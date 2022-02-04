@@ -1,6 +1,8 @@
 package scala
 
 import (
+	"path/filepath"
+
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
@@ -58,4 +60,11 @@ func (c *scalaConfig) ParseDirectives(rel string, directives []rule.Directive) (
 		}
 	}
 	return
+}
+
+// isScalaFile returns true if the file extension looks like it should contain
+// protobuf definitions.
+func isScalaFile(filename string) bool {
+	ext := filepath.Ext(filename)
+	return ext == ".scala"
 }

@@ -6,6 +6,7 @@ go_library(
     name = "scala",
     srcs = [
         "config.go",
+        "package.go",
         "scala.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
@@ -17,6 +18,7 @@ go_library(
         "@bazel_gazelle//repo:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
+        "@build_stack_rules_proto//pkg/protoc",
     ],
 )
 
@@ -32,5 +34,6 @@ go_test(
     name = "scala_test",
     srcs = ["scala_test.go"],
     data = [":gazelle"] + glob(["testdata/**"]),
+    embed = [":scala"],
     deps = ["@build_stack_rules_proto//pkg/goldentest"],
 )

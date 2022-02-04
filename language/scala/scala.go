@@ -113,5 +113,33 @@ func (sl *scalaLang) Resolve(
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	return language.GenerateResult{}
+	cfg := getOrCreateScalaConfig(args.Config)
+
+	files := make([]string, 0)
+
+	for _, f := range args.RegularFiles {
+		if !isScalaFile(f) {
+			continue
+		}
+		files = append(files, f)
+	}
+
+	pkg := newScalaPackage(args.Rel, cfg, files...)
+	// pl.packages[args.Rel] = pkg
+
+	rules := pkg.Rules()
+	empty := pkg.Empty()
+
+	imports := make([]interface{}, len(rules))
+	for i, r := range rules {
+		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
+		// internalLabel := label.New("", args.Rel, r.Name())
+		// protoc.GlobalRuleIndex().Put(internalLabel, r)
+	}
+
+	return language.GenerateResult{
+		Gen:     rules,
+		Empty:   empty,
+		Imports: imports,
+	}
 }
