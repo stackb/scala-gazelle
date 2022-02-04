@@ -22,13 +22,13 @@ type scalaPackage struct {
 	// the config for this package
 	cfg *scalaConfig
 	// the list of '.scala' files
-	files []string
+	files []*ScalaFile
 	// the generated and empty rule providers
 	gen, empty []RuleProvider
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, files ...string) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, files ...*ScalaFile) *scalaPackage {
 	s := &scalaPackage{
 		ruleRegistry: ruleRegistry,
 		rel:          rel,
@@ -67,7 +67,7 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	}
 	rc.Impl = impl
 
-	rule := impl.ProvideRule(rc)
+	rule := impl.ProvideRule(rc, s.files)
 	if rule == nil {
 		return nil
 	}

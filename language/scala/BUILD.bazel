@@ -13,11 +13,14 @@ go_library(
         "rule_info.go",
         "rule_provider.go",
         "scala.go",
+        "scala_file.go",
         "scala_library.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
+        "//antlr:parser",  # keep
+        "@antlr4_runtimes//:go",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",

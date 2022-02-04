@@ -119,13 +119,18 @@ func (sl *scalaLang) Resolve(
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
 	cfg := getOrCreateScalaConfig(args.Config)
 
-	files := make([]string, 0)
+	files := make([]*ScalaFile, 0)
 
 	for _, f := range args.RegularFiles {
 		if !isScalaFile(f) {
 			continue
 		}
-		files = append(files, f)
+		file, err := ParseScalaFile(f)
+		if err != nil {
+			log.Println("error parsing scala file:", f, err.Error())
+			continue
+		}
+		files = append(files, file)
 	}
 
 	pkg := newScalaPackage(sl.ruleRegistry, args.Rel, cfg, files...)
