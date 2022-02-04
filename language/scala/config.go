@@ -1,10 +1,18 @@
 package scala
 
 import (
+	"fmt"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+)
+
+const (
+	// ruleDirective is the directive for toggling rule generation.
+	ruleDirective = "scala_rule"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -59,13 +67,52 @@ func (c *scalaConfig) Clone() *scalaConfig {
 func (c *scalaConfig) ParseDirectives(rel string, directives []rule.Directive) (err error) {
 	for _, d := range directives {
 		switch d.Key {
-		// case SomeDirective:
-		// 	err = c.parseSomeDirective(d)
-		// if err != nil {
-		// 	return fmt.Errorf("parse %v: %w", d, err)
+		case ruleDirective:
+			err = c.parseRuleDirective(d)
+			if err != nil {
+				return fmt.Errorf("parse %v: %w", d, err)
+			}
 		}
 	}
 	return
+}
+
+func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
+	fields := strings.Fields(d.Value)
+	if len(fields) < 3 {
+		return fmt.Errorf("invalid directive %v: expected three or more fields, got %d", d, len(fields))
+	}
+	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
+	r, err := c.getOrCreateRuleConfig(c.config, name)
+	if err != nil {
+		return fmt.Errorf("invalid proto_rule directive %+v: %w", d, err)
+	}
+	return r.parseDirective(c, name, param, value)
+}
+
+func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {
+	r, ok := c.rules[name]
+	if !ok {
+		r = NewRuleConfig(config, name)
+		r.Implementation = name
+		c.rules[name] = r
+	}
+	return r, nil
+}
+
+// configuredRules returns a determinstic ordered list of configured
+// rules
+func (c *scalaConfig) configuredRules() []*RuleConfig {
+	names := make([]string, 0)
+	for name := range c.rules {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	rules := make([]*RuleConfig, 0)
+	for _, name := range names {
+		rules = append(rules, c.rules[name])
+	}
+	return rules
 }
 
 // isScalaFile returns true if the file extension looks like it should contain
@@ -73,4 +120,18 @@ func (c *scalaConfig) ParseDirectives(rel string, directives []rule.Directive) (
 func isScalaFile(filename string) bool {
 	ext := filepath.Ext(filename)
 	return ext == ".scala"
+}
+
+// DeduplicateAndSort removes duplicate entries and sorts the list
+func DeduplicateAndSort(in []string) (out []string) {
+	seen := make(map[string]bool)
+	for _, v := range in {
+		if seen[v] {
+			continue
+		}
+		seen[v] = true
+		out = append(out, v)
+	}
+	sort.Strings(out)
+	return
 }
