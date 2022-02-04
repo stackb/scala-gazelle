@@ -50,7 +50,7 @@ func (s *scalaLibrary) LoadInfo() rule.LoadInfo {
 }
 
 // ProvideRule implements part of the RuleInfo interface.
-func (s *scalaLibrary) ProvideRule(cfg *RuleConfig) RuleProvider {
+func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, pkg *ScalaPackage) RuleProvider {
 	return &scalaLibraryRule{
 		kindName:       s.kindName,
 		ruleNameSuffix: scalaLibraryRuleSuffix,
