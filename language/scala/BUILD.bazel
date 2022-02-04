@@ -1,4 +1,6 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+# gazelle:exclude testdata
 
 go_library(
     name = "scala",
@@ -13,4 +15,19 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
     ],
+)
+
+genrule(
+    name = "gazelle_tool",
+    outs = ["gazelle"],
+    cmd = "cp $(location //:gazelle-scala) $@",
+    executable = True,
+    tools = ["//:gazelle-scala"],
+)
+
+go_test(
+    name = "scala_test",
+    srcs = ["scala_test.go"],
+    data = [":gazelle"] + glob(["testdata/**"]),
+    deps = ["@build_stack_rules_proto//pkg/goldentest"],
 )

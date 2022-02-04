@@ -27,6 +27,16 @@ load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 gazelle_dependencies()
 
 # ----------------------------------------------------
+# build_stack_rules_proto
+# ----------------------------------------------------
+
+register_toolchains("@build_stack_rules_proto//toolchain:standard")
+
+load("@build_stack_rules_proto//:go_deps.bzl", "gazelle_protobuf_extension_go_deps")
+
+gazelle_protobuf_extension_go_deps()
+
+# ----------------------------------------------------
 # Antlr
 # ----------------------------------------------------
 

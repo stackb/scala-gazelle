@@ -9,6 +9,7 @@ def workspace_deps():
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
     rules_antlr()
+    build_stack_rules_proto()
 
 def io_bazel_rules_go():
     _maybe(
@@ -57,4 +58,10 @@ def rules_antlr():
         sha256 = "0df8550be207576a649bedbb21c619fb3a20025916f2df6ffd801ad7f7f7d48b",
         strip_prefix = "rules_antlr-89a29cca479363a5aee53e203719510bdc6be6ff",
         urls = ["https://github.com/marcohu/rules_antlr/archive/89a29cca479363a5aee53e203719510bdc6be6ff.tar.gz"],
+    )
+
+def build_stack_rules_proto():
+    native.local_repository(
+        name = "build_stack_rules_proto",
+        path = "/Users/i868039/go/src/github.com/stackb/rules_proto",
     )
