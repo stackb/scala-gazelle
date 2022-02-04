@@ -9,9 +9,7 @@ antlr(
 
 go_library(
     name = "parser",
-    srcs = [
-        ":scala",
-    ],
+    srcs = [":scala"],
     importpath = "github.com/stackb/scala-gazelle/antlr",
     visibility = ["//visibility:public"],
     deps = [

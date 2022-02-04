@@ -1,0 +1,22 @@
+load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+
+# ----------------------------------------------------
+# Gazelle
+# ----------------------------------------------------
+# gazelle:prefix github.com/stackb/scala-gazelle
+# gazelle:exclude vendor
+
+gazelle_binary(
+    name = "gazelle-scala",
+    languages = [
+        "@bazel_gazelle//language/go",
+        "@bazel_gazelle//language/proto",
+        # "//language/scala",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+gazelle(
+    name = "gazelle",
+    gazelle = ":gazelle-scala",
+)
