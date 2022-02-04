@@ -7,10 +7,12 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
-// scalaConfig represents the config extension for the scala language.
+// scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
 	// config is the parent gazelle config.
 	config *config.Config
+	// exclude patterns for rules that should be skipped for this package.
+	rules map[string]*RuleConfig
 }
 
 // GetscalaConfig returns the associated package config.
@@ -25,6 +27,7 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 func newScalaConfig(config *config.Config) *scalaConfig {
 	return &scalaConfig{
 		config: config,
+		rules:  make(map[string]*RuleConfig),
 	}
 }
 
@@ -44,6 +47,9 @@ func getOrCreateScalaConfig(config *config.Config) *scalaConfig {
 // Clone copies this config to a new one.
 func (c *scalaConfig) Clone() *scalaConfig {
 	clone := newScalaConfig(c.config)
+	for k, v := range c.rules {
+		clone.rules[k] = v.clone()
+	}
 	return clone
 }
 

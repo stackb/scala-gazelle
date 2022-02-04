@@ -6,7 +6,11 @@ go_library(
     name = "scala",
     srcs = [
         "config.go",
+        "intent.go",
         "package.go",
+        "rule_config.go",
+        "rule_info.go",
+        "rule_provider.go",
         "scala.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
