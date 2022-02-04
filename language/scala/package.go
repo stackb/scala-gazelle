@@ -45,6 +45,9 @@ func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, fi
 func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	rules := make([]RuleProvider, 0)
 
+	log.Println("GENERATE RULES", enabled)
+	log.Println("CONFIGURED RULES", len(s.cfg.configuredRules()))
+
 	for _, rc := range s.cfg.configuredRules() {
 		if enabled != rc.Enabled {
 			continue
@@ -56,6 +59,8 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 }
 
 func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
+	log.Println("PROVIDE FILE", rc)
+
 	impl, err := globalRegistry.LookupRule(rc.Implementation)
 	if err == ErrUnknownRule {
 		log.Fatalf(

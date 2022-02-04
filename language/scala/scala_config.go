@@ -2,6 +2,7 @@ package scala
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -65,9 +66,12 @@ func (c *scalaConfig) Clone() *scalaConfig {
 // directory name is given by 'rel' and the list of directives in the BUILD file
 // are specified by 'directives'.
 func (c *scalaConfig) ParseDirectives(rel string, directives []rule.Directive) (err error) {
+	log.Println("PARSING DIRECTIVES", len(directives))
+
 	for _, d := range directives {
 		switch d.Key {
 		case ruleDirective:
+			log.Println("PARSE DIRECTIVE", d)
 			err = c.parseRuleDirective(d)
 			if err != nil {
 				return fmt.Errorf("parse %v: %w", d, err)

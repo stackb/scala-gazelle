@@ -43,13 +43,18 @@ func (*scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) 
 
 func (*scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error { return nil }
 
-func (*scalaLang) KnownDirectives() []string { return nil }
+func (*scalaLang) KnownDirectives() []string {
+	return []string{
+		ruleDirective,
+	}
+}
 
 // Configure implements config.Configurer
 func (sl *scalaLang) Configure(c *config.Config, rel string, f *rule.File) {
 	if f == nil {
 		return
 	}
+	log.Println("parsing directives!", len(f.Directives))
 	if err := getOrCreateScalaConfig(c).ParseDirectives(rel, f.Directives); err != nil {
 		log.Fatalf("error while parsing rule directives in package %q: %v", rel, err)
 	}
@@ -121,6 +126,8 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	files := make([]*ScalaFile, 0)
 
+	log.Println("VISITING", args.Rel)
+
 	for _, f := range args.RegularFiles {
 		if !isScalaFile(f) {
 			continue
@@ -130,6 +137,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 			log.Println("error parsing scala file:", f, err.Error())
 			continue
 		}
+		log.Println("SCALA FILE", f)
 		files = append(files, file)
 	}
 

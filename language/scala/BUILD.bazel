@@ -5,7 +5,6 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "scala",
     srcs = [
-        "config.go",
         "intent.go",
         "package.go",
         "registry.go",
@@ -13,6 +12,7 @@ go_library(
         "rule_info.go",
         "rule_provider.go",
         "scala.go",
+        "scala_config.go",
         "scala_file.go",
         "scala_library.go",
     ],

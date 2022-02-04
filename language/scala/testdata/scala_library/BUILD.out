@@ -1,9 +1,9 @@
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
-# scala_rule scala_library implementation stackb:rules_scala:scala_library
-# scala_rule scala_library enabled true
+# gazelle:scala_rule scala_library implementation stackb:rules_scala:scala_library
+# gazelle:scala_rule scala_library enabled true
 
 scala_library(
-    name = "root_scala_library",
+    name = "fixme_scala_library",
     srcs = ["Main.scala"],
 )

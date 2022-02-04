@@ -54,6 +54,8 @@ func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, files []*ScalaFile) RuleProv
 	return &scalaLibraryRule{
 		kindName:       s.kindName,
 		ruleNameSuffix: scalaLibraryRuleSuffix,
+		ruleConfig:     cfg,
+		files:          files,
 	}
 }
 
@@ -63,6 +65,7 @@ type scalaLibraryRule struct {
 	ruleNameSuffix string
 	srcs           []string
 	ruleConfig     *RuleConfig
+	files          []*ScalaFile
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -78,6 +81,9 @@ func (s *scalaLibraryRule) Name() string {
 // Srcs computes the srcs list for the rule.
 func (s *scalaLibraryRule) Srcs() []string {
 	srcs := make([]string, 0)
+	for _, file := range s.files {
+		srcs = append(srcs, file.Name)
+	}
 	return srcs
 }
 

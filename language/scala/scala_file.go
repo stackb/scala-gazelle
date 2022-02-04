@@ -5,7 +5,9 @@ import (
 	"github.com/stackb/scala-gazelle/antlr/parser"
 )
 
-type ScalaFile struct{}
+type ScalaFile struct {
+	Name string
+}
 
 func ParseScalaFile(filename string) (*ScalaFile, error) {
 	is, err := antlr.NewFileStream(filename)
@@ -22,7 +24,9 @@ func ParseScalaFile(filename string) (*ScalaFile, error) {
 
 	antlr.ParseTreeWalkerDefault.Walk(&scalaListener{}, tree)
 
-	return &ScalaFile{}, nil
+	return &ScalaFile{
+		Name: filename,
+	}, nil
 }
 
 type scalaListener struct {
