@@ -1,2 +1,2 @@
 # gazelle:scala_rule scala_library implementation stackb:rules_scala:scala_library
-# gazelle:scala_rule scala_library enabled true
+# gazelle:resolve scala scala com.typesafe.config.ConfigFactory @maven//:typesafe

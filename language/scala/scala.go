@@ -22,12 +22,14 @@ const (
 func NewLanguage() language.Language {
 	return &scalaLang{
 		ruleRegistry: globalRegistry,
+		packages:     make(map[string]*scalaPackage),
 	}
 }
 
 // scalaLang implements language.Language.
 type scalaLang struct {
 	ruleRegistry RuleRegistry
+	packages     map[string]*scalaPackage
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -125,7 +127,21 @@ func (*scalaLang) Fix(c *config.Config, f *rule.File) {}
 // If nil is returned, the rule will not be indexed. If any non-nil slice is
 // returned, including an empty slice, the rule will be indexed.
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
-	return nil
+	from := label.New("", f.Pkg, r.Name())
+
+	pkg, ok := sl.packages[from.Pkg]
+	if !ok {
+		log.Println("Unknown package", from.Pkg)
+		return nil
+	}
+
+	provider := pkg.ruleProvider(r)
+	if provider == nil {
+		log.Printf("Unknown rule provider for //%s:%s %p", f.Pkg, r.Name(), r)
+		return nil
+	}
+
+	return provider.Imports(c, r, f)
 }
 
 // Embeds returns a list of labels of rules that the given rule embeds. If a
@@ -149,6 +165,19 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
+	if pkg, ok := sl.packages[from.Pkg]; ok {
+		provider := pkg.ruleProvider(r)
+		if provider == nil {
+			log.Printf("no known rule provider for %v", from)
+		}
+		if imports, ok := importsRaw.([]string); ok {
+			provider.Resolve(c, ix, r, imports, from)
+		} else {
+			log.Printf("warning: resolve imports: expected []string, got %T", importsRaw)
+		}
+	} else {
+		log.Printf("no known rule package for %v", from.Pkg)
+	}
 }
 
 // GenerateRules extracts build metadata from source files in a directory.
@@ -181,7 +210,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	pkg := newScalaPackage(sl.ruleRegistry, args.Rel, cfg, files...)
-	// pl.packages[args.Rel] = pkg
+	sl.packages[args.Rel] = pkg
 
 	rules := pkg.Rules()
 	empty := pkg.Empty()

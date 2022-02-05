@@ -40,6 +40,14 @@ func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, fi
 	return s
 }
 
+// ruleProvider returns the provider of a rule or nil if not known.
+func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
+	if provider, ok := r.PrivateAttr(ruleProviderKey).(RuleProvider); ok {
+		return provider
+	}
+	return nil
+}
+
 // generateRules constructs a list of rules based on the configured set of
 // languages.
 func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {

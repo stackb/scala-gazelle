@@ -8,6 +8,7 @@ go_library(
         "intent.go",
         "package.go",
         "registry.go",
+        "resolver.go",
         "rule_config.go",
         "rule_info.go",
         "rule_provider.go",

@@ -8,7 +8,12 @@ import (
 )
 
 const (
-	scalaLibraryRuleName   = "scala_library"
+	// scalaLibraryRuleName is the name of the rule
+	scalaLibraryRuleName = "scala_library"
+	// scalaImportsPrivateKey is the PrivateAttr() key that holds the set of
+	// imports for the rule.
+	scalaImportsPrivateKey = "_scala_imports"
+	// scalaLibraryRuleSuffix is the default suffix for generated rule names.
 	scalaLibraryRuleSuffix = "_scala_library"
 )
 
@@ -93,6 +98,17 @@ func (s *scalaLibraryRule) Deps() []string {
 	return DeduplicateAndSort(deps)
 }
 
+// imports computes the set of (scala) imports for the rule.
+func (s *scalaLibraryRule) imports() []string {
+	imps := make([]string, 0)
+	for _, file := range s.files {
+		for _, imp := range file.Imports {
+			imps = append(imps, imp.Name)
+		}
+	}
+	return DeduplicateAndSort(imps)
+}
+
 // Rule implements part of the ruleProvider interface.
 func (s *scalaLibraryRule) Rule() *rule.Rule {
 	newRule := rule.NewRule(s.Kind(), s.Name())
@@ -104,26 +120,29 @@ func (s *scalaLibraryRule) Rule() *rule.Rule {
 		newRule.SetAttr("deps", deps)
 	}
 
-	// // set the override language such that deps of 'proto_scala_library' and
-	// // 'grpc_scala_library' can resolve together (matches the value used by
-	// // "Imports").
-	// newRule.SetPrivateAttr(protoc.ResolverImpLangPrivateKey, scalaLibraryRuleSuffix)
+	newRule.SetPrivateAttr(ResolverImpLangPrivateKey, ScalaLangName)
+	newRule.SetPrivateAttr(config.GazelleImportsKey, s.imports())
+	newRule.SetPrivateAttr(scalaImportsPrivateKey, s.imports())
 
 	return newRule
 }
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaLibraryRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	// if lib, ok := r.PrivateAttr(protoc.ProtoLibraryKey).(protoc.ProtoLibrary); ok {
-	// 	return protoc.ProtoLibraryImportSpecsForKind(scalaLibraryRuleSuffix, lib)
-	// }
+	if imps, ok := r.PrivateAttr(scalaImportsPrivateKey).([]string); ok {
+		specs := make([]resolve.ImportSpec, len(imps))
+		for i, imp := range imps {
+			specs[i] = resolve.ImportSpec{
+				Lang: "scala",
+				Imp:  imp,
+			}
+		}
+		return specs
+	}
 	return nil
 }
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaLibraryRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-	// if s.resolver == nil {
-	// 	return
-	// }
-	// s.resolver(c, ix, r, imports, from)
+	resolveDeps("deps")(c, ix, r, imports, from)
 }
