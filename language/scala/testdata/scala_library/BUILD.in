@@ -3,3 +3,5 @@
 # gazelle:resolve scala scala a.b.c.R @maven//:a
 # gazelle:resolve scala scala a.b.c.S @maven//:a
 # gazelle:resolve scala scala x.y._ @maven//:x
+# gazelle:resolve scala scala omnistac.core.message.Rational //omnistac/core/message:rational
+# gazelle:resolve scala scala omnistac.core.message._ //omnistac/core/message:all

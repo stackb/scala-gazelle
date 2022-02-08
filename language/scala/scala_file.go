@@ -42,10 +42,6 @@ type ScalaImport struct {
 type scalaListener struct {
 	*parser.BaseScalaListener
 
-	// temporary list of ImportExprs.  List is re-initialized when we enter an
-	// import.
-	importExprs []*parser.ImportExprContext
-
 	imports []ScalaImport
 }
 
@@ -54,50 +50,63 @@ func (l *scalaListener) addImportedType(importedType string) {
 	log.Println("Added import", importedType)
 }
 
+func (l *scalaListener) addAllImportedType(importedType string) {
+	// l.imports = append(l.imports, ScalaImport{Name: importedType})
+	log.Println("Added all import", importedType)
+}
+
 func (l *scalaListener) EnterImport_(ctx *parser.Import_Context) {
 	// log.Println("EnterImport_", ctx)
-	l.importExprs = make([]*parser.ImportExprContext, 0)
 }
 
-func (l *scalaListener) EnterImportExpr(ctx *parser.ImportExprContext) {
-	l.importExprs = append(l.importExprs, ctx)
-}
+func (l *scalaListener) ExitImportExpr(ctx *parser.ImportExprContext) {
+	// recog := ctx.GetParser()
 
-func (l *scalaListener) ExitImport_(ctx *parser.Import_Context) {
-	// log.Println("ExitImport_", len(l.importExprs))
-	recog := ctx.GetParser()
+	// log.Printf("ExitImport_ expr %T", t.StableId())
+	stableID, ok := ctx.StableId().(*parser.StableIdContext)
+	if !ok {
+		return
+	}
 
-	log.Println("import:", ctx.ToStringTree(recog.GetRuleNames(), recog))
+	log.Printf("ExitImport_ stableID %v (id=%+v)", stableID.GetText(), ctx.Id())
+	log.Println("text: " + ctx.GetText())
 
-	for _, expr := range ctx.AllImportExpr() {
-		if t, ok := expr.(*parser.ImportExprContext); ok {
-			// log.Printf("ExitImport_ expr %T", t.StableId())
-			stableID, ok := t.StableId().(*parser.StableIdContext)
-			if !ok {
-				continue
-			}
+	typeName := stableID.GetText()
 
-			log.Printf("ExitImport_ stableID %v (id=%+v)", stableID.GetText(), t.Id())
-			log.Println("text: " + t.GetText())
+	if isc, ok := ctx.ImportSelectors().(*parser.ImportSelectorsContext); ok {
+		log.Println("isc text: " + isc.GetText())
 
-			typeName := stableID.GetText()
-
-			if isc, ok := t.ImportSelectors().(*parser.ImportSelectorsContext); ok {
-				// case of "import a.b.c.{D, E}"
-				for _, is := range isc.AllImportSelector() {
-					if s, ok := is.(*parser.ImportSelectorContext); ok {
-						for _, tn := range s.AllId() {
-							l.addImportedType(typeName + "." + tn.GetText())
-						}
-					}
+		for i := 0; i < isc.GetChildCount(); i++ {
+			child := isc.GetChild(i)
+			switch childT := child.(type) {
+			case *parser.ImportSelectorContext:
+				log.Println("ImportSelectorContext text: " + childT.GetText())
+				for _, tn := range childT.AllId() {
+					log.Println("ImportSelectorContext id text: " + tn.GetText())
+					l.addImportedType(typeName + "." + tn.GetText())
 				}
-			} else {
-				if strings.HasSuffix(t.GetText(), "_") {
-					l.addImportedType(t.GetText())
-				} else {
-					l.addImportedType(typeName)
+			case *antlr.TerminalNodeImpl:
+				if childT.GetText() == "_" {
+					l.addAllImportedType(typeName)
 				}
 			}
+			// if pc, ok := child.(antlr.ParseTree); ok {
+			// 	log.Printf("isc child %d (%T): %v", i, child, pc.ToStringTree(recog.GetRuleNames(), recog))
+			// } else {
+			// 	log.Printf("isc child %d (%T): %+v", i, child, child)
+			// }
+		}
+
+		// case of "import a.b.c.{D, E}"
+		// for _, is := range isc.AllImportSelector() {
+		// 	if s, ok := is.(*parser.ImportSelectorContext); ok {
+		// 	}
+		// }
+	} else {
+		if strings.HasSuffix(ctx.GetText(), "_") {
+			l.addImportedType(ctx.GetText())
+		} else {
+			l.addImportedType(typeName)
 		}
 	}
 }
