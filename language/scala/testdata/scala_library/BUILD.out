@@ -2,9 +2,14 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 # gazelle:scala_rule scala_library implementation stackb:rules_scala:scala_library
 # gazelle:resolve scala scala com.typesafe.config.ConfigFactory @maven//:typesafe
+# gazelle:resolve scala scala a.b.c.R @maven//:a
+# gazelle:resolve scala scala a.b.c.S @maven//:a
 
 scala_library(
     name = "fixme_scala_library",
     srcs = ["Main.scala"],
-    deps = ["@maven//:typesafe"],
+    deps = [
+        "@maven//:a",
+        "@maven//:typesafe",
+    ],
 )

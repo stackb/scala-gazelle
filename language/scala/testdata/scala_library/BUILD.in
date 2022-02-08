@@ -1,2 +1,4 @@
 # gazelle:scala_rule scala_library implementation stackb:rules_scala:scala_library
 # gazelle:resolve scala scala com.typesafe.config.ConfigFactory @maven//:typesafe
+# gazelle:resolve scala scala a.b.c.R @maven//:a
+# gazelle:resolve scala scala a.b.c.S @maven//:a

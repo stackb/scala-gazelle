@@ -1,7 +1,7 @@
 package scala
 
 import (
-	// "log"
+	"log"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/stackb/scala-gazelle/antlr/parser"
@@ -59,13 +59,36 @@ func (l *scalaListener) EnterImportExpr(ctx *parser.ImportExprContext) {
 
 func (l *scalaListener) ExitImport_(ctx *parser.Import_Context) {
 	// log.Println("ExitImport_", len(l.importExprs))
+	recog := ctx.GetParser()
+
+	log.Println("import:", ctx.ToStringTree(recog.GetRuleNames(), recog))
 
 	for _, expr := range ctx.AllImportExpr() {
 		if t, ok := expr.(*parser.ImportExprContext); ok {
 			// log.Printf("ExitImport_ expr %T", t.StableId())
-			if s, ok := t.StableId().(*parser.StableIdContext); ok {
-				// log.Printf("ExitImport_ stableId %v", s.GetText())
-				l.imports = append(l.imports, ScalaImport{Name: s.GetText()})
+			stableID, ok := t.StableId().(*parser.StableIdContext)
+			if !ok {
+				continue
+			}
+
+			log.Printf("ExitImport_ stableID %v (id=%+v)", stableID.GetText(), t.Id())
+
+			typeName := stableID.GetText()
+
+			if isc, ok := t.ImportSelectors().(*parser.ImportSelectorsContext); ok {
+				// case of "import a.b.c.{D, E}"
+				for _, is := range isc.AllImportSelector() {
+					if s, ok := is.(*parser.ImportSelectorContext); ok {
+						for _, tn := range s.AllId() {
+							importedType := typeName + "." + tn.GetText()
+							l.imports = append(l.imports, ScalaImport{Name: importedType})
+						}
+					}
+				}
+			} else {
+				// case of "import a.b.c.D"
+				importedType := typeName
+				l.imports = append(l.imports, ScalaImport{Name: importedType})
 			}
 		}
 	}
