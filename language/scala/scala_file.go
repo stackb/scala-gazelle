@@ -2,6 +2,7 @@ package scala
 
 import (
 	"log"
+	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/stackb/scala-gazelle/antlr/parser"
@@ -48,6 +49,11 @@ type scalaListener struct {
 	imports []ScalaImport
 }
 
+func (l *scalaListener) addImportedType(importedType string) {
+	l.imports = append(l.imports, ScalaImport{Name: importedType})
+	log.Println("Added import", importedType)
+}
+
 func (l *scalaListener) EnterImport_(ctx *parser.Import_Context) {
 	// log.Println("EnterImport_", ctx)
 	l.importExprs = make([]*parser.ImportExprContext, 0)
@@ -72,6 +78,7 @@ func (l *scalaListener) ExitImport_(ctx *parser.Import_Context) {
 			}
 
 			log.Printf("ExitImport_ stableID %v (id=%+v)", stableID.GetText(), t.Id())
+			log.Println("text: " + t.GetText())
 
 			typeName := stableID.GetText()
 
@@ -80,15 +87,16 @@ func (l *scalaListener) ExitImport_(ctx *parser.Import_Context) {
 				for _, is := range isc.AllImportSelector() {
 					if s, ok := is.(*parser.ImportSelectorContext); ok {
 						for _, tn := range s.AllId() {
-							importedType := typeName + "." + tn.GetText()
-							l.imports = append(l.imports, ScalaImport{Name: importedType})
+							l.addImportedType(typeName + "." + tn.GetText())
 						}
 					}
 				}
 			} else {
-				// case of "import a.b.c.D"
-				importedType := typeName
-				l.imports = append(l.imports, ScalaImport{Name: importedType})
+				if strings.HasSuffix(t.GetText(), "_") {
+					l.addImportedType(t.GetText())
+				} else {
+					l.addImportedType(typeName)
+				}
 			}
 		}
 	}
