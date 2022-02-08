@@ -8,6 +8,8 @@ import (
 	"github.com/stackb/scala-gazelle/antlr/parser"
 )
 
+const debugParseScalaFile = false
+
 type ScalaFile struct {
 	Name    string
 	Imports []ScalaImport
@@ -22,7 +24,9 @@ func ParseScalaFile(filename string) (*ScalaFile, error) {
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	p := parser.NewScalaParser(stream)
-	p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+	if debugParseScalaFile {
+		p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+	}
 	p.BuildParseTrees = true
 	tree := p.CompilationUnit()
 
@@ -47,65 +51,59 @@ type scalaListener struct {
 
 func (l *scalaListener) addImportedType(importedType string) {
 	l.imports = append(l.imports, ScalaImport{Name: importedType})
-	log.Println("Added import", importedType)
+	if debugParseScalaFile {
+		log.Println("Added import", importedType)
+	}
 }
 
 func (l *scalaListener) addAllImportedType(importedType string) {
-	// l.imports = append(l.imports, ScalaImport{Name: importedType})
-	log.Println("Added all import", importedType)
-}
-
-func (l *scalaListener) EnterImport_(ctx *parser.Import_Context) {
-	// log.Println("EnterImport_", ctx)
+	l.imports = append(l.imports, ScalaImport{Name: importedType + "._"})
+	if debugParseScalaFile {
+		log.Println("Added all import", importedType+"._")
+	}
 }
 
 func (l *scalaListener) ExitImportExpr(ctx *parser.ImportExprContext) {
-	// recog := ctx.GetParser()
-
-	// log.Printf("ExitImport_ expr %T", t.StableId())
 	stableID, ok := ctx.StableId().(*parser.StableIdContext)
 	if !ok {
 		return
 	}
 
-	log.Printf("ExitImport_ stableID %v (id=%+v)", stableID.GetText(), ctx.Id())
-	log.Println("text: " + ctx.GetText())
-
 	typeName := stableID.GetText()
 
 	if isc, ok := ctx.ImportSelectors().(*parser.ImportSelectorsContext); ok {
-		log.Println("isc text: " + isc.GetText())
-
 		for i := 0; i < isc.GetChildCount(); i++ {
 			child := isc.GetChild(i)
 			switch childT := child.(type) {
 			case *parser.ImportSelectorContext:
-				log.Println("ImportSelectorContext text: " + childT.GetText())
-				for _, tn := range childT.AllId() {
-					log.Println("ImportSelectorContext id text: " + tn.GetText())
-					l.addImportedType(typeName + "." + tn.GetText())
+				for j := 0; j < childT.GetChildCount(); j++ {
+					sel := childT.GetChild(j)
+					switch selT := sel.(type) {
+					case *antlr.TerminalNodeImpl:
+						// ImportSelector has two forms: a.b.c.{D} or a.b.c.{D
+						// => E}.  In both cases we only really care about the
+						// first child.  Leaving the loop here for possible
+						// future cases.
+						if j == 0 {
+							l.addImportedType(typeName + "." + selT.GetText())
+						}
+						// case antlr.ParseTree:
+						// 	log.Printf("sel: %T %v", selT, selT.ToStringTree(ctx.GetParser().GetRuleNames(), ctx.GetParser()))
+					}
 				}
 			case *antlr.TerminalNodeImpl:
 				if childT.GetText() == "_" {
+					// handles the case like "a.b.c.{D => E, _}"
 					l.addAllImportedType(typeName)
 				}
 			}
-			// if pc, ok := child.(antlr.ParseTree); ok {
-			// 	log.Printf("isc child %d (%T): %v", i, child, pc.ToStringTree(recog.GetRuleNames(), recog))
-			// } else {
-			// 	log.Printf("isc child %d (%T): %+v", i, child, child)
-			// }
 		}
-
-		// case of "import a.b.c.{D, E}"
-		// for _, is := range isc.AllImportSelector() {
-		// 	if s, ok := is.(*parser.ImportSelectorContext); ok {
-		// 	}
-		// }
 	} else {
 		if strings.HasSuffix(ctx.GetText(), "_") {
-			l.addImportedType(ctx.GetText())
+			// handles the case like "a.b.c._"
+			l.addAllImportedType(typeName)
 		} else {
+			// handles the case like "a.b.c.D"
 			l.addImportedType(typeName)
 		}
 	}

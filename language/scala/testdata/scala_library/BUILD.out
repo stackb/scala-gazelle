@@ -12,8 +12,8 @@ scala_library(
     name = "fixme_scala_library",
     srcs = ["Main.scala"],
     deps = [
-        "//omnistac/core/message:rational",
         "//omnistac/core/message:all",
+        "//omnistac/core/message:rational",
         "@maven//:a",
         "@maven//:typesafe",
         "@maven//:x",
