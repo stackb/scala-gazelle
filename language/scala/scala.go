@@ -21,15 +21,23 @@ const (
 // binary.
 func NewLanguage() language.Language {
 	return &scalaLang{
-		ruleRegistry: globalRegistry,
-		packages:     make(map[string]*scalaPackage),
+		ruleRegistry:          globalRegistry,
+		crossResolverRegistry: globalCrossResolverRegistry,
+		packages:              make(map[string]*scalaPackage),
 	}
 }
 
 // scalaLang implements language.Language.
 type scalaLang struct {
+	// classIndexFile is the filename used for the class index
+	classIndexFile string
+	// ruleRegistry is the rule registry implementation
 	ruleRegistry RuleRegistry
-	packages     map[string]*scalaPackage
+	// crossResolverRegistry is the cross resolver registry implementation
+	crossResolverRegistry CrossResolverRegistry
+	// packages is map from the config.Rel to *scalaPackage for the
+	// workspace-relative packate name.
+	packages map[string]*scalaPackage
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -40,11 +48,26 @@ func (sl *scalaLang) Name() string { return ScalaLangName }
 // The following methods are implemented to satisfy the
 // https://pkg.go.dev/github.com/bazelbuild/bazel-gazelle/resolve?tab=doc#Resolver
 // interface, but are otherwise unused.
-func (*scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	getOrCreateScalaConfig(c) // ignoring return value, only want side-effect
+
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+			resolver.RegisterFlags(fs, cmd, c)
+		}
+	}
 }
 
-func (*scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error { return nil }
+func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+			if err := resolver.CheckFlags(fs, c); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
 
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
@@ -119,7 +142,15 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 // Fix repairs deprecated usage of language-specific rules in f. This is called
 // before the file is indexed. Unless c.ShouldFix is true, fixes that delete or
 // rename rules should not be performed.
-func (*scalaLang) Fix(c *config.Config, f *rule.File) {}
+func (sl *scalaLang) Fix(c *config.Config, f *rule.File) {
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+			if fixer, ok := resolver.(Fixer); ok {
+				fixer.Fix(c, f)
+			}
+		}
+	}
+}
 
 // Imports returns a list of ImportSpecs that can be used to import the rule r.
 // This is used to populate RuleIndex.
@@ -227,4 +258,16 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		Empty:   empty,
 		Imports: imports,
 	}
+}
+
+// CrossResolve calls all known resolvers and returns the first non-empty result.
+func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+			if result := resolver.CrossResolve(c, ix, imp, lang); len(result) > 0 {
+				return result
+			}
+		}
+	}
+	return nil
 }

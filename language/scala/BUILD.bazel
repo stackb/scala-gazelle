@@ -5,13 +5,15 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "scala",
     srcs = [
+        "cross_resolver_registry.go",
+        "index.go",
         "intent.go",
         "package.go",
-        "registry.go",
         "resolver.go",
         "rule_config.go",
         "rule_info.go",
         "rule_provider.go",
+        "rule_registry.go",
         "scala.go",
         "scala_config.go",
         "scala_file.go",
@@ -21,7 +23,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//antlr:parser",  # keep
-        "@antlr4_runtimes//:go",
+        "@antlr4_runtimes//:go",  # keep
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",
