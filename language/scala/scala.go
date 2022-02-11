@@ -143,13 +143,6 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 // before the file is indexed. Unless c.ShouldFix is true, fixes that delete or
 // rename rules should not be performed.
 func (sl *scalaLang) Fix(c *config.Config, f *rule.File) {
-	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
-			if fixer, ok := resolver.(Fixer); ok {
-				fixer.Fix(c, f)
-			}
-		}
-	}
 }
 
 // Imports returns a list of ImportSpecs that can be used to import the rule r.

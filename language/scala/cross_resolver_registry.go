@@ -10,18 +10,11 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
-// Fixer allows a Cross Resolver interface to get a Fix callback.  An
-// implementation might use Fix to perform indexing.
-type Fixer interface {
-	Fix(c *config.Config, f *rule.File)
-}
-
 // ConfigurableCrossResolver implementations support the CrossResolver interface
 // as well as a subset of config.Configurer.  This interface is provided to
 // support different implementations of a scala cross-resolver.  A simple
 // implementation might be based off a CSV file, whereas a larger monorepo may
-// require a more sophisticated cache.  If the cross resolver implements Fixer,
-// it will be called.
+// require a more sophisticated cache.
 type ConfigurableCrossResolver interface {
 	resolve.CrossResolver
 	// RegisterFlags implements part of the config.Configurer interface.
