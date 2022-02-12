@@ -30,7 +30,8 @@ go_library(
         "@bazel_gazelle//repo:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
-        "@build_stack_rules_proto//pkg/protoc",
+        "@com_github_antlr_antlr4_runtime_go_antlr//:go_default_library",
+        "@com_github_stackb_rules_proto//pkg/protoc:go_default_library",
     ],
 )
 
@@ -47,5 +48,5 @@ go_test(
     srcs = ["scala_test.go"],
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
-    deps = ["@build_stack_rules_proto//pkg/goldentest"],
+    deps = ["@com_github_stackb_rules_proto//pkg/goldentest:go_default_library"],
 )
