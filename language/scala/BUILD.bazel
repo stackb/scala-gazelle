@@ -7,7 +7,6 @@ go_library(
     srcs = [
         "cross_resolver_registry.go",
         "file_scala_import_resolver.go",
-        "index.go",
         "intent.go",
         "package.go",
         "resolver.go",

@@ -2,15 +2,9 @@ package scala
 
 import (
 	"flag"
-	"log"
-	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
-	"github.com/bazelbuild/bazel-gazelle/language"
-	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
-	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
 func init() {
@@ -18,19 +12,26 @@ func init() {
 }
 
 type fileScalaImportResolver struct {
+	// index is a flag that, if true, instructs the resolver to perform indexing
+	// and write the indexFile.  Otherwise, only read the file.
+	index bool
+	// indexFile is the filesystem path to the index.
 	indexFile string
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
-func (sl *fileScalaImportResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (r *fileScalaImportResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+	fs.BoolVar(&r.index, "index", false, "if true, perform indexing")
+	fs.StringVar(&r.indexFile, "index_file", "", "name of the index file to read/write")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
-func (sl *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	// perform indexing here
 	return nil
 }
 
 // CrossResolve implements the CrossResolver interface.
-func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+func (r *fileScalaImportResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	return nil
 }

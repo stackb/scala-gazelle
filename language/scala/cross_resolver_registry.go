@@ -7,7 +7,6 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
-	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
 // ConfigurableCrossResolver implementations support the CrossResolver interface
