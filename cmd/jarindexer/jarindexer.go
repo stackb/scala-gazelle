@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
@@ -16,6 +17,8 @@ const (
 )
 
 var (
+	isAnonymous = regexp.MustCompile(`^.*\$[0-9]$`)
+
 	inputFile  string
 	outputFile string
 )
@@ -34,7 +37,7 @@ func main() {
 	if inputFile == "" {
 		log.Fatal("-input_file is required")
 	}
-	if inputFile == "" {
+	if outputFile == "" {
 		log.Fatal("-output_file is required")
 	}
 	if debug {
@@ -53,7 +56,7 @@ func run() error {
 	if err := parseJarFile(spec.Filename, spec); err != nil {
 		log.Printf("warning: could not parse %s: %v", spec.Filename, err)
 	}
-	if err := index.WriteJarSpec(outputFile, spec); err != nil {
+	if err := index.WriteJSONFile(outputFile, spec); err != nil {
 		return err
 	}
 	return nil
@@ -69,10 +72,20 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			}
 			return nil
 		}
-		name := convertClassName(c.Name())
+		name := c.Name()
 		if debug {
 			log.Println("Visiting class:", f.Name, name)
 		}
+
+		// exclude anonymous classes like 'com/google/protobuf/Int32Value$1'
+		if isAnonymous.MatchString(name) {
+			if debug {
+				log.Println("skipping anonymous class:", f.Name, c.Name())
+			}
+			return nil
+		}
+
+		name = convertClassName(name)
 		spec.Classes = append(spec.Classes, name)
 		return nil
 	})
@@ -80,6 +93,6 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 
 func convertClassName(name string) string {
 	name = strings.Replace(name, "/", ".", -1)
-	name = strings.Replace(name, "$", ".", 1)
+	name = strings.Replace(name, "$", ".", -1) // TODO(pcj): is this correct to do this with the inner classes?
 	return name
 }

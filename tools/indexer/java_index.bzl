@@ -3,18 +3,52 @@
 
 load(":aspect.bzl", "JarIndexerAspect", "java_indexer_aspect")
 
+def build_mergeindex(ctx, jarindex_files):
+    """Builds the merged index for all jarindexes."""
+
+    output_file = ctx.actions.declare_file(ctx.label.name + ".json")
+
+    args = [
+        "--output_file",
+        output_file.path,
+    ] + [f.path for f in jarindex_files]
+
+    ctx.actions.run(
+        mnemonic = "MergeIndex",
+        progress_message = "Merging jarindex files: " + str(ctx.label),
+        executable = ctx.executable._mergeindex,
+        arguments = args,
+        inputs = jarindex_files,
+        outputs = [output_file],
+    )
+
+    return output_file
+
 def _java_index_impl(ctx):
     """Collect deps from our aspect."""
-    outputs = depset()
+
+    # List[File]
+    direct_files = []
+
+    # List[Depset[File]]
+    transitive_jarindex_files = []
+
+    # List[File]
+    jarindex_files = []
 
     for dep in ctx.attr.deps:
         info = dep[JarIndexerAspect]
+        jarindex_files.extend(info.jar_index_files.to_list())
+        transitive_jarindex_files.append(info.jar_index_files)
+        # transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
-        # TODO: this depset construction can't be right
-        outputs = depset(direct = outputs.to_list(), transitive = [info.info_file, info.jar_index_files])
+    index_file = build_mergeindex(ctx, jarindex_files)
+    direct_files.append(index_file)
 
     return [DefaultInfo(
-        files = outputs,
+        files = depset(direct_files),
+    ), OutputGroupInfo(
+        jarindex_files = depset(transitive = transitive_jarindex_files),
     )]
 
 java_index = rule(

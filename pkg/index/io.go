@@ -21,7 +21,7 @@ func ReadJarSpec(filename string) (*JarSpec, error) {
 	return &spec, nil
 }
 
-func WriteJarSpec(filename string, spec *JarSpec) error {
+func WriteJSONFile(filename string, spec interface{}) error {
 	data, err := json.MarshalIndent(spec, "", "  ")
 	if err != nil {
 		return err

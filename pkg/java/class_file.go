@@ -122,6 +122,8 @@ type ClassFile struct {
 	methods           []MethodInfo
 	attributeCount    u2
 	attributes        []AttributeInfo
+
+	computedNestedTypeStatus bool
 }
 
 func (this *ClassFile) read(bytes []byte) {
@@ -165,9 +167,32 @@ func (this *ClassFile) IsPrivate() bool {
 	return this.IsAccessFlagSet(JVM_ACC_PRIVATE)
 }
 
-func hasBit(n uint16, pos uint16) bool {
-	val := n & (1 << pos)
-	return (val > 0)
+func (this *ClassFile) computeNestedTypeStatus() {
+	if this.computedNestedTypeStatus {
+		return
+	}
+	// for _, attr := range this.attributes {
+
+	// 	  if (attribute instanceof InnerClasses) {
+	// 		  final InnerClass[] innerClasses = ((InnerClasses) attribute).getInnerClasses();
+	// 		  for (final InnerClass innerClasse : innerClasses) {
+	// 			  boolean innerClassAttributeRefersToMe = false;
+	// 			  String inner_class_name = constantPool.getConstantString(innerClasse.getInnerClassIndex(),
+	// 						 Const.CONSTANT_Class);
+	// 			  inner_class_name = Utility.compactClassName(inner_class_name, false);
+	// 			  if (inner_class_name.equals(getClassName())) {
+	// 				  innerClassAttributeRefersToMe = true;
+	// 			  }
+	// 			  if (innerClassAttributeRefersToMe) {
+	// 				  this.isNested = true;
+	// 				  if (innerClasse.getInnerNameIndex() == 0) {
+	// 					  this.isAnonymous = true;
+	// 				  }
+	// 			  }
+	// 		  }
+	// 	  }
+	// }
+	this.computedNestedTypeStatus = true
 }
 
 func (this *ClassFile) readMagic(reader *ClassReader) {

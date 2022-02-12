@@ -1,5 +1,10 @@
 package index
 
+// IndexSpec describes the a list of JarSpecs.
+type IndexSpec struct {
+	JarSpecs []JarSpec `json:"jarSpecs,omitempty"`
+}
+
 // JarSpec describes the symbols provided by a bazel label that produces a jar
 // file.
 type JarSpec struct {
