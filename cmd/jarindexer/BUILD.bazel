@@ -1,11 +1,11 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
 go_library(
-    name = "indexer_lib",
+    name = "jarindexer_lib",
     srcs = [
-        "indexer.go",
+        "jarindexer.go",
     ],
-    importpath = "github.com/stackb/scala-gazelle/cmd/indexer",
+    importpath = "github.com/stackb/scala-gazelle/cmd/jarindexer",
     visibility = ["//visibility:public"],
     deps = [
         "//pkg/java",
@@ -13,17 +13,17 @@ go_library(
 )
 
 go_binary(
-    name = "indexer",
-    embed = [":indexer_lib"],
+    name = "jarindexer",
+    embed = [":jarindexer_lib"],
     visibility = ["//visibility:public"],
 )
 
 go_test(
-    name = "indexer_test",
+    name = "jarindexer_test",
     srcs = [
-        "indexer_test.go",
+        "jarindexer_test.go",
     ],
-    embed = [":indexer_lib"],
+    embed = [":jarindexer_lib"],
     deps = [
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
