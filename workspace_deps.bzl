@@ -61,7 +61,8 @@ def rules_antlr():
     )
 
 def build_stack_rules_proto():
-    native.local_repository(
+    _maybe(
+        native.local_repository,
         name = "build_stack_rules_proto",
         path = "/Users/i868039/go/src/github.com/stackb/rules_proto",
     )
