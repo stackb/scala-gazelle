@@ -14,5 +14,5 @@ type RuleInfo interface {
 	// ProvideRule takes the given configration and compilation and emits a
 	// RuleProvider.  If the state of the ScalaConfiguration is such that the
 	// rule should not be emitted, implementation should return nil.
-	ProvideRule(rc *RuleConfig, files []*ScalaFile) RuleProvider
+	ProvideRule(rc *RuleConfig, pkg ScalaPackage) RuleProvider
 }

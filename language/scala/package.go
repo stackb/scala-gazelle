@@ -13,6 +13,11 @@ const (
 	ruleProviderKey = "_scala_rule_provider"
 )
 
+type ScalaPackage interface {
+	Rel() string
+	Files() []*ScalaFile
+}
+
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// the registry to use
@@ -57,7 +62,11 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 		if enabled != rc.Enabled {
 			continue
 		}
-		rules = append(rules, s.provideRule(rc))
+		rule := s.provideRule(rc)
+		if rule == nil {
+			continue
+		}
+		rules = append(rules, rule)
 	}
 
 	return rules
@@ -75,12 +84,22 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	}
 	rc.Impl = impl
 
-	rule := impl.ProvideRule(rc, s.files)
+	rule := impl.ProvideRule(rc, s)
 	if rule == nil {
 		return nil
 	}
 
 	return rule
+}
+
+// Rel implements part of the ScalaPackage interface.
+func (s *scalaPackage) Rel() string {
+	return s.rel
+}
+
+// Files implements part of the ScalaPackage interface.
+func (s *scalaPackage) Files() []*ScalaFile {
+	return s.files
 }
 
 // Rules provides the aggregated rule list for the package.

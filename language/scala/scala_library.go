@@ -1,6 +1,8 @@
 package scala
 
 import (
+	"path/filepath"
+
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
@@ -55,17 +57,24 @@ func (s *scalaLibrary) LoadInfo() rule.LoadInfo {
 }
 
 // ProvideRule implements part of the RuleInfo interface.
-func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, files []*ScalaFile) RuleProvider {
+func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleProvider {
+	files := pkg.Files()
+	if len(files) == 0 {
+		return nil
+	}
+
 	return &scalaLibraryRule{
 		kindName:       s.kindName,
 		ruleNameSuffix: scalaLibraryRuleSuffix,
 		ruleConfig:     cfg,
+		rel:            pkg.Rel(),
 		files:          files,
 	}
 }
 
 // scalaLibraryRule implements RuleProvider for 'scala_library'-derived rules.
 type scalaLibraryRule struct {
+	rel            string
 	kindName       string
 	ruleNameSuffix string
 	srcs           []string
@@ -80,7 +89,8 @@ func (s *scalaLibraryRule) Kind() string {
 
 // Name implements part of the ruleProvider interface.
 func (s *scalaLibraryRule) Name() string {
-	return "fixme" + s.ruleNameSuffix
+	prefix := filepath.Base(s.rel)
+	return prefix + s.ruleNameSuffix
 }
 
 // Srcs computes the srcs list for the rule.

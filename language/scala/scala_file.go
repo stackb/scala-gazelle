@@ -2,6 +2,7 @@ package scala
 
 import (
 	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -15,7 +16,9 @@ type ScalaFile struct {
 	Imports []ScalaImport
 }
 
-func ParseScalaFile(filename string) (*ScalaFile, error) {
+func ParseScalaFile(dir, base string) (*ScalaFile, error) {
+	filename := filepath.Join(dir, base)
+
 	is, err := antlr.NewFileStream(filename)
 	if err != nil {
 		return nil, err
@@ -34,7 +37,7 @@ func ParseScalaFile(filename string) (*ScalaFile, error) {
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
 
 	return &ScalaFile{
-		Name:    filename,
+		Name:    base,
 		Imports: listener.imports,
 	}, nil
 }

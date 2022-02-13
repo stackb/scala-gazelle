@@ -225,7 +225,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		if !isScalaFile(f) {
 			continue
 		}
-		file, err := ParseScalaFile(f)
+		file, err := ParseScalaFile(args.Dir, f)
 		if err != nil {
 			log.Println("error parsing scala file:", f, err.Error())
 			continue
