@@ -23,6 +23,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//antlr:parser",  # keep
+        "//pkg/index",
         "@antlr4_runtimes//:go",  # keep
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

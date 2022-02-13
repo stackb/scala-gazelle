@@ -52,7 +52,7 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 	getOrCreateScalaConfig(c) // ignoring return value, only want side-effect
 
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			resolver.RegisterFlags(fs, cmd, c)
 		}
 	}
@@ -60,7 +60,7 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 
 func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			if err := resolver.CheckFlags(fs, c); err != nil {
 				return err
 			}
@@ -256,7 +256,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 // CrossResolve calls all known resolvers and returns the first non-empty result.
 func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err != nil {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			if result := resolver.CrossResolve(c, ix, imp, lang); len(result) > 0 {
 				return result
 			}

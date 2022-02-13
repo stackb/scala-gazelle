@@ -9,6 +9,18 @@ import (
 	"path/filepath"
 )
 
+func ReadIndexSpec(filename string) (*IndexSpec, error) {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("read: %w", err)
+	}
+	var spec IndexSpec
+	if err := json.Unmarshal(data, &spec); err != nil {
+		return nil, fmt.Errorf("unmarshal: %w", err)
+	}
+	return &spec, nil
+}
+
 func ReadJarSpec(filename string) (*JarSpec, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {

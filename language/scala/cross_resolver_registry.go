@@ -45,18 +45,18 @@ func CrossResolvers() CrossResolverRegistry {
 
 // registry is the default registry singleton.
 var globalCrossResolverRegistry = &crossResolverRegistry{
-	CrossResolvers: make(map[string]ConfigurableCrossResolver),
+	crossResolvers: make(map[string]ConfigurableCrossResolver),
 }
 
 // crossResolverRegistry implements CrossResolverRegistry.
 type crossResolverRegistry struct {
-	CrossResolvers map[string]ConfigurableCrossResolver
+	crossResolvers map[string]ConfigurableCrossResolver
 }
 
 // CrossResolverNames implements part of the CrossResolverRegistry interface.
 func (p *crossResolverRegistry) CrossResolverNames() []string {
 	names := make([]string, 0)
-	for name := range p.CrossResolvers {
+	for name := range p.crossResolvers {
 		names = append(names, name)
 	}
 	sort.Strings(names)
@@ -64,20 +64,20 @@ func (p *crossResolverRegistry) CrossResolverNames() []string {
 }
 
 // MustRegisterCrossResolver implements part of the ResolverRegistry interface.
-func (p *crossResolverRegistry) MustRegisterCrossResolver(name string, CrossResolver ConfigurableCrossResolver) CrossResolverRegistry {
-	_, ok := p.CrossResolvers[name]
+func (p *crossResolverRegistry) MustRegisterCrossResolver(name string, resolver ConfigurableCrossResolver) CrossResolverRegistry {
+	_, ok := p.crossResolvers[name]
 	if ok {
 		panic("duplicate CrossResolver registration: " + name)
 	}
-	p.CrossResolvers[name] = CrossResolver
+	p.crossResolvers[name] = resolver
 	return p
 }
 
 // LookupCrossResolver implements part of the ResolverRegistry interface.
 func (p *crossResolverRegistry) LookupCrossResolver(name string) (ConfigurableCrossResolver, error) {
-	CrossResolver, ok := p.CrossResolvers[name]
+	resolver, ok := p.crossResolvers[name]
 	if !ok {
 		return nil, ErrUnknownResolver
 	}
-	return CrossResolver, nil
+	return resolver, nil
 }
