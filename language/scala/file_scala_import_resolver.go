@@ -28,6 +28,9 @@ func (r *fileScalaImportResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c 
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	if r.indexFile == "" {
+		return nil
+	}
 	// perform indexing here
 	index, err := index.ReadIndexSpec(r.indexFile)
 	if err != nil {
