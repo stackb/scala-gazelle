@@ -251,6 +251,10 @@ func (this *ClassFile) readConstantPool(reader *ClassReader) {
 			cpInfo = &ConstantMethodTypeInfo{tag: tag}
 		case JVM_TAG_InvokeDynamic:
 			cpInfo = &ConstantInvokeDynamicInfo{tag: tag}
+		case JVM_TAG_Module:
+			cpInfo = &ConstantModuleInfo{tag: tag}
+		case JVM_TAG_Package:
+			cpInfo = &ConstantPackageInfo{tag: tag}
 		default:
 			// ignore
 			log.Printf("java/lang/ClassFormatError: Not a supported constant tag: %d", tag)
@@ -564,6 +568,36 @@ type ConstantInvokeDynamicInfo struct {
 func (this *ConstantInvokeDynamicInfo) readInfo(reader *ClassReader) {
 	this.bootstrapMethodAttrIndex = reader.readU2()
 	this.nameAndTypeIndex = reader.readU2()
+}
+
+/*
+CONSTANT_Module_info {
+    u1 tag;
+    u2 name_index;
+}
+*/
+type ConstantModuleInfo struct {
+	tag       u1
+	nameIndex u2
+}
+
+func (this *ConstantModuleInfo) readInfo(reader *ClassReader) {
+	this.nameIndex = reader.readU2()
+}
+
+/*
+CONSTANT_Package_info {
+    u1 tag;
+    u2 name_index;
+}
+*/
+type ConstantPackageInfo struct {
+	tag       u1
+	nameIndex u2
+}
+
+func (this *ConstantPackageInfo) readInfo(reader *ClassReader) {
+	this.nameIndex = reader.readU2()
 }
 
 /*

@@ -34,6 +34,7 @@ _java_rules = [
     "java_binary",
     "java_test",
     "java_proto_library",
+    "jvm_import",
 ]
 
 _scala_rules = [
@@ -451,6 +452,7 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
         #plugin_processor_jars = plugin_processor_jars,
     )
 
+    # print("java_info:", java_info)
     ide_info["java_ide_info"] = java_info
 
     # java_info_files.append(ide_info_file)
@@ -630,7 +632,7 @@ def _java_indexer_aspect_impl(target, ctx):
     return [
         JarIndexerAspect(
             info_file = info_file,
-            jar_index_files = depset(jar_index_files, transitive = transitive_jar_index_files),
+            jar_index_files = depset(direct = jar_index_files, transitive = transitive_jar_index_files),
         ),
         OutputGroupInfo(
             java_info_files = depset([ide_info_file], transitive = java_info_files),

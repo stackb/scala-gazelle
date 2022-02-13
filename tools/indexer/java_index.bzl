@@ -39,8 +39,9 @@ def _java_index_impl(ctx):
     for dep in ctx.attr.deps:
         info = dep[JarIndexerAspect]
         jarindex_files.extend(info.jar_index_files.to_list())
-        transitive_jarindex_files.append(info.jar_index_files)
-        # transitive_jarindex_files += [info.info_file, info.jar_index_files]
+
+        # transitive_jarindex_files.append(info.jar_index_files)
+        transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
     index_file = build_mergeindex(ctx, jarindex_files)
     direct_files.append(index_file)
@@ -48,6 +49,7 @@ def _java_index_impl(ctx):
     return [DefaultInfo(
         files = depset(direct_files),
     ), OutputGroupInfo(
+        index_file = [index_file],
         jarindex_files = depset(transitive = transitive_jarindex_files),
     )]
 

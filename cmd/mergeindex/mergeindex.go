@@ -28,7 +28,7 @@ func main() {
 		log.Fatal("-output_file is required")
 	}
 	if len(fs.Args()) == 0 {
-		log.Fatal("positional args should be a non-empty list of .jarindex.json files to merge: %v", os.Args)
+		log.Fatal("positional args should be a non-empty list of .jarindex.json files to merge: args=", os.Args)
 	}
 	if debug {
 		index.ListFiles(".")

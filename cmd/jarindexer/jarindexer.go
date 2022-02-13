@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
@@ -56,6 +57,9 @@ func run() error {
 	if err := parseJarFile(spec.Filename, spec); err != nil {
 		log.Printf("warning: could not parse %s: %v", spec.Filename, err)
 	}
+
+	sort.Strings(spec.Classes)
+
 	if err := index.WriteJSONFile(outputFile, spec); err != nil {
 		return err
 	}
@@ -63,7 +67,9 @@ func run() error {
 }
 
 func parseJarFile(filename string, spec *index.JarSpec) error {
-	log.Println("Parsing jar file:", filename)
+	if debug {
+		log.Println("Parsing jar file:", filename)
+	}
 	entry := java.NewJarClassPathEntry(filename)
 	return entry.Visit(func(f *zip.File, c *java.ClassFile) error {
 		if c.IsSynthetic() {
@@ -76,7 +82,20 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 		if debug {
 			log.Println("Visiting class:", f.Name, name)
 		}
-
+		// exclude Main$ scala classes
+		if strings.HasSuffix(name, "$") {
+			if debug {
+				log.Println("skipping scala singleton class:", f.Name, c.Name())
+			}
+			return nil
+		}
+		// exclude shaded classes
+		if strings.Contains(name, "/shaded/") {
+			if debug {
+				log.Println("skipping shaded class:", f.Name, c.Name())
+			}
+			return nil
+		}
 		// exclude anonymous classes like 'com/google/protobuf/Int32Value$1'
 		if isAnonymous.MatchString(name) {
 			if debug {
@@ -93,6 +112,6 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 
 func convertClassName(name string) string {
 	name = strings.Replace(name, "/", ".", -1)
-	name = strings.Replace(name, "$", ".", -1) // TODO(pcj): is this correct to do this with the inner classes?
+	// name = strings.Replace(name, "$", ".", -1) // TODO(pcj): is this correct to do this with the inner classes?
 	return name
 }

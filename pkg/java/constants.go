@@ -30,6 +30,8 @@ const (
 	JVM_TAG_MethodHandle       = 15
 	JVM_TAG_MethodType         = 16
 	JVM_TAG_InvokeDynamic      = 18
+	JVM_TAG_Module             = 19
+	JVM_TAG_Package            = 20
 )
 
 /* Flags */
@@ -128,6 +130,8 @@ const (
 	JVM_CONSTANT_MethodHandle       = 15 // JSR 292
 	JVM_CONSTANT_MethodType         = 16 // JSR 292
 	JVM_CONSTANT_InvokeDynamic      = 18
+	JVM_CONSTANT_Module             = 19
+	JVM_CONSTANT_Package            = 20
 )
 
 /* JVM_CONSTANT_MethodHandle subtypes */
