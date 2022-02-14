@@ -24,3 +24,14 @@ gazelle(
     name = "gazelle",
     gazelle = ":gazelle-scala",
 )
+
+gazelle(
+    name = "update_go_repositories",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=go_repos.bzl%go_repositories",
+        "-build_file_proto_mode=disable_global",
+        "-prune=true",
+    ],
+    command = "update-repos",
+)

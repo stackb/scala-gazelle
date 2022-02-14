@@ -100,6 +100,11 @@ func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) 
 	return r, nil
 }
 
+func (c *scalaConfig) GetConfiguredRule(name string) (*RuleConfig, bool) {
+	rc, ok := c.rules[name]
+	return rc, ok
+}
+
 // configuredRules returns a determinstic ordered list of configured
 // rules
 func (c *scalaConfig) configuredRules() []*RuleConfig {

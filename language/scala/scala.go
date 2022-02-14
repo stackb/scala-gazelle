@@ -221,19 +221,19 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	files := make([]*ScalaFile, 0)
 
-	for _, f := range args.RegularFiles {
-		if !isScalaFile(f) {
-			continue
-		}
-		file, err := ParseScalaFile(args.Dir, f)
-		if err != nil {
-			log.Println("error parsing scala file:", f, err.Error())
-			continue
-		}
-		files = append(files, file)
-	}
+	// for _, f := range args.RegularFiles {
+	// 	if !isScalaFile(f) {
+	// 		continue
+	// 	}
+	// 	file, err := ParseScalaFile(args.Dir, f)
+	// 	if err != nil {
+	// 		log.Println("error parsing scala file:", f, err.Error())
+	// 		continue
+	// 	}
+	// 	files = append(files, file)
+	// }
 
-	pkg := newScalaPackage(sl.ruleRegistry, args.Rel, cfg, files...)
+	pkg := newScalaPackage(sl.ruleRegistry, args.File, cfg, files...)
 	sl.packages[args.Rel] = pkg
 
 	rules := pkg.Rules()
@@ -263,4 +263,15 @@ func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp r
 		}
 	}
 	return nil
+}
+
+func fullyQualifiedRuleKind(loads []*rule.Load, ruleKind string) string {
+	for _, load := range loads {
+		for _, pair := range load.SymbolPairs() {
+			if pair.To == ruleKind {
+				return load.Name() + "%" + pair.To
+			}
+		}
+	}
+	return ruleKind
 }

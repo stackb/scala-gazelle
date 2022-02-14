@@ -58,17 +58,17 @@ func (s *scalaLibrary) LoadInfo() rule.LoadInfo {
 
 // ProvideRule implements part of the RuleInfo interface.
 func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleProvider {
-	files := pkg.Files()
-	if len(files) == 0 {
-		return nil
-	}
+	// files := pkg.Files()
+	// if len(files) == 0 {
+	// 	return nil
+	// }
 
 	return &scalaLibraryRule{
 		kindName:       s.kindName,
 		ruleNameSuffix: scalaLibraryRuleSuffix,
 		ruleConfig:     cfg,
 		rel:            pkg.Rel(),
-		files:          files,
+		// files:          files,
 	}
 }
 

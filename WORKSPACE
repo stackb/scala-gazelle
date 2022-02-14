@@ -21,6 +21,7 @@ go_register_toolchains(version = "1.16.2")
 # ----------------------------------------------------
 # Gazelle
 # ----------------------------------------------------
+# gazelle:repository_macro go_repos.bzl%go_repositories
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 

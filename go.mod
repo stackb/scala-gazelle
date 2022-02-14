@@ -10,6 +10,7 @@ require (
 require (
 	github.com/bazelbuild/buildtools v0.0.0-20211007154642-8dd79e56e98e // indirect
 	github.com/bazelbuild/rules_go v0.29.0 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.0.2 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect

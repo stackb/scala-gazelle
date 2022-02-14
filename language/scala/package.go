@@ -15,15 +15,16 @@ const (
 
 type ScalaPackage interface {
 	Rel() string
-	Files() []*ScalaFile
+	File() *rule.File
+	// Files() []*ScalaFile
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// the registry to use
 	ruleRegistry RuleRegistry
-	// relative path of build file
-	rel string
+	// the build file
+	file *rule.File
 	// the config for this package
 	cfg *scalaConfig
 	// the list of '.scala' files
@@ -33,15 +34,16 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, files ...*ScalaFile) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfig, files ...*ScalaFile) *scalaPackage {
 	s := &scalaPackage{
 		ruleRegistry: ruleRegistry,
-		rel:          rel,
+		file:         file,
 		cfg:          cfg,
 		files:        files,
 	}
 	s.gen = s.generateRules(true)
 	s.empty = s.generateRules(false)
+
 	return s
 }
 
@@ -57,6 +59,28 @@ func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
 // languages.
 func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	rules := make([]RuleProvider, 0)
+
+	if s.file != nil {
+		for _, r := range s.file.Rules {
+			// fqrk := fullyQualifiedRuleKind(args.File.Loads, r.Kind())
+			rc, ok := s.cfg.GetConfiguredRule(r.Kind())
+			if !ok {
+				continue
+			}
+
+			log.Println("matched resolver rule", r.Kind(), r.Name())
+
+			rule := s.resolveRule(rc, r)
+			if rule == nil {
+				continue
+			}
+			rules = append(rules, rule)
+
+			// if strings.HasPrefix(r.Kind(), "scala_") {
+			// 	log.Printf("Existing rule %s %s", r.Kind(), r.Name())
+			// }
+		}
+	}
 
 	for _, rc := range s.cfg.configuredRules() {
 		if enabled != rc.Enabled {
@@ -77,7 +101,7 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
-			s.rel,
+			s.Rel(),
 			rc.Implementation,
 			globalRegistry.RuleNames(),
 		)
@@ -92,9 +116,37 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	return rule
 }
 
+func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
+	impl, err := globalRegistry.LookupRule(rc.Implementation)
+	if err == ErrUnknownRule {
+		log.Fatalf(
+			"%s: rule not registered: %q (available: %v)",
+			s.Rel(),
+			rc.Implementation,
+			globalRegistry.RuleNames(),
+		)
+	}
+	rc.Impl = impl
+
+	if rr, ok := impl.(RuleResolver); ok {
+		return rr.ResolveRule(rc, s, r)
+	}
+
+	return nil
+}
+
+// File implements part of the ScalaPackage interface.
+func (s *scalaPackage) File() *rule.File {
+	return s.file
+}
+
 // Rel implements part of the ScalaPackage interface.
 func (s *scalaPackage) Rel() string {
-	return s.rel
+	var rel string
+	if s.file != nil {
+		rel = s.file.Pkg
+	}
+	return rel
 }
 
 // Files implements part of the ScalaPackage interface.
@@ -146,8 +198,8 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 			// the rule ref seems to have changed by that time, the PrivateAttr
 			// is removed.  Maybe this is due to rule merges?  Very difficult to
 			// track down bug that cost me days.
-			from := label.New("", s.rel, r.Name())
-			file := rule.EmptyFile("", s.rel)
+			from := label.New("", s.Rel(), r.Name())
+			file := rule.EmptyFile("", s.Rel())
 			provideResolverImportSpecs(s.cfg.config, p, r, file, from)
 		}
 

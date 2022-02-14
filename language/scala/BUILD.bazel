@@ -15,6 +15,7 @@ go_library(
         "rule_provider.go",
         "rule_registry.go",
         "scala.go",
+        "scala_app.go",
         "scala_config.go",
         "scala_file.go",
         "scala_library.go",
@@ -32,6 +33,8 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@build_stack_rules_proto//pkg/protoc",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_bmatcuk_doublestar//:doublestar",
     ],
 )
 
