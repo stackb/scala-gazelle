@@ -197,7 +197,7 @@ func (sl *scalaLang) Resolve(
 		if imports, ok := importsRaw.([]string); ok {
 			provider.Resolve(c, ix, r, imports, from)
 		} else {
-			log.Printf("warning: resolve imports: expected []string, got %T", importsRaw)
+			log.Printf("warning: resolve scala imports: expected []string, got %T", importsRaw)
 		}
 	} else {
 		log.Printf("no known rule package for %v", from.Pkg)

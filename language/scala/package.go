@@ -3,10 +3,7 @@ package scala
 import (
 	"log"
 
-	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 const (
@@ -15,6 +12,7 @@ const (
 
 type ScalaPackage interface {
 	Rel() string
+	Dir() string
 	File() *rule.File
 	// Files() []*ScalaFile
 }
@@ -149,6 +147,11 @@ func (s *scalaPackage) Rel() string {
 	return rel
 }
 
+// Dir implements part of the ScalaPackage interface.
+func (s *scalaPackage) Dir() string {
+	return s.cfg.config.RepoRoot
+}
+
 // Files implements part of the ScalaPackage interface.
 func (s *scalaPackage) Files() []*ScalaFile {
 	return s.files
@@ -180,41 +183,11 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 		if r == nil {
 			continue
 		}
-
 		if shouldResolve {
 			// record the association of the rule provider here for the resolver.
 			r.SetPrivateAttr(ruleProviderKey, p)
-
-			// imports := r.PrivateAttr(config.GazelleImportsKey)
-			// if imports == nil {
-			// 	lib := s.ruleLibs[p]
-			// 	r.SetPrivateAttr(ProtoLibraryKey, lib)
-			// }
-
-			// NOTE: this is a bit of a hack: it would be preferable to populate
-			// the global resolver with import specs during the .Imports()
-			// function.  One would think that the RuleProvider could be set as
-			// a PrivateAttr to be retrieved in the Imports() function. However,
-			// the rule ref seems to have changed by that time, the PrivateAttr
-			// is removed.  Maybe this is due to rule merges?  Very difficult to
-			// track down bug that cost me days.
-			from := label.New("", s.Rel(), r.Name())
-			file := rule.EmptyFile("", s.Rel())
-			provideResolverImportSpecs(s.cfg.config, p, r, file, from)
 		}
-
 		rules = append(rules, r)
 	}
 	return rules
-}
-
-func provideResolverImportSpecs(c *config.Config, provider RuleProvider, r *rule.Rule, f *rule.File, from label.Label) {
-	for _, imp := range provider.Imports(c, r, f) {
-		protoc.GlobalResolver().Provide(
-			"scala",
-			imp.Lang,
-			imp.Imp,
-			from,
-		)
-	}
 }
