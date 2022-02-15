@@ -11,6 +11,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
+	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 const (
@@ -29,7 +31,7 @@ type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, im
 func resolveDeps(attrName string) depsResolver {
 	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
 		if debug {
-			log.Printf("ResolveDepsAttr %q for %s rule %v", attrName, r.Kind(), from)
+			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)
 		}
 
 		existing := r.AttrStrings(attrName)
@@ -39,16 +41,18 @@ func resolveDeps(attrName string) depsResolver {
 		for _, d := range existing {
 			depSet[d] = true
 		}
+		unresolved := make([]string, 0)
+
+		// determine the resolve kind
+		impLang := r.Kind()
+		if overrideImpLang, ok := r.PrivateAttr(ResolverImpLangPrivateKey).(string); ok {
+			impLang = overrideImpLang
+		}
 
 		for _, imp := range imports {
-			if debug {
-				log.Println(from, "resolving:", imp)
-			}
 
-			// determine the resolve kind
-			impLang := r.Kind()
-			if overrideImpLang, ok := r.PrivateAttr(ResolverImpLangPrivateKey).(string); ok {
-				impLang = overrideImpLang
+			if debug {
+				log.Println("resolveDeps:", impLang, imp)
 			}
 
 			l, err := resolveAnyKind(c, ix, impLang, imp, from)
@@ -59,10 +63,11 @@ func resolveDeps(attrName string) depsResolver {
 				continue
 			}
 			if err != nil {
-				log.Println(from, "ResolveDepsAttr error:", err)
+				log.Println(from, "resolveDeps error:", err)
 				continue
 			}
 			if l == label.NoLabel {
+				unresolved = append(unresolved, imp)
 				if debug {
 					log.Println(from, "no label", imp)
 				}
@@ -85,7 +90,18 @@ func resolveDeps(attrName string) depsResolver {
 			r.SetAttr(attrName, deps)
 			if debug {
 				log.Println(from, "resolved deps:", deps)
+				printRules(r)
 			}
+
+			if len(unresolved) > 0 {
+				unresolved = protoc.DeduplicateAndSort(unresolved)
+				before := make([]build.Comment, len(unresolved))
+				for i, imp := range unresolved {
+					before[i].Token = "# unresolved import: " + imp
+				}
+				r.Attr(attrName).Comment().Before = before
+			}
+
 		}
 	}
 }
@@ -147,4 +163,12 @@ func StripRel(rel string, filename string) string {
 	}
 	filename = filename[len(rel):]
 	return strings.TrimPrefix(filename, "/")
+}
+
+func printRules(rules ...*rule.Rule) {
+	file := rule.EmptyFile("", "")
+	for _, r := range rules {
+		r.Insert(file)
+	}
+	fmt.Println(string(file.Format()))
 }
