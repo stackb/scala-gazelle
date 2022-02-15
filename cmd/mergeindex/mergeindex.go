@@ -42,6 +42,9 @@ func merge(filenames []string) error {
 	// spec is the final object to write as output
 	var spec index.IndexSpec
 
+	// jarLabels is used to prevent duplicate entries for a given jar.
+	labels := make(map[string]bool)
+
 	// labelByClass is used to check if more than one label provides a given
 	// class.
 	labelByClass := make(map[string][]string)
@@ -51,6 +54,12 @@ func merge(filenames []string) error {
 		if err != nil {
 			return err
 		}
+		if labels[jarSpec.Label] {
+			log.Println("duplicate jar spec:", jarSpec.Label)
+			continue
+		}
+		labels[jarSpec.Label] = true
+
 		for _, class := range jarSpec.Classes {
 			labelByClass[class] = append(labelByClass[class], jarSpec.Label)
 		}
