@@ -37,6 +37,10 @@ load("@build_stack_rules_proto//:go_deps.bzl", "gazelle_protobuf_extension_go_de
 
 gazelle_protobuf_extension_go_deps()
 
+load("//:go_repos.bzl", "go_repositories")
+
+go_repositories()
+
 # ----------------------------------------------------
 # Antlr
 # ----------------------------------------------------

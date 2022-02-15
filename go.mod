@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/bazelbuild/buildtools v0.0.0-20211007154642-8dd79e56e98e // indirect
+	github.com/bazelbuild/buildtools v0.0.0-20220211113555-f1ead6bc540d // indirect
 	github.com/bazelbuild/rules_go v0.29.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.0.2 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
