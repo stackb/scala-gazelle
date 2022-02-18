@@ -15,3 +15,34 @@ type JarSpec struct {
 	// Classes is a list of FQNs in the jar
 	Classes []string `json:"classes,omitempty"`
 }
+
+// ScalaFileSpec describes the symbols provided/required by a single source
+// file.
+type ScalaFileSpec struct {
+	// Filename is the source filename
+	Filename string `json:"filename,omitempty"`
+	// Imports is a list of required imports.
+	Imports []string `json:"imports,omitempty"`
+	// Packages is a list of provided top-level classes.
+	Packages []string `json:"packages,omitempty"`
+	// Classes is a list of provided top-level classes.
+	Classes []string `json:"classes,omitempty"`
+	// Objects is a list of provided top-level classes.
+	Objects []string `json:"objects,omitempty"`
+	// Traits is a list of provided top-level classes.
+	Traits []string `json:"traits,omitempty"`
+}
+
+// ScalaRuleSpec represents a list of ScalaFileSpec.
+type ScalaRuleSpec struct {
+	// Label is the bazel label that names the source file in its srcs list.
+	Label string `json:"label,omitempty"`
+	// Files is the list of files in the rule
+	Srcs []ScalaFileSpec `json:"srcs,omitempty"`
+}
+
+// ScalaRuleIndexSpec represents a list of ScalaRuleSpec.
+type ScalaRuleIndexSpec struct {
+	// Files is the list of files in the rule
+	Rules []ScalaRuleSpec `json:"rules,omitempty"`
+}

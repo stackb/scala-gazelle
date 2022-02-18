@@ -40,7 +40,7 @@ func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfi
 		files:        files,
 	}
 	s.gen = s.generateRules(true)
-	s.empty = s.generateRules(false)
+	// s.empty = s.generateRules(false)
 
 	return s
 }
@@ -66,17 +66,12 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 				continue
 			}
 
-			log.Println("matched resolver rule", r.Kind(), r.Name())
-
 			rule := s.resolveRule(rc, r)
 			if rule == nil {
 				continue
 			}
-			rules = append(rules, rule)
 
-			// if strings.HasPrefix(r.Kind(), "scala_") {
-			// 	log.Printf("Existing rule %s %s", r.Kind(), r.Name())
-			// }
+			rules = append(rules, rule)
 		}
 	}
 

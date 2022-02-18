@@ -42,6 +42,7 @@ func resolveDeps(attrName string) depsResolver {
 			depSet[d] = true
 		}
 		unresolved := make([]string, 0)
+		resolved := make([]string, 0)
 
 		// determine the resolve kind
 		impLang := r.Kind()
@@ -60,14 +61,16 @@ func resolveDeps(attrName string) depsResolver {
 				if debug {
 					log.Println(from, "skipped:", imp)
 				}
+				unresolved = append(unresolved, "skipped: "+imp)
 				continue
 			}
 			if err != nil {
 				log.Println(from, "resolveDeps error:", err)
+				unresolved = append(unresolved, "error: "+imp+": "+err.Error())
 				continue
 			}
 			if l == label.NoLabel {
-				unresolved = append(unresolved, imp)
+				unresolved = append(unresolved, "unresolved: "+imp)
 				if debug {
 					log.Println(from, "no label", imp)
 				}
@@ -79,6 +82,7 @@ func resolveDeps(attrName string) depsResolver {
 				log.Println(from, "resolved:", imp, "is provided by", l)
 			}
 			depSet[l.String()] = true
+			resolved = append(resolved, imp+" -> "+l.String())
 		}
 
 		if len(depSet) > 0 {
@@ -97,9 +101,16 @@ func resolveDeps(attrName string) depsResolver {
 				unresolved = protoc.DeduplicateAndSort(unresolved)
 				before := make([]build.Comment, len(unresolved))
 				for i, imp := range unresolved {
-					before[i].Token = "# unresolved import: " + imp
+					before[i].Token = "# " + imp
 				}
-				r.Attr(attrName).Comment().Before = before
+				r.Attr(attrName).Comment().After = before
+			} else {
+				resolved = protoc.DeduplicateAndSort(resolved)
+				before := make([]build.Comment, len(resolved))
+				for i, imp := range resolved {
+					before[i].Token = "# resolved: " + imp
+				}
+				r.Attr(attrName).Comment().After = before
 			}
 
 		}

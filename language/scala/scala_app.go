@@ -3,105 +3,148 @@ package scala
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/bmatcuk/doublestar"
+	"github.com/bmatcuk/doublestar/v4"
+	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 func init() {
-	Rules().MustRegisterRule("stackb:rules_proto:scala_app", &scalaApp{})
+	Rules().MustRegisterRule("stackb:rules_proto:scala_app",
+		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app"})
+
+	Rules().MustRegisterRule("stackb:rules_proto:scala_app_test",
+		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app_test"})
+
+	Rules().MustRegisterRule("stackb:rules_proto:scala_library",
+		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_library"})
+
+	Rules().MustRegisterRule("stackb:rules_proto:scala_binary",
+		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_binary"})
+
+	Rules().MustRegisterRule("stackb:rules_proto:scala_test",
+		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_test"})
 }
 
-// scalaApp implements RuleResolver for the 'scala_app' rule from
-// @rules_scala.
-type scalaApp struct{}
+// scalaExistingRule implements RuleResolver for scala-kind rules that are
+// already in the build file.  It does not create any new rules.  This rule
+// implementation is to parse source files and update deps.
+type scalaExistingRule struct{ load, name string }
 
 // Name implements part of the RuleInfo interface.
-func (s *scalaApp) Name() string {
-	return "scala_app"
+func (s *scalaExistingRule) Name() string {
+	return s.name
 }
 
 // KindInfo implements part of the RuleInfo interface.
-func (s *scalaApp) KindInfo() rule.KindInfo {
+func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
+		// TODO(pcj): understand better why deps needs to be in MergeableAttrs
+		// here rather than ResolveAttrs.
 		MergeableAttrs: map[string]bool{
 			"srcs": true,
+			"deps": true,
 		},
-		ResolveAttrs: map[string]bool{"deps": true},
 	}
 }
 
 // LoadInfo implements part of the RuleInfo interface.
-func (s *scalaApp) LoadInfo() rule.LoadInfo {
+func (s *scalaExistingRule) LoadInfo() rule.LoadInfo {
 	return rule.LoadInfo{
-		Name:    "//bazel_tools.bzl/scala:scala.bzl",
-		Symbols: []string{"scala_app"},
+		Name:    s.load,
+		Symbols: []string{s.name},
 	}
 }
 
 // ProvideRule implements part of the RuleInfo interface.  It always returns
 // nil.  The ResolveRule interface is the intended use case.
-func (s *scalaApp) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleProvider {
+func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleProvider {
 	return nil
 }
 
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
-func (s *scalaApp) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
-	return &scalaAppRule{cfg, pkg, existing}
+func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
+	// If we cannot find any srcs for the rule, bail now.
+	srcs := getAttrFiles(pkg, existing, "srcs")
+	if len(srcs) == 0 {
+		return nil
+	}
+
+	resolver, err := CrossResolvers().LookupCrossResolver("stackb:scala-gazelle:scala-source-index")
+	if err != nil {
+		log.Fatal("unable to find scala source cross resolver!")
+	}
+	requires, provides := resolveSrcsSymbols(pkg.Dir(), pkg.Rel(), srcs, resolver.(*scalaSourceIndexResolver))
+
+	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
+	existing.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
+
+	// comments := make([]build.Comment, len(requires))
+	for _, imp := range requires {
+		existing.AddComment("# import: " + imp)
+		// comments[i].Token = "# import: " + imp
+	}
+	// existing.Attr("name").Comment().After = comments
+
+	return &scalaExistingRuleRule{cfg, pkg, existing, requires, provides}
 }
 
-// scalaAppRule implements RuleProvider for 'scala_library'-derived rules.
-type scalaAppRule struct {
+// scalaExistingRuleRule implements RuleProvider for existing scala rules.
+type scalaExistingRuleRule struct {
 	cfg  *RuleConfig
 	pkg  ScalaPackage
 	rule *rule.Rule
+	// requires is the list of scala symbols this group of files requires
+	// (import statements).
+	requires []string
+	// provides is the list of scala symbols this group of files provides
+	// (classes, traits, etc).
+	provides []string
 }
 
 // Kind implements part of the ruleProvider interface.
-func (s *scalaAppRule) Kind() string {
+func (s *scalaExistingRuleRule) Kind() string {
 	return s.rule.Kind()
 }
 
 // Name implements part of the ruleProvider interface.
-func (s *scalaAppRule) Name() string {
+func (s *scalaExistingRuleRule) Name() string {
 	return s.rule.Name()
 }
 
 // Rule implements part of the ruleProvider interface.
-func (s *scalaAppRule) Rule() *rule.Rule {
+func (s *scalaExistingRuleRule) Rule() *rule.Rule {
 	return s.rule
 }
 
 // Imports implements part of the RuleProvider interface.
-func (s *scalaAppRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	log.Printf("resolving imports!")
-
-	srcs := s.getSrcsFiles()
-
-	// if imps, ok := r.PrivateAttr(scalaImportsPrivateKey).([]string); ok {
-	// 	specs := make([]resolve.ImportSpec, len(imps))
-	// 	for i, imp := range imps {
-	// 		specs[i] = resolve.ImportSpec{
-	// 			Lang: "scala",
-	// 			Imp:  imp,
-	// 		}
-	// 	}
-	// 	return specs
-	// }
-	return nil
+func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
+	specs := make([]resolve.ImportSpec, len(s.provides))
+	for i, imp := range s.provides {
+		specs[i] = resolve.ImportSpec{
+			Lang: "scala",
+			Imp:  imp,
+		}
+	}
+	return specs
 }
 
-// getSrcsFiles returns a list of source files for the 'srcs' attribute.  Each
-// value is a repo-relative path.
-func (s *scalaAppRule) getSrcsFiles() (srcs []string) {
-	files := make([]*ScalaFile, 0)
+// Resolve implements part of the RuleProvider interface.
+func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
+	log.Println("resolveDeps", imports)
+	resolveDeps("deps")(c, ix, r, imports, from)
+}
 
-	switch t := s.rule.Attr("srcs").(type) {
+// getAttrFiles returns a list of source files for the 'srcs' attribute.  Each
+// value is a repo-relative path.
+func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []string) {
+	switch t := r.Attr(attrName).(type) {
 	case *build.ListExpr:
 		// probably ["foo.scala", "bar.scala"]
 		for _, item := range t.List {
@@ -120,15 +163,15 @@ func (s *scalaAppRule) getSrcsFiles() (srcs []string) {
 		switch ident.Name {
 		case "glob":
 			glob := parseGlob(t)
-			fs := os.DirFS(s.pkg.Rel())
+			dir := filepath.Join(pkg.Dir(), pkg.Rel())
+			fs := os.DirFS(dir)
 			for _, pattern := range glob.Patterns {
 				names, err := doublestar.Glob(fs, pattern)
+				// log.Printf("names for pattern %s in %s: %v", pattern, dir, names)
 				if err != nil {
-					// doublestar.Match returns only one possible error, and only if the
-					// pattern is not valid. During the configuration of the walker (see
-					// Configure below), we discard any invalid pattern and thus an error
-					// here should not be possible.
-					log.Printf("error during doublestar.Glob: %v (pattern ignored: %v)", err, pattern)
+					// doublestar.Match returns only one possible error, and
+					// only if the pattern is not valid.
+					log.Printf("error during doublestar.Glob: %v (pattern invalid: %v)", err, pattern)
 					continue
 				}
 				srcs = append(srcs, names...)
@@ -143,22 +186,58 @@ func (s *scalaAppRule) getSrcsFiles() (srcs []string) {
 	return
 }
 
-// Resolve implements part of the RuleProvider interface.
-func (s *scalaAppRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-	// resolveDeps("deps")(c, ix, r, imports, from)
+func parseScalaFiles(dir string, files []string) []*ScalaFile {
+	scalaFiles := make([]*ScalaFile, 0)
+	for _, file := range files {
+		f, err := ParseScalaFile(dir, file)
+		if err != nil {
+			log.Println("error parsing scala file", file, err)
+			continue
+		}
+		scalaFiles = append(scalaFiles, f)
+	}
+	return scalaFiles
+}
+
+func scalaImports(files []*ScalaFile) []string {
+	imports := make([]string, 0)
+	for _, f := range files {
+		for _, imp := range f.Imports {
+			imports = append(imports, imp.Name)
+		}
+	}
+	return imports
+}
+
+func resolveSrcsSymbols(dir, rel string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
+	log.Println("resolving srcs:", srcs)
+
+	for _, src := range srcs {
+		filename := filepath.Join(rel, src)
+		if file, ok := resolver.LookupScalaFileSpec(filename); ok {
+			requires = append(requires, file.Imports...)
+			provides = append(provides, file.Packages...)
+			provides = append(provides, file.Classes...)
+			provides = append(provides, file.Objects...)
+			provides = append(provides, file.Traits...)
+		} else {
+			log.Println("unknown scala file:", filename)
+		}
+	}
+
+	requires = protoc.DeduplicateAndSort(requires)
+	provides = protoc.DeduplicateAndSort(provides)
+	return
 }
 
 func parseGlob(call *build.CallExpr) (glob rule.GlobValue) {
-	log.Printf("parsing glob! %+v", call)
-
 	for _, expr := range call.List {
 		switch list := expr.(type) {
 		case *build.ListExpr:
 			for _, item := range list.List {
 				switch elem := item.(type) {
 				case *build.StringExpr:
-					value := elem.Token
-					glob.Patterns = append(glob.Patterns, value)
+					glob.Patterns = append(glob.Patterns, elem.Value)
 				default:
 					log.Printf("skipping glob list item expression: %+v (%T)", elem, elem)
 				}

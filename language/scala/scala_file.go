@@ -4,6 +4,7 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/stackb/scala-gazelle/antlr/parser"
@@ -17,7 +18,11 @@ type ScalaFile struct {
 }
 
 func ParseScalaFile(dir, base string) (*ScalaFile, error) {
+	then := time.Now()
+
 	filename := filepath.Join(dir, base)
+
+	log.Println("parsing", filename, "...")
 
 	is, err := antlr.NewFileStream(filename)
 	if err != nil {
@@ -29,12 +34,17 @@ func ParseScalaFile(dir, base string) (*ScalaFile, error) {
 	p := parser.NewScalaParser(stream)
 	if debugParseScalaFile {
 		p.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+	} else {
+		p.RemoveErrorListeners()
 	}
 	p.BuildParseTrees = true
 	tree := p.CompilationUnit()
 
 	listener := &scalaListener{}
 	antlr.ParseTreeWalkerDefault.Walk(listener, tree)
+
+	dt := time.Now().Sub(then)
+	log.Println("parsed", filename, "in", dt)
 
 	return &ScalaFile{
 		Name:    base,

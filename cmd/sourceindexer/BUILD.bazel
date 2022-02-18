@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "sourceindexer_lib",
+    srcs = ["sourceindexer.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/scalaindexer",
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "sourceindexer",
+    data = [
+        "node_modules/scalameta-parsers/index.js",
+        "node_modules/scalameta-parsers/package.json",
+        "sourceindexer.js",
+        "@build_bazel_rules_nodejs//toolchains/node:node_bin",
+    ],
+    embed = [":sourceindexer_lib"],
+    visibility = ["//visibility:public"],
+)

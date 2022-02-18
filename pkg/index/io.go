@@ -33,6 +33,30 @@ func ReadJarSpec(filename string) (*JarSpec, error) {
 	return &spec, nil
 }
 
+func ReadScalaRuleSpec(filename string) (*ScalaRuleSpec, error) {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("read: %w", err)
+	}
+	var spec ScalaRuleSpec
+	if err := json.Unmarshal(data, &spec); err != nil {
+		return nil, fmt.Errorf("unmarshal: %w", err)
+	}
+	return &spec, nil
+}
+
+func ReadScalaRuleIndexSpec(filename string) (*ScalaRuleIndexSpec, error) {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("read: %w", err)
+	}
+	var spec ScalaRuleIndexSpec
+	if err := json.Unmarshal(data, &spec); err != nil {
+		return nil, fmt.Errorf("unmarshal: %w", err)
+	}
+	return &spec, nil
+}
+
 func WriteJSONFile(filename string, spec interface{}) error {
 	data, err := json.MarshalIndent(spec, "", "  ")
 	if err != nil {

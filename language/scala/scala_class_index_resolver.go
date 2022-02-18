@@ -8,19 +8,20 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
+	"github.com/stackb/rules_proto/pkg/protoc"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
 func init() {
-	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:file", &fileScalaImportResolver{
+	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-class-index", &scalaClassIndexResolver{
 		byLabel: make(map[string][]label.Label),
 	})
 }
 
-// fileScalaImportResolver provides a cross-resolver for precompiled symbols that are
+// scalaClassIndexResolver provides a cross-resolver for precompiled symbols that are
 // provided by the mergeindex tool.
-type fileScalaImportResolver struct {
+type scalaClassIndexResolver struct {
 	// indexFile is the filesystem path to the index.
 	indexFile string
 	// byLabel is a mapping from an import string to the label that provides it.
@@ -29,12 +30,12 @@ type fileScalaImportResolver struct {
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
-func (r *fileScalaImportResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&r.indexFile, "index_file", "", "name of the index file to read/write")
+func (r *scalaClassIndexResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+	fs.StringVar(&r.indexFile, "scala_class_index_file", "", "name of the scala class index file to read/write")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
-func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if r.indexFile == "" {
 		return nil
 	}
@@ -44,6 +45,9 @@ func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 		return fmt.Errorf("error while reading index specification file %s: %v", r.indexFile, err)
 	}
 
+	resolver := protoc.GlobalResolver()
+	lang := "scala"
+
 	for _, jarSpec := range index.JarSpecs {
 		for _, class := range jarSpec.Classes {
 			jarLabel, err := label.Parse(jarSpec.Label)
@@ -52,6 +56,7 @@ func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 				continue
 			}
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
+			resolver.Provide(lang, lang, class, jarLabel)
 		}
 	}
 
@@ -59,10 +64,12 @@ func (r *fileScalaImportResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 }
 
 // CrossResolve implements the CrossResolver interface.
-func (r *fileScalaImportResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	if lang != "scala" {
 		return nil
 	}
+
+	log.Println("scalaClassIndexResolver.CrossResolve!", lang, imp.Imp)
 
 	resolved := r.byLabel[imp.Imp]
 	if len(resolved) == 0 {

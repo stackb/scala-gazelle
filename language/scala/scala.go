@@ -189,6 +189,7 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
+	log.Println("scala.Resolve", from)
 	if pkg, ok := sl.packages[from.Pkg]; ok {
 		provider := pkg.ruleProvider(r)
 		if provider == nil {
@@ -217,6 +218,8 @@ func (sl *scalaLang) Resolve(
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+	log.Println("visiting", args.Rel)
+
 	cfg := getOrCreateScalaConfig(args.Config)
 
 	files := make([]*ScalaFile, 0)
@@ -246,6 +249,12 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		// protoc.GlobalRuleIndex().Put(internalLabel, r)
 	}
 
+	log.Println("scala.GenerateRules rules", args.Rel, len(rules))
+	for _, r := range rules {
+		log.Println("gen", r.Kind(), r.Name())
+	}
+	log.Println("scala.GenerateRules imports", args.Rel, imports)
+
 	return language.GenerateResult{
 		Gen:     rules,
 		Empty:   empty,
@@ -256,6 +265,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 // CrossResolve calls all known resolvers and returns the first non-empty result.
 func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		// log.Println("cross resolve", name, lang, imp.Imp)
 		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			if result := resolver.CrossResolve(c, ix, imp, lang); len(result) > 0 {
 				return result
