@@ -38,6 +38,10 @@ type scalaLang struct {
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative packate name.
 	packages map[string]*scalaPackage
+	// isResolvePhase is a flag that is tracks if at least one Resolve() call
+	// has occurred.  It can be used to determine when the rule indexing phase
+	// has completed and deps resolution phase has started.
+	isResolvePhase bool
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -189,6 +193,11 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
+	if !sl.isResolvePhase {
+		sl.isResolvePhase = true
+		sl.onResolvePhase()
+	}
+
 	if pkg, ok := sl.packages[from.Pkg]; ok {
 		provider := pkg.ruleProvider(r)
 		if provider == nil {
@@ -248,23 +257,26 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		// protoc.GlobalRuleIndex().Put(internalLabel, r)
 	}
 
-	if args.Rel == "" {
-		for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-			// log.Println("cross resolve", name, lang, imp.Imp)
-			if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
-				if ssr, ok := resolver.(*scalaSourceIndexResolver); ok {
-					if err := ssr.DumpIndex("/tmp/ssr.json"); err != nil {
-						log.Println("dump index error:", err)
-					}
-				}
-			}
-		}
-	}
-
 	return language.GenerateResult{
 		Gen:     rules,
 		Empty:   empty,
 		Imports: imports,
+	}
+}
+
+func (sl *scalaLang) onResolvePhase() {
+	sl.writeSourceIndex()
+}
+
+func (sl *scalaLang) writeSourceIndex() {
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
+			if ssr, ok := resolver.(*scalaSourceIndexResolver); ok {
+				if err := ssr.WriteIndex(); err != nil {
+					log.Println("dump index error:", err)
+				}
+			}
+		}
 	}
 }
 

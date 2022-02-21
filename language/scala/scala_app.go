@@ -80,7 +80,10 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 	if err != nil {
 		log.Fatal("unable to find scala source cross resolver!")
 	}
-	requires, provides := resolveSrcsSymbols(pkg.Dir(), pkg.Rel(), srcs, resolver.(*scalaSourceIndexResolver))
+
+	from := label.New("", pkg.Rel(), existing.Name())
+
+	requires, provides := resolveSrcsSymbols(pkg.Dir(), from, srcs, resolver.(*scalaSourceIndexResolver))
 
 	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
 	existing.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
@@ -207,15 +210,13 @@ func scalaImports(files []*ScalaFile) []string {
 	return imports
 }
 
-func resolveSrcsSymbols(dir, rel string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
-	for _, src := range srcs {
-		filename := filepath.Join(rel, src)
-		file, err := resolver.ParseScalaFileSpec(dir, filename)
-		if err != nil {
-			log.Println("error: ", filename, err)
-			continue
-		}
+func resolveSrcsSymbols(dir string, from label.Label, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
+	spec, err := resolver.ParseScalaRuleSpec(dir, from, srcs...)
+	if err != nil {
+		log.Println("failed to parse scala sources", from, err)
+	}
 
+	for _, file := range spec.Srcs {
 		requires = append(requires, file.Imports...)
 		provides = append(provides, file.Packages...)
 		provides = append(provides, file.Classes...)

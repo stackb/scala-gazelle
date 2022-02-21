@@ -57,7 +57,7 @@ java_index = rule(
     implementation = _java_index_impl,
     attrs = {
         "deps": attr.label_list(
-            providers = [JavaInfo],
+            # providers = [JavaInfo],
             aspects = [java_indexer_aspect],
             doc = "list of java deps to be indexed",
         ),

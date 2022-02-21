@@ -343,6 +343,8 @@ def collect_java_toolchain_info(target, ide_info, ide_info_file):
         toolchain = target[java_common.JavaToolchainInfo]
     else:
         return False
+    print("collecting java toolchain info!")
+
     javac_jars = []
     if hasattr(toolchain, "tools"):
         javac_jars = [
@@ -467,9 +469,12 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     return True
 
 def _java_indexer_aspect_impl(target, ctx):
+    # print("indexer aspect: visiting:", str(target.label))
     deps = []
     if hasattr(ctx.rule.attr, "deps"):
         deps.extend(ctx.rule.attr.deps)
+    if hasattr(ctx.rule.attr, "runtime_deps"):
+        deps.extend(ctx.rule.attr.runtime_deps)
 
     transitive_info_file = []
     transitive_jar_index_files = []
@@ -641,7 +646,7 @@ def _java_indexer_aspect_impl(target, ctx):
     ]
 
 java_indexer_aspect = aspect(
-    attr_aspects = ["deps"],
+    attr_aspects = ["deps", "runtime_deps"],
     attrs = {
         "_cc_toolchain": attr.label(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),

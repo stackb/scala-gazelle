@@ -21,6 +21,8 @@ type JarSpec struct {
 type ScalaFileSpec struct {
 	// Filename is the source filename
 	Filename string `json:"filename,omitempty"`
+	// MD5 is the sha256 hash of the file contents
+	Sha256 string `json:"sha256,omitempty"`
 	// Imports is a list of required imports.
 	Imports []string `json:"imports,omitempty"`
 	// Packages is a list of provided top-level classes.
