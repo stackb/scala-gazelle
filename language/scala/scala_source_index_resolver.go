@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -17,6 +18,7 @@ func init() {
 	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-source-index", &scalaSourceIndexResolver{
 		byLabel:    make(map[string][]label.Label),
 		byFilename: make(map[string]*index.ScalaFileSpec),
+		parser:     &scalaSourceParser{},
 	})
 }
 
@@ -30,12 +32,29 @@ type scalaSourceIndexResolver struct {
 	byLabel map[string][]label.Label
 	// byFilename is a mapping of the scala file to the spec
 	byFilename map[string]*index.ScalaFileSpec
+	// parser is
+	parser *scalaSourceParser
 }
 
 func (r *scalaSourceIndexResolver) LookupScalaFileSpec(filename string) (*index.ScalaFileSpec, bool) {
-	log.Println("LookupScalaFileSpec:", filename)
-	spec, ok := r.byFilename[filename]
-	return spec, ok
+	file, ok := r.byFilename[filename]
+	return file, ok
+}
+
+func (r *scalaSourceIndexResolver) ParseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
+	file, ok := r.LookupScalaFileSpec(filename)
+	if ok {
+		return file, nil
+	}
+	abs := filepath.Join(dir, filename)
+	log.Println("parsing ->", filename)
+	file, err := r.parser.parse(abs)
+	if err != nil {
+		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
+	}
+	file.Filename = filename
+	r.byFilename[filename] = file
+	return file, nil
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
@@ -93,13 +112,19 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 	return nil
 }
 
+func (r *scalaSourceIndexResolver) DumpIndex(filename string) error {
+	var idx index.ScalaRuleSpec
+	for _, v := range r.byFilename {
+		idx.Srcs = append(idx.Srcs, *v)
+	}
+	return index.WriteJSONFile(filename, &idx)
+}
+
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	if lang != "scala" {
 		return nil
 	}
-
-	log.Println("scalaSourceIndexResolver.CrossResolve!", lang, imp.Imp)
 
 	resolved := r.byLabel[imp.Imp]
 	if len(resolved) == 0 {

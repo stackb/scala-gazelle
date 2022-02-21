@@ -85,12 +85,11 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
 	existing.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
 
-	// comments := make([]build.Comment, len(requires))
-	for _, imp := range requires {
-		existing.AddComment("# import: " + imp)
-		// comments[i].Token = "# import: " + imp
+	if debug {
+		for _, imp := range requires {
+			existing.AddComment("# import: " + imp)
+		}
 	}
-	// existing.Attr("name").Comment().After = comments
 
 	return &scalaExistingRuleRule{cfg, pkg, existing, requires, provides}
 }
@@ -137,7 +136,6 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-	log.Println("resolveDeps", imports)
 	resolveDeps("deps")(c, ix, r, imports, from)
 }
 
@@ -210,19 +208,19 @@ func scalaImports(files []*ScalaFile) []string {
 }
 
 func resolveSrcsSymbols(dir, rel string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
-	log.Println("resolving srcs:", srcs)
-
 	for _, src := range srcs {
 		filename := filepath.Join(rel, src)
-		if file, ok := resolver.LookupScalaFileSpec(filename); ok {
-			requires = append(requires, file.Imports...)
-			provides = append(provides, file.Packages...)
-			provides = append(provides, file.Classes...)
-			provides = append(provides, file.Objects...)
-			provides = append(provides, file.Traits...)
-		} else {
-			log.Println("unknown scala file:", filename)
+		file, err := resolver.ParseScalaFileSpec(dir, filename)
+		if err != nil {
+			log.Println("error: ", filename, err)
+			continue
 		}
+
+		requires = append(requires, file.Imports...)
+		provides = append(provides, file.Packages...)
+		provides = append(provides, file.Classes...)
+		provides = append(provides, file.Objects...)
+		provides = append(provides, file.Traits...)
 	}
 
 	requires = protoc.DeduplicateAndSort(requires)

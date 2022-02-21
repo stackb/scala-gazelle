@@ -40,7 +40,7 @@ func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfi
 		files:        files,
 	}
 	s.gen = s.generateRules(true)
-	// s.empty = s.generateRules(false)
+	s.empty = s.generateRules(false)
 
 	return s
 }

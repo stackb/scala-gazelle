@@ -3,10 +3,12 @@
  * JSON summary of top-level symbols to stdout.
  */
 const fs = require('fs');
+const readline = require('readline');
 const { Console } = require('console');
 const { parseSource } = require('scalameta-parsers');
 
 const debug = false;
+const delim = Buffer.from([0x00]);
 
 /**
  * ScalaSourceFile parses a scala source file and aggregates symbols discovered
@@ -248,35 +250,13 @@ class ScalaSourceFile {
 
 }
 
-function main() {
-    const args = process.argv.slice(2);
-    if (debug) {
-        console.warn('args:', args);
-    }
-
-    if (args.length < 5) {
-        console.warn('problem: -o OUTPUT_FILE, -l LABEL, and at least one source file must be supplied.');
-        console.error('usage: sourceindexer.js -o OUTPUT_FILE -l LABEL [INPUT_FILES]');
-    }
-
-    let outputFile = '/dev/stdout'
-    let label = '';
-    const inputs = [];
-
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        if (arg === '-o') {
-            outputFile = args[i + 1];
-            i++;
-            continue;
-        } else if (arg === '-l') {
-            label = args[i + 1];
-            i++;
-            continue;
-        }
-        inputs.push(arg);
-    }
-
+/**
+ * parse takes a list of input files and write a JSON.
+ * 
+ * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
+ * @returns {!Array<ScalaSourceInfo>}
+ */
+function parse(inputs) {
     const srcs = [];
     inputs.forEach(filename => {
         try {
@@ -284,16 +264,114 @@ function main() {
             src.parse();
             srcs.push(src.toObject());
         } catch (e) {
+            srcs.push({
+                filename: filename,
+                error: e.message,
+            });
             console.warn('error parsing', filename, e);
         }
     });
 
-    const data = JSON.stringify({ label, srcs }, null, 2);
-    fs.writeFileSync(outputFile, data);
+    return srcs;
+}
 
+function main() {
+    const args = process.argv.slice(2);
     if (debug) {
-        console.warn(`Wrote ${outputFile} (${data.length} bytes)`);
+        console.warn('usage: sourceindexer.js -o OUTPUT_FILE -l LABEL [INPUT_FILES]');
+        console.warn('args:', args);
     }
+
+    // the output to write to (only valid when not in server mode)
+    let output = process.stdout;
+    // label is the bazel label that contains the file we are parsing, so it can
+    // be included in the result json
+    let label = '';
+    // repoRoot is the absolute path to the root.
+    let repoRoot = '';
+    // inputs is a list of input files
+    const inputs = [];
+
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
+        switch (arg) {
+            case '-o':
+                outputFile = args[i + 1];
+                i++;
+                break;
+            case '-l':
+                label = args[i + 1];
+                i++;
+                break;
+            case '-d':
+                repoRoot = args[i + 1];
+                i++;
+                break;
+            default:
+                inputs.push(arg);
+        }
+    }
+
+    // if the user supplied a list of files on the command line, parse those in
+    // batch.  Otherwise, wait on stdin for parse requests.
+    if (inputs.length > 0) {
+        const srcs = parse(inputs)
+        const result = JSON.stringify({ label, srcs }, null, 2);
+        fs.writeFileSync(output, result);
+        if (debug) {
+            console.warn(`Wrote ${output} (${result.length} bytes)`);
+        }
+
+    } else {
+        console.warn('Waiting for parse requests from stdin...');
+
+        const io = readline.createInterface(process.stdin, process.stdout, undefined, false);
+
+        async function run() {
+            for await (const line of nextRequest()) {
+                // const request = JSON.parse(line);
+                const srcs = parse([line]);
+                // console.warn(`parse file: "${line}"`, srcs);
+                process.stdout.write(JSON.stringify(srcs[0]));
+                process.stdout.write(delim);
+
+            }
+        }
+
+        run();
+        // io.question
+        // io.on('line', (line) => {
+        //     console.warn('line event: ', JSON.stringify(line, null, 2));
+        //     const filename = line.trim();
+        //     console.warn(`parse file: "${filename}"`);
+        //     const result = parse(label, [filename]);
+        //     inputs.length = 0;
+        //     console.warn(`parse result: ${result}`);
+
+        //     io.write(result);
+        //     io.write('\n');
+        // }).on('close', () => {
+        //     process.exit(0);
+        // });
+
+        // io.resume();
+    }
+
 }
 
 main();
+
+async function* nextRequest() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: undefined,
+    });
+
+    try {
+        for (; ;) {
+            yield new Promise((resolve) => rl.question("", resolve));
+        }
+    } finally {
+        rl.close();
+    }
+}

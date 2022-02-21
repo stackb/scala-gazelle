@@ -20,7 +20,7 @@ const (
 )
 
 func init() {
-	Rules().MustRegisterRule("stackb:rules_scala:"+scalaLibraryRuleName,
+	Rules().MustRegisterRule("stackb:rules_scala:experimental:"+scalaLibraryRuleName,
 		&scalaLibrary{
 			kindName: scalaLibraryRuleName,
 		})

@@ -101,7 +101,7 @@ func resolveDeps(attrName string) depsResolver {
 				unresolved = protoc.DeduplicateAndSort(unresolved)
 				before := make([]build.Comment, len(unresolved))
 				for i, imp := range unresolved {
-					before[i].Token = "# " + imp
+					before[i].Token = "# unresolved" + imp
 				}
 				r.Attr(attrName).Comment().After = before
 			} else {
@@ -110,7 +110,9 @@ func resolveDeps(attrName string) depsResolver {
 				for i, imp := range resolved {
 					before[i].Token = "# resolved: " + imp
 				}
+
 				r.Attr(attrName).Comment().After = before
+				log.Println(from, "resolved deps:", resolved)
 			}
 
 		}

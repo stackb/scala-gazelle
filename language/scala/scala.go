@@ -155,7 +155,7 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 
 	pkg, ok := sl.packages[from.Pkg]
 	if !ok {
-		log.Println("Unknown package", from.Pkg)
+		// log.Println("scala.Imports(): Unknown package", from.Pkg)
 		return nil
 	}
 
@@ -189,7 +189,6 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
-	log.Println("scala.Resolve", from)
 	if pkg, ok := sl.packages[from.Pkg]; ok {
 		provider := pkg.ruleProvider(r)
 		if provider == nil {
@@ -249,11 +248,18 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		// protoc.GlobalRuleIndex().Put(internalLabel, r)
 	}
 
-	log.Println("scala.GenerateRules rules", args.Rel, len(rules))
-	for _, r := range rules {
-		log.Println("gen", r.Kind(), r.Name())
+	if args.Rel == "" {
+		for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+			// log.Println("cross resolve", name, lang, imp.Imp)
+			if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
+				if ssr, ok := resolver.(*scalaSourceIndexResolver); ok {
+					if err := ssr.DumpIndex("/tmp/ssr.json"); err != nil {
+						log.Println("dump index error:", err)
+					}
+				}
+			}
+		}
 	}
-	log.Println("scala.GenerateRules imports", args.Rel, imports)
 
 	return language.GenerateResult{
 		Gen:     rules,

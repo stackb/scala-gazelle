@@ -8,7 +8,7 @@ go_library(
         "cross_resolver_registry.go",
         "intent.go",
         "package.go",
-        # "parser.go",
+        "parser.go",
         "resolver.go",
         "rule_config.go",
         "rule_info.go",
@@ -22,7 +22,10 @@ go_library(
         "scala_library.go",
         "scala_source_index_resolver.go",
     ],
-    data = ["//cmd/scalaindexer"],
+    data = [
+        ":node",
+        ":sourceindexer",
+    ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
@@ -38,7 +41,24 @@ go_library(
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_bmatcuk_doublestar_v4//:doublestar",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
+)
+
+genrule(
+    name = "sourceindexer_tool",
+    outs = ["sourceindexer"],
+    cmd = "cp $(location //cmd/sourceindexer) $@",
+    executable = True,
+    tools = ["//cmd/sourceindexer"],
+)
+
+genrule(
+    name = "node_bin",
+    outs = ["node"],
+    cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
+    executable = True,
+    tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
 )
 
 genrule(

@@ -69,8 +69,6 @@ func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.Rul
 		return nil
 	}
 
-	log.Println("scalaClassIndexResolver.CrossResolve!", lang, imp.Imp)
-
 	resolved := r.byLabel[imp.Imp]
 	if len(resolved) == 0 {
 		return nil

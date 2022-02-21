@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -8,24 +10,79 @@ import (
 	"syscall"
 )
 
-const debug = false
+type options struct {
+	debug                bool
+	restoreEmbeddedFiles bool
+	nodeBinPath          string
+	nodePath             string
+	scriptPath           string
+	files                []string
+}
+
+func parseOptions(args []string) (*options, error) {
+	var opts options
+	var fs flag.FlagSet
+	fs.StringVar(&opts.nodeBinPath, "node_bin_path", "", "override location of node binary")
+	fs.StringVar(&opts.nodePath, "node_path", "", "override location of node modules")
+	fs.StringVar(&opts.scriptPath, "script_path", "", "override location of sourceindexer script")
+	fs.BoolVar(&opts.restoreEmbeddedFiles, "embedded", true, "restore embedded files")
+	fs.BoolVar(&opts.debug, "debug", false, "debug mode")
+	if err := fs.Parse(args[1:]); err != nil {
+		return nil, err
+	}
+	opts.files = fs.Args()
+
+	if opts.restoreEmbeddedFiles {
+		tmpDir := os.TempDir()
+		mustRestore(&opts, tmpDir, embeddedInterpreter)
+		mustRestore(&opts, tmpDir, embeddedAssets)
+		if opts.nodeBinPath == "" {
+			opts.nodeBinPath = filepath.Join(tmpDir, "external/nodejs_darwin_amd64/bin/nodejs/bin/node")
+		}
+		if opts.nodePath == "" {
+			opts.nodePath = filepath.Join(tmpDir, "cmd/sourceindexer")
+		}
+		if opts.scriptPath == "" {
+			opts.scriptPath = filepath.Join(tmpDir, "cmd/sourceindexer/sourceindexer.js")
+		}
+	}
+
+	// in the case where this tool is being run as an action the paths are
+	// relative to the runfiles dir.
+	runfilesDir := args[0] + ".runfiles"
+	if opts.nodeBinPath == "" {
+		opts.nodeBinPath = filepath.Join(runfilesDir, "nodejs_darwin_amd64/bin/nodejs/bin/node")
+	}
+	if opts.nodePath == "" {
+		opts.nodePath = filepath.Join(runfilesDir, "scala_gazelle/cmd/sourceindexer")
+	}
+	if opts.scriptPath == "" {
+		opts.scriptPath = filepath.Join(runfilesDir, "scala_gazelle/cmd/sourceindexer/sourceindexer.js")
+	}
+
+	return &opts, nil
+}
 
 func main() {
-	if debug {
-		log.Println(os.Environ())
+	log.SetPrefix("sourceindexer.go: ")
+	log.SetFlags(0) // don't print timestamps
+
+	opts, err := parseOptions(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if opts.debug {
+		// log.Println(os.Environ())
 		listFiles(".")
 	}
 
-	runfilesdir := os.Args[0] + ".runfiles"
-	nodebin := filepath.Join(runfilesdir, "nodejs_darwin_amd64/bin/nodejs/bin/node")
-	script := filepath.Join(runfilesdir, "scala_gazelle/cmd/sourceindexer/sourceindexer.js")
-	nodepath := filepath.Join(runfilesdir, "scala_gazelle/cmd/sourceindexer")
-	args := append([]string{script}, os.Args[1:]...)
-	env := []string{"NODE_PATH=" + nodepath}
+	args := append([]string{opts.scriptPath}, opts.files...)
+	env := []string{"NODE_PATH=" + opts.nodePath}
 
-	exitCode, err := run(nodebin, args, ".", env)
+	exitCode, err := run(opts.nodeBinPath, args, ".", env)
 	if err != nil {
-		log.Printf("%v", err)
+		log.Print(err)
 	}
 	os.Exit(exitCode)
 }
@@ -74,4 +131,36 @@ func listFiles(dir string) error {
 		log.Println(path)
 		return nil
 	})
+}
+
+// mustRestore - Restore assets.
+func mustRestore(opts *options, baseDir string, assets map[string][]byte) {
+	// unpack variable is provided by the go_embed data and is a
+	// map[string][]byte such as {"/usr/share/games/fortune/literature.dat":
+	// bytes... }
+	for rel, bytes := range assets {
+		filename := filepath.Join(baseDir, rel)
+		dirname := filepath.Dir(filename)
+		// log.Printf("file %s, dir %s, rel %d, abs %s, absdir: %s", file, dir, rel, abs, absdir)
+		if err := os.MkdirAll(dirname, os.ModePerm); err != nil {
+			log.Fatalf("Failed to create asset dir %s: %v", dirname, err)
+		}
+		if err := ioutil.WriteFile(filename, bytes, os.ModePerm); err != nil {
+			log.Fatalf("Failed to write asset %s: %v", filename, err)
+		}
+
+		switch filepath.Base(rel) {
+		case "sourceindexer.js":
+			opts.scriptPath = filename
+		case "node":
+			opts.nodeBinPath = filename
+		case "package.json":
+			// cmd/sourceindexer/node_modules/scalameta-parsers/package.json -> cmd/sourceindexer/
+			opts.nodePath = filepath.Dir(filepath.Dir(dirname))
+		}
+
+		if opts.debug {
+			log.Printf("Restored %s", filename)
+		}
+	}
 }
