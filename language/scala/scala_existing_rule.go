@@ -14,19 +14,19 @@ import (
 )
 
 func init() {
-	Rules().MustRegisterRule("stackb:scala_gazelle:scala_library",
+	Rules().MustRegisterRule("stackb:scala-gazelle:scala_library",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_library"})
 
-	Rules().MustRegisterRule("stackb:scala_gazelle:scala_binary",
+	Rules().MustRegisterRule("stackb:scala-gazelle:scala_binary",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_binary"})
 
-	Rules().MustRegisterRule("stackb:scala_gazelle:scala_test",
+	Rules().MustRegisterRule("stackb:scala-gazelle:scala_test",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_test"})
 
-	Rules().MustRegisterRule("stackb:scala_gazelle:scala_app",
+	Rules().MustRegisterRule("stackb:scala-gazelle:scala_app",
 		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app"})
 
-	Rules().MustRegisterRule("stackb:scala_gazelle:scala_app_test",
+	Rules().MustRegisterRule("stackb:scala-gazelle:scala_app_test",
 		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app_test"})
 }
 
