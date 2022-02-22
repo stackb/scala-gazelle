@@ -18,23 +18,28 @@ import (
 
 // ref: https://raw.githubusercontent.com/bazelbuild/rules_python/main/gazelle/parser.go
 
-var (
-	parserStdin  io.Writer
-	parserStdout io.Reader
-	parserMutex  sync.Mutex
-)
+// scalaSourceParser implements a parser frontend for scala files that extracts
+// the index information.  The parser backend runs as a separate process.
+type scalaSourceParser struct {
+	parserToolPath string
+	parserStdin    io.Writer
+	parserStdout   io.Reader
+	parserCancel   func()
+	parserMutex    sync.Mutex
+}
 
-func init() {
-	parseTool, err := bazel.Runfile("sourceindexer")
+func (p *scalaSourceParser) start() error {
+	parseTool, err := bazel.Runfile(p.parserToolPath)
 	if err != nil {
 		log.Printf("failed to initialize parser: %v\n", err)
 		index.ListFiles(".")
-		os.Exit(1)
+		return err
 	}
 
 	ctx := context.Background()
 	ctx, parserCancel := context.WithTimeout(ctx, time.Minute*5)
 	cmd := exec.CommandContext(ctx, parseTool, "-embedded")
+	p.parserCancel = parserCancel
 
 	cmd.Stderr = os.Stderr
 
@@ -43,18 +48,18 @@ func init() {
 		log.Printf("failed to initialize parser: %v\n", err)
 		os.Exit(1)
 	}
-	parserStdin = stdin
+	p.parserStdin = stdin
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Printf("failed to initialize parser: %v\n", err)
-		os.Exit(1)
+		return err
 	}
-	parserStdout = stdout
+	p.parserStdout = stdout
 
 	if err := cmd.Start(); err != nil {
 		log.Printf("failed to initialize parser: %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	go func() {
@@ -64,10 +69,13 @@ func init() {
 			os.Exit(1)
 		}
 	}()
+
+	return nil
 }
 
-// scalaSourceParser implements a parser for scala files that extracts the index information.
-type scalaSourceParser struct{}
+func (p *scalaSourceParser) stop() {
+	p.parserCancel()
+}
 
 // parseAll parses all provided Scala files by consecutively calling p.parse.
 func (p *scalaSourceParser) parseAll(filenames []string) ([]*index.ScalaFileSpec, error) {
@@ -85,11 +93,11 @@ func (p *scalaSourceParser) parseAll(filenames []string) ([]*index.ScalaFileSpec
 // parse parses a Scala file and returns the index. An error is raised if
 // communicating with the long-lived Scala parser over stdin and stdout fails.
 func (p *scalaSourceParser) parse(filename string) (*index.ScalaFileSpec, error) {
-	parserMutex.Lock()
-	defer parserMutex.Unlock()
+	p.parserMutex.Lock()
+	defer p.parserMutex.Unlock()
 
-	fmt.Fprintln(parserStdin, filename)
-	reader := bufio.NewReader(parserStdout)
+	fmt.Fprintln(p.parserStdin, filename)
+	reader := bufio.NewReader(p.parserStdout)
 	data, err := reader.ReadBytes(0)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse %s: %w", filename, err)

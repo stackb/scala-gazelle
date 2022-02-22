@@ -56,12 +56,12 @@ func resolveDeps(attrName string) depsResolver {
 				log.Println("resolveDeps:", impLang, imp)
 			}
 
-			l, err := resolveAnyKind(c, ix, impLang, imp, from)
+			l, err := resolveImport(c, ix, impLang, imp, from)
 			if err == errSkipImport {
 				if debug {
 					log.Println(from, "skipped:", imp)
 				}
-				unresolved = append(unresolved, "skipped: "+imp)
+				// Note: skipped imports do not contribute to 'unresolved' list.
 				continue
 			}
 			if err != nil {
@@ -120,6 +120,25 @@ func resolveDeps(attrName string) depsResolver {
 
 		}
 	}
+}
+
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) (label.Label, error) {
+	// if the import is empty, we may have reached the root symbol.
+	if imp == "" {
+		return label.NoLabel, errSkipImport
+	}
+	l, err := resolveAnyKind(c, ix, lang, imp, from)
+	if l == PlatformLabel {
+		return l, errSkipImport
+	}
+	if l == label.NoLabel {
+		lastDot := strings.LastIndex(imp, ".")
+		if lastDot > 0 {
+			parentImp := imp[0:lastDot]
+			return resolveImport(c, ix, lang, parentImp, from)
+		}
+	}
+	return l, err
 }
 
 // resolveAnyKind answers the question "what bazel label provides a rule for the

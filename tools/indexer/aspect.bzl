@@ -469,7 +469,7 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     return True
 
 def _java_indexer_aspect_impl(target, ctx):
-    # print("indexer aspect: visiting:", str(target.label))
+    # print("indexer aspect visiting:", str(target.label))
     deps = []
     if hasattr(ctx.rule.attr, "deps"):
         deps.extend(ctx.rule.attr.deps)

@@ -257,7 +257,7 @@ func (sl *scalaLang) writeSourceIndex() {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
 		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			if ssr, ok := resolver.(*scalaSourceIndexResolver); ok {
-				if err := ssr.WriteIndex(); err != nil {
+				if err := ssr.writeIndex(); err != nil {
 					log.Println("dump index error:", err)
 				}
 			}

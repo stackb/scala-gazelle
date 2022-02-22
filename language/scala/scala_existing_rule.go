@@ -14,20 +14,20 @@ import (
 )
 
 func init() {
-	Rules().MustRegisterRule("stackb:rules_proto:scala_app",
-		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app"})
-
-	Rules().MustRegisterRule("stackb:rules_proto:scala_app_test",
-		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app_test"})
-
-	Rules().MustRegisterRule("stackb:rules_proto:scala_library",
+	Rules().MustRegisterRule("stackb:scala_gazelle:scala_library",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_library"})
 
-	Rules().MustRegisterRule("stackb:rules_proto:scala_binary",
+	Rules().MustRegisterRule("stackb:scala_gazelle:scala_binary",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_binary"})
 
-	Rules().MustRegisterRule("stackb:rules_proto:scala_test",
+	Rules().MustRegisterRule("stackb:scala_gazelle:scala_test",
 		&scalaExistingRule{"@io_bazel_rules_scala//scala:scala.bzl", "scala_test"})
+
+	Rules().MustRegisterRule("stackb:scala_gazelle:scala_app",
+		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app"})
+
+	Rules().MustRegisterRule("stackb:scala_gazelle:scala_app_test",
+		&scalaExistingRule{"//bazel_tools.bzl/scala:scala.bzl", "scala_app_test"})
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
@@ -46,7 +46,6 @@ func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 		// TODO(pcj): understand better why deps needs to be in MergeableAttrs
 		// here rather than ResolveAttrs.
 		MergeableAttrs: map[string]bool{
-			"srcs": true,
 			"deps": true,
 		},
 	}

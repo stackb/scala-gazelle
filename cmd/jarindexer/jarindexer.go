@@ -113,6 +113,9 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			pkgs[strings.TrimSuffix(name, ".package")] = true
 		} else {
 			spec.Classes = append(spec.Classes, name)
+			if pkgName, ok := classPackageName(name); ok {
+				pkgs[pkgName] = true
+			}
 		}
 
 		for _, pkgName := range c.PackageNames() {
@@ -142,4 +145,14 @@ func convertClassName(name string) string {
 
 func convertPackageName(name string) string {
 	return strings.Replace(name, "/", ".", -1)
+}
+
+func classPackageName(name string) (string, bool) {
+	lastDot := strings.LastIndex(name, ".")
+	if lastDot <= 0 {
+		return "", false
+	}
+
+	pkg := name[0:lastDot]
+	return pkg, true
 }

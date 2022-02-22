@@ -13,7 +13,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
-	"github.com/stackb/rules_proto/pkg/protoc"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
@@ -27,8 +26,17 @@ func init() {
 	})
 }
 
-// scalaSourceIndexResolver provides a cross-resolver for precompiled symbols
-// that are provided by the mergeindex tool.
+// scalaSourceIndexResolver provides a cross-resolver for scala source files. If
+// -scala_source_index_in is configured, the given source index will be used to
+// bootstrap the internal cache.  At runtime the .ParseScalaRuleSpec function
+// can be used to parse scala files.  If the cache already has an entry for the
+// filename with matching sha256, the cache hit will be used.  Otherwise the
+// actual parsing will be delegated to the parser backend (a separate process
+// that communicates over stdin/stdout).  At the end of gazelle's rule indexing
+// phase, .writeIndex is called, dumping the cache into a file (if the outfile
+// is configured).  A possible configuration is to use the same file for both in
+// and out, creating a configuration loop such that only new/modified .scala
+// files need to be parsed on subsequent gazelle executions.
 type scalaSourceIndexResolver struct {
 	// filesystem path to the indexes to read/write.
 	indexIn, indexOut string
@@ -45,21 +53,27 @@ type scalaSourceIndexResolver struct {
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
 func (r *scalaSourceIndexResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	log.Println("os.Args", os.Args)
 	fs.StringVar(&r.indexIn, "scala_source_index_in", "", "name of the scala source index file to read")
 	fs.StringVar(&r.indexOut, "scala_source_index_out", "", "name of the scala source index file to write")
+	fs.StringVar(&r.parser.parserToolPath, "scala_parser_tool_path", "sourceindexer", "filesystem path to the parser tool")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if r.indexIn != "" {
-		if err := r.ReadIndex(r.indexIn); err != nil {
+		if err := r.readScalaRuleIndexSpec(r.indexIn); err != nil {
 			log.Println("warning:", err)
 		}
 	}
-	return nil
+	// start the parser backend process
+	return r.parser.start()
 }
 
+// ParseScalaRuleSpec is used to parse a list of source files.  The list of srcs
+// is expected to be relative to the from.Pkg rel field, and the absolute path
+// of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
+// cache entry for the given file and the current sha256 matches the cached one,
+// the cached entry will be returned.
 func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Label, srcs ...string) (*index.ScalaRuleSpec, error) {
 	rule := &index.ScalaRuleSpec{
 		Label: from.String(),
@@ -91,7 +105,6 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 		}
 	}
 
-	log.Println("parsing ->", filename)
 	file, err = r.parser.parse(abs)
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
@@ -102,59 +115,68 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	return file, nil
 }
 
-func (r *scalaSourceIndexResolver) ReadIndex(filename string) error {
-	log.Println("Reading source index", filename)
+func (r *scalaSourceIndexResolver) readScalaRuleIndexSpec(filename string) error {
 	index, err := index.ReadScalaRuleIndexSpec(filename)
 	if err != nil {
 		return fmt.Errorf("error while reading index specification file %s: %v", filename, err)
 	}
 
-	resolver := protoc.GlobalResolver()
-	lang := "scala"
-
 	for _, rule := range index.Rules {
-		ruleLabel, err := label.Parse(rule.Label)
-		if err != nil {
-			log.Printf("bad label while loading rule spec: %v", err)
-			continue
+		if err := r.readScalaRuleSpec(&rule); err != nil {
+			return err
 		}
-
-		for _, file := range rule.Srcs {
-			f := file
-			if _, exists := r.byFilename[f.Filename]; exists {
-				panic("duplicate filename: " + f.Filename)
-			}
-			r.byFilename[f.Filename] = &f
-
-			for _, sym := range f.Classes {
-				resolver.Provide(lang, lang, sym, ruleLabel)
-				// r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
-			}
-			for _, sym := range f.Objects {
-				resolver.Provide(lang, lang, sym, ruleLabel)
-				// r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
-			}
-			for _, sym := range f.Traits {
-				resolver.Provide(lang, lang, sym, ruleLabel)
-				// r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
-			}
-			for _, sym := range f.Packages {
-				resolver.Provide(lang, lang, sym+"._", ruleLabel)
-				// r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
-			}
-		}
-		r.byRule[ruleLabel] = &rule
 	}
 
 	return nil
 }
 
-func (r *scalaSourceIndexResolver) WriteIndex() error {
+func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) error {
+	ruleLabel, err := label.Parse(rule.Label)
+	if err != nil {
+		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
+	}
+
+	r.byRule[ruleLabel] = rule
+
+	for _, file := range rule.Srcs {
+		if err := r.readScalaFileSpec(ruleLabel, &file); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *scalaSourceIndexResolver) readScalaFileSpec(ruleLabel label.Label, file *index.ScalaFileSpec) error {
+	if _, exists := r.byFilename[file.Filename]; exists {
+		return fmt.Errorf("duplicate filename: " + file.Filename)
+	}
+	r.byFilename[file.Filename] = file
+
+	for _, sym := range file.Classes {
+		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	}
+	for _, sym := range file.Objects {
+		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	}
+	for _, sym := range file.Traits {
+		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	}
+	for _, sym := range file.Packages {
+		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	}
+
+	return nil
+}
+
+func (r *scalaSourceIndexResolver) writeIndex() error {
+	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
+	r.parser.stop()
+
 	// index is not written if the _out file is not configured
 	if r.indexOut == "" {
 		return nil
 	}
-	log.Println("Writing source index", r.indexOut)
 
 	var idx index.ScalaRuleIndexSpec
 	for _, rule := range r.byRule {
@@ -165,10 +187,6 @@ func (r *scalaSourceIndexResolver) WriteIndex() error {
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	if lang != "scala" {
-		return nil
-	}
-
 	resolved := r.byLabel[imp.Imp]
 	if len(resolved) == 0 {
 		return nil
