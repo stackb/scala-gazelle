@@ -6,6 +6,7 @@ go_library(
     name = "scala",
     srcs = [
         "cross_resolver_registry.go",
+        "glob.go",
         "intent.go",
         "package.go",
         "parser.go",
@@ -71,8 +72,14 @@ genrule(
 
 go_test(
     name = "scala_test",
-    srcs = ["scala_test.go"],
+    srcs = [
+        "glob_test.go",
+        # "scala_test.go",
+    ],
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
-    deps = ["@build_stack_rules_proto//pkg/goldentest"],
+    deps = [
+        "@build_stack_rules_proto//pkg/goldentest",
+        "@com_github_google_go_cmp//cmp",
+    ],
 )

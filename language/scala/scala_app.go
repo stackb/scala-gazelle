@@ -228,23 +228,3 @@ func resolveSrcsSymbols(dir string, from label.Label, srcs []string, resolver *s
 	provides = protoc.DeduplicateAndSort(provides)
 	return
 }
-
-func parseGlob(call *build.CallExpr) (glob rule.GlobValue) {
-	for _, expr := range call.List {
-		switch list := expr.(type) {
-		case *build.ListExpr:
-			for _, item := range list.List {
-				switch elem := item.(type) {
-				case *build.StringExpr:
-					glob.Patterns = append(glob.Patterns, elem.Value)
-				default:
-					log.Printf("skipping glob list item expression: %+v (%T)", elem, elem)
-				}
-			}
-		default:
-			log.Println("skipping glob list expression: %+v", expr)
-		}
-	}
-
-	return
-}
