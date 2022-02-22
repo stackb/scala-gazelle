@@ -169,7 +169,7 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 			log.Println("ignoring srcs call expression: %+v", t)
 		}
 	default:
-		log.Printf("unknown srcs types: %T", t)
+		log.Printf("unknown srcs types: //%s:%s %T", pkg.Rel(), r.Name(), t)
 	}
 
 	return

@@ -112,7 +112,7 @@ func resolveDeps(attrName string) depsResolver {
 				}
 
 				r.Attr(attrName).Comment().After = before
-				log.Println(from, "resolved deps:", resolved)
+				// log.Println(from, "resolved deps:", resolved)
 			}
 
 		}

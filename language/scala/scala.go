@@ -166,7 +166,7 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 
 	provider := pkg.ruleProvider(r)
 	if provider == nil {
-		log.Printf("Unknown rule provider for //%s:%s %p", f.Pkg, r.Name(), r)
+		log.Printf("Unknown rule provider for %s %v", r.Kind(), from)
 		return nil
 	}
 
@@ -227,7 +227,7 @@ func (sl *scalaLang) Resolve(
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	log.Println("visiting", args.Rel)
+	// log.Println("visiting", args.Rel)
 
 	cfg := getOrCreateScalaConfig(args.Config)
 
