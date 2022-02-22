@@ -70,8 +70,10 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 	if debug {
 		log.Println("Parsing jar file:", filename)
 	}
+	pkgs := make(map[string]bool)
+
 	entry := java.NewJarClassPathEntry(filename)
-	return entry.Visit(func(f *zip.File, c *java.ClassFile) error {
+	if err := entry.Visit(func(f *zip.File, c *java.ClassFile) error {
 		if c.IsSynthetic() {
 			if debug {
 				log.Println("skipping synthetic class:", f.Name, c.Name())
@@ -103,15 +105,41 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			}
 			return nil
 		}
-
 		name = convertClassName(name)
-		spec.Classes = append(spec.Classes, name)
+
+		// use the scala convention to generate a class for the package to
+		// populate the packages index.  This might not be correct.
+		if strings.HasSuffix(name, ".package") {
+			pkgs[strings.TrimSuffix(name, ".package")] = true
+		} else {
+			spec.Classes = append(spec.Classes, name)
+		}
+
+		for _, pkgName := range c.PackageNames() {
+			pkgs[convertPackageName(pkgName)] = true
+		}
+
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
+
+	packages := make([]string, 0, len(pkgs))
+	for p := range pkgs {
+		packages = append(packages, p)
+	}
+	sort.Strings(packages)
+	spec.Packages = packages
+
+	return nil
 }
 
 func convertClassName(name string) string {
 	name = strings.Replace(name, "/", ".", -1)
 	// name = strings.Replace(name, "$", ".", -1) // TODO(pcj): is this correct to do this with the inner classes?
 	return name
+}
+
+func convertPackageName(name string) string {
+	return strings.Replace(name, "/", ".", -1)
 }

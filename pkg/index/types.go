@@ -14,6 +14,8 @@ type JarSpec struct {
 	Filename string `json:"filename,omitempty"`
 	// Classes is a list of FQNs in the jar
 	Classes []string `json:"classes,omitempty"`
+	// Packages is a list of packages represented in the jar
+	Packages []string `json:"packages,omitempty"`
 }
 
 // ScalaFileSpec describes the symbols provided/required by a single source

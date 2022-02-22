@@ -49,14 +49,22 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 	lang := "scala"
 
 	for _, jarSpec := range index.JarSpecs {
+		jarLabel, err := label.Parse(jarSpec.Label)
+		if err != nil {
+			log.Printf("bad label while loading jar spec %s: %v", jarSpec.Filename, err)
+			continue
+		}
+		for _, pkg := range jarSpec.Packages {
+			pkgImport := pkg + "._"
+			r.byLabel[pkgImport] = append(r.byLabel[pkgImport], jarLabel)
+			resolver.Provide(lang, lang, pkgImport, jarLabel)
+
+		}
+
 		for _, class := range jarSpec.Classes {
-			jarLabel, err := label.Parse(jarSpec.Label)
-			if err != nil {
-				log.Printf("bad label while loading jar spec %s: %v", jarSpec.Filename, err)
-				continue
-			}
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
 			resolver.Provide(lang, lang, class, jarLabel)
+
 		}
 	}
 

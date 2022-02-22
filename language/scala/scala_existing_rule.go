@@ -32,7 +32,7 @@ func init() {
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
 // already in the build file.  It does not create any new rules.  This rule
-// implementation is to parse source files and update deps.
+// implementation is to parse files named in 'srcs' and update 'deps'.
 type scalaExistingRule struct{ load, name string }
 
 // Name implements part of the RuleInfo interface.
@@ -69,8 +69,9 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
-	// If we cannot find any srcs for the rule, bail now.
 	srcs := getAttrFiles(pkg, existing, "srcs")
+
+	// If we cannot find any srcs for the rule, bail now.
 	if len(srcs) == 0 {
 		return nil
 	}
@@ -82,6 +83,7 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 
 	from := label.New("", pkg.Rel(), existing.Name())
 
+	log.Println(from, "srcs:", srcs)
 	requires, provides := resolveSrcsSymbols(pkg.Dir(), from, srcs, resolver.(*scalaSourceIndexResolver))
 
 	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
@@ -150,23 +152,20 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 		for _, item := range t.List {
 			switch elem := item.(type) {
 			case *build.StringExpr:
-				value := elem.Token
-				srcs = append(srcs, value)
+				srcs = append(srcs, elem.Value)
 			}
 		}
 	case *build.CallExpr:
 		// probably glob(["**/*.scala"])
-		ident, ok := t.X.(*build.Ident)
-		if !ok {
-			break
-		}
-		switch ident.Name {
-		case "glob":
-			glob := parseGlob(t)
-			dir := filepath.Join(pkg.Dir(), pkg.Rel())
-			srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
-		default:
-			log.Printf("ignoring srcs call expression: %+v", t)
+		if ident, ok := t.X.(*build.Ident); ok {
+			switch ident.Name {
+			case "glob":
+				glob := parseGlob(t)
+				dir := filepath.Join(pkg.Dir(), pkg.Rel())
+				srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
+			default:
+				log.Printf("ignoring srcs call expression: %+v", t)
+			}
 		}
 	default:
 		log.Printf("unknown srcs types: //%s:%s %T", pkg.Rel(), r.Name(), t)

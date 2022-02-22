@@ -147,6 +147,17 @@ func (this *ClassFile) Name() string {
 	return this.cpUtf8(this.constantPool[this.thisClass].(*ConstantClassInfo).nameIndex)
 }
 
+// PackageNames collects a list of packageinfo names in the constant pool.
+func (this *ClassFile) PackageNames() []string {
+	names := make([]string, 0)
+	for _, cpInfo := range this.constantPool {
+		if pkgInfo, ok := cpInfo.(*ConstantPackageInfo); ok {
+			names = append(names, this.cpUtf8(pkgInfo.nameIndex))
+		}
+	}
+	return names
+}
+
 func (this *ClassFile) AccessFlags() uint16 {
 	return this.accessFlags
 }

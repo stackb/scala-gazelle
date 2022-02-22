@@ -65,7 +65,7 @@ func resolveDeps(attrName string) depsResolver {
 				continue
 			}
 			if err != nil {
-				log.Println(from, "resolveDeps error:", err)
+				log.Println(from, "scala resolveDeps error:", err)
 				unresolved = append(unresolved, "error: "+imp+": "+err.Error())
 				continue
 			}
@@ -98,6 +98,9 @@ func resolveDeps(attrName string) depsResolver {
 			}
 
 			if len(unresolved) > 0 {
+				if true {
+					panic(fmt.Sprintf("unresolved deps! %v", unresolved))
+				}
 				unresolved = protoc.DeduplicateAndSort(unresolved)
 				before := make([]build.Comment, len(unresolved))
 				for i, imp := range unresolved {
