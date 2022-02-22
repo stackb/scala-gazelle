@@ -21,11 +21,11 @@ import (
 
 func init() {
 	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-source-index", &scalaSourceIndexResolver{
-		symbols:    make(map[string]*provider),
-		byFilename: make(map[string]*index.ScalaFileSpec),
-		byRule:     make(map[label.Label]*index.ScalaRuleSpec),
-		parser:     &scalaSourceParser{},
-		symbolsMux: &sync.Mutex{},
+		providers:    make(map[string]*provider),
+		byFilename:   make(map[string]*index.ScalaFileSpec),
+		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
+		parser:       &scalaSourceParser{},
+		providersMux: &sync.Mutex{},
 	})
 }
 
@@ -43,10 +43,10 @@ func init() {
 type scalaSourceIndexResolver struct {
 	// filesystem path to the indexes to read/write.
 	indexIn, indexOut string
-	// symbols is a mapping from an import symbol to the thing that provides it.
-	symbols map[string]*provider
-	// symbolsMux protects symbols map
-	symbolsMux *sync.Mutex
+	// providers is a mapping from an import symbol to the thing that provides it.
+	providers map[string]*provider
+	// providersMux protects providers map
+	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
 	byFilename map[string]*index.ScalaFileSpec
 	// byRule is a mapping of the scala rule to the spec
@@ -161,8 +161,8 @@ func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule index.ScalaRuleSpec) e
 }
 
 func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec) error {
-	r.symbolsMux.Lock()
-	defer r.symbolsMux.Unlock()
+	r.providersMux.Lock()
+	defer r.providersMux.Unlock()
 
 	if _, exists := r.byFilename[file.Filename]; exists {
 		return fmt.Errorf("duplicate filename: " + file.Filename)
@@ -188,18 +188,18 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 
 func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
 	log.Println("provide:", imp, ruleLabel)
-	if p, ok := r.symbols[imp]; ok {
+	if p, ok := r.providers[imp]; ok {
 		if p.label == ruleLabel {
 			return
 		}
 		log.Fatalf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
-	r.symbols[imp] = &provider{rule, ruleLabel}
+	r.providers[imp] = &provider{rule, ruleLabel}
 }
 
 func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
 	log.Println("provide package:", imp, ruleLabel)
-	if p, ok := r.symbols[imp]; ok {
+	if p, ok := r.providers[imp]; ok {
 		// if there is an existing provider of the same package for the same rule, that is OK.
 		if p.label == ruleLabel {
 			return
@@ -223,7 +223,7 @@ func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, rul
 			log.Fatalf("package %q is provided by more than one rule (%q %s, %q %s)", imp, p.rule.Kind, p.label, rule.Kind, ruleLabel)
 		}
 	}
-	r.symbols[imp] = &provider{rule, ruleLabel}
+	r.providers[imp] = &provider{rule, ruleLabel}
 }
 
 func (r *scalaSourceIndexResolver) OnResolvePhase() error {
@@ -251,7 +251,7 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	log.Println("source crossResolve:", imp.Imp)
 
-	provider, ok := r.symbols[imp.Imp]
+	provider, ok := r.providers[imp.Imp]
 	if !ok {
 		return nil
 	}
