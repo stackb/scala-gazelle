@@ -77,7 +77,6 @@ type scalaLibraryRule struct {
 	rel            string
 	kindName       string
 	ruleNameSuffix string
-	srcs           []string
 	ruleConfig     *RuleConfig
 }
 

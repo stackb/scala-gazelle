@@ -166,7 +166,7 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 			dir := filepath.Join(pkg.Dir(), pkg.Rel())
 			srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
 		default:
-			log.Println("ignoring srcs call expression: %+v", t)
+			log.Printf("ignoring srcs call expression: %+v", t)
 		}
 	default:
 		log.Printf("unknown srcs types: //%s:%s %T", pkg.Rel(), r.Name(), t)
@@ -178,7 +178,8 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 func resolveSrcsSymbols(dir string, from label.Label, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
 	spec, err := resolver.ParseScalaRuleSpec(dir, from, srcs...)
 	if err != nil {
-		log.Println("failed to parse scala sources", from, err)
+		log.Fatalln("failed to parse scala sources", from, err)
+		return
 	}
 
 	for _, file := range spec.Srcs {

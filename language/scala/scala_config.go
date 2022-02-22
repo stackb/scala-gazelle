@@ -2,7 +2,6 @@ package scala
 
 import (
 	"fmt"
-	"path/filepath"
 	"sort"
 	"strings"
 
@@ -21,14 +20,6 @@ type scalaConfig struct {
 	config *config.Config
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
-}
-
-// GetscalaConfig returns the associated package config.
-func getScalaConfig(config *config.Config) *scalaConfig {
-	if cfg, ok := config.Exts[ScalaLangName].(*scalaConfig); ok {
-		return cfg
-	}
-	return nil
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -118,13 +109,6 @@ func (c *scalaConfig) configuredRules() []*RuleConfig {
 		rules = append(rules, c.rules[name])
 	}
 	return rules
-}
-
-// isScalaFile returns true if the file extension looks like it should contain
-// protobuf definitions.
-func isScalaFile(filename string) bool {
-	ext := filepath.Ext(filename)
-	return ext == ".scala"
 }
 
 // DeduplicateAndSort removes duplicate entries and sorts the list

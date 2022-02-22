@@ -69,11 +69,6 @@ func init() {
 // scalaSourceParser implements a parser for scala files that extracts the index information.
 type scalaSourceParser struct{}
 
-// newScalaSourceParser constructs a new scalaSourceParser.
-func newScalaSourceParser() *scalaSourceParser {
-	return &scalaSourceParser{}
-}
-
 // parseAll parses all provided Scala files by consecutively calling p.parse.
 func (p *scalaSourceParser) parseAll(filenames []string) ([]*index.ScalaFileSpec, error) {
 	files := make([]*index.ScalaFileSpec, len(filenames))

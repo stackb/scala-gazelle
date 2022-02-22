@@ -115,7 +115,7 @@ func (r *scalaSourceIndexResolver) ReadIndex(filename string) error {
 	for _, rule := range index.Rules {
 		ruleLabel, err := label.Parse(rule.Label)
 		if err != nil {
-			log.Println("bad label while loading rule spec: %v", err)
+			log.Printf("bad label while loading rule spec: %v", err)
 			continue
 		}
 

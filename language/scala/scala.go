@@ -29,8 +29,6 @@ func NewLanguage() language.Language {
 
 // scalaLang implements language.Language.
 type scalaLang struct {
-	// classIndexFile is the filename used for the class index
-	classIndexFile string
 	// ruleRegistry is the rule registry implementation
 	ruleRegistry RuleRegistry
 	// crossResolverRegistry is the cross resolver registry implementation
@@ -278,15 +276,4 @@ func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp r
 		}
 	}
 	return nil
-}
-
-func fullyQualifiedRuleKind(loads []*rule.Load, ruleKind string) string {
-	for _, load := range loads {
-		for _, pair := range load.SymbolPairs() {
-			if pair.To == ruleKind {
-				return load.Name() + "%" + pair.To
-			}
-		}
-	}
-	return ruleKind
 }

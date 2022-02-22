@@ -52,7 +52,7 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 		for _, class := range jarSpec.Classes {
 			jarLabel, err := label.Parse(jarSpec.Label)
 			if err != nil {
-				log.Println("bad label while loading jar spec %s: %v", jarSpec.Filename, err)
+				log.Printf("bad label while loading jar spec %s: %v", jarSpec.Filename, err)
 				continue
 			}
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
