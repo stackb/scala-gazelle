@@ -163,8 +163,17 @@ class ScalaSourceFile {
         node.importees.forEach(importee => {
             switch (importee.type) {
                 case 'Importee.Name':
-                    const name = importee.name.value;
-                    this.imports.add([ref, name].join('.'))
+                    this.imports.add([ref, importee.name.value].join('.'))
+                    break;
+                case 'Importee.Rename':
+                    this.imports.add([ref, importee.name.value].join('.'))
+                    break;
+                case 'Importee.Unimport':
+                    // an unimport is specifically excluded from the scala
+                    // import symbol table, but since it still implies an
+                    // interaction with the package we go ahead and index it
+                    // here.
+                    this.imports.add([ref, importee.name.value].join('.'))
                     break;
                 case 'Importee.Wildcard':
                     this.imports.add([ref, '_'].join('.'))

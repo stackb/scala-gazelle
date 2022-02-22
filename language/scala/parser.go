@@ -62,14 +62,6 @@ func (p *scalaSourceParser) start() error {
 		return err
 	}
 
-	go func() {
-		defer parserCancel()
-		if err := cmd.Wait(); err != nil {
-			log.Printf("failed to wait for parser: %v\n", err)
-			os.Exit(1)
-		}
-	}()
-
 	return nil
 }
 
