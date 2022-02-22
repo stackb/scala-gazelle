@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
+	"sync"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -19,10 +21,11 @@ import (
 
 func init() {
 	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-source-index", &scalaSourceIndexResolver{
-		byLabel:    make(map[string][]label.Label),
+		symbols:    make(map[string]*provider),
 		byFilename: make(map[string]*index.ScalaFileSpec),
 		byRule:     make(map[label.Label]*index.ScalaRuleSpec),
 		parser:     &scalaSourceParser{},
+		symbolsMux: &sync.Mutex{},
 	})
 }
 
@@ -40,15 +43,21 @@ func init() {
 type scalaSourceIndexResolver struct {
 	// filesystem path to the indexes to read/write.
 	indexIn, indexOut string
-	// byLabel is a mapping from an import symbol to the label that provides it.
-	// It is possible more than one label provides a symbol.
-	byLabel map[string][]label.Label
+	// symbols is a mapping from an import symbol to the thing that provides it.
+	symbols map[string]*provider
+	// symbolsMux protects symbols map
+	symbolsMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
 	byFilename map[string]*index.ScalaFileSpec
 	// byRule is a mapping of the scala rule to the spec
 	byRule map[label.Label]*index.ScalaRuleSpec
 	// parser is an instance of the scala source parser
 	parser *scalaSourceParser
+}
+
+type provider struct {
+	rule  *index.ScalaRuleSpec
+	label label.Label
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
@@ -73,21 +82,23 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 // is expected to be relative to the from.Pkg rel field, and the absolute path
 // of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
 // cache entry for the given file and the current sha256 matches the cached one,
-// the cached entry will be returned.
-func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Label, srcs ...string) (*index.ScalaRuleSpec, error) {
-	rule := &index.ScalaRuleSpec{
+// the cached entry will be returned.  Kind is used to determine if the rule is
+// a test rule.
+func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
+	rule := index.ScalaRuleSpec{
 		Label: from.String(),
+		Kind:  kind,
 		Srcs:  make([]index.ScalaFileSpec, len(srcs)),
 	}
 	for i, src := range srcs {
 		filename := filepath.Join(from.Pkg, src)
 		file, err := r.parseScalaFileSpec(dir, filename)
 		if err != nil {
-			return nil, err
+			return index.ScalaRuleSpec{}, err
 		}
 		rule.Srcs[i] = *file
 	}
-	r.byRule[from] = rule
+	r.readScalaRuleSpec(rule)
 	return rule, nil
 }
 
@@ -122,7 +133,8 @@ func (r *scalaSourceIndexResolver) readScalaRuleIndexSpec(filename string) error
 	}
 
 	for _, rule := range index.Rules {
-		if err := r.readScalaRuleSpec(&rule); err != nil {
+		rCopy := rule
+		if err := r.readScalaRuleSpec(rCopy); err != nil {
 			return err
 		}
 	}
@@ -130,16 +142,17 @@ func (r *scalaSourceIndexResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) error {
+func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule index.ScalaRuleSpec) error {
 	ruleLabel, err := label.Parse(rule.Label)
-	if err != nil {
+	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
 	}
 
-	r.byRule[ruleLabel] = rule
+	r.byRule[ruleLabel] = &rule
 
 	for _, file := range rule.Srcs {
-		if err := r.readScalaFileSpec(ruleLabel, &file); err != nil {
+		f := &file
+		if err := r.readScalaFileSpec(&rule, ruleLabel, f); err != nil {
 			return err
 		}
 	}
@@ -147,32 +160,81 @@ func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) 
 	return nil
 }
 
-func (r *scalaSourceIndexResolver) readScalaFileSpec(ruleLabel label.Label, file *index.ScalaFileSpec) error {
+func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec) error {
+	r.symbolsMux.Lock()
+	defer r.symbolsMux.Unlock()
+
 	if _, exists := r.byFilename[file.Filename]; exists {
 		return fmt.Errorf("duplicate filename: " + file.Filename)
 	}
+
 	r.byFilename[file.Filename] = file
 
-	for _, sym := range file.Classes {
-		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	for _, imp := range file.Classes {
+		r.provide(rule, ruleLabel, file, imp)
 	}
-	for _, sym := range file.Objects {
-		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	for _, imp := range file.Objects {
+		r.provide(rule, ruleLabel, file, imp)
 	}
-	for _, sym := range file.Traits {
-		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	for _, imp := range file.Traits {
+		r.provide(rule, ruleLabel, file, imp)
 	}
-	for _, sym := range file.Packages {
-		r.byLabel[sym] = append(r.byLabel[sym], ruleLabel)
+	for _, imp := range file.Packages {
+		r.providePackage(rule, ruleLabel, file, imp+"._")
 	}
 
 	return nil
 }
 
-func (r *scalaSourceIndexResolver) writeIndex() error {
+func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+	log.Println("provide:", imp, ruleLabel)
+	if p, ok := r.symbols[imp]; ok {
+		if p.label == ruleLabel {
+			return
+		}
+		log.Fatalf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
+	}
+	r.symbols[imp] = &provider{rule, ruleLabel}
+}
+
+func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+	log.Println("provide package:", imp, ruleLabel)
+	if p, ok := r.symbols[imp]; ok {
+		// if there is an existing provider of the same package for the same rule, that is OK.
+		if p.label == ruleLabel {
+			return
+		}
+		// if there is an existing provider of the same package for a different
+		// rule, non-test rules take precedence.  If two tests try and provide
+		// the same package, the first one wins.
+		if isTestRule(rule.Kind) {
+			return
+		}
+		// So the incoming rule.Kind is a not test rule.
+		// If two non-test rules try and provide the same package, we have an issue.
+		if !isTestRule(p.rule.Kind) {
+			log.Printf("current label: %v", p.label)
+			log.Printf("next label: %v", ruleLabel)
+			if p.rule == rule {
+				log.Panicln("huh?")
+			}
+			log.Printf("current: %+v", p.rule)
+			log.Printf("next: %+v", rule)
+			log.Fatalf("package %q is provided by more than one rule (%q %s, %q %s)", imp, p.rule.Kind, p.label, rule.Kind, ruleLabel)
+		}
+	}
+	r.symbols[imp] = &provider{rule, ruleLabel}
+}
+
+func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()
 
+	// dump the index
+	return r.writeIndex()
+}
+
+func (r *scalaSourceIndexResolver) writeIndex() error {
 	// index is not written if the _out file is not configured
 	if r.indexOut == "" {
 		return nil
@@ -187,17 +249,14 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	resolved := r.byLabel[imp.Imp]
-	if len(resolved) == 0 {
+	log.Println("source crossResolve:", imp.Imp)
+
+	provider, ok := r.symbols[imp.Imp]
+	if !ok {
 		return nil
 	}
 
-	result := make([]resolve.FindResult, len(resolved))
-	for i, v := range resolved {
-		result[i] = resolve.FindResult{Label: v}
-	}
-
-	return result
+	return []resolve.FindResult{{Label: provider.label}}
 }
 
 // fileSha256 computes the sha256 hash of a file
@@ -218,4 +277,8 @@ func readSha256(in io.Reader) (string, error) {
 		return "", err
 	}
 	return hex.EncodeToString(h.Sum(nil)), nil
+}
+
+func isTestRule(kind string) bool {
+	return strings.Contains(kind, "test")
 }

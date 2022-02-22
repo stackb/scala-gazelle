@@ -22,6 +22,13 @@ type ConfigurableCrossResolver interface {
 	CheckFlags(fs *flag.FlagSet, c *config.Config) error
 }
 
+// GazellePhaseTransitionListener is an optional interface for a cross-resolver
+// that wants phase transition notification.  Errors are considered fatal.
+type GazellePhaseTransitionListener interface {
+	OnIndexPhase() error
+	OnResolvePhase() error
+}
+
 // ErrUnknownResolver is the error returned when a CrossResolver is not known.
 var ErrUnknownResolver = errors.New("unknown CrossResolver")
 

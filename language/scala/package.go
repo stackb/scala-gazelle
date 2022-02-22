@@ -14,11 +14,12 @@ type ScalaPackage interface {
 	Rel() string
 	Dir() string
 	File() *rule.File
-	// Files() []*ScalaFile
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
+	// rel is the package (args.Rel)
+	rel string
 	// the registry to use
 	ruleRegistry RuleRegistry
 	// the build file
@@ -30,8 +31,9 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
+		rel:          rel,
 		ruleRegistry: ruleRegistry,
 		file:         file,
 		cfg:          cfg,
@@ -50,37 +52,34 @@ func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
 	return nil
 }
 
-// generateRules constructs a list of rules based on the configured set of
-// languages.
+// generateRules constructs a list of rules based on the configured set of rule
+// configurations.
 func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	rules := make([]RuleProvider, 0)
 
+	existingRulesByKind := make(map[string][]*rule.Rule)
 	if s.file != nil {
 		for _, r := range s.file.Rules {
-			// fqrk := fullyQualifiedRuleKind(args.File.Loads, r.Kind())
-			rc, ok := s.cfg.GetConfiguredRule(r.Kind())
-			if !ok {
-				continue
-			}
-
-			rule := s.resolveRule(rc, r)
-			if rule == nil {
-				continue
-			}
-
-			rules = append(rules, rule)
+			existingRulesByKind[r.Kind()] = append(existingRulesByKind[r.Kind()], r)
 		}
 	}
 
 	for _, rc := range s.cfg.configuredRules() {
-		if enabled != rc.Enabled {
+		// if enabled != rc.Enabled {
+		if !rc.Enabled {
+			log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
 			continue
 		}
 		rule := s.provideRule(rc)
-		if rule == nil {
-			continue
+		if rule != nil {
+			rules = append(rules, rule)
 		}
-		rules = append(rules, rule)
+		for _, r := range existingRulesByKind[rc.Name] {
+			rule := s.resolveRule(rc, r)
+			if rule != nil {
+				rules = append(rules, rule)
+			}
+		}
 	}
 
 	return rules
@@ -98,12 +97,7 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	}
 	rc.Impl = impl
 
-	rule := impl.ProvideRule(rc, s)
-	if rule == nil {
-		return nil
-	}
-
-	return rule
+	return impl.ProvideRule(rc, s)
 }
 
 func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
@@ -132,11 +126,7 @@ func (s *scalaPackage) File() *rule.File {
 
 // Rel implements part of the ScalaPackage interface.
 func (s *scalaPackage) Rel() string {
-	var rel string
-	if s.file != nil {
-		rel = s.file.Pkg
-	}
-	return rel
+	return s.rel
 }
 
 // Dir implements part of the ScalaPackage interface.

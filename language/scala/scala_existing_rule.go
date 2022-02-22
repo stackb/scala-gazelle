@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -68,10 +69,14 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
-	srcs := getAttrFiles(pkg, existing, "srcs")
-
-	// If we cannot find any srcs for the rule, bail now.
+	srcs, err := getAttrFiles(pkg, existing, "srcs")
+	if err != nil {
+		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
+		return nil
+	}
+	// If we cannot find any srcs for the rule, skip it.
 	if len(srcs) == 0 {
+		log.Printf("skipping %s //%s:%s (no srcs)", existing.Kind(), pkg.Rel(), existing.Name())
 		return nil
 	}
 
@@ -82,8 +87,7 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 
 	from := label.New("", pkg.Rel(), existing.Name())
 
-	log.Println(from, "srcs:", srcs)
-	requires, provides := resolveSrcsSymbols(pkg.Dir(), from, srcs, resolver.(*scalaSourceIndexResolver))
+	requires, provides := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, resolver.(*scalaSourceIndexResolver))
 
 	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
 	existing.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
@@ -144,7 +148,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 // getAttrFiles returns a list of source files for the 'srcs' attribute.  Each
 // value is a repo-relative path.
-func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []string) {
+func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []string, err error) {
 	switch t := r.Attr(attrName).(type) {
 	case *build.ListExpr:
 		// probably ["foo.scala", "bar.scala"]
@@ -166,15 +170,20 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 				log.Printf("ignoring srcs call expression: %+v", t)
 			}
 		}
+	case *build.Ident:
+		err = fmt.Errorf("not attempting to resolve identifier %q: consider inlining it", t.Name)
+	case nil:
+		// TODO(pcj): should this be considered an error, or normal condition?
+		// err = fmt.Errorf("rule has no 'srcs' attribute")
 	default:
-		log.Printf("unknown srcs types: //%s:%s %T", pkg.Rel(), r.Name(), t)
+		err = fmt.Errorf("uninterpretable 'srcs' attribute type: %T", t)
 	}
 
 	return
 }
 
-func resolveSrcsSymbols(dir string, from label.Label, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
-	spec, err := resolver.ParseScalaRuleSpec(dir, from, srcs...)
+func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
+	spec, err := resolver.ParseScalaRuleSpec(dir, from, kind, srcs...)
 	if err != nil {
 		log.Fatalln("failed to parse scala sources", from, err)
 		return

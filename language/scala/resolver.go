@@ -70,7 +70,7 @@ func resolveDeps(attrName string) depsResolver {
 				continue
 			}
 			if l == label.NoLabel {
-				unresolved = append(unresolved, "unresolved: "+imp)
+				unresolved = append(unresolved, "no-label: "+imp)
 				if debug {
 					log.Println(from, "no label", imp)
 				}
@@ -123,6 +123,9 @@ func resolveDeps(attrName string) depsResolver {
 }
 
 func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) (label.Label, error) {
+	if debug {
+		log.Println("resolveImport", from, lang, imp)
+	}
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
 		return label.NoLabel, errSkipImport
@@ -132,10 +135,15 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 		return l, errSkipImport
 	}
 	if l == label.NoLabel {
+		// if this is already a package import, try the parent package
+		imp = strings.TrimSuffix(imp, "._")
 		lastDot := strings.LastIndex(imp, ".")
 		if lastDot > 0 {
-			parentImp := imp[0:lastDot]
-			return resolveImport(c, ix, lang, parentImp, from)
+			parentPkg := imp[0:lastDot] + "._"
+			if debug {
+				log.Println("resolveImport parent package", from, lang, parentPkg)
+			}
+			return resolveImport(c, ix, lang, parentPkg, from)
 		}
 	}
 	return l, err

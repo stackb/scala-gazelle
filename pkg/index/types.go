@@ -41,6 +41,8 @@ type ScalaFileSpec struct {
 type ScalaRuleSpec struct {
 	// Label is the bazel label that names the source file in its srcs list.
 	Label string `json:"label,omitempty"`
+	// Kind is the kind of rule named by Label.
+	Kind string `json:"kind,omitempty"`
 	// Files is the list of files in the rule
 	Srcs []ScalaFileSpec `json:"srcs,omitempty"`
 }

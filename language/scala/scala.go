@@ -69,7 +69,7 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 			}
 		}
 	}
-	return nil
+	return sl.onIndexPhase()
 }
 
 func (*scalaLang) KnownDirectives() []string {
@@ -163,8 +163,10 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 	}
 
 	provider := pkg.ruleProvider(r)
+	// NOTE: gazelle attempts to index rules found in the build file regardless
+	// of whether we returned the rule from GenerateRules or not, so this will
+	// be nil in that case.
 	if provider == nil {
-		log.Printf("Unknown rule provider for %s %v", r.Kind(), from)
 		return nil
 	}
 
@@ -194,7 +196,9 @@ func (sl *scalaLang) Resolve(
 ) {
 	if !sl.isResolvePhase {
 		sl.isResolvePhase = true
-		sl.onResolvePhase()
+		if err := sl.onResolvePhase(); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if pkg, ok := sl.packages[from.Pkg]; ok {
@@ -229,46 +233,58 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	cfg := getOrCreateScalaConfig(args.Config)
 
-	pkg := newScalaPackage(sl.ruleRegistry, args.File, cfg)
+	pkg := newScalaPackage(sl.ruleRegistry, args.Rel, args.File, cfg)
 	sl.packages[args.Rel] = pkg
 
 	rules := pkg.Rules()
-	empty := pkg.Empty()
+	// empty := pkg.Empty()
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
-		// internalLabel := label.New("", args.Rel, r.Name())
-		// protoc.GlobalRuleIndex().Put(internalLabel, r)
 	}
 
+	// if args.File != nil {
+	// 	log.Println("visited", args.Rel)
+	// }
+
 	return language.GenerateResult{
-		Gen:     rules,
-		Empty:   empty,
+		Gen: rules,
+		// Empty:   empty,
 		Imports: imports,
 	}
 }
 
-func (sl *scalaLang) onResolvePhase() {
-	sl.writeSourceIndex()
-}
-
-func (sl *scalaLang) writeSourceIndex() {
+func (sl *scalaLang) onIndexPhase() error {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
 		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
-			if ssr, ok := resolver.(*scalaSourceIndexResolver); ok {
-				if err := ssr.writeIndex(); err != nil {
-					log.Println("dump index error:", err)
+			if ssr, ok := resolver.(GazellePhaseTransitionListener); ok {
+				if err := ssr.OnIndexPhase(); err != nil {
+					return err
 				}
 			}
 		}
 	}
+	return nil
+}
+
+func (sl *scalaLang) onResolvePhase() error {
+	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
+		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
+			if ssr, ok := resolver.(GazellePhaseTransitionListener); ok {
+				if err := ssr.OnResolvePhase(); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // CrossResolve calls all known resolvers and returns the first non-empty result.
 func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	for _, name := range sl.crossResolverRegistry.CrossResolverNames() {
-		// log.Println("cross resolve", name, lang, imp.Imp)
+		// log.Println("!cross-resolve", name, lang, imp.Imp)
 		if resolver, err := sl.crossResolverRegistry.LookupCrossResolver(name); err == nil {
 			if result := resolver.CrossResolve(c, ix, imp, lang); len(result) > 0 {
 				return result

@@ -325,7 +325,7 @@ def build_jar_index(ctx, target, jar):
 
     ctx.actions.run(
         mnemonic = "JarIndexer",
-        progress_message = "Parsing jar file symbols: " + str(target.label),
+        progress_message = "Extracting symbols from: " + jar.basename,
         executable = ctx.executable._jarindexer,
         arguments = args,
         inputs = [input_file, jar],
