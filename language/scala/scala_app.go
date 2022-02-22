@@ -10,7 +10,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/bmatcuk/doublestar/v4"
 	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
@@ -165,18 +164,7 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 		case "glob":
 			glob := parseGlob(t)
 			dir := filepath.Join(pkg.Dir(), pkg.Rel())
-			fs := os.DirFS(dir)
-			for _, pattern := range glob.Patterns {
-				names, err := doublestar.Glob(fs, pattern)
-				// log.Printf("names for pattern %s in %s: %v", pattern, dir, names)
-				if err != nil {
-					// doublestar.Match returns only one possible error, and
-					// only if the pattern is not valid.
-					log.Printf("error during doublestar.Glob: %v (pattern invalid: %v)", err, pattern)
-					continue
-				}
-				srcs = append(srcs, names...)
-			}
+			srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
 		default:
 			log.Println("ignoring srcs call expression: %+v", t)
 		}
