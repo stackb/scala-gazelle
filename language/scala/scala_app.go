@@ -175,29 +175,6 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func parseScalaFiles(dir string, files []string) []*ScalaFile {
-	scalaFiles := make([]*ScalaFile, 0)
-	for _, file := range files {
-		f, err := ParseScalaFile(dir, file)
-		if err != nil {
-			log.Println("error parsing scala file", file, err)
-			continue
-		}
-		scalaFiles = append(scalaFiles, f)
-	}
-	return scalaFiles
-}
-
-func scalaImports(files []*ScalaFile) []string {
-	imports := make([]string, 0)
-	for _, f := range files {
-		for _, imp := range f.Imports {
-			imports = append(imports, imp.Name)
-		}
-	}
-	return imports
-}
-
 func resolveSrcsSymbols(dir string, from label.Label, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
 	spec, err := resolver.ParseScalaRuleSpec(dir, from, srcs...)
 	if err != nil {

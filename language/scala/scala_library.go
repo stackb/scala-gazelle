@@ -79,7 +79,6 @@ type scalaLibraryRule struct {
 	ruleNameSuffix string
 	srcs           []string
 	ruleConfig     *RuleConfig
-	files          []*ScalaFile
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -96,9 +95,6 @@ func (s *scalaLibraryRule) Name() string {
 // Srcs computes the srcs list for the rule.
 func (s *scalaLibraryRule) Srcs() []string {
 	srcs := make([]string, 0)
-	for _, file := range s.files {
-		srcs = append(srcs, file.Name)
-	}
 	return srcs
 }
 
@@ -111,11 +107,6 @@ func (s *scalaLibraryRule) Deps() []string {
 // imports computes the set of (scala) imports for the rule.
 func (s *scalaLibraryRule) imports() []string {
 	imps := make([]string, 0)
-	for _, file := range s.files {
-		for _, imp := range file.Imports {
-			imps = append(imps, imp.Name)
-		}
-	}
 	return DeduplicateAndSort(imps)
 }
 

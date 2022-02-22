@@ -25,19 +25,16 @@ type scalaPackage struct {
 	file *rule.File
 	// the config for this package
 	cfg *scalaConfig
-	// the list of '.scala' files
-	files []*ScalaFile
 	// the generated and empty rule providers
 	gen, empty []RuleProvider
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfig, files ...*ScalaFile) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
 		ruleRegistry: ruleRegistry,
 		file:         file,
 		cfg:          cfg,
-		files:        files,
 	}
 	s.gen = s.generateRules(true)
 	s.empty = s.generateRules(false)
@@ -145,11 +142,6 @@ func (s *scalaPackage) Rel() string {
 // Dir implements part of the ScalaPackage interface.
 func (s *scalaPackage) Dir() string {
 	return s.cfg.config.RepoRoot
-}
-
-// Files implements part of the ScalaPackage interface.
-func (s *scalaPackage) Files() []*ScalaFile {
-	return s.files
 }
 
 // Rules provides the aggregated rule list for the package.

@@ -19,7 +19,6 @@ go_library(
         "scala_app.go",
         "scala_class_index_resolver.go",
         "scala_config.go",
-        "scala_file.go",
         "scala_library.go",
         "scala_source_index_resolver.go",
     ],
@@ -30,9 +29,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
-        "//antlr:parser",  # keep
         "//pkg/index",
-        "@antlr4_runtimes//:go",  # keep
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",

@@ -231,21 +231,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	cfg := getOrCreateScalaConfig(args.Config)
 
-	files := make([]*ScalaFile, 0)
-
-	// for _, f := range args.RegularFiles {
-	// 	if !isScalaFile(f) {
-	// 		continue
-	// 	}
-	// 	file, err := ParseScalaFile(args.Dir, f)
-	// 	if err != nil {
-	// 		log.Println("error parsing scala file:", f, err.Error())
-	// 		continue
-	// 	}
-	// 	files = append(files, file)
-	// }
-
-	pkg := newScalaPackage(sl.ruleRegistry, args.File, cfg, files...)
+	pkg := newScalaPackage(sl.ruleRegistry, args.File, cfg)
 	sl.packages[args.Rel] = pkg
 
 	rules := pkg.Rules()

@@ -7,7 +7,6 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # gazelle:exclude vendor
 # gazelle:resolve go go github.com/stackb/rules_proto/pkg/protoc @build_stack_rules_proto//pkg/protoc
 # gazelle:resolve go go github.com/stackb/rules_proto/pkg/goldentest @build_stack_rules_proto//pkg/goldentest
-# gazelle:resolve go go github.com/antlr/antlr4/runtime/Go/antlr @antlr4_runtimes//:go
 # gazelle:resolve go go github.com/bazelbuild/buildtools/build @com_github_bazelbuild_buildtools//build:go_default_library
 
 gazelle_binary(
