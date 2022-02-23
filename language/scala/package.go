@@ -75,12 +75,20 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 		if rule != nil {
 			rules = append(rules, rule)
 		}
-		for _, r := range existingRulesByFQN[rc.Implementation] {
-			rule := s.resolveRule(rc, r)
-			if rule != nil {
-				rules = append(rules, rule)
+		existing := existingRulesByFQN[rc.Implementation]
+		if len(existing) > 0 {
+			for _, r := range existing {
+				rule := s.resolveRule(rc, r)
+				if rule != nil {
+					rules = append(rules, rule)
+				}
 			}
 		}
+		delete(existingRulesByFQN, rc.Implementation)
+	}
+
+	for fqn := range existingRulesByFQN {
+		log.Println("no config for rule:", fqn)
 	}
 
 	return rules
@@ -164,6 +172,7 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 		if shouldResolve {
 			// record the association of the rule provider here for the resolver.
 			r.SetPrivateAttr(ruleProviderKey, p)
+			// log.Println("provided rule %s %s", r.Kind(), r.Name())
 		}
 		rules = append(rules, r)
 	}

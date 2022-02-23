@@ -332,11 +332,8 @@ function main() {
         }
 
     } else {
-        const io = readline.createInterface(process.stdin, process.stdout, undefined, false);
-
         async function run() {
             for await (const line of nextRequest()) {
-                // const request = JSON.parse(line);
                 const srcs = parse([line]);
                 // console.warn(`parse file: "${line}"`, srcs);
                 process.stdout.write(JSON.stringify(srcs[0]));
@@ -346,22 +343,6 @@ function main() {
         }
 
         run();
-        // io.question
-        // io.on('line', (line) => {
-        //     console.warn('line event: ', JSON.stringify(line, null, 2));
-        //     const filename = line.trim();
-        //     console.warn(`parse file: "${filename}"`);
-        //     const result = parse(label, [filename]);
-        //     inputs.length = 0;
-        //     console.warn(`parse result: ${result}`);
-
-        //     io.write(result);
-        //     io.write('\n');
-        // }).on('close', () => {
-        //     process.exit(0);
-        // });
-
-        // io.resume();
     }
 
 }

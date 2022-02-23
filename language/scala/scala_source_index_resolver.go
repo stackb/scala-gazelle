@@ -22,6 +22,7 @@ import (
 func init() {
 	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-source-index", &scalaSourceIndexResolver{
 		providers:    make(map[string][]*provider),
+		packages:     make(map[string][]*provider),
 		byFilename:   make(map[string]*index.ScalaFileSpec),
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
 		parser:       &scalaSourceParser{},
@@ -43,8 +44,14 @@ func init() {
 type scalaSourceIndexResolver struct {
 	// filesystem path to the indexes to read/write.
 	indexIn, indexOut string
-	// providers is a mapping from an import symbol to the thing that provides it.
+	// providers and packages is a mapping from an import symbol to the things
+	// that provide it. It is legal for more than one label to provide a symbol
+	// (e.g., a test class can exist in multiple rule srcs attribute), but it is
+	// an error if such a symbol is attempted to be imported (e.g., a test class
+	// should not be imported). They are made distinct as they have different
+	// disambigation semantics.
 	providers map[string][]*provider
+	packages  map[string][]*provider
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
@@ -57,6 +64,7 @@ type scalaSourceIndexResolver struct {
 
 type provider struct {
 	rule  *index.ScalaRuleSpec
+	file  *index.ScalaFileSpec
 	label label.Label
 }
 
@@ -123,6 +131,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	file.Filename = filename
 	file.Sha256 = sha256
 	r.byFilename[filename] = file
+	log.Printf("parsed: <%s>", filename)
 	return file, nil
 }
 
@@ -193,14 +202,16 @@ func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel 
 		if p.label == ruleLabel {
 			return
 		}
-		log.Fatalf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
+		log.Printf("current: %+v", p.file)
+		log.Printf("next: %+v", file)
+		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
-	r.providers[imp] = []*provider{{rule, ruleLabel}}
+	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
 }
 
 func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
 	log.Println("provide package:", imp, ruleLabel)
-	if pp, ok := r.providers[imp]; ok {
+	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.
 		if p.label == ruleLabel {
@@ -213,9 +224,15 @@ func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, rul
 			return
 		}
 	}
-	r.providers[imp] = append(r.providers[imp], &provider{rule, ruleLabel})
+	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
+// OnIndexPhase implements part of GazellePhaseTransitionListener.
+func (r *scalaSourceIndexResolver) OnIndexPhase() error {
+	return nil
+}
+
+// OnResolvePhase implements part of GazellePhaseTransitionListener.
 func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()
@@ -234,23 +251,42 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 	for _, rule := range r.byRule {
 		idx.Rules = append(idx.Rules, *rule)
 	}
-	return index.WriteJSONFile(r.indexOut, &idx)
+
+	if err := index.WriteJSONFile(r.indexOut, &idx); err != nil {
+		return err
+	}
+
+	log.Println("Wrote", r.indexOut)
+
+	return nil
 }
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	log.Println("source crossResolve:", imp.Imp)
-	sym := strings.TrimSuffix(imp.Imp, "._")
 
-	providers, ok := r.providers[sym]
-	if !ok {
-		return nil
+	if providers, ok := r.providers[imp.Imp]; ok {
+		log.Println("source crossResolve hit:", providers)
+		result := make([]resolve.FindResult, len(providers))
+		for i, p := range providers {
+			result[i] = resolve.FindResult{Label: p.label}
+		}
+		return result
 	}
 
-	log.Println("source crossResolve hit:", providers[0].label)
+	sym := strings.TrimSuffix(imp.Imp, "._")
 
-	// pick the first result -- this might not be correct!
-	return []resolve.FindResult{{Label: providers[0].label}}
+	if packages, ok := r.packages[sym]; ok {
+		// pick the first result -- this might not be correct!
+		log.Println("source crossResolve package hit:", packages[0].label)
+		result := make([]resolve.FindResult, len(packages))
+		for i, p := range packages {
+			result[i] = resolve.FindResult{Label: p.label}
+		}
+		return result
+	}
+
+	return nil
 }
 
 // fileSha256 computes the sha256 hash of a file

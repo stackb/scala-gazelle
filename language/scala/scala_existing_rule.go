@@ -13,6 +13,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
 func init() {
@@ -26,8 +27,14 @@ func init() {
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
 
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library")
-	mustRegister("//bazel_tools.bzl/scala:scala.bzl", "scala_app")
-	mustRegister("//bazel_tools.bzl/scala:scala.bzl", "scala_app_test")
+	mustRegister("//bazel_tools:scala.bzl", "scala_app")
+	mustRegister("//bazel_tools:scala.bzl", "scala_app_test")
+	mustRegister("//bazel_tools:scala.bzl", "scala_binary")
+	mustRegister("//bazel_tools:scala.bzl", "scala_library")
+	mustRegister("//bazel_tools:scala.bzl", "scala_test")
+	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app")
+	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app")
+	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test")
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
@@ -73,6 +80,7 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
 		return nil
 	}
+
 	// If we cannot find any srcs for the rule, skip it.
 	if len(srcs) == 0 {
 		log.Printf("skipping %s //%s:%s (no srcs)", existing.Kind(), pkg.Rel(), existing.Name())
@@ -86,7 +94,11 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 
 	from := label.New("", pkg.Rel(), existing.Name())
 
-	requires, provides := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, resolver.(*scalaSourceIndexResolver))
+	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, resolver.(*scalaSourceIndexResolver))
+	if err != nil {
+		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
+		return nil
+	}
 
 	if debug {
 		for i, src := range srcs {
@@ -199,10 +211,10 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string) {
-	spec, err := resolver.ParseScalaRuleSpec(dir, from, kind, srcs...)
+func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string, err error) {
+	var spec index.ScalaRuleSpec
+	spec, err = resolver.ParseScalaRuleSpec(dir, from, kind, srcs...)
 	if err != nil {
-		log.Fatalln("failed to parse scala sources", from, err)
 		return
 	}
 

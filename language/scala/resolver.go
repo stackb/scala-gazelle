@@ -34,6 +34,10 @@ func resolveDeps(attrName string) depsResolver {
 			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)
 		}
 
+		if from.Name == "" {
+			log.Panicf("bad label: %v", from)
+		}
+
 		existing := r.AttrStrings(attrName)
 		r.DelAttr(attrName)
 
@@ -182,7 +186,7 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 		return label.NoLabel, errNotFound
 	}
 	if len(matches) > 1 {
-		return label.NoLabel, fmt.Errorf("multiple rules (%s and %s) may be imported with %q from %s", matches[0].Label, matches[1].Label, imp, from)
+		return label.NoLabel, fmt.Errorf("%v: %q is provided by multiple rules (%s and %s).  Add a resolve directive in the nearest BUILD.bazel file to disambiguate (example: '# gazelle:resolve scala scala %s %s')", from, imp, matches[0].Label, matches[1].Label, imp, matches[0].Label)
 	}
 	if matches[0].IsSelfImport(from) || isSameImport(c, from, matches[0].Label) {
 		// log.Println(from, "self import:", imp)
