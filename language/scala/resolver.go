@@ -130,22 +130,29 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 	if imp == "" {
 		return label.NoLabel, errSkipImport
 	}
+
 	l, err := resolveAnyKind(c, ix, lang, imp, from)
-	if l == PlatformLabel {
-		return l, errSkipImport
+	if err != nil {
+		return l, err
 	}
+
+	if l == PlatformLabel {
+		return label.NoLabel, errSkipImport
+	}
+
 	if l == label.NoLabel {
 		// if this is already a package import, try the parent package
 		imp = strings.TrimSuffix(imp, "._")
 		lastDot := strings.LastIndex(imp, ".")
 		if lastDot > 0 {
-			parentPkg := imp[0:lastDot] + "._"
+			parent := imp[0:lastDot]
 			if debug {
-				log.Println("resolveImport parent package", from, lang, parentPkg)
+				log.Println("resolveImport parent package", from, lang, parent)
 			}
-			return resolveImport(c, ix, lang, parentPkg, from)
+			return resolveImport(c, ix, lang, parent, from)
 		}
 	}
+
 	return l, err
 }
 

@@ -332,8 +332,6 @@ function main() {
         }
 
     } else {
-        console.warn('Waiting for parse requests from stdin...');
-
         const io = readline.createInterface(process.stdin, process.stdout, undefined, false);
 
         async function run() {

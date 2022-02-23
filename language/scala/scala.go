@@ -167,6 +167,7 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 	// of whether we returned the rule from GenerateRules or not, so this will
 	// be nil in that case.
 	if provider == nil {
+		// log.Println("scala.Imports(): Unknown provider", from)
 		return nil
 	}
 
@@ -244,9 +245,9 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 	}
 
-	// if args.File != nil {
-	// 	log.Println("visited", args.Rel)
-	// }
+	if args.File != nil {
+		log.Println("visited", args.Rel)
+	}
 
 	return language.GenerateResult{
 		Gen: rules,

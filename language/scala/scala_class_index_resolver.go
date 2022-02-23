@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -69,8 +70,7 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 			}
 		}
 		for _, pkg := range jarSpec.Packages {
-			pkgImport := pkg + "._"
-			r.byLabel[pkgImport] = append(r.byLabel[pkgImport], jarLabel)
+			r.byLabel[pkg] = append(r.byLabel[pkg], jarLabel)
 		}
 
 		for _, class := range jarSpec.Classes {
@@ -83,7 +83,9 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	resolved := r.byLabel[imp.Imp]
+	sym := strings.TrimSuffix(imp.Imp, "._")
+
+	resolved := r.byLabel[sym]
 	if len(resolved) == 0 {
 		return nil
 	}

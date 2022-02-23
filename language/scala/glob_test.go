@@ -17,43 +17,63 @@ import (
 // TestParseGlob tests the parsing of a starlark glob.
 func TestParseGlob(t *testing.T) {
 	for name, tc := range map[string]struct {
-		text string
+		// prelude is an optional chunk of BUILD file content
+		prelude string
+		// glob is the starlark text of the glob
+		glob string
+		// want is the expected parsed structure
 		want rule.GlobValue
 	}{
 		"empty glob": {
-			text: `glob()`,
+			glob: `glob()`,
 			want: rule.GlobValue{},
 		},
 		"default include list - empty": {
-			text: `glob([])`,
+			glob: `glob([])`,
 			want: rule.GlobValue{},
 		},
 		"default include list - one pattern": {
-			text: `glob(["A.scala"])`,
+			glob: `glob(["A.scala"])`,
 			want: rule.GlobValue{Patterns: []string{"A.scala"}},
 		},
 		"default include list - two patterns": {
-			text: `glob(["A.scala", "B.scala"])`,
+			glob: `glob(["A.scala", "B.scala"])`,
 			want: rule.GlobValue{Patterns: []string{"A.scala", "B.scala"}},
 		},
 		"exclude list - single exclude": {
-			text: `glob([], exclude=["C.scala"])`,
+			glob: `glob([], exclude=["C.scala"])`,
 			want: rule.GlobValue{Excludes: []string{"C.scala"}},
 		},
+		"global pattern": {
+			prelude: `LIST = ["A.scala"]`,
+			glob:    `glob(LIST)`,
+			want:    rule.GlobValue{Patterns: []string{"A.scala"}},
+		},
+		"global pattern and exclude": {
+			prelude: `
+INCLUDES = ["A.scala"]
+EXCLUDES = ["C.scala"]
+`,
+			glob: `glob(INCLUDES, exclude = EXCLUDES)`,
+			want: rule.GlobValue{Patterns: []string{"A.scala"}, Excludes: []string{"C.scala"}},
+		},
 		"complex value - not supported": {
-			text: `glob(get_include_list(), get_exclude_list())`,
+			glob: `glob(get_include_list(), get_exclude_list())`,
 			want: rule.GlobValue{},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			content := fmt.Sprintf("test_rule(srcs = %s)", tc.text)
-			file, err := build.Parse("BUILD", []byte(content))
+			content := fmt.Sprintf("test_rule(srcs = %s)", tc.glob)
+			if tc.prelude != "" {
+				content = tc.prelude + "\n\n" + content
+			}
+			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(content))
 			if err != nil {
 				t.Fatal(err)
 			}
-			r := file.Rules("test_rule")[0]
+			r := file.File.Rules("test_rule")[0]
 
-			got := parseGlob(r.Attr("srcs").(*build.CallExpr))
+			got := parseGlob(file, r.Attr("srcs").(*build.CallExpr))
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("parseGlob (-want +got):\n%s", diff)
 			}

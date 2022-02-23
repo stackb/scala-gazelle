@@ -1,31 +1,37 @@
 package scala
 
 import (
+	"bytes"
+	"fmt"
 	"io/fs"
 	"log"
 
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/bmatcuk/doublestar/v4"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/stackb/scala-gazelle/pkg/starlarkeval"
+	"go.starlark.net/starlark"
 )
 
-func parseGlob(call *build.CallExpr) (glob rule.GlobValue) {
-	for _, expr := range call.List {
+func parseGlob(file *rule.File, call *build.CallExpr) (glob rule.GlobValue) {
+	for i, expr := range call.List {
 		switch e := expr.(type) {
 		case *build.AssignExpr:
 			if ident, ok := e.LHS.(*build.Ident); ok {
 				switch ident.Name {
 				case "exclude":
-					if list, ok := e.RHS.(*build.ListExpr); ok {
-						for _, item := range list.List {
-							switch elem := item.(type) {
-							case *build.StringExpr:
-								glob.Excludes = append(glob.Excludes, elem.Value)
-							default:
-								log.Printf("skipping glob list item expression: %+v (%T)", elem, elem)
-							}
+					switch rhs := e.RHS.(type) {
+					case *build.ListExpr:
+						glob.Excludes = append(glob.Excludes, stringList(rhs)...)
+					case *build.Ident:
+						values, err := globalStringList(file, rhs)
+						if err != nil {
+							log.Print("skipping list expression elem: %v", err)
+							break
 						}
-					} else {
+						glob.Excludes = append(glob.Excludes, values...)
+					default:
 						log.Printf("skipping glob assign exclude (only list expressions are supported): %s = %T", ident.Name, e.RHS)
 					}
 				default:
@@ -33,16 +39,19 @@ func parseGlob(call *build.CallExpr) (glob rule.GlobValue) {
 				}
 			}
 		case *build.ListExpr:
-			for _, item := range e.List {
-				switch elem := item.(type) {
-				case *build.StringExpr:
-					glob.Patterns = append(glob.Patterns, elem.Value)
-				default:
-					log.Printf("skipping glob list item expression: %+v (%T)", elem, elem)
-				}
+			glob.Patterns = append(glob.Patterns, stringList(e)...)
+		case *build.Ident:
+			values, err := globalStringList(file, e)
+			if err != nil {
+				log.Print("skipping list expression elem: %v", err)
+				break
 			}
+			glob.Patterns = append(glob.Patterns, values...)
 		default:
-			log.Printf("skipping glob list expression: %T", e)
+			if false {
+				spew.Dump(call)
+			}
+			log.Printf("skipping glob list expression %d: %T in %+v", i, e, call)
 		}
 	}
 
@@ -80,4 +89,55 @@ func applyGlob(glob rule.GlobValue, fs fs.FS) (srcs []string) {
 	}
 
 	return
+}
+
+func stringList(list *build.ListExpr) (values []string) {
+	for _, item := range list.List {
+		switch elem := item.(type) {
+		case *build.StringExpr:
+			values = append(values, elem.Value)
+		default:
+			log.Printf("skipping glob list item expression: %+v (%T)", elem, elem)
+		}
+	}
+	return
+}
+
+func globalStringList(file *rule.File, ident *build.Ident) ([]string, error) {
+	value, err := resolveGlobalAssignment(file, ident.Name)
+	if err != nil {
+		return nil, fmt.Errorf("must resolve to a starlark List[String]: %v", ident.Name, err)
+	}
+	list, ok := value.(*build.ListExpr)
+	if !ok {
+		return nil, fmt.Errorf("must resolve to a starlark List[String]", ident.Name)
+	}
+	return stringList(list), nil
+}
+
+func resolveGlobalAssignment(file *rule.File, identName string) (build.Expr, error) {
+	for _, stmt := range file.File.Stmt {
+		switch t := stmt.(type) {
+		case *build.AssignExpr:
+			if ident, ok := t.LHS.(*build.Ident); ok {
+				if ident.Name == identName {
+					return t.RHS, nil
+				}
+			}
+		}
+	}
+	return nil, fmt.Errorf("unknown global identifier: %s", identName)
+}
+
+func evalGlobalIdentifier(file *rule.File, identName string) (starlark.Value, error) {
+	in := bytes.NewReader(file.Format())
+	interpreter := starlarkeval.NewInterpreter(log.Printf)
+	if err := interpreter.Exec(file.Path, in); err != nil {
+		return nil, err
+	}
+	value := interpreter.GetGlobal(identName)
+	if value == nil {
+		return nil, fmt.Errorf("unknown global identifier: %s", identName)
+	}
+	return value, nil
 }

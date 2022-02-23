@@ -30,6 +30,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//pkg/index",
+        "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",
@@ -39,7 +40,9 @@ go_library(
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_bmatcuk_doublestar_v4//:doublestar",
+        "@com_github_davecgh_go_spew//spew",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@net_starlark_go//starlark",
     ],
 )
 
@@ -79,8 +82,10 @@ go_test(
     ] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
+        "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
         "@build_stack_rules_proto//pkg/goldentest",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
