@@ -60,7 +60,7 @@ func resolveDeps(attrName string) depsResolver {
 				log.Println("resolveDeps:", impLang, imp)
 			}
 
-			l, err := resolveImport(c, ix, impLang, imp, from)
+			ll, err := resolveImport(c, ix, impLang, imp, from)
 			if err == errSkipImport {
 				if debug {
 					log.Println(from, "skipped:", imp)
@@ -73,7 +73,7 @@ func resolveDeps(attrName string) depsResolver {
 				unresolved = append(unresolved, "error: "+imp+": "+err.Error())
 				continue
 			}
-			if l == label.NoLabel {
+			if len(ll) == 0 {
 				unresolved = append(unresolved, "no-label: "+imp)
 				if debug {
 					log.Println(from, "no label", imp)
@@ -81,12 +81,14 @@ func resolveDeps(attrName string) depsResolver {
 				continue
 			}
 
-			l = l.Rel(from.Repo, from.Pkg)
-			if debug {
-				log.Println(from, "resolved:", imp, "is provided by", l)
+			for _, l := range ll {
+				l = l.Rel(from.Repo, from.Pkg)
+				if debug {
+					log.Println(from, "resolved:", imp, "is provided by", l)
+				}
+				depSet[l.String()] = true
+				resolved = append(resolved, imp+" -> "+l.String())
 			}
-			depSet[l.String()] = true
-			resolved = append(resolved, imp+" -> "+l.String())
 		}
 
 		if len(depSet) > 0 {
@@ -126,25 +128,25 @@ func resolveDeps(attrName string) depsResolver {
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) (label.Label, error) {
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) ([]label.Label, error) {
 	if debug {
 		log.Println("resolveImport", from, lang, imp)
 	}
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
-		return label.NoLabel, errSkipImport
+		return nil, errSkipImport
 	}
 
-	l, err := resolveAnyKind(c, ix, lang, imp, from)
+	ll, err := resolveAnyKind(c, ix, lang, imp, from)
 	if err != nil {
-		return l, err
+		return nil, err
 	}
 
-	if l == PlatformLabel {
-		return label.NoLabel, errSkipImport
+	if len(ll) == 1 && ll[0] == PlatformLabel {
+		return nil, errSkipImport
 	}
 
-	if l == label.NoLabel {
+	if len(ll) == 0 {
 		// if this is already a package import, try the parent package
 		imp = strings.TrimSuffix(imp, "._")
 		lastDot := strings.LastIndex(imp, ".")
@@ -157,7 +159,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 		}
 	}
 
-	return l, err
+	return ll, err
 }
 
 // resolveAnyKind answers the question "what bazel label provides a rule for the
@@ -166,34 +168,40 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 // resolve directives, or via a YAML config).  If no override is found, the
 // RuleIndex is consulted, which contains all rules indexed by gazelle in the
 // generation phase.   If no match is found, return label.NoLabel.
-func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) (label.Label, error) {
+func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) ([]label.Label, error) {
 	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
 		// log.Println(from, "override hit:", l)
-		return l, nil
+		return []label.Label{l}, nil
 	}
-	if l, err := resolveWithIndex(c, ix, lang, imp, from); err == nil || err == errSkipImport {
-		return l, err
+	if ll, err := resolveWithIndex(c, ix, lang, imp, from); err == nil || err == errSkipImport {
+		return ll, err
 	} else if err != errNotFound {
-		return label.NoLabel, err
+		return nil, err
 	}
-	return label.NoLabel, nil
+	return nil, nil
 }
 
-func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) (label.Label, error) {
+func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) ([]label.Label, error) {
 	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, ScalaLangName)
 	if len(matches) == 0 {
 		// log.Println(from, "no matches:", imp)
-		return label.NoLabel, errNotFound
+		return nil, errNotFound
 	}
 	if len(matches) > 1 {
-		return label.NoLabel, fmt.Errorf("%v: %q is provided by multiple rules (%s and %s).  Add a resolve directive in the nearest BUILD.bazel file to disambiguate (example: '# gazelle:resolve scala scala %s %s')", from, imp, matches[0].Label, matches[1].Label, imp, matches[0].Label)
+		// return label.NoLabel, fmt.Errorf("%v: %q is provided by multiple rules (%s and %s).  Add a resolve directive in the nearest BUILD.bazel file to disambiguate (example: '# gazelle:resolve scala scala %s %s')", from, imp, matches[0].Label, matches[1].Label, imp, matches[0].Label)
+		ll := make([]label.Label, len(matches))
+		for i, match := range matches {
+			// TODO(pcj): check for self imports
+			ll[i] = match.Label
+		}
+		return ll, nil
 	}
 	if matches[0].IsSelfImport(from) || isSameImport(c, from, matches[0].Label) {
 		// log.Println(from, "self import:", imp)
-		return label.NoLabel, errSkipImport
+		return nil, errSkipImport
 	}
 	// log.Println(from, "FindRulesByImportWithConfig first match:", imp, matches[0].Label)
-	return matches[0].Label, nil
+	return []label.Label{matches[0].Label}, nil
 }
 
 // isSameImport returns true if the "from" and "to" labels are the same.  If the
