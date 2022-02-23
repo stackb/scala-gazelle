@@ -93,10 +93,10 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 // the cached entry will be returned.  Kind is used to determine if the rule is
 // a test rule.
 func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
-	rule := index.ScalaRuleSpec{
+	rule := &index.ScalaRuleSpec{
 		Label: from.String(),
 		Kind:  kind,
-		Srcs:  make([]index.ScalaFileSpec, len(srcs)),
+		Srcs:  make([]*index.ScalaFileSpec, len(srcs)),
 	}
 	for i, src := range srcs {
 		filename := filepath.Join(from.Pkg, src)
@@ -104,10 +104,10 @@ func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Lab
 		if err != nil {
 			return index.ScalaRuleSpec{}, err
 		}
-		rule.Srcs[i] = *file
+		rule.Srcs[i] = file
 	}
 	r.readScalaRuleSpec(rule)
-	return rule, nil
+	return *rule, nil
 }
 
 func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
@@ -120,7 +120,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	file, ok := r.byFilename[filename]
 	if ok {
 		if file.Sha256 == sha256 {
-			log.Printf("file cache hit: <%s> (%s)", filename, sha256)
+			// log.Printf("file cache hit: <%s> (%s)", filename, sha256)
 			return file, nil
 		} else {
 			log.Printf("sha256 mismatch: <%s> (%s, %s)", filename, file.Sha256, sha256)
@@ -146,8 +146,7 @@ func (r *scalaSourceIndexResolver) readScalaRuleIndexSpec(filename string) error
 	}
 
 	for _, rule := range index.Rules {
-		rCopy := rule
-		if err := r.readScalaRuleSpec(rCopy); err != nil {
+		if err := r.readScalaRuleSpec(rule); err != nil {
 			return err
 		}
 	}
@@ -155,20 +154,19 @@ func (r *scalaSourceIndexResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule index.ScalaRuleSpec) error {
+func (r *scalaSourceIndexResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
 	}
 
-	r.byRule[ruleLabel] = &rule
-
 	for _, file := range rule.Srcs {
-		f := &file
-		if err := r.readScalaFileSpec(&rule, ruleLabel, f); err != nil {
+		if err := r.readScalaFileSpec(rule, ruleLabel, file); err != nil {
 			return err
 		}
 	}
+
+	r.byRule[ruleLabel] = rule
 
 	return nil
 }
@@ -178,10 +176,8 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	defer r.providersMux.Unlock()
 
 	if _, exists := r.byFilename[file.Filename]; exists {
-		return fmt.Errorf("duplicate filename: " + file.Filename)
+		return fmt.Errorf("duplicate filename <%s>", file.Filename)
 	}
-
-	r.byFilename[file.Filename] = file
 
 	for _, imp := range file.Classes {
 		r.provide(rule, ruleLabel, file, imp)
@@ -195,6 +191,9 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	for _, imp := range file.Packages {
 		r.providePackage(rule, ruleLabel, file, imp)
 	}
+
+	r.byFilename[file.Filename] = file
+	log.Printf("cached file <%s> (%s)", file.Filename, file.Sha256)
 
 	return nil
 }
@@ -253,7 +252,7 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 
 	var idx index.ScalaRuleIndexSpec
 	for _, rule := range r.byRule {
-		idx.Rules = append(idx.Rules, *rule)
+		idx.Rules = append(idx.Rules, rule)
 	}
 
 	if err := index.WriteJSONFile(r.indexOut, &idx); err != nil {
@@ -267,10 +266,14 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	log.Println("source crossResolve:", imp.Imp)
+	if lang != "scala" {
+		return nil
+	}
 
-	if providers, ok := r.providers[imp.Imp]; ok {
-		log.Println("source crossResolve hit:", providers)
+	sym := imp.Imp
+
+	if providers, ok := r.providers[sym]; ok {
+		// log.Println("source crossResolve hit:", providers)
 		result := make([]resolve.FindResult, len(providers))
 		for i, p := range providers {
 			result[i] = resolve.FindResult{Label: p.label}
@@ -278,11 +281,11 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		return result
 	}
 
-	sym := strings.TrimSuffix(imp.Imp, "._")
+	sym = strings.TrimSuffix(sym, "._")
 
 	if packages, ok := r.packages[sym]; ok {
 		// pick the first result -- this might not be correct!
-		log.Println("source crossResolve package hit:", packages[0].label)
+		// log.Println("source crossResolve package hit:", packages[0].label)
 		result := make([]resolve.FindResult, len(packages))
 		for i, p := range packages {
 			result[i] = resolve.FindResult{Label: p.label}
@@ -290,6 +293,7 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		return result
 	}
 
+	// log.Println("source crossResolve miss:", imp.Imp)
 	return nil
 }
 

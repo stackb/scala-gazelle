@@ -63,7 +63,7 @@ func merge(filenames []string) error {
 		for _, class := range jarSpec.Classes {
 			labelByClass[class] = append(labelByClass[class], jarSpec.Label)
 		}
-		spec.JarSpecs = append(spec.JarSpecs, *jarSpec)
+		spec.JarSpecs = append(spec.JarSpecs, jarSpec)
 	}
 
 	for classname, labels := range labelByClass {

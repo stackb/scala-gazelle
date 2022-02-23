@@ -2,7 +2,7 @@ package index
 
 // IndexSpec describes the a list of JarSpecs.
 type IndexSpec struct {
-	JarSpecs []JarSpec `json:"jarSpecs,omitempty"`
+	JarSpecs []*JarSpec `json:"jarSpecs,omitempty"`
 }
 
 // JarSpec describes the symbols provided by a bazel label that produces a jar
@@ -44,11 +44,11 @@ type ScalaRuleSpec struct {
 	// Kind is the kind of rule named by Label.
 	Kind string `json:"kind,omitempty"`
 	// Files is the list of files in the rule
-	Srcs []ScalaFileSpec `json:"srcs,omitempty"`
+	Srcs []*ScalaFileSpec `json:"srcs,omitempty"`
 }
 
 // ScalaRuleIndexSpec represents a list of ScalaRuleSpec.
 type ScalaRuleIndexSpec struct {
 	// Files is the list of files in the rule
-	Rules []ScalaRuleSpec `json:"rules,omitempty"`
+	Rules []*ScalaRuleSpec `json:"rules,omitempty"`
 }

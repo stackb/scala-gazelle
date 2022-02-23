@@ -87,9 +87,9 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 		delete(existingRulesByFQN, rc.Implementation)
 	}
 
-	for fqn := range existingRulesByFQN {
-		log.Println("no config for rule:", fqn)
-	}
+	// for fqn := range existingRulesByFQN {
+	// 	log.Println("no config for rule:", fqn)
+	// }
 
 	return rules
 }

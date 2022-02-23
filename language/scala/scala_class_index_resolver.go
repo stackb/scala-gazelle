@@ -83,6 +83,10 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+	if lang != "scala" {
+		return nil
+	}
+
 	sym := strings.TrimSuffix(imp.Imp, "._")
 
 	resolved := r.byLabel[sym]

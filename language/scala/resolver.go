@@ -147,8 +147,16 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 	}
 
 	if len(ll) == 0 {
-		// if this is already a package import, try the parent package
-		imp = strings.TrimSuffix(imp, "._")
+		// if this is a _root_ import, try without
+		if strings.HasPrefix(imp, "_root_.") {
+			return resolveImport(c, ix, lang, strings.TrimPrefix(imp, "_root_."), from)
+		}
+
+		// if this is already an all import, try without
+		if strings.HasSuffix(imp, "._") {
+			return resolveImport(c, ix, lang, strings.TrimSuffix(imp, "._"), from)
+		}
+
 		lastDot := strings.LastIndex(imp, ".")
 		if lastDot > 0 {
 			parent := imp[0:lastDot]
