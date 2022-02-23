@@ -29,6 +29,7 @@ func init() {
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library")
 	mustRegister("//bazel_tools:scala.bzl", "scala_app")
 	mustRegister("//bazel_tools:scala.bzl", "scala_app_test")
+	mustRegister("//bazel_tools:scala.bzl", "scala_app_library")
 	mustRegister("//bazel_tools:scala.bzl", "scala_binary")
 	mustRegister("//bazel_tools:scala.bzl", "scala_library")
 	mustRegister("//bazel_tools:scala.bzl", "scala_test")

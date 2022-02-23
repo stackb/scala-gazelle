@@ -120,8 +120,13 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	file, ok := r.byFilename[filename]
 	if ok {
 		if file.Sha256 == sha256 {
+			log.Printf("file cache hit: <%s> (%s)", filename, sha256)
 			return file, nil
+		} else {
+			log.Printf("sha256 mismatch: <%s> (%s, %s)", filename, file.Sha256, sha256)
 		}
+	} else {
+		log.Printf("file cache miss: <%s>", filename)
 	}
 
 	file, err = r.parser.parse(abs)
@@ -130,7 +135,6 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	}
 	file.Filename = filename
 	file.Sha256 = sha256
-	r.byFilename[filename] = file
 	log.Printf("parsed: <%s>", filename)
 	return file, nil
 }
