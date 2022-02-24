@@ -4,6 +4,16 @@
 load(":aspect.bzl", "JarIndexerAspect", "java_indexer_aspect")
 
 def build_jarindex(ctx, basename, jar):
+    """Builds a single jarindex.
+
+    Args:
+        ctx: the context object
+        basename: a string representing a filename prefix for generated files
+        jar: the File to parse
+    Returns:
+        the output File of the index.
+    """
+
     input_file = ctx.actions.declare_file(basename + ".jar.json")
     output_file = ctx.actions.declare_file(basename + ".jarindex.json")
 
@@ -33,20 +43,28 @@ def build_jarindex(ctx, basename, jar):
     return output_file
 
 def build_mergeindex(ctx, jarindex_files):
-    """Builds the merged index for all jarindexes."""
+    """Builds the merged index for all jarindexes.
+
+    Args:
+        ctx: the context object
+        jarindex_files: a sequence of File representing the jarindex files
+    Returns:
+        the output File of the merged file.
+    """
 
     output_file = ctx.actions.declare_file(ctx.label.name + ".json")
 
-    args = [
-        "--output_file",
-        output_file.path,
-    ] + [f.path for f in jarindex_files]
+    args = ctx.actions.args()
+    args.use_param_file("@%s", use_always = False)
+    args.add("--output_file", output_file)
+    args.add_joined("--predefined", [str(Label(lbl)) for lbl in ctx.attr.predefined], uniquify = True, join_with = ",")
+    args.add_all(jarindex_files)
 
     ctx.actions.run(
         mnemonic = "MergeIndex",
         progress_message = "Merging jarindex files: " + str(ctx.label),
         executable = ctx.executable._mergeindex,
-        arguments = args,
+        arguments = [args],
         inputs = jarindex_files,
         outputs = [output_file],
     )
@@ -68,8 +86,6 @@ def _java_index_impl(ctx):
     for dep in ctx.attr.deps:
         info = dep[JarIndexerAspect]
         jarindex_files.extend(info.jar_index_files.to_list())
-
-        # transitive_jarindex_files.append(info.jar_index_files)
         transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
     i = 0
@@ -92,6 +108,7 @@ java_index = rule(
     implementation = _java_index_impl,
     attrs = {
         "deps": attr.label_list(
+            # TODO(pcj): make JavaInfo a requirement here?  Currently the aspect looks for it if present.
             # providers = [JavaInfo],
             aspects = [java_indexer_aspect],
             doc = "list of java deps to be indexed",
@@ -99,6 +116,9 @@ java_index = rule(
         "platform_jars": attr.label_list(
             doc = "list of jar files to be indexed without a JarSpec.Label",
             allow_files = True,
+        ),
+        "predefined": attr.string_list(
+            doc = "list of labels that do not need to be included in deps",
         ),
         "_mergeindex": attr.label(
             default = Label("//cmd/mergeindex"),

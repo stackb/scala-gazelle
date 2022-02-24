@@ -2,7 +2,11 @@ package index
 
 // IndexSpec describes the a list of JarSpecs.
 type IndexSpec struct {
+	// JarSpecs is the list of jars in the index.
 	JarSpecs []*JarSpec `json:"jarSpecs,omitempty"`
+	// Predefined is a list of labels that do not need to be explicity provided
+	// in deps.  Examples would include platform jar class and the scala stdlib.
+	Predefined []string `json:"predefined,omitempty"`
 }
 
 // JarSpec describes the symbols provided by a bazel label that produces a jar
@@ -49,6 +53,6 @@ type ScalaRuleSpec struct {
 
 // ScalaRuleIndexSpec represents a list of ScalaRuleSpec.
 type ScalaRuleIndexSpec struct {
-	// Files is the list of files in the rule
+	// Rules is the list of rule specs in the index.
 	Rules []*ScalaRuleSpec `json:"rules,omitempty"`
 }
