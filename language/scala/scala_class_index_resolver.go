@@ -17,10 +17,10 @@ import (
 // Example: 'java.lang.Boolean'.
 var PlatformLabel = label.New("platform", "", "do_not_import")
 
-func init() {
-	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-class-index", &scalaClassIndexResolver{
+func newScalaClassIndexResolver() *scalaClassIndexResolver {
+	return &scalaClassIndexResolver{
 		byLabel: make(map[string][]label.Label),
-	})
+	}
 }
 
 // scalaClassIndexResolver provides a cross-resolver for symbols extracted from
@@ -59,6 +59,15 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 		return fmt.Errorf("error while reading index specification file %s: %v", r.indexIn, err)
 	}
 
+	isPredefined := make(map[label.Label]bool)
+	for _, v := range index.Predefined {
+		lbl, err := label.Parse(v)
+		if err != nil {
+			return fmt.Errorf("bad predefined label %q: %v", v, err)
+		}
+		isPredefined[lbl] = true
+	}
+
 	for _, jarSpec := range index.JarSpecs {
 		jarLabel, err := label.Parse(jarSpec.Label)
 		if err != nil {
@@ -69,6 +78,9 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 				continue
 			}
 		}
+		if isPredefined[jarLabel] {
+			jarLabel = PlatformLabel
+		}
 		for _, pkg := range jarSpec.Packages {
 			r.byLabel[pkg] = append(r.byLabel[pkg], jarLabel)
 		}
@@ -78,6 +90,11 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 		}
 	}
 
+	return nil
+}
+
+// OnResolvePhase implements GazellePhaseTransitionListener.
+func (r *scalaClassIndexResolver) OnResolvePhase() error {
 	return nil
 }
 

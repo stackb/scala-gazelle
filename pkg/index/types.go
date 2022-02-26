@@ -56,3 +56,9 @@ type ScalaRuleIndexSpec struct {
 	// Rules is the list of rule specs in the index.
 	Rules []*ScalaRuleSpec `json:"rules,omitempty"`
 }
+
+// ScalaCompileSpec describes the symbols derived from attempting to compile a scala source file.
+type ScalaCompileSpec struct {
+	// NotFound is a list of symbols that were not found.
+	NotFound []string `json:"notFound,omitempty"`
+}

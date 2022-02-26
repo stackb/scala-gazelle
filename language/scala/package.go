@@ -11,13 +11,24 @@ const (
 )
 
 type ScalaPackage interface {
+	// Rel returns the relative path to this package
 	Rel() string
+	// Dir returns the absolute path to the worksace
 	Dir() string
+	// File returns the BUILD file for the package
 	File() *rule.File
+	// ScalaFileParser returns the parser instance to use.
+	ScalaFileParser() ScalaFileParser
+	// ScalaImportRegistry returns the registry instance.
+	ScalaImportRegistry() ScalaImportRegistry
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
+	// parser is the file parser
+	scalaFileParser ScalaFileParser
+	// shared import registry
+	scalaImportRegistry ScalaImportRegistry
 	// rel is the package (args.Rel)
 	rel string
 	// the registry to use
@@ -31,12 +42,14 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
-		rel:          rel,
-		ruleRegistry: ruleRegistry,
-		file:         file,
-		cfg:          cfg,
+		scalaFileParser:     scalaFileParser,
+		scalaImportRegistry: scalaImportRegistry,
+		rel:                 rel,
+		ruleRegistry:        ruleRegistry,
+		file:                file,
+		cfg:                 cfg,
 	}
 	s.gen = s.generateRules(true)
 	s.empty = s.generateRules(false)
@@ -95,13 +108,13 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 }
 
 func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
-	impl, err := globalRegistry.LookupRule(rc.Implementation)
+	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
 			s.Rel(),
 			rc.Implementation,
-			globalRegistry.RuleNames(),
+			s.ruleRegistry.RuleNames(),
 		)
 	}
 	rc.Impl = impl
@@ -110,13 +123,13 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 }
 
 func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
-	impl, err := globalRegistry.LookupRule(rc.Implementation)
+	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
 			s.Rel(),
 			rc.Implementation,
-			globalRegistry.RuleNames(),
+			globalRuleRegistry.RuleNames(),
 		)
 	}
 	rc.Impl = impl
@@ -126,6 +139,16 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	}
 
 	return nil
+}
+
+// ScalaImportRegistry implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaImportRegistry() ScalaImportRegistry {
+	return s.scalaImportRegistry
+}
+
+// ScalaFileParser implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaFileParser() ScalaFileParser {
+	return s.scalaFileParser
 }
 
 // File implements part of the ScalaPackage interface.

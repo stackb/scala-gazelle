@@ -7,6 +7,7 @@ go_library(
     srcs = [
         "cross_resolver_registry.go",
         "glob.go",
+        "import_registry.go",
         "intent.go",
         "package.go",
         "parser.go",
@@ -17,6 +18,7 @@ go_library(
         "rule_registry.go",
         "scala.go",
         "scala_class_index_resolver.go",
+        "scala_compiler.go",
         "scala_config.go",
         "scala_existing_rule.go",
         "scala_library.go",
@@ -24,6 +26,7 @@ go_library(
     ],
     data = [
         ":node",
+        ":scala_compiler.jar",
         ":sourceindexer",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
@@ -53,6 +56,22 @@ genrule(
     executable = True,
     tools = ["//cmd/sourceindexer"],
 )
+
+genrule(
+    name = "scala_compiler_jar",
+    outs = ["scala_compiler.jar"],
+    cmd = "cp $(location //cmd/scalacparse:scala_compiler_deploy.jar) $@",
+    executable = True,
+    tools = ["//cmd/scalacparse:scala_compiler_deploy.jar"],
+)
+
+# genrule(
+#     name = "scala_compiler_jar_old",
+#     outs = ["scala_compiler.jar"],
+#     cmd = "cp $(location //cmd/scalacparse:scalacparse_deploy.jar) $@",
+#     executable = True,
+#     tools = ["//cmd/scalacparse:scalacparse_deploy.jar"],
+# )
 
 genrule(
     name = "node_bin",

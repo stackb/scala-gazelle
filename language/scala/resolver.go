@@ -21,14 +21,14 @@ const (
 )
 
 var (
-	debug         = false
+	debug         = true
 	errSkipImport = errors.New("self import")
 	errNotFound   = errors.New("rule not found")
 )
 
 type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label)
 
-func resolveDeps(attrName string) depsResolver {
+func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolver {
 	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
 		if debug {
 			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)
@@ -45,6 +45,7 @@ func resolveDeps(attrName string) depsResolver {
 		for _, d := range existing {
 			depSet[d] = true
 		}
+
 		unresolved := make([]string, 0)
 		resolved := make([]string, 0)
 
@@ -54,11 +55,11 @@ func resolveDeps(attrName string) depsResolver {
 			impLang = overrideImpLang
 		}
 
-		for _, imp := range imports {
+		if debug {
+			log.Printf("resolving %d imports: %v", len(imports), imports)
+		}
 
-			if debug {
-				log.Println("resolveDeps:", impLang, imp)
-			}
+		for _, imp := range imports {
 
 			ll, err := resolveImport(c, ix, impLang, imp, from)
 			if err == errSkipImport {
@@ -80,7 +81,27 @@ func resolveDeps(attrName string) depsResolver {
 				}
 				continue
 			}
-
+			if len(ll) > 1 {
+				// given a wildcard symbol, fetch all possible known
+				// completions, grouped by label.  Get the list of symbols in
+				// the source file(s) from which the wildcard occurred.  Take
+				// the intersection of the not-found symbols to the
+				// completion-set to identify the symbols that were actually
+				// used in the files.  Then take the subset of labels that
+				// provide those symbols.
+				disambiguated, err := importRegistry.Disambiguate(imp, ll, from)
+				if err != nil {
+					log.Fatal(err)
+				}
+				ll = disambiguated
+				// log.Printf("%v: %s matched more than one label! (picking first one): %v", from, imp, ll)
+				// if strings.HasSuffix(imp, "._") {
+				// 	log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, ll)
+				// } else {
+				// 	log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, ll)
+				// }
+				ll = ll[0:1]
+			}
 			for _, l := range ll {
 				l = l.Rel(from.Repo, from.Pkg)
 				if debug {

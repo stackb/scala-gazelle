@@ -73,6 +73,8 @@ class ScalaSourceFile {
         }
         const buffer = fs.readFileSync(this.filename);
         const tree = parseSource(buffer.toString());
+        // this.printNode(tree);
+
         if (tree.error) {
             this.visitError(tree);
         } else {
@@ -228,7 +230,7 @@ class ScalaSourceFile {
      * @param {Node} node 
      */
     printNode(node) {
-        this.console.log(JSON.stringify(node, null, 2));
+        this.console.warn(JSON.stringify(node, null, 2));
     }
 
     /**

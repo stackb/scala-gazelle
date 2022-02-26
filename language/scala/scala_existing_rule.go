@@ -56,6 +56,9 @@ func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 		MergeableAttrs: map[string]bool{
 			"deps": true,
 		},
+		// SubstituteAttrs: map[string]bool{
+		// 	"deps": true,
+		// },
 	}
 }
 
@@ -88,20 +91,17 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 		return nil
 	}
 
-	resolver, err := CrossResolvers().LookupCrossResolver("stackb:scala-gazelle:scala-source-index")
-	if err != nil {
-		log.Fatal("unable to find scala source cross resolver!")
-	}
-
 	from := label.New("", pkg.Rel(), existing.Name())
 
-	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, resolver.(*scalaSourceIndexResolver))
+	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, pkg.ScalaFileParser())
 	if err != nil {
 		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
 		return nil
 	}
 
 	if debug {
+		log.Println(from, "requires:", requires)
+
 		for i, src := range srcs {
 			log.Println(from, "srcs:", i, src)
 		}
@@ -167,7 +167,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-	resolveDeps("deps")(c, ix, r, imports, from)
+	resolveDeps("deps", s.pkg.ScalaImportRegistry())(c, ix, r, imports, from)
 }
 
 // getAttrFiles returns a list of source files for the 'srcs' attribute.  Each
@@ -212,9 +212,9 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, resolver *scalaSourceIndexResolver) (requires, provides []string, err error) {
+func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, parser ScalaFileParser) (requires, provides []string, err error) {
 	var spec index.ScalaRuleSpec
-	spec, err = resolver.ParseScalaRuleSpec(dir, from, kind, srcs...)
+	spec, err = parser.ParseScalaFiles(dir, from, kind, srcs...)
 	if err != nil {
 		return
 	}
@@ -222,9 +222,9 @@ func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string
 	for _, file := range spec.Srcs {
 		for _, imp := range file.Imports {
 			// exclude imports that appear to be in-package.
-			if isUnqualifiedImport(imp) {
-				continue
-			}
+			// if isUnqualifiedImport(imp) {
+			// 	continue
+			// }
 			requires = append(requires, imp)
 		}
 		provides = append(provides, file.Packages...)

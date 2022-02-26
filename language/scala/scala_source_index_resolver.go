@@ -19,15 +19,32 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-func init() {
-	CrossResolvers().MustRegisterCrossResolver("stackb:scala-gazelle:scala-source-index", &scalaSourceIndexResolver{
+type ScalaFileParser interface {
+	// ParseScalaFiles is used to parse a list of source files.  The list of srcs
+	// is expected to be relative to the from.Pkg rel field, and the absolute path
+	// of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
+	// cache entry for the given file and the current sha256 matches the cached one,
+	// the cached entry will be returned.  Kind is used to determine if the rule is
+	// a test rule.
+	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error)
+}
+
+// ScalaRuleRegistry keep track of which files are associated under a rule
+// (which has a srcs attribute).
+type ScalaRuleRegistry interface {
+	// GetScalaFiles returns the rule spec for a given label.  If the label is unknown, false is returned.
+	GetScalaRule(from label.Label) (index.ScalaRuleSpec, bool)
+}
+
+func newScalaSourceIndexResolver() *scalaSourceIndexResolver {
+	return &scalaSourceIndexResolver{
 		providers:    make(map[string][]*provider),
 		packages:     make(map[string][]*provider),
 		byFilename:   make(map[string]*index.ScalaFileSpec),
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
 		parser:       &scalaSourceParser{},
 		providersMux: &sync.Mutex{},
-	})
+	}
 }
 
 // scalaSourceIndexResolver provides a cross-resolver for scala source files. If
@@ -86,13 +103,8 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 	return r.parser.start()
 }
 
-// ParseScalaRuleSpec is used to parse a list of source files.  The list of srcs
-// is expected to be relative to the from.Pkg rel field, and the absolute path
-// of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
-// cache entry for the given file and the current sha256 matches the cached one,
-// the cached entry will be returned.  Kind is used to determine if the rule is
-// a test rule.
-func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
+// ParseScalaFiles implements ScalaFileParser
+func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
 	rule := &index.ScalaRuleSpec{
 		Label: from.String(),
 		Kind:  kind,
@@ -108,6 +120,12 @@ func (r *scalaSourceIndexResolver) ParseScalaRuleSpec(dir string, from label.Lab
 	}
 	r.readScalaRuleSpec(rule)
 	return *rule, nil
+}
+
+// GetScalaRule implements ScalaRuleRegistry.
+func (r *scalaSourceIndexResolver) GetScalaRule(from label.Label) (index.ScalaRuleSpec, bool) {
+	rule, ok := r.byRule[from]
+	return *rule, ok
 }
 
 func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
@@ -193,7 +211,7 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	}
 
 	r.byFilename[file.Filename] = file
-	log.Printf("cached file <%s> (%s)", file.Filename, file.Sha256)
+	log.Printf("cached file <%s> (%s) %+v", file.Filename, file.Sha256, file)
 
 	return nil
 }
@@ -230,12 +248,7 @@ func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, rul
 	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
-// OnIndexPhase implements part of GazellePhaseTransitionListener.
-func (r *scalaSourceIndexResolver) OnIndexPhase() error {
-	return nil
-}
-
-// OnResolvePhase implements part of GazellePhaseTransitionListener.
+// OnResolvePhase implements GazellePhaseTransitionListener.
 func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()

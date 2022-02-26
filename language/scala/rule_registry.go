@@ -23,11 +23,11 @@ type RuleRegistry interface {
 
 // Rules returns a reference to the global RuleRegistry
 func Rules() RuleRegistry {
-	return globalRegistry
+	return globalRuleRegistry
 }
 
 // registry is the default registry singleton.
-var globalRegistry = &registry{
+var globalRuleRegistry = &registry{
 	rules: make(map[string]RuleInfo),
 }
 

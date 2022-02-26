@@ -66,7 +66,9 @@ func (p *scalaSourceParser) start() error {
 }
 
 func (p *scalaSourceParser) stop() {
-	p.parserCancel()
+	if p.parserCancel != nil {
+		p.parserCancel()
+	}
 }
 
 // parseAll parses all provided Scala files by consecutively calling p.parse.
