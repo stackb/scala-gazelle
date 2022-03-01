@@ -39,6 +39,13 @@ type ScalaFileSpec struct {
 	Objects []string `json:"objects,omitempty"`
 	// Traits is a list of provided top-level classes.
 	Traits []string `json:"traits,omitempty"`
+	// Types is a list of provided top-level types (in package objects).
+	Types []string `json:"types,omitempty"`
+	// Vals is a list of provided top-level vals (in package objects).
+	Vals []string `json:"vals,omitempty"`
+	// ApplyFun is a list of simple function calls.  In practice these look like
+	// constructor invocations.
+	ApplyFun []string `json:"applyFun,omitempty"`
 }
 
 // ScalaRuleSpec represents a list of ScalaFileSpec.
@@ -59,6 +66,19 @@ type ScalaRuleIndexSpec struct {
 
 // ScalaCompileSpec describes the symbols derived from attempting to compile a scala source file.
 type ScalaCompileSpec struct {
-	// NotFound is a list of symbols that were not found.
-	NotFound []string `json:"notFound,omitempty"`
+	// NotFound is a list of types that were not found (e.g. "not found: value DateUtils")
+	NotFound []*NotFoundSymbol `json:"notFound,omitempty"`
+	// E.g. "object Session is not a member of package com.foo.core"
+	NotMember []*NotMemberSymbol `json:"notMember,omitempty"`
+}
+
+type NotFoundSymbol struct {
+	Kind string
+	Name string
+}
+
+type NotMemberSymbol struct {
+	Kind    string
+	Name    string
+	Package string
 }

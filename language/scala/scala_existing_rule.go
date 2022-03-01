@@ -231,6 +231,8 @@ func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string
 		provides = append(provides, file.Classes...)
 		provides = append(provides, file.Objects...)
 		provides = append(provides, file.Traits...)
+		provides = append(provides, file.Types...)
+		provides = append(provides, file.Vals...)
 	}
 
 	requires = protoc.DeduplicateAndSort(requires)

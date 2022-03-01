@@ -33,7 +33,7 @@ type ScalaFileParser interface {
 // (which has a srcs attribute).
 type ScalaRuleRegistry interface {
 	// GetScalaFiles returns the rule spec for a given label.  If the label is unknown, false is returned.
-	GetScalaRule(from label.Label) (index.ScalaRuleSpec, bool)
+	GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool)
 }
 
 func newScalaSourceIndexResolver() *scalaSourceIndexResolver {
@@ -123,9 +123,26 @@ func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label,
 }
 
 // GetScalaRule implements ScalaRuleRegistry.
-func (r *scalaSourceIndexResolver) GetScalaRule(from label.Label) (index.ScalaRuleSpec, bool) {
+func (r *scalaSourceIndexResolver) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
+	from.Repo = "" // TODO(pcj): this is correct?  We always want sources in the main repo.
 	rule, ok := r.byRule[from]
-	return *rule, ok
+	return rule, ok
+}
+
+// Provided implements the protoc.ImportProvider interface.
+func (r *scalaSourceIndexResolver) Provided(lang, impLang string) map[label.Label][]string {
+	if lang != "scala" && impLang != "scala" {
+		return nil
+	}
+
+	result := make(map[label.Label][]string)
+	for imp, pp := range r.providers {
+		for _, p := range pp {
+			result[p.label] = append(result[p.label], imp)
+		}
+	}
+
+	return result
 }
 
 func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
@@ -144,7 +161,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 			log.Printf("sha256 mismatch: <%s> (%s, %s)", filename, file.Sha256, sha256)
 		}
 	} else {
-		log.Printf("file cache miss: <%s>", filename)
+		// log.Printf("file cache miss: <%s>", filename)
 	}
 
 	file, err = r.parser.parse(abs)
@@ -153,7 +170,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	}
 	file.Filename = filename
 	file.Sha256 = sha256
-	log.Printf("parsed: <%s>", filename)
+	log.Printf("Parsed: <%s>", filename)
 	return file, nil
 }
 
@@ -204,6 +221,12 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 		r.provide(rule, ruleLabel, file, imp)
 	}
 	for _, imp := range file.Traits {
+		r.provide(rule, ruleLabel, file, imp)
+	}
+	for _, imp := range file.Types {
+		r.provide(rule, ruleLabel, file, imp)
+	}
+	for _, imp := range file.Vals {
 		r.provide(rule, ruleLabel, file, imp)
 	}
 	for _, imp := range file.Packages {

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path"
 	"regexp"
 	"sort"
 	"strings"
@@ -105,6 +106,15 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			}
 			return nil
 		}
+
+		// transform "org/json4s/package$MappingException.class" ->
+		// "org/json4s/MappingException.class" so that
+		// "org.json4s.MappingException" is resolveable.
+		base := path.Base(name)
+		if strings.HasPrefix(base, "package$") {
+			name = path.Join(path.Dir(name), base[len("package$"):])
+		}
+
 		name = convertClassName(name)
 
 		// use the scala convention to generate a class for the package to

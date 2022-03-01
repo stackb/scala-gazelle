@@ -98,6 +98,22 @@ func (r *scalaClassIndexResolver) OnResolvePhase() error {
 	return nil
 }
 
+// Provided implements the protoc.ImportProvider interface.
+func (r *scalaClassIndexResolver) Provided(lang, impLang string) map[label.Label][]string {
+	if lang != "scala" && impLang != "scala" {
+		return nil
+	}
+
+	result := make(map[label.Label][]string)
+	for imp, ll := range r.byLabel {
+		for _, l := range ll {
+			result[l] = append(result[l], imp)
+		}
+	}
+
+	return result
+}
+
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	if lang != "scala" {

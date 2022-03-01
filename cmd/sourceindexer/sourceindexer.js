@@ -52,6 +52,18 @@ class ScalaSourceFile {
         this.topObjects = new Set();
 
         /**
+         * A set of top-level values, qualified by their package name.
+         * @type {Set<string>}
+         */
+        this.topVals = new Set();
+
+        /**
+         * A set of top-level types, qualified by their package name.
+         * @type {Set<string>}
+         */
+        this.topTypes = new Set();
+
+        /**
          * A set of top-level classes, qualified by their package name.
          * @type {Set<string>}
          */
@@ -62,6 +74,12 @@ class ScalaSourceFile {
          * @type {Set<string>}
          */
         this.topTraits = new Set();
+
+        /**
+         * A set of applied functions anywhere in the file.
+         * @type {Set<string>}
+         */
+        this.applyFun = new Set();
     }
 
     /**
@@ -75,11 +93,42 @@ class ScalaSourceFile {
         const tree = parseSource(buffer.toString());
         // this.printNode(tree);
 
+        this.traverse(tree, (key, node) => {
+            if (!node) {
+                return false
+            }
+            if (node.type === 'Term.Apply' && node.fun && node.fun.type === 'Term.Name') {
+                const name = this.parseName(node.fun);
+                this.applyFun.add(name);
+            }
+            return true;
+        });
+
         if (tree.error) {
             this.visitError(tree);
         } else {
             this.visitNode(tree);
         }
+    }
+
+    /**
+     * Traverse an object, calling filter on each key/value
+     * pair to know whether to continue
+     * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/
+     * @param  {object} obj
+     * @param  {function} filter
+     */
+    traverse(obj, filter) {
+        if (typeof obj !== 'object' || obj === null) {
+            return;
+        }
+
+        Object.entries(obj).forEach(([key, value]) => {
+            // Key is either an array index or object key
+            if (filter(key, value)) {
+                this.traverse(value, filter);
+            }
+        });
     }
 
     /**
@@ -124,9 +173,18 @@ class ScalaSourceFile {
             case 'Defn.Trait':
                 this.visitDefnTrait(node);
                 break;
+            case 'Defn.Val':
+                this.visitDefnVal(node);
+                break;
+            case 'Defn.Type':
+                this.visitDefnType(node);
+                break;
+            case 'Template':
+                this.visitTemplate(node);
+                break;
             default:
                 this.console.log('unhandled node type', node.type, this.filename);
-                // printNode(node);
+                this.printNode(node);
                 this.visitStats(node.stats);
         }
     }
@@ -154,6 +212,15 @@ class ScalaSourceFile {
     visitPkgObject(node) {
         const name = this.parseName(node.name);
         this.topObjects.add(this.packageQualifiedName(name));
+        this.packages.add(this.packageQualifiedName(name));
+
+        this.pkgs.push(name);
+        this.visitNode(node.templ);
+        this.pkgs.pop();
+    }
+
+    visitTemplate(node) {
+        this.visitStats(node.stats);
     }
 
     visitImport(node) {
@@ -203,6 +270,19 @@ class ScalaSourceFile {
         this.visitStats(node.stats)
     }
 
+    visitDefnVal(node) {
+        // TODO(pcj): what are the reasonable vars to record?
+        if (Array.isArray(node.pats) && node.pats.length && node.pats[0].type == "Pat.Var" && node.pats[0].name) {
+            const name = this.parseName(node.pats[0].name);
+            this.topVals.add(this.packageQualifiedName(name));
+        }
+    }
+
+    visitDefnType(node) {
+        const name = this.parseName(node.name);
+        this.topTypes.add(this.packageQualifiedName(name));
+    }
+
     toObject() {
         const obj = {
             filename: this.filename,
@@ -221,6 +301,9 @@ class ScalaSourceFile {
         maybeAssign(this.topClasses, 'classes');
         maybeAssign(this.topTraits, 'traits');
         maybeAssign(this.topObjects, 'objects');
+        maybeAssign(this.topVals, 'vals');
+        maybeAssign(this.topTypes, 'types');
+        maybeAssign(this.applyFun, 'applyFun');
 
         return obj;
     }
@@ -255,7 +338,6 @@ class ScalaSourceFile {
                 return names.join('.');
             default:
                 this.console.warn('unhandled ref type:', ref.type);
-                printNode(ref);
         }
     }
 

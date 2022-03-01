@@ -5,6 +5,8 @@ import (
 	"log"
 	"sort"
 
+	"github.com/stackb/rules_proto/pkg/protoc"
+
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -71,6 +73,21 @@ type scalaLang struct {
 // generates "go_library" rules.
 func (sl *scalaLang) Name() string { return ScalaLangName }
 
+// OnBegin implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnBegin() {}
+
+// OnIndex implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnIndex() {}
+
+// OnResolve implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnResolve() {
+}
+
+// OnEnd implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnEnd() {
+	sl.scalaCompiler.stop()
+}
+
 // The following methods are implemented to satisfy the
 // https://pkg.go.dev/github.com/bazelbuild/bazel-gazelle/resolve?tab=doc#Resolver
 // interface, but are otherwise unused.
@@ -90,7 +107,9 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 			return err
 		}
 	}
-	sl.scalaCompiler.CheckFlags(fs, c)
+	if err := sl.scalaCompiler.CheckFlags(fs, c); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -98,6 +117,7 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
 		ruleDirective,
+		overrideDirective,
 	}
 }
 
@@ -199,7 +219,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 	}
 
-	if args.File != nil {
+	if debug && args.File != nil {
 		log.Println("visited", args.Rel)
 	}
 
@@ -254,6 +274,22 @@ func (sl *scalaLang) onResolvePhase() error {
 	if err := sl.scalaCompiler.OnResolvePhase(); err != nil {
 		return err
 	}
+
+	// gather proto imports
+	for from, imports := range protoc.GlobalResolver().Provided(ScalaLangName, ScalaLangName) {
+		sl.importRegistry.Provides(from, imports)
+	}
+
+	// gather 1p/3p imports
+	for _, rslv := range sl.resolvers {
+		if ip, ok := rslv.(protoc.ImportProvider); ok {
+			for from, imports := range ip.Provided(ScalaLangName, ScalaLangName) {
+				sl.importRegistry.Provides(from, imports)
+			}
+		}
+	}
+
+	sl.importRegistry.OnResolve()
 	return nil
 }
 
@@ -299,6 +335,10 @@ func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp r
 		if result := r.CrossResolve(c, ix, imp, lang); len(result) > 0 {
 			return result
 		}
+	}
+	// final / fallback resolver.
+	if result := sl.importRegistry.CrossResolve(c, ix, imp, lang); len(result) > 0 {
+		return result
 	}
 	return nil
 }

@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	debug         = true
+	debug         = false
 	errSkipImport = errors.New("self import")
 	errNotFound   = errors.New("rule not found")
 )
@@ -60,7 +60,9 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 		}
 
 		for _, imp := range imports {
-
+			if debug {
+				log.Println("---", imp, "---")
+			}
 			ll, err := resolveImport(c, ix, impLang, imp, from)
 			if err == errSkipImport {
 				if debug {
@@ -76,9 +78,7 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 			}
 			if len(ll) == 0 {
 				unresolved = append(unresolved, "no-label: "+imp)
-				if debug {
-					log.Println(from, "no label", imp)
-				}
+				log.Panicln(from, "unresolved import (no label):", imp)
 				continue
 			}
 			if len(ll) > 1 {
@@ -89,7 +89,7 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 				// completion-set to identify the symbols that were actually
 				// used in the files.  Then take the subset of labels that
 				// provide those symbols.
-				disambiguated, err := importRegistry.Disambiguate(imp, ll, from)
+				disambiguated, err := importRegistry.Disambiguate(c, imp, ll, from)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -188,7 +188,24 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 		}
 	}
 
+	if len(ll) > 1 {
+		ll = dedupLabels(ll)
+	}
+
 	return ll, err
+}
+
+// dedupLabels deduplicates labels but keeps existing ordering.
+func dedupLabels(in []label.Label) (out []label.Label) {
+	seen := make(map[label.Label]bool)
+	for _, l := range in {
+		if seen[l] {
+			continue
+		}
+		seen[l] = true
+		out = append(out, l)
+	}
+	return out
 }
 
 // resolveAnyKind answers the question "what bazel label provides a rule for the

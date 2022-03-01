@@ -93,11 +93,14 @@ go_test(
     name = "scala_test",
     srcs = [
         "glob_test.go",
+        "import_resolver_test.go",
+        "scala_compiler_test.go",
         "scala_test.go",
     ],
     data = [
         ":gazelle",
         ":sourceindexer",
+        ":scala_compiler.jar",
     ] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
