@@ -40,7 +40,9 @@ func init() {
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
 // already in the build file.  It does not create any new rules.  This rule
 // implementation is to parse files named in 'srcs' and update 'deps'.
-type scalaExistingRule struct{ load, name string }
+type scalaExistingRule struct {
+	load, name string
+}
 
 // Name implements part of the RuleInfo interface.
 func (s *scalaExistingRule) Name() string {
@@ -55,9 +57,9 @@ func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 		MergeableAttrs: map[string]bool{
 			"deps": true,
 		},
-		// SubstituteAttrs: map[string]bool{
-		// 	"deps": true,
-		// },
+		ResolveAttrs: map[string]bool{
+			"deps": true,
+		},
 	}
 }
 
@@ -78,23 +80,31 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
-	srcs, err := getAttrFiles(pkg, existing, "srcs")
+	log.Printf("existing rule %p", existing)
+
+	r := rule.NewRule(existing.Kind(), existing.Name())
+	for _, key := range existing.AttrKeys() {
+		r.SetAttr(key, existing.Attr(key))
+	}
+	r.DelAttr("deps") // make sure the "source" rule has no deps to start
+
+	srcs, err := getAttrFiles(pkg, r, "srcs")
 	if err != nil {
-		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
+		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
 		return nil
 	}
 
 	// If we cannot find any srcs for the rule, skip it.
 	if len(srcs) == 0 {
-		log.Printf("skipping %s //%s:%s (no srcs)", existing.Kind(), pkg.Rel(), existing.Name())
+		log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
 		return nil
 	}
 
-	from := label.New("", pkg.Rel(), existing.Name())
+	from := label.New("", pkg.Rel(), r.Name())
 
-	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, existing.Kind(), srcs, pkg.ScalaFileParser())
+	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
 	if err != nil {
-		log.Printf("skipping %s //%s:%s (%v)", existing.Kind(), pkg.Rel(), existing.Name(), err)
+		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
 		return nil
 	}
 
@@ -102,6 +112,7 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 		log.Println(from, "requires:", requires)
 
 		for i, src := range srcs {
+			r.AddComment("# srcs: " + src)
 			log.Println(from, "srcs:", i, src)
 		}
 		for i, v := range requires {
@@ -112,16 +123,16 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 		}
 	}
 
-	existing.SetPrivateAttr(config.GazelleImportsKey, requires)
-	existing.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
+	r.SetPrivateAttr(config.GazelleImportsKey, requires)
+	r.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
 
 	if debug {
 		for _, imp := range requires {
-			existing.AddComment("# import: " + imp)
+			r.AddComment("# import: " + imp)
 		}
 	}
 
-	return &scalaExistingRuleRule{cfg, pkg, existing, requires, provides}
+	return &scalaExistingRuleRule{cfg, pkg, r, requires, provides}
 }
 
 // scalaExistingRuleRule implements RuleProvider for existing scala rules.
@@ -149,6 +160,7 @@ func (s *scalaExistingRuleRule) Name() string {
 
 // Rule implements part of the ruleProvider interface.
 func (s *scalaExistingRuleRule) Rule() *rule.Rule {
+	log.Printf("returning rule %p", s.rule)
 	return s.rule
 }
 

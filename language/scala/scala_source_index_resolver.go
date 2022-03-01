@@ -234,13 +234,13 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	}
 
 	r.byFilename[file.Filename] = file
-	log.Printf("cached file <%s> (%s) %+v", file.Filename, file.Sha256, file)
+	// log.Printf("cached file <%s> (%s) %+v", file.Filename, file.Sha256, file)
 
 	return nil
 }
 
 func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
-	log.Println("provide:", imp, ruleLabel)
+	// log.Println("provide:", imp, ruleLabel)
 	if pp, ok := r.providers[imp]; ok {
 		p := pp[0]
 		if p.label == ruleLabel {
@@ -254,7 +254,7 @@ func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel 
 }
 
 func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
-	log.Println("provide package:", imp, ruleLabel)
+	// log.Println("provide package:", imp, ruleLabel)
 	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.

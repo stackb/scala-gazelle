@@ -73,12 +73,12 @@ type ScalaCompileSpec struct {
 }
 
 type NotFoundSymbol struct {
-	Kind string
-	Name string
+	Kind string `json:"kind"`
+	Name string `json:"name"`
 }
 
 type NotMemberSymbol struct {
-	Kind    string
-	Name    string
-	Package string
+	Kind    string `json:"kind"`
+	Name    string `json:"name"`
+	Package string `json:"package"`
 }

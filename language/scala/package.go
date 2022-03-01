@@ -52,7 +52,7 @@ func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser,
 		cfg:                 cfg,
 	}
 	s.gen = s.generateRules(true)
-	s.empty = s.generateRules(false)
+	// s.empty = s.generateRules(false)
 
 	return s
 }

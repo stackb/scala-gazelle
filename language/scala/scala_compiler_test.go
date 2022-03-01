@@ -13,6 +13,7 @@ import (
 // compiler to a CompileSpec.
 func TestScalaCompileResponse(t *testing.T) {
 	for name, tc := range map[string]struct {
+		dir          string
 		filename     string
 		mockResponse string
 		want         *index.ScalaCompileSpec
@@ -27,7 +28,7 @@ func TestScalaCompileResponse(t *testing.T) {
 </compileResponse>
 `,
 			want: &index.ScalaCompileSpec{
-				NotFound: []*index.CompileSymbol{{Name: "Greeter", Kind: "type"}},
+				NotFound: []*index.NotFoundSymbol{{Name: "Greeter", Kind: "type"}},
 			},
 		},
 	} {
@@ -46,7 +47,7 @@ func TestScalaCompileResponse(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			got, err := compiler.Compile(tc.filename)
+			got, err := compiler.Compile(tc.dir, tc.filename)
 			if err != nil {
 				t.Fatal(err)
 			}

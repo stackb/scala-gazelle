@@ -15,7 +15,7 @@ func TestScala(t *testing.T) {
 		t.Fatal(err)
 	}
 	goldentest.FromDir("language/scala",
-		goldentest.WithOnlyTests("compiler_disambiguation"),
+		goldentest.WithOnlyTests("greeter"),
 		goldentest.WithDataFiles(bazel.RunfileEntry{
 			Path:      filepath.Join(cwd, "sourceindexer"),
 			ShortPath: "sourceindexer",

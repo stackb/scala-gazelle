@@ -75,18 +75,24 @@ type scalaLang struct {
 func (sl *scalaLang) Name() string { return ScalaLangName }
 
 // OnBegin implements part of the language.Lifecycler interface.
-func (sl *scalaLang) OnBegin() {}
+func (sl *scalaLang) OnBegin() {
+	log.Println("-- BEGIN ---")
+}
 
 // OnIndex implements part of the language.Lifecycler interface.
-func (sl *scalaLang) OnIndex() {}
+func (sl *scalaLang) OnIndex() {
+	log.Println("-- INDEX PHASE ---")
+}
 
 // OnResolve implements part of the language.Lifecycler interface.
 func (sl *scalaLang) OnResolve() {
+	log.Println("-- RESOLVE PHASE ---")
 }
 
 // OnEnd implements part of the language.Lifecycler interface.
 func (sl *scalaLang) OnEnd() {
 	sl.scalaCompiler.stop()
+	log.Println("-- END ---")
 }
 
 // The following methods are implemented to satisfy the
@@ -205,7 +211,9 @@ func (sl *scalaLang) Fix(c *config.Config, f *rule.File) {
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	// log.Println("visiting", args.Rel)
+	if debug {
+		log.Println("visiting", args.Rel)
+	}
 
 	cfg := getOrCreateScalaConfig(args.Config)
 
@@ -213,7 +221,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sl.packages[args.Rel] = pkg
 
 	for _, r := range args.OtherGen {
-		if r.Kind() != "proto_library" {
+		if r.Kind() != "proto_library2" {
 			continue
 		}
 		if !hasPackageProto(args.RegularFiles) {
@@ -221,11 +229,17 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		}
 		srcs := r.AttrStrings("srcs")
 		if len(srcs) > 0 {
-			srcs = append(srcs, "package.proto")
+			newSrcs := make([]string, 0)
+			for _, src := range srcs {
+				if src == "package.proto" {
+					continue
+				}
+				newSrcs = append(newSrcs, src)
+			}
 			r.SetAttr("srcs", protoc.DeduplicateAndSort(srcs))
-			log.Printf("added package.proto to %s //%s:%s", r.Kind(), args.Rel, r.Name())
-			deps := append(r.AttrStrings("deps"), "//thirdparty/protobuf/scalapb:scalapb_proto")
-			r.SetAttr("deps", protoc.DeduplicateAndSort(deps))
+			// log.Printf("added package.proto to %s //%s:%s", r.Kind(), args.Rel, r.Name())
+			// deps := append(r.AttrStrings("deps"), "//thirdparty/protobuf/scalapb:scalapb_proto")
+			// r.SetAttr("deps", protoc.DeduplicateAndSort(deps))
 		}
 	}
 
@@ -282,6 +296,8 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 func (*scalaLang) Embeds(r *rule.Rule, from label.Label) []label.Label { return nil }
 
 func (sl *scalaLang) onResolvePhase() error {
+	// log.Panicln("stopping at resolve phase")
+
 	for _, r := range sl.resolvers {
 		if gptl, ok := r.(GazellePhaseTransitionListener); ok {
 			if err := gptl.OnResolvePhase(); err != nil {

@@ -119,10 +119,10 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 			}
 			sort.Strings(deps)
 			r.SetAttr(attrName, deps)
-			if debug {
-				log.Println(from, "resolved deps:", deps)
-				printRules(r)
-			}
+			// if debug {
+			// 	log.Println(from, "resolved deps:", deps)
+			// 	printRules(r)
+			// }
 
 			if len(unresolved) > 0 {
 				if true {
@@ -141,7 +141,7 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 					before[i].Token = "# resolved: " + imp
 				}
 
-				r.Attr(attrName).Comment().After = before
+				r.Attr(attrName).Comment().Before = before
 				// log.Println(from, "resolved deps:", resolved)
 			}
 

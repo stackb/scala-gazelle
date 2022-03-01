@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/stackb/scala-gazelle/pkg/index"
 
+	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 )
 
@@ -59,7 +60,8 @@ func TestImportRegistryDisambiguateErrors(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			_, got := tc.registry.Disambiguate(tc.imp, tc.labels, tc.from)
+			c := &config.Config{}
+			_, got := tc.registry.Disambiguate(c, tc.imp, tc.labels, tc.from)
 			if got == nil {
 				t.Fatal("expected err, got none")
 			}
@@ -93,7 +95,8 @@ func TestImportRegistryDisambiguate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got, err := tc.registry.Disambiguate(tc.imp, tc.labels, tc.from)
+			c := &config.Config{}
+			got, err := tc.registry.Disambiguate(c, tc.imp, tc.labels, tc.from)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
@@ -165,9 +168,9 @@ func (b *importRegistryBuilder) sourceImports(from, filename string, imports ...
 }
 
 func (b *importRegistryBuilder) notFoundTypes(filename string, notFoundTypes ...string) *importRegistryBuilder {
-	nf := make([]*index.CompileSymbol, len(notFoundTypes))
+	nf := make([]*index.NotFoundSymbol, len(notFoundTypes))
 	for i, t := range notFoundTypes {
-		nf[i] = &index.CompileSymbol{Name: t, Kind: "type"}
+		nf[i] = &index.NotFoundSymbol{Name: t, Kind: "type"}
 	}
 	b.compiler.results[filename] = &index.ScalaCompileSpec{
 		NotFound: nf,
@@ -204,7 +207,7 @@ type fakeCompiler struct {
 	results map[string]*index.ScalaCompileSpec
 }
 
-func (fc *fakeCompiler) Compile(filename string) (*index.ScalaCompileSpec, error) {
+func (fc *fakeCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, error) {
 	fc.t.Log("compiler", filename, fc.results)
 	spec, ok := fc.results[filename]
 	if !ok {

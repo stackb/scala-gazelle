@@ -35,7 +35,7 @@ type ScalaImportRegistry interface {
 
 func newImportRegistry(scalaRuleRegistry ScalaRuleRegistry, scalaCompiler ScalaCompiler) *importRegistry {
 	return &importRegistry{
-		importsOut:        "/tmp/scala-gazelle-imports.csv",
+		// importsOut:        "/tmp/scala-gazelle-imports.csv",
 		scalaRuleRegistry: scalaRuleRegistry,
 		scalaCompiler:     scalaCompiler,
 		provides:          make(map[label.Label][]string),
@@ -64,7 +64,9 @@ func (ir *importRegistry) OnResolve() {
 	for from, imports := range ir.provides {
 		for _, imp := range imports {
 			if _, ok := ir.imports[imp]; ok {
-				log.Printf("importRegistry: duplicate provider of %q: %v %v", imp, ir.imports[imp], from)
+				if debug {
+					log.Printf("importRegistry: duplicate provider of %q: %v %v", imp, ir.imports[imp], from)
+				}
 			}
 			ir.imports[imp] = from
 			class, ok := importClass(imp)
@@ -116,19 +118,23 @@ func (ir *importRegistry) Completions(imp string) map[string]label.Label {
 }
 
 func (ir *importRegistry) Disambiguate(c *config.Config, imp string, labels []label.Label, from label.Label) ([]label.Label, error) {
-	log.Printf("%v: disambiguating %q, candidate labels: %v", from, imp, labels)
-
-	if true {
-		return labels[0:1], nil
-	}
+	debug := false
 
 	// step 0: check override specs
 	if sc := getScalaConfig(c); sc != nil {
 		for _, override := range sc.overrides {
+			// log.Printf("%v: check match override %q with override: %v", from, imp, override.imp.Imp)
 			if ok, _ := doublestar.Match(override.imp.Imp, imp); ok {
+				if debug {
+					log.Printf("%v: disambiguated %q with override: %v", from, imp, override.dep)
+				}
 				return []label.Label{override.dep}, nil
 			}
 		}
+	}
+
+	if debug {
+		log.Printf("%v: disambiguating %q, candidate labels: %v", from, imp, labels)
 	}
 
 	// step 1: get completion symbols for the import.  For example, if we had
@@ -139,8 +145,10 @@ func (ir *importRegistry) Disambiguate(c *config.Config, imp string, labels []la
 		return nil, fmt.Errorf("no completions known for %v (aborting disambiguation attempt of %q)", from, imp)
 	}
 
-	for i, c := range completions {
-		log.Printf("completion universe member %q: %v", i, c)
+	if debug {
+		for i, c := range completions {
+			log.Printf("completion universe member %q: %v", i, c)
+		}
 	}
 
 	// step 2: gather the list of srcs in 'from' and filter them such that
@@ -167,7 +175,7 @@ func (ir *importRegistry) Disambiguate(c *config.Config, imp string, labels []la
 	types := make(map[string]bool)
 
 	for _, file := range files {
-		compilation, err := ir.scalaCompiler.Compile(file.Filename)
+		compilation, err := ir.scalaCompiler.Compile(c.RepoRoot, file.Filename)
 		if err != nil {
 			return labels, fmt.Errorf("rule %v: error while disambiguating import %q in file %s: %w", from, imp, file.Filename, err)
 		}
@@ -193,8 +201,11 @@ func (ir *importRegistry) Disambiguate(c *config.Config, imp string, labels []la
 			types[sym] = true
 		}
 	}
-	for i, c := range types {
-		log.Printf("possible completion %q: %v", i, c)
+
+	if debug {
+		for i, c := range types {
+			log.Printf("possible completion %q: %v", i, c)
+		}
 	}
 
 	// step 4: process all the unknown types in srcs.  If we find a completion
@@ -232,7 +243,7 @@ func importClass(imp string) (string, bool) {
 
 // CrossResolve implements the CrossResolver interface.
 func (ir *importRegistry) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	log.Println("final XResolve", lang, imp.Lang)
+	// log.Println("final XResolve", lang, imp.Lang)
 	if lang != ScalaLangName {
 		return nil
 	}
@@ -240,11 +251,11 @@ func (ir *importRegistry) CrossResolve(c *config.Config, ix *resolve.RuleIndex, 
 	class, _ := importClass(strings.TrimSuffix(imp.Imp, "._"))
 
 	if from, ok := ir.classes[class]; ok && len(from) == 1 {
-		log.Println("success exact match class check:", class, from)
+		// log.Println("success exact match class check:", class, from)
 		return []resolve.FindResult{{Label: from[0]}}
 	}
 
-	log.Println("failed exact match class check:", class)
+	// log.Println("failed exact match class check:", class)
 
 	// sc := getScalaConfig(c)
 	// if sc == nil {

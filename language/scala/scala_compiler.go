@@ -39,7 +39,7 @@ var notPackageMemberRe = regexp.MustCompile(`^object ([^ ]+) is not a member of 
 // type system.
 type ScalaCompiler interface {
 	// Compile compiles the file and returns a compilespec.
-	Compile(filename string) (*index.ScalaCompileSpec, error)
+	Compile(dir, filename string) (*index.ScalaCompileSpec, error)
 }
 
 func newScalaCompiler() *scalaCompiler {
@@ -52,6 +52,8 @@ type scalaCompiler struct {
 	backendRawURL string
 	// backendURL is the bind address for the compiler server
 	backendURL *url.URL
+	// cacheDir is the location where we can write cache files
+	cacheDir string
 	// jarPath is the unresolved runfile
 	jarPath string
 	// toolPath is the resolved path to the tool
@@ -72,7 +74,8 @@ type scalaCompiler struct {
 func (p *scalaCompiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&p.jarPath, "scala_compiler_jar", "scala_compiler.jar", "filesystem path to the scala compiler tool jar")
 	fs.StringVar(&p.backendRawURL, "scala_compiler_url", "http://127.0.0.1:8040", "bind address for the server")
-	fs.BoolVar(&p.startSubprocess, "scala_compiler_subprocess", true, "whether to start the compiler subprocess")
+	fs.StringVar(&p.cacheDir, "scala_cache_dir", "/tmp/scala_compiler", "Cache directory for scala compiler.  If unset, diables the cache")
+	fs.BoolVar(&p.startSubprocess, "scala_compiler_subprocess", false, "whether to start the compiler subprocess")
 	fs.DurationVar(&p.maxCompileDialSeconds, "scala_compiler_dial_timeout", time.Second*5, "compiler dial timeout")
 	fs.DurationVar(&p.maxCompileRequestSeconds, "scala_compiler_request_timeout", time.Second*60, "compiler request timeout")
 }
@@ -87,6 +90,14 @@ func (p *scalaCompiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	}
 	p.toolPath = tool
 
+	if err := p.initHTTPClient(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *scalaCompiler) initHTTPClient() error {
 	uri, err := url.Parse(p.backendRawURL)
 	if err != nil {
 		return fmt.Errorf("bad -scala_compiler_url: %w", err)
@@ -100,14 +111,6 @@ func (p *scalaCompiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 		}
 	}
 
-	if err := p.initHTTPClient(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (p *scalaCompiler) initHTTPClient() error {
 	transport := &http.Transport{
 		Dial: (&net.Dialer{
 			Timeout: p.maxCompileDialSeconds,
@@ -163,8 +166,22 @@ func (p *scalaCompiler) OnResolvePhase() error {
 
 // Compile a Scala file and returns the index. An error is raised if
 // communicating with the long-lived Scala compiler over stdin and stdout fails.
-func (p *scalaCompiler) Compile(filename string) (*index.ScalaCompileSpec, error) {
-	log.Printf("--- COMPILE <%s> ---", filename)
+func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, error) {
+	// log.Printf("--- COMPILE <%s> ---", filename)
+	specFile := filepath.Join(p.cacheDir, filename+".json")
+
+	if p.cacheDir != "" {
+		if _, err := os.Stat(specFile); errors.Is(err, os.ErrNotExist) {
+			log.Printf("Compile cache miss: <%s>", filename)
+		} else {
+			if spec, err := index.ReadScalaCompileSpec(specFile); err != nil {
+				log.Printf("Compile cache error: <%s>: %v", filename, err)
+			} else {
+				// log.Printf("Compile cache hit: <%s>", filename)
+				return spec, nil
+			}
+		}
+	}
 
 	compileRequest := &CompileRequest{Files: []string{filename}}
 
@@ -190,8 +207,8 @@ func (p *scalaCompiler) Compile(filename string) (*index.ScalaCompileSpec, error
 	}
 	// fmt.Printf("Response Body : %s", data)
 
-	if true {
-		outfile := filepath.Join("/tmp", "scala-compiler", filename+".xml")
+	if p.cacheDir != "" {
+		outfile := filepath.Join(p.cacheDir, filename+".xml")
 		outdir := filepath.Dir(outfile)
 		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
 			return nil, err
@@ -212,6 +229,17 @@ func (p *scalaCompiler) Compile(filename string) (*index.ScalaCompileSpec, error
 	}
 
 	// TODO: dedup the ScalaCompileSpec?
+
+	if p.cacheDir != "" {
+		outdir := filepath.Dir(specFile)
+		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
+			return nil, err
+		}
+		if err := index.WriteJSONFile(specFile, &spec); err != nil {
+			return nil, err
+		}
+		log.Printf("Compile cache put: <%s>", filename)
+	}
 
 	return &spec, nil
 }
