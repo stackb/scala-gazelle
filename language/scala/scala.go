@@ -3,6 +3,7 @@ package scala
 import (
 	"flag"
 	"log"
+	"path/filepath"
 	"sort"
 
 	"github.com/stackb/rules_proto/pkg/protoc"
@@ -211,6 +212,23 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	pkg := newScalaPackage(sl.ruleRegistry, sl.scalaFileParser, sl.importRegistry, args.Rel, args.File, cfg)
 	sl.packages[args.Rel] = pkg
 
+	for _, r := range args.OtherGen {
+		if r.Kind() != "proto_library" {
+			continue
+		}
+		if !hasPackageProto(args.RegularFiles) {
+			continue
+		}
+		srcs := r.AttrStrings("srcs")
+		if len(srcs) > 0 {
+			srcs = append(srcs, "package.proto")
+			r.SetAttr("srcs", protoc.DeduplicateAndSort(srcs))
+			log.Printf("added package.proto to %s //%s:%s", r.Kind(), args.Rel, r.Name())
+			deps := append(r.AttrStrings("deps"), "//thirdparty/protobuf/scalapb:scalapb_proto")
+			r.SetAttr("deps", protoc.DeduplicateAndSort(deps))
+		}
+	}
+
 	rules := pkg.Rules()
 	// empty := pkg.Empty()
 
@@ -341,4 +359,13 @@ func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp r
 		return result
 	}
 	return nil
+}
+
+func hasPackageProto(files []string) bool {
+	for _, f := range files {
+		if filepath.Base(f) == "package.proto" {
+			return true
+		}
+	}
+	return false
 }
