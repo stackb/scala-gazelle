@@ -240,21 +240,17 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 }
 
 func (r *scalaSourceIndexResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
-	// log.Println("provide:", imp, ruleLabel)
 	if pp, ok := r.providers[imp]; ok {
 		p := pp[0]
 		if p.label == ruleLabel {
 			return
 		}
-		log.Printf("current: %+v", p.file)
-		log.Printf("next: %+v", file)
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
 	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
 }
 
 func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
-	// log.Println("provide package:", imp, ruleLabel)
 	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.

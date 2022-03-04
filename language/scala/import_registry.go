@@ -196,8 +196,8 @@ func (ir *importRegistry) Disambiguate(c *config.Config, imp string, labels []la
 				}
 			}
 		}
-		// also all applied function names
-		for _, sym := range file.ApplyFun {
+		// also all applied names
+		for _, sym := range file.Names {
 			types[sym] = true
 		}
 	}

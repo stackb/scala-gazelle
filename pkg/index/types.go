@@ -43,9 +43,9 @@ type ScalaFileSpec struct {
 	Types []string `json:"types,omitempty"`
 	// Vals is a list of provided top-level vals (in package objects).
 	Vals []string `json:"vals,omitempty"`
-	// ApplyFun is a list of simple function calls.  In practice these look like
+	// Names is a list of simple function calls.  In practice these look like
 	// constructor invocations.
-	ApplyFun []string `json:"applyFun,omitempty"`
+	Names []string `json:"names,omitempty"`
 }
 
 // ScalaRuleSpec represents a list of ScalaFileSpec.

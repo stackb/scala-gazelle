@@ -76,10 +76,10 @@ class ScalaSourceFile {
         this.topTraits = new Set();
 
         /**
-         * A set of applied functions anywhere in the file.
+         * A set of names anywhere in the file.
          * @type {Set<string>}
          */
-        this.applyFun = new Set();
+        this.names = new Set();
     }
 
     /**
@@ -93,13 +93,12 @@ class ScalaSourceFile {
         const tree = parseSource(buffer.toString());
         // this.printNode(tree);
 
-        this.traverse(tree, (key, node) => {
+        this.traverse(tree, undefined, (key, node, parent) => {
             if (!node) {
                 return false
             }
-            if (node.type === 'Term.Apply' && node.fun && node.fun.type === 'Term.Name') {
-                const name = this.parseName(node.fun);
-                this.applyFun.add(name);
+            if (node.type === 'Term.Name' && node.value) {
+                this.names.add(node.value);
             }
             return true;
         });
@@ -112,21 +111,26 @@ class ScalaSourceFile {
     }
 
     /**
-     * Traverse an object, calling filter on each key/value
-     * pair to know whether to continue
-     * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/
+     * Traverse an object, calling filter on each key/value pair to know whether
+     * to continue.  The parent argument will always have a '.type' field that
+     * indicates the context of the current node.
+     * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/.
      * @param  {object} obj
+     * @param  {object} parent
      * @param  {function} filter
      */
-    traverse(obj, filter) {
+    traverse(obj, parent, filter) {
         if (typeof obj !== 'object' || obj === null) {
             return;
         }
-
+        let typedParent = parent;
+        if (obj.type) {
+            typedParent = obj;
+        }
         Object.entries(obj).forEach(([key, value]) => {
             // Key is either an array index or object key
-            if (filter(key, value)) {
-                this.traverse(value, filter);
+            if (filter(key, value, parent)) {
+                this.traverse(value, typedParent, filter);
             }
         });
     }
@@ -303,7 +307,7 @@ class ScalaSourceFile {
         maybeAssign(this.topObjects, 'objects');
         maybeAssign(this.topVals, 'vals');
         maybeAssign(this.topTypes, 'types');
-        maybeAssign(this.applyFun, 'applyFun');
+        maybeAssign(this.names, 'names');
 
         return obj;
     }
