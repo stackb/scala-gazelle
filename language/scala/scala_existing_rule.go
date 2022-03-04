@@ -80,8 +80,9 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
-	log.Printf("existing rule %p", existing)
-
+	// TODO(pcj): is this rule copying actually necessary?  Introduced this when
+	// trying to debug a bug where I wasn't sure if state inside the rule was
+	// the issue.
 	r := rule.NewRule(existing.Kind(), existing.Name())
 	for _, key := range existing.AttrKeys() {
 		r.SetAttr(key, existing.Attr(key))
@@ -160,7 +161,6 @@ func (s *scalaExistingRuleRule) Name() string {
 
 // Rule implements part of the ruleProvider interface.
 func (s *scalaExistingRuleRule) Rule() *rule.Rule {
-	log.Printf("returning rule %p", s.rule)
 	return s.rule
 }
 

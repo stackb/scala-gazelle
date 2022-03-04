@@ -82,25 +82,20 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 				continue
 			}
 			if len(ll) > 1 {
-				// given a wildcard symbol, fetch all possible known
-				// completions, grouped by label.  Get the list of symbols in
-				// the source file(s) from which the wildcard occurred.  Take
-				// the intersection of the not-found symbols to the
-				// completion-set to identify the symbols that were actually
-				// used in the files.  Then take the subset of labels that
-				// provide those symbols.
 				disambiguated, err := importRegistry.Disambiguate(c, imp, ll, from)
 				if err != nil {
-					log.Fatal(err)
+					log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, ll, from, err)
+				}
+				if false {
+					if len(ll) > 0 {
+						if strings.HasSuffix(imp, "._") {
+							log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, ll)
+						} else {
+							log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, ll)
+						}
+					}
 				}
 				ll = disambiguated
-				// log.Printf("%v: %s matched more than one label! (picking first one): %v", from, imp, ll)
-				// if strings.HasSuffix(imp, "._") {
-				// 	log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, ll)
-				// } else {
-				// 	log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, ll)
-				// }
-				ll = ll[0:1]
 			}
 			for _, l := range ll {
 				l = l.Rel(from.Repo, from.Pkg)
@@ -119,30 +114,16 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 			}
 			sort.Strings(deps)
 			r.SetAttr(attrName, deps)
-			// if debug {
-			// 	log.Println(from, "resolved deps:", deps)
-			// 	printRules(r)
-			// }
+
+			if false {
+				r.SetAttr("resolved_deps", protoc.DeduplicateAndSort(resolved))
+			}
 
 			if len(unresolved) > 0 {
 				if true {
 					panic(fmt.Sprintf("unresolved deps! %v", unresolved))
 				}
-				unresolved = protoc.DeduplicateAndSort(unresolved)
-				before := make([]build.Comment, len(unresolved))
-				for i, imp := range unresolved {
-					before[i].Token = "# unresolved" + imp
-				}
-				r.Attr(attrName).Comment().After = before
-			} else {
-				resolved = protoc.DeduplicateAndSort(resolved)
-				before := make([]build.Comment, len(resolved))
-				for i, imp := range resolved {
-					before[i].Token = "# resolved: " + imp
-				}
-
-				r.Attr(attrName).Comment().Before = before
-				// log.Println(from, "resolved deps:", resolved)
+				r.SetAttr("unresolved_deps", protoc.DeduplicateAndSort(unresolved))
 			}
 
 		}
