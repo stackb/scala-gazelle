@@ -25,10 +25,14 @@ var (
 	errNotFound   = errors.New("rule not found")
 )
 
-type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label)
+type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label)
 
 func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolver {
-	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
+	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
+		imports, ok := importsRaw.([]string)
+		if !ok {
+			return
+		}
 		dbg := debug
 		if dbg {
 			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)

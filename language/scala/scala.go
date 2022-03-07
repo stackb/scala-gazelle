@@ -354,11 +354,7 @@ func (sl *scalaLang) Resolve(
 		if provider == nil {
 			log.Printf("no known rule provider for %v", from)
 		}
-		if imports, ok := importsRaw.([]string); ok {
-			provider.Resolve(c, ix, r, imports, from)
-		} else {
-			log.Printf("warning: resolve scala imports: expected []string, got %T", importsRaw)
-		}
+		provider.Resolve(c, ix, r, importsRaw, from)
 	} else {
 		log.Printf("no known rule package for %v", from.Pkg)
 	}

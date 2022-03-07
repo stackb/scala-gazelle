@@ -177,7 +177,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 }
 
 // Resolve implements part of the RuleProvider interface.
-func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
+func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label) {
 	resolveDeps("deps", s.pkg.ScalaImportRegistry())(c, ix, r, imports, from)
 }
 
