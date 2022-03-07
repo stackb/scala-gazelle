@@ -35,7 +35,7 @@ type ScalaImportRegistry interface {
 
 func newImportRegistry(scalaRuleRegistry ScalaRuleRegistry, scalaCompiler ScalaCompiler) *importRegistry {
 	return &importRegistry{
-		// importsOut:        "/tmp/scala-gazelle-imports.csv",
+		importsOut:        "/tmp/scala-gazelle-imports.csv",
 		scalaRuleRegistry: scalaRuleRegistry,
 		scalaCompiler:     scalaCompiler,
 		provides:          make(map[label.Label][]string),
@@ -103,14 +103,6 @@ func (ir *importRegistry) Completions(imp string) map[string]label.Label {
 			}
 			base := strings.TrimPrefix(i[len(prefix):], ".")
 			completions[base] = from
-			// // for things like "io.grpc.Status$Code", also include "io.grpc.Status"
-			// dollar := strings.Index(base, "$")
-			// if dollar <= 0 {
-			// 	continue
-			// }
-			// log.Println("completed base:", i, dollar, base[0:dollar])
-			// completions[base[0:dollar]] = from
-			// log.Println("completed subbase:", i, base)
 		}
 	}
 
@@ -243,32 +235,18 @@ func importClass(imp string) (string, bool) {
 
 // CrossResolve implements the CrossResolver interface.
 func (ir *importRegistry) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	// log.Println("final XResolve", lang, imp.Lang)
 	if lang != ScalaLangName {
 		return nil
 	}
 
-	class, _ := importClass(strings.TrimSuffix(imp.Imp, "._"))
-
-	if from, ok := ir.classes[class]; ok && len(from) == 1 {
-		// log.Println("success exact match class check:", class, from)
-		return []resolve.FindResult{{Label: from[0]}}
+	if from, ok := ir.imports[imp.Imp]; ok {
+		return []resolve.FindResult{{Label: from}}
 	}
 
-	// log.Println("failed exact match class check:", class)
-
-	// sc := getScalaConfig(c)
-	// if sc == nil {
-	// 	return nil
-	// }
-
-	// for _, override := range sc.overrides {
-	// 	if ok, err := doublestar.Match(override.imp.Imp, imp.Imp); ok {
-	// 		log.Println("resolve scala glob: match", override.imp.Imp, imp.Imp)
-	// 		return []resolve.FindResult{{Label: override.dep}}
-	// 	} else {
-	// 		log.Println("resolve scala glob: fail", override.imp.Imp, imp.Imp, err)
-	// 	}
+	// class, _ := importClass(strings.TrimSuffix(imp.Imp, "._"))
+	// if from, ok := ir.classes[class]; ok && len(from) == 1 {
+	// 	// log.Println("success exact match class check:", class, from)
+	// 	return []resolve.FindResult{{Label: from[0]}}
 	// }
 
 	return nil
@@ -303,6 +281,7 @@ func (r *importRegistry) writeImports() error {
 	}
 
 	w.Flush()
+
 	log.Println("Wrote", r.importsOut)
 
 	return nil

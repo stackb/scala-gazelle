@@ -11,7 +11,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
@@ -30,12 +29,15 @@ type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, im
 
 func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolver {
 	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-		if debug {
+		dbg := debug
+		if dbg {
 			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)
 		}
 
+		sc := getScalaConfig(c)
+
 		if from.Name == "" {
-			log.Panicf("bad label: %v", from)
+			log.Panicf("resolver: bad from label: %v", from)
 		}
 
 		existing := r.AttrStrings(attrName)
@@ -55,17 +57,33 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 			impLang = overrideImpLang
 		}
 
-		if debug {
+		if dbg {
 			log.Printf("resolving %d imports: %v", len(imports), imports)
 		}
 
-		for _, imp := range imports {
-			if debug {
+		stack := make(importStack, 0)
+		stack = stack.push(imports...)
+		stack = stack.push(getScalaImportsFromRuleComment(r)...)
+
+		var imp string
+
+		for !stack.empty() {
+			stack, imp = stack.pop()
+
+			// push any indirect dependencies
+			if deps := sc.GetIndirectDependencies(ScalaLangName, imp); len(deps) > 0 {
+				if dbg {
+					log.Println("adding indirect deps", deps)
+				}
+				stack = stack.push(deps...)
+			}
+
+			if dbg {
 				log.Println("---", imp, "---")
 			}
 			ll, err := resolveImport(c, ix, impLang, imp, from)
 			if err == errSkipImport {
-				if debug {
+				if dbg {
 					log.Println(from, "skipped:", imp)
 				}
 				// Note: skipped imports do not contribute to 'unresolved' list.
@@ -82,6 +100,7 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 				continue
 			}
 			if len(ll) > 1 {
+				original := ll
 				disambiguated, err := importRegistry.Disambiguate(c, imp, ll, from)
 				if err != nil {
 					log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, ll, from, err)
@@ -96,10 +115,15 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 					}
 				}
 				ll = disambiguated
+				resolved = append(resolved, fmt.Sprintf("diambiguated %q: %v => %v", imp, original, disambiguated))
 			}
 			for _, l := range ll {
+				// one final check for self imports
+				if from.Equal(l) || isSameImport(c, from, l) {
+					continue
+				}
 				l = l.Rel(from.Repo, from.Pkg)
-				if debug {
+				if dbg {
 					log.Println(from, "resolved:", imp, "is provided by", l)
 				}
 				depSet[l.String()] = true
@@ -115,8 +139,10 @@ func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolv
 			sort.Strings(deps)
 			r.SetAttr(attrName, deps)
 
-			if false {
-				r.SetAttr("resolved_deps", protoc.DeduplicateAndSort(resolved))
+			if true {
+				tags := r.AttrStrings("tags")
+				tags = append(tags, protoc.DeduplicateAndSort(resolved)...)
+				r.SetAttr("tags", tags)
 			}
 
 			if len(unresolved) > 0 {
@@ -174,6 +200,20 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp str
 	}
 
 	return ll, err
+}
+
+func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
+	for _, line := range r.Comments() {
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			continue
+		}
+		if fields[0] != "scala-import:" {
+			continue
+		}
+		imports = append(imports, fields[1])
+	}
+	return
 }
 
 // dedupLabels deduplicates labels but keeps existing ordering.
@@ -260,4 +300,20 @@ func printRules(rules ...*rule.Rule) {
 		r.Insert(file)
 	}
 	fmt.Println(string(file.Format()))
+}
+
+// importStack is a simple stack of strings.
+type importStack []string
+
+func (s importStack) push(v ...string) importStack {
+	return append(s, v...)
+}
+
+func (s importStack) empty() bool {
+	return len(s) == 0
+}
+
+func (s importStack) pop() (importStack, string) {
+	l := len(s)
+	return s[:l-1], s[l-1]
 }

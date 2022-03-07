@@ -319,9 +319,6 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		// pick the first result -- this might not be correct!
 		// log.Println("source crossResolve package hit:", packages[0].label)
 		result := make([]resolve.FindResult, len(packages))
-		for i, p := range packages {
-			result[i] = resolve.FindResult{Label: p.label}
-		}
 		return result
 	}
 

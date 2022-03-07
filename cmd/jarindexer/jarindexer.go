@@ -92,13 +92,7 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			}
 			return nil
 		}
-		// exclude shaded classes
-		if strings.Contains(name, "/shaded/") {
-			if debug {
-				log.Println("skipping shaded class:", f.Name, c.Name())
-			}
-			return nil
-		}
+
 		// exclude anonymous classes like 'com/google/protobuf/Int32Value$1'
 		if isAnonymous.MatchString(name) {
 			if debug {
