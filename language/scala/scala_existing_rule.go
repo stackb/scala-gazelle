@@ -300,6 +300,15 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			str := &build.StringExpr{Value: dep.String()}
 			list[i] = str
 
+			// for first one, list all imports
+			if i == 0 {
+				for imp := range imports {
+					str.Comments.Before = append(str.Comments.Before, build.Comment{
+						Token: "# import: " + imp,
+					})
+				}
+			}
+
 			if imps, ok := resolved[dep]; ok {
 				reasons := make([]string, 0, len(imps))
 				for imp := range imps {
@@ -312,7 +321,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			}
 		}
 		// r.SetAttr("deps", deps)
-		r.SetAttr("deps", &build.ListExpr{List: list})
+		depsExpr := &build.ListExpr{List: list}
+		r.SetAttr("deps", depsExpr)
 
 		// if true {
 		// 	tags := r.AttrStrings("tags")

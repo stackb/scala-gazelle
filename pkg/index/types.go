@@ -46,6 +46,8 @@ type ScalaFileSpec struct {
 	// Names is a list of simple function calls.  In practice these look like
 	// constructor invocations.
 	Names []string `json:"names,omitempty"`
+	// Extends is a mapping from the base type to a list of symbol names.
+	Extends map[string][]string `json:"extends,omitempty"`
 }
 
 // ScalaRuleSpec represents a list of ScalaFileSpec.

@@ -80,6 +80,13 @@ class ScalaSourceFile {
          * @type {Set<string>}
          */
         this.names = new Set();
+
+        /**
+         * If type, trait, or class extends another symbol, record that here.
+         * Key is the package-qualified-name, value is a list of names.
+         * @type {Map<string,Array<string>>}
+         */
+        this.extendsMap = new Map();
     }
 
     /**
@@ -93,12 +100,13 @@ class ScalaSourceFile {
         const tree = parseSource(buffer.toString());
         // this.printNode(tree);
 
-        this.traverse(tree, undefined, (key, node, parent) => {
+        this.traverse(tree, [], (key, node, stack) => {
             if (!node) {
                 return false
             }
             if (node.type === 'Term.Name' && node.value) {
                 this.names.add(node.value);
+                this.console.log('Adding name of', stack[stack.length - 1].type);
             }
             return true;
         });
@@ -112,27 +120,29 @@ class ScalaSourceFile {
 
     /**
      * Traverse an object, calling filter on each key/value pair to know whether
-     * to continue.  The parent argument will always have a '.type' field that
-     * indicates the context of the current node.
+     * to continue.  The stack contains all parent objects which have a '.type'
+     * field.
      * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/.
      * @param  {object} obj
-     * @param  {object} parent
+     * @param  {Array<object>} stack
      * @param  {function} filter
      */
-    traverse(obj, parent, filter) {
+    traverse(obj, stack, filter) {
         if (typeof obj !== 'object' || obj === null) {
             return;
         }
-        let typedParent = parent;
         if (obj.type) {
-            typedParent = obj;
+            stack.push(obj);
         }
         Object.entries(obj).forEach(([key, value]) => {
             // Key is either an array index or object key
-            if (filter(key, value, parent)) {
-                this.traverse(value, typedParent, filter);
+            if (filter(key, value, stack)) {
+                this.traverse(value, stack, filter);
             }
         });
+        if (obj.type) {
+            stack.pop();
+        }
     }
 
     /**
@@ -259,18 +269,24 @@ class ScalaSourceFile {
 
     visitDefnObject(node) {
         const name = this.parseName(node.name);
-        this.topObjects.add(this.packageQualifiedName(name));
+        const qName = this.packageQualifiedName(name);
+        this.topObjects.add(qName);
+        this.parseExtends('object', qName, node);
     }
 
     visitDefnClass(node) {
         const name = this.parseName(node.name);
-        this.topClasses.add(this.packageQualifiedName(name));
+        const qName = this.packageQualifiedName(name);
+        this.topClasses.add(qName);
+        this.parseExtends('class', qName, node);
         this.visitStats(node.stats)
     }
 
     visitDefnTrait(node) {
         const name = this.parseName(node.name);
-        this.topTraits.add(this.packageQualifiedName(name));
+        const qName = this.packageQualifiedName(name);
+        this.topTraits.add(qName);
+        this.parseExtends('trait', qName, node);
         this.visitStats(node.stats)
     }
 
@@ -287,12 +303,33 @@ class ScalaSourceFile {
         this.topTypes.add(this.packageQualifiedName(name));
     }
 
+    parseExtends(type, qName, node) {
+        const key = `${type} ${qName}`;
+        if (node.templ) {
+            for (const init of node.templ.inits) {
+                // this.printNode(init);
+                if (init.tpe) {
+                    const tpe = this.parseName(init.tpe);
+                    if (tpe) {
+                        let symbols = this.extendsMap.get(key);
+                        if (!symbols) {
+                            symbols = [];
+                            this.extendsMap.set(key, symbols);
+                        }
+                        symbols.push(tpe);
+                        this.console.log(`${key} extends ${tpe}`);
+                    }
+                }
+            }
+        }
+    }
+
     toObject() {
         const obj = {
             filename: this.filename,
         };
 
-        const maybeAssign = (set, prop) => {
+        const maybeAssignList = (set, prop) => {
             const list = Array.from(set);
             if (list.length) {
                 list.sort();
@@ -300,14 +337,26 @@ class ScalaSourceFile {
             }
         };
 
-        maybeAssign(this.packages, 'packages');
-        maybeAssign(this.imports, 'imports');
-        maybeAssign(this.topClasses, 'classes');
-        maybeAssign(this.topTraits, 'traits');
-        maybeAssign(this.topObjects, 'objects');
-        maybeAssign(this.topVals, 'vals');
-        maybeAssign(this.topTypes, 'types');
-        maybeAssign(this.names, 'names');
+        const maybeAssignMap = (map, prop) => {
+            if (!map.size) {
+                return;
+            }
+            let m = Object.create(null);
+            for (let [k, v] of map) {
+                m[k] = v;
+            }
+            obj[prop] = m;
+        };
+
+        maybeAssignList(this.packages, 'packages');
+        maybeAssignList(this.imports, 'imports');
+        maybeAssignList(this.topClasses, 'classes');
+        maybeAssignList(this.topTraits, 'traits');
+        maybeAssignList(this.topObjects, 'objects');
+        maybeAssignList(this.topVals, 'vals');
+        maybeAssignList(this.topTypes, 'types');
+        maybeAssignList(this.names, 'names');
+        maybeAssignMap(this.extendsMap, 'extends');
 
         return obj;
     }
