@@ -154,15 +154,15 @@ func printRules(rules ...*rule.Rule) {
 func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
 	for _, line := range r.Comments() {
 		fields := strings.Fields(line)
-		if len(fields) != 2 {
+		// ["#", "scala-import:", "org.json4s.CustomSerializer"]
+		if len(fields) != 3 {
 			continue
 		}
-		if fields[0] != "scala-import:" {
-			log.Println("skipped rule comment line:", fields[0], line)
+		if fields[1] != "scala-import:" {
 			continue
 		}
-		imports = append(imports, fields[1])
-		log.Println("add scala import from rule comment:", fields[1])
+		imports = append(imports, fields[2])
+		// log.Println("add scala import from rule comment:", fields[2])
 	}
 	return
 }

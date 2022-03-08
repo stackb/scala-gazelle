@@ -80,15 +80,15 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
-func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, existing *rule.Rule) RuleProvider {
+func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
 	// TODO(pcj): is this rule copying actually necessary?  Introduced this when
 	// trying to debug a bug where I wasn't sure if state inside the rule was
 	// the issue.
-	r := rule.NewRule(existing.Kind(), existing.Name())
-	for _, key := range existing.AttrKeys() {
-		r.SetAttr(key, existing.Attr(key))
-	}
-	r.DelAttr("deps") // make sure the "source" rule has no deps to start
+	// r := rule.NewRule(existing.Kind(), existing.Name())
+	// for _, key := range existing.AttrKeys() {
+	// 	r.SetAttr(key, existing.Attr(key))
+	// }
+	// r.DelAttr("deps") // make sure the "source" rule has no deps to start
 
 	srcs, err := getAttrFiles(pkg, r, "srcs")
 	if err != nil {

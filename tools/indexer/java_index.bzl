@@ -14,12 +14,26 @@ def build_jarindex(ctx, basename, jar):
         the output File of the index.
     """
 
+    ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
     input_file = ctx.actions.declare_file(basename + ".jar.json")
     output_file = ctx.actions.declare_file(basename + ".jarindex.json")
 
+    ctx.actions.run(
+        executable = ctx.executable._ijar,
+        inputs = [jar],
+        outputs = [ijar],
+        arguments = [
+            "--target_label",
+            str(ctx.label),
+            jar.path,
+            ijar.path,
+        ],
+        mnemonic = "Ijar",
+    )
+
     ctx.actions.write(
         content = json.encode(struct(
-            filename = jar.path,
+            filename = ijar.path,
         )),
         output = input_file,
     )
@@ -36,7 +50,7 @@ def build_jarindex(ctx, basename, jar):
         progress_message = "Parsing jar file symbols",
         executable = ctx.executable._jarindexer,
         arguments = args,
-        inputs = [input_file, jar],
+        inputs = [input_file, ijar],
         outputs = [output_file],
     )
 
@@ -129,6 +143,12 @@ java_index = rule(
             default = Label("//cmd/jarindexer"),
             cfg = "exec",
             executable = True,
+        ),
+        "_ijar": attr.label(
+            default = Label("@bazel_tools//tools/jdk:ijar"),
+            executable = True,
+            cfg = "exec",
+            allow_files = True,
         ),
     },
 )

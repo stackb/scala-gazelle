@@ -305,13 +305,27 @@ def _get_compile_flags(dep):
 def build_jar_index(ctx, target, jar):
     """Builds the java package manifest for the given source files."""
 
+    ijar_file = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
     input_file = ctx.actions.declare_file(target.label.name + ".jar.json")
     output_file = ctx.actions.declare_file(target.label.name + ".jarindex.json")
+
+    ctx.actions.run(
+        executable = ctx.executable._ijar,
+        inputs = [jar],
+        outputs = [ijar_file],
+        arguments = [
+            "--target_label",
+            str(ctx.label),
+            jar.path,
+            ijar_file.path,
+        ],
+        mnemonic = "Ijar",
+    )
 
     ctx.actions.write(
         content = json.encode(struct(
             label = str(target.label),
-            filename = jar.path,
+            filename = ijar_file.path,
         )),
         output = input_file,
     )
@@ -324,11 +338,11 @@ def build_jar_index(ctx, target, jar):
     ]
 
     ctx.actions.run(
-        mnemonic = "JarIndexer",
+        mnemonic = "IJarIndexer",
         progress_message = "Extracting symbols from: " + jar.basename,
         executable = ctx.executable._jarindexer,
         arguments = args,
-        inputs = [input_file, jar],
+        inputs = [input_file, ijar_file],
         outputs = [output_file],
     )
 
@@ -655,6 +669,12 @@ java_indexer_aspect = aspect(
             default = Label("//cmd/jarindexer"),
             cfg = "exec",
             executable = True,
+        ),
+        "_ijar": attr.label(
+            default = Label("@bazel_tools//tools/jdk:ijar"),
+            executable = True,
+            cfg = "exec",
+            allow_files = True,
         ),
     },
     fragments = ["cpp", "java"],
