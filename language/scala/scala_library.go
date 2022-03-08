@@ -144,6 +144,4 @@ func (s *scalaLibraryRule) Imports(c *config.Config, r *rule.Rule, file *rule.Fi
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaLibraryRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label) {
-	// TODO: delete this class or fix this.
-	// resolveDeps("deps")(c, ix, r, imports, from)
 }

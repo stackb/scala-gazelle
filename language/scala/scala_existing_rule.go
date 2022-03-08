@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -103,50 +104,24 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, exist
 
 	from := label.New("", pkg.Rel(), r.Name())
 
-	requires, provides, err := resolveSrcsSymbols(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
+	files, err := resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
 	if err != nil {
 		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
 		return nil
 	}
 
-	if debug {
-		log.Println(from, "requires:", requires)
-
-		for i, src := range srcs {
-			r.AddComment("# srcs: " + src)
-			log.Println(from, "srcs:", i, src)
-		}
-		for i, v := range requires {
-			log.Println(from, "requires:", i, v)
-		}
-		for i, v := range provides {
-			log.Println(from, "provides:", i, v)
-		}
-	}
-
-	r.SetPrivateAttr(config.GazelleImportsKey, requires)
+	r.SetPrivateAttr(config.GazelleImportsKey, files)
 	r.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
 
-	if debug {
-		for _, imp := range requires {
-			r.AddComment("# import: " + imp)
-		}
-	}
-
-	return &scalaExistingRuleRule{cfg, pkg, r, requires, provides}
+	return &scalaExistingRuleRule{cfg, pkg, r, files}
 }
 
 // scalaExistingRuleRule implements RuleProvider for existing scala rules.
 type scalaExistingRuleRule struct {
-	cfg  *RuleConfig
-	pkg  ScalaPackage
-	rule *rule.Rule
-	// requires is the list of scala symbols this group of files requires
-	// (import statements).
-	requires []string
-	// provides is the list of scala symbols this group of files provides
-	// (classes, traits, etc).
-	provides []string
+	cfg   *RuleConfig
+	pkg   ScalaPackage
+	rule  *rule.Rule
+	files []*index.ScalaFileSpec
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -166,19 +141,196 @@ func (s *scalaExistingRuleRule) Rule() *rule.Rule {
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	specs := make([]resolve.ImportSpec, len(s.provides))
-	for i, imp := range s.provides {
+	provides := make([]string, 0)
+	for _, file := range s.files {
+		provides = append(provides, file.Packages...)
+		provides = append(provides, file.Classes...)
+		provides = append(provides, file.Objects...)
+		provides = append(provides, file.Traits...)
+		provides = append(provides, file.Types...)
+		provides = append(provides, file.Vals...)
+	}
+	provides = protoc.DeduplicateAndSort(provides)
+
+	specs := make([]resolve.ImportSpec, len(provides))
+	for i, imp := range provides {
 		specs[i] = resolve.ImportSpec{
 			Lang: "scala",
 			Imp:  imp,
 		}
 	}
+
 	return specs
 }
 
 // Resolve implements part of the RuleProvider interface.
-func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label) {
-	resolveDeps("deps", s.pkg.ScalaImportRegistry())(c, ix, r, imports, from)
+func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
+	dbg := debug
+	files, ok := importsRaw.([]*index.ScalaFileSpec)
+	if !ok {
+		return
+	}
+	importRegistry := s.pkg.ScalaImportRegistry()
+	sc := getScalaConfig(c)
+
+	// gather imports in a map such that we know the file that the import arose
+	// from.  IN some cases (indirect deps, those provided in rule comments) the
+	// file is not known (nil).
+	imports := make(map[string]*index.ScalaFileSpec)
+
+	// 1: direct imports
+	for _, file := range files {
+		for _, imp := range file.Imports {
+			imports[imp] = file
+		}
+	}
+
+	// 2: explicity named in the rule comment.
+	for _, imp := range getScalaImportsFromRuleComment(r) {
+		if _, ok := imports[imp]; !ok {
+			imports[imp] = nil
+		}
+	}
+
+	// 3: transitive of 1+2.
+	stack := make(importStack, 0, len(imports))
+	for k := range imports {
+		stack = stack.push(k)
+	}
+	var imp string
+	for !stack.empty() {
+		stack, imp = stack.pop()
+		for _, dep := range sc.GetIndirectDependencies(ScalaLangName, imp) {
+			// make this is feature tooggle? for transitive indirects?
+			// stack = stack.push(dep)
+			if _, ok := imports[dep]; !ok {
+				imports[dep] = nil
+			}
+		}
+	}
+
+	// want to record which imports contributed to from
+	resolved := make(labelImportMap)
+
+	depSet := make(map[label.Label]bool)
+	for _, d := range r.AttrStrings("deps") {
+		l, err := label.Parse(d)
+		if err != nil {
+			continue
+		}
+		depSet[l] = true
+		resolved.Set(l, "<rule attr>")
+	}
+
+	unresolved := make([]string, 0)
+	// resolved := make([]string, 0)
+
+	// determine the resolve kind
+	impLang := r.Kind()
+	if overrideImpLang, ok := r.PrivateAttr(ResolverImpLangPrivateKey).(string); ok {
+		impLang = overrideImpLang
+	}
+
+	for imp, file := range imports {
+		if dbg {
+			log.Println("---", from, imp, "---")
+		}
+
+		labels := resolveImport(c, ix, importRegistry, file, impLang, imp, from, resolved)
+
+		if len(labels) == 0 {
+			unresolved = append(unresolved, "no-label: "+imp)
+			if dbg {
+				log.Println("unresolved:", imp)
+			}
+			continue
+		}
+
+		if len(labels) > 1 {
+			// original := labels
+			disambiguated, err := importRegistry.Disambiguate(c, imp, labels, from)
+			if err != nil {
+				log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, labels, from, err)
+			}
+			if false {
+				if len(labels) > 0 {
+					if strings.HasSuffix(imp, "._") {
+						log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, labels)
+					} else {
+						log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, labels)
+					}
+				}
+			}
+			labels = disambiguated
+			// resolved = append(resolved, fmt.Sprintf("diambiguated %q: %v => %v", imp, original, disambiguated))
+		}
+
+		for _, l := range labels {
+			if from.Equal(l) || isSameImport(c, from, l) || l == label.NoLabel || l == PlatformLabel {
+				continue
+			}
+			l = l.Rel(from.Repo, from.Pkg)
+			depSet[l] = true
+			resolved.Set(l, imp)
+
+			// resolved = append(resolved, imp+" -> "+l.String())
+			if dbg {
+				log.Println("resolved:", imp, "is provided by", l)
+			}
+		}
+	}
+
+	r.DelAttr("deps")
+
+	if len(depSet) > 0 {
+		deps := make([]label.Label, len(depSet))
+		i := 0
+		for dep := range depSet {
+			deps[i] = dep
+			i++
+			// deps = append(deps, dep.String())
+		}
+		sort.Slice(deps, func(i, j int) bool {
+			a := deps[i]
+			b := deps[j]
+			return a.String() < b.String()
+		})
+		list := make([]build.Expr, len(deps))
+		for i, dep := range deps {
+			str := &build.StringExpr{Value: dep.String()}
+			list[i] = str
+
+			if imps, ok := resolved[dep]; ok {
+				reasons := make([]string, 0, len(imps))
+				for imp := range imps {
+					reasons = append(reasons, imp)
+				}
+				sort.Strings(reasons)
+				for _, reason := range reasons {
+					str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+				}
+			}
+		}
+		// r.SetAttr("deps", deps)
+		r.SetAttr("deps", &build.ListExpr{List: list})
+
+		// if true {
+		// 	tags := r.AttrStrings("tags")
+		// 	tags = append(tags, protoc.DeduplicateAndSort(resolved)...)
+		// 	r.SetAttr("tags", tags)
+		// }
+
+		if len(unresolved) > 0 {
+			if true {
+				panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+			}
+			r.SetAttr("unresolved_deps", protoc.DeduplicateAndSort(unresolved))
+		}
+	}
+
+	if dbg {
+		log.Println("-- | ", from, "finished deps resolution.")
+	}
 }
 
 // getAttrFiles returns a list of source files for the 'srcs' attribute.  Each
@@ -223,32 +375,12 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveSrcsSymbols(dir string, from label.Label, kind string, srcs []string, parser ScalaFileParser) (requires, provides []string, err error) {
-	var spec index.ScalaRuleSpec
-	spec, err = parser.ParseScalaFiles(dir, from, kind, srcs...)
-	if err != nil {
-		return
+func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser ScalaFileParser) ([]*index.ScalaFileSpec, error) {
+	if spec, err := parser.ParseScalaFiles(dir, from, kind, srcs...); err != nil {
+		return nil, err
+	} else {
+		return spec.Srcs, nil
 	}
-
-	for _, file := range spec.Srcs {
-		for _, imp := range file.Imports {
-			// exclude imports that appear to be in-package.
-			// if isUnqualifiedImport(imp) {
-			// 	continue
-			// }
-			requires = append(requires, imp)
-		}
-		provides = append(provides, file.Packages...)
-		provides = append(provides, file.Classes...)
-		provides = append(provides, file.Objects...)
-		provides = append(provides, file.Traits...)
-		provides = append(provides, file.Types...)
-		provides = append(provides, file.Vals...)
-	}
-
-	requires = protoc.DeduplicateAndSort(requires)
-	provides = protoc.DeduplicateAndSort(provides)
-	return
 }
 
 // isUnqualifiedImport examples: 'CastDepthUtils._' or 'CastDepthUtils'.

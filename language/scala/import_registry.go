@@ -31,6 +31,10 @@ type ScalaImportRegistry interface {
 	// ambiguous, error is returned, possibly with a non-empty list of labels
 	// that represent best-effort results.
 	Disambiguate(c *config.Config, imp string, labels []label.Label, from label.Label) ([]label.Label, error)
+	// Get the label that provides the given import
+	Provider(imp string) (label.Label, bool)
+	// Completions returns concrete symbols under the given prefix
+	Completions(prefix string) map[string]label.Label
 }
 
 func newImportRegistry(scalaRuleRegistry ScalaRuleRegistry, scalaCompiler ScalaCompiler) *importRegistry {
@@ -81,6 +85,11 @@ func (ir *importRegistry) OnResolve() {
 	}
 }
 
+func (ir *importRegistry) Provider(imp string) (label.Label, bool) {
+	from, ok := ir.imports[imp]
+	return from, ok
+}
+
 func (ir *importRegistry) Provides(l label.Label, imports []string) {
 	ir.provides[l] = append(ir.provides[l], imports...)
 }
@@ -94,7 +103,7 @@ func (ir *importRegistry) Completions(imp string) map[string]label.Label {
 	// transform 'java.util._' to 'java.util.'
 	prefix := strings.TrimSuffix(imp, "_")
 
-	// log.Printf("completing %q in %v (provides=%v)", prefix, ir.imports, ir.provides)
+	// log.Printf("completing %q", prefix)
 
 	for i, from := range ir.imports {
 		if strings.HasPrefix(i, prefix) {

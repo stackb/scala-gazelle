@@ -1,236 +1,93 @@
 package scala
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"sort"
 	"strings"
+
+	"github.com/stackb/scala-gazelle/pkg/index"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 const (
 	// ResolverImpLangPrivateKey stores the implementation language override.
 	ResolverImpLangPrivateKey = "_resolve_imp_lang"
+	debug                     = true
 )
 
-var (
-	debug         = false
-	errSkipImport = errors.New("self import")
-	errNotFound   = errors.New("rule not found")
-)
+type labelImportMap map[label.Label]map[string]bool
 
-type depsResolver func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label)
-
-func resolveDeps(attrName string, importRegistry ScalaImportRegistry) depsResolver {
-	return func(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-		imports, ok := importsRaw.([]string)
-		if !ok {
-			return
-		}
-		dbg := debug
-		if dbg {
-			log.Printf("resolveDeps %q for %s rule %v", attrName, r.Kind(), from)
-		}
-
-		sc := getScalaConfig(c)
-
-		if from.Name == "" {
-			log.Panicf("resolver: bad from label: %v", from)
-		}
-
-		existing := r.AttrStrings(attrName)
-		r.DelAttr(attrName)
-
-		depSet := make(map[string]bool)
-		for _, d := range existing {
-			depSet[d] = true
-		}
-
-		unresolved := make([]string, 0)
-		resolved := make([]string, 0)
-
-		// determine the resolve kind
-		impLang := r.Kind()
-		if overrideImpLang, ok := r.PrivateAttr(ResolverImpLangPrivateKey).(string); ok {
-			impLang = overrideImpLang
-		}
-
-		if dbg {
-			log.Printf("resolving %d imports: %v", len(imports), imports)
-		}
-
-		stack := make(importStack, 0)
-		stack = stack.push(imports...)
-		stack = stack.push(getScalaImportsFromRuleComment(r)...)
-
-		var imp string
-
-		for !stack.empty() {
-			stack, imp = stack.pop()
-
-			// push any indirect dependencies
-			if deps := sc.GetIndirectDependencies(ScalaLangName, imp); len(deps) > 0 {
-				if dbg {
-					log.Println("adding indirect deps", deps)
-				}
-				stack = stack.push(deps...)
-			}
-
-			if dbg {
-				log.Println("---", imp, "---")
-			}
-			ll, err := resolveImport(c, ix, impLang, imp, from)
-			if err == errSkipImport {
-				if dbg {
-					log.Println(from, "skipped:", imp)
-				}
-				// Note: skipped imports do not contribute to 'unresolved' list.
-				continue
-			}
-			if err != nil {
-				log.Println(from, "scala resolveDeps error:", err)
-				unresolved = append(unresolved, "error: "+imp+": "+err.Error())
-				continue
-			}
-			if len(ll) == 0 {
-				unresolved = append(unresolved, "no-label: "+imp)
-				log.Panicln(from, "unresolved import (no label):", imp)
-				continue
-			}
-			if len(ll) > 1 {
-				original := ll
-				disambiguated, err := importRegistry.Disambiguate(c, imp, ll, from)
-				if err != nil {
-					log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, ll, from, err)
-				}
-				if false {
-					if len(ll) > 0 {
-						if strings.HasSuffix(imp, "._") {
-							log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, ll)
-						} else {
-							log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, ll)
-						}
-					}
-				}
-				ll = disambiguated
-				resolved = append(resolved, fmt.Sprintf("diambiguated %q: %v => %v", imp, original, disambiguated))
-			}
-			for _, l := range ll {
-				// one final check for self imports
-				if from.Equal(l) || isSameImport(c, from, l) {
-					continue
-				}
-				l = l.Rel(from.Repo, from.Pkg)
-				if dbg {
-					log.Println(from, "resolved:", imp, "is provided by", l)
-				}
-				depSet[l.String()] = true
-				resolved = append(resolved, imp+" -> "+l.String())
-			}
-		}
-
-		if len(depSet) > 0 {
-			deps := make([]string, 0, len(depSet))
-			for dep := range depSet {
-				deps = append(deps, dep)
-			}
-			sort.Strings(deps)
-			r.SetAttr(attrName, deps)
-
-			if true {
-				tags := r.AttrStrings("tags")
-				tags = append(tags, protoc.DeduplicateAndSort(resolved)...)
-				r.SetAttr("tags", tags)
-			}
-
-			if len(unresolved) > 0 {
-				if true {
-					panic(fmt.Sprintf("unresolved deps! %v", unresolved))
-				}
-				r.SetAttr("unresolved_deps", protoc.DeduplicateAndSort(unresolved))
-			}
-
-		}
+func (m labelImportMap) Set(from label.Label, imp string) {
+	if all, ok := m[from]; ok {
+		all[imp] = true
+	} else {
+		m[from] = map[string]bool{imp: true}
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) ([]label.Label, error) {
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, file *index.ScalaFileSpec, lang string, imp string, from label.Label, labelMap labelImportMap) []label.Label {
 	if debug {
-		log.Println("resolveImport", from, lang, imp)
+		log.Println("resolveImport:", imp)
 	}
+
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
-		return nil, errSkipImport
+		return nil
 	}
 
-	ll, err := resolveAnyKind(c, ix, lang, imp, from)
-	if err != nil {
-		return nil, err
+	labels := resolveAnyKind(c, ix, lang, imp, from)
+	if debug {
+		log.Println("resolveAnyKind:", imp, labels)
 	}
 
-	if len(ll) == 1 && ll[0] == PlatformLabel {
-		return nil, errSkipImport
+	if len(labels) > 1 {
+		labels = dedupLabels(labels)
 	}
-
-	if len(ll) == 0 {
-		// if this is a _root_ import, try without
-		if strings.HasPrefix(imp, "_root_.") {
-			return resolveImport(c, ix, lang, strings.TrimPrefix(imp, "_root_."), from)
+	if len(labels) > 0 {
+		for _, l := range labels {
+			labelMap.Set(l, imp)
 		}
+		return labels
+	}
 
-		// if this is already an all import, try without
-		if strings.HasSuffix(imp, "._") {
-			return resolveImport(c, ix, lang, strings.TrimSuffix(imp, "._"), from)
-		}
+	// if this is a _root_ import, try without
+	if strings.HasPrefix(imp, "_root_.") {
+		return resolveImport(c, ix, registry, file, lang, strings.TrimPrefix(imp, "_root_."), from, labelMap)
+	}
 
-		lastDot := strings.LastIndex(imp, ".")
-		if lastDot > 0 {
-			parent := imp[0:lastDot]
-			if debug {
-				log.Println("resolveImport parent package", from, lang, parent)
+	// if this is a wildcard import, try without
+	if strings.HasSuffix(imp, "._") {
+		return resolveImport(c, ix, registry, file, lang, strings.TrimSuffix(imp, "._"), from, labelMap)
+	}
+
+	// if this has a parent, try parent
+	lastDot := strings.LastIndex(imp, ".")
+	if lastDot > 0 {
+		parent := imp[0:lastDot]
+		return resolveImport(c, ix, registry, file, lang, parent, from, labelMap)
+	}
+
+	// we are down to a single symbol now.  Probe the importRegistry for a
+	// type in our package.
+	if file != nil {
+		for _, pkg := range file.Packages {
+			log.Printf("probing for %q in package %s", imp, pkg)
+			completions := registry.Completions(pkg)
+			for actualType, provider := range completions {
+				if imp == actualType {
+					log.Printf("matched in-package import=%s.%s: %v", pkg, imp, provider)
+					labelMap.Set(provider, imp)
+					return []label.Label{provider}
+				}
 			}
-			return resolveImport(c, ix, lang, parent, from)
 		}
 	}
 
-	if len(ll) > 1 {
-		ll = dedupLabels(ll)
-	}
-
-	return ll, err
-}
-
-func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
-	for _, line := range r.Comments() {
-		fields := strings.Fields(line)
-		if len(fields) != 2 {
-			continue
-		}
-		if fields[0] != "scala-import:" {
-			continue
-		}
-		imports = append(imports, fields[1])
-	}
-	return
-}
-
-// dedupLabels deduplicates labels but keeps existing ordering.
-func dedupLabels(in []label.Label) (out []label.Label) {
-	seen := make(map[label.Label]bool)
-	for _, l := range in {
-		if seen[l] {
-			continue
-		}
-		seen[l] = true
-		out = append(out, l)
-	}
-	return out
+	return nil
 }
 
 // resolveAnyKind answers the question "what bazel label provides a rule for the
@@ -238,41 +95,29 @@ func dedupLabels(in []label.Label) (out []label.Label) {
 // algorithm first consults the override list (configured either via gazelle
 // resolve directives, or via a YAML config).  If no override is found, the
 // RuleIndex is consulted, which contains all rules indexed by gazelle in the
-// generation phase.   If no match is found, return label.NoLabel.
-func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) ([]label.Label, error) {
+// generation phase.
+func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) []label.Label {
 	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
-		// log.Println(from, "override hit:", l)
-		return []label.Label{l}, nil
+		log.Println(from, "override hit:", l)
+		return []label.Label{l}
 	}
-	if ll, err := resolveWithIndex(c, ix, lang, imp, from); err == nil || err == errSkipImport {
-		return ll, err
-	} else if err != errNotFound {
-		return nil, err
-	}
-	return nil, nil
+	return resolveWithIndex(c, ix, lang, imp, from)
 }
 
-func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) ([]label.Label, error) {
+func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) []label.Label {
 	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, ScalaLangName)
 	if len(matches) == 0 {
-		// log.Println(from, "no matches:", imp)
-		return nil, errNotFound
+		return nil
 	}
-	if len(matches) > 1 {
-		// return label.NoLabel, fmt.Errorf("%v: %q is provided by multiple rules (%s and %s).  Add a resolve directive in the nearest BUILD.bazel file to disambiguate (example: '# gazelle:resolve scala scala %s %s')", from, imp, matches[0].Label, matches[1].Label, imp, matches[0].Label)
-		ll := make([]label.Label, len(matches))
-		for i, match := range matches {
-			// TODO(pcj): check for self imports
-			ll[i] = match.Label
+	labels := make([]label.Label, len(matches))
+	for i, match := range matches {
+		if match.IsSelfImport(from) {
+			labels[i] = label.NoLabel
+		} else {
+			labels[i] = match.Label
 		}
-		return ll, nil
 	}
-	if matches[0].IsSelfImport(from) || isSameImport(c, from, matches[0].Label) {
-		// log.Println(from, "self import:", imp)
-		return nil, errSkipImport
-	}
-	// log.Println(from, "FindRulesByImportWithConfig first match:", imp, matches[0].Label)
-	return []label.Label{matches[0].Label}, nil
+	return labels
 }
 
 // isSameImport returns true if the "from" and "to" labels are the same.  If the
@@ -304,6 +149,38 @@ func printRules(rules ...*rule.Rule) {
 		r.Insert(file)
 	}
 	fmt.Println(string(file.Format()))
+}
+
+func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
+	for _, line := range r.Comments() {
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			continue
+		}
+		if fields[0] != "scala-import:" {
+			log.Println("skipped rule comment line:", fields[0], line)
+			continue
+		}
+		imports = append(imports, fields[1])
+		log.Println("add scala import from rule comment:", fields[1])
+	}
+	return
+}
+
+// dedupLabels deduplicates labels but keeps existing ordering.
+func dedupLabels(in []label.Label) (out []label.Label) {
+	seen := make(map[label.Label]bool)
+	for _, l := range in {
+		if seen[l] {
+			continue
+		}
+		if l == label.NoLabel || l == PlatformLabel {
+			continue
+		}
+		seen[l] = true
+		out = append(out, l)
+	}
+	return out
 }
 
 // importStack is a simple stack of strings.
