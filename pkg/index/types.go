@@ -5,13 +5,16 @@ type IndexSpec struct {
 	// JarSpecs is the list of jars in the index.
 	JarSpecs []*JarSpec `json:"jarSpecs,omitempty"`
 	// Predefined is a list of labels that do not need to be explicity provided
-	// in deps.  Examples would include platform jar class and the scala stdlib.
+	// in deps.  Examples would include platform jar class (e.g. the jar that
+	// contains java.lang.Object) and the scala stdlib.
 	Predefined []string `json:"predefined,omitempty"`
 }
 
 // JarSpec describes the symbols provided by a bazel label that produces a jar
 // file.
 type JarSpec struct {
+	Symbols []string
+	Files   []*ClassFileSpec
 	// Label is the bazel label that provides the jar
 	Label string `json:"label,omitempty"`
 	// Filename is the jar filename
@@ -22,6 +25,13 @@ type JarSpec struct {
 	Packages []string `json:"packages,omitempty"`
 	// Extends is a mapping from class to symbol that it extends
 	Extends map[string]string `json:"extends,omitempty"`
+}
+
+type ClassFileSpec struct {
+	// Name is the class FQN
+	Name string `json:"name"`
+	// Classes is the list of classes in the constant pool.
+	Classes []int `json:"classes,omitempty"`
 }
 
 // ScalaFileSpec describes the symbols provided/required by a single source

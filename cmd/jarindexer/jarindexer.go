@@ -73,6 +73,9 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 	}
 	pkgs := make(map[string]bool)
 
+	symbols := make([]string, 0)
+	symbolIndex := make(map[string]int)
+
 	entry := java.NewJarClassPathEntry(filename)
 	if err := entry.Visit(func(f *zip.File, c *java.ClassFile) error {
 		if c.IsSynthetic() {
@@ -136,6 +139,24 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			spec.Extends[name] = convertClassName(superClass)
 		}
 
+		classes := c.Classes()
+		classFile := &index.ClassFileSpec{Name: name}
+		if len(classes) > 0 {
+			classFile.Classes = make([]int, len(classes))
+			for i, name := range classes {
+				className := convertClassName(name)
+				if index, ok := symbolIndex[className]; ok {
+					classFile.Classes[i] = index
+				} else {
+					index := len(symbols)
+					symbols = append(symbols, className)
+					symbolIndex[className] = index
+					classFile.Classes[i] = index
+				}
+			}
+		}
+		spec.Files = append(spec.Files, classFile)
+
 		return nil
 	}); err != nil {
 		return err
@@ -147,7 +168,7 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 	}
 	sort.Strings(packages)
 	spec.Packages = packages
-
+	spec.Symbols = symbols
 	return nil
 }
 

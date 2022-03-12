@@ -13,6 +13,7 @@ func TestParseJarFile(t *testing.T) {
 		filename     string
 		wantPackages []string
 		wantClasses  []string
+		wantFiles    []*index.ClassFileSpec
 		wantExtends  map[string]string
 		wantErr      error
 	}{
@@ -126,6 +127,9 @@ func TestParseJarFile(t *testing.T) {
 					t.Errorf("packages (-want +got):\n%s", diff)
 				}
 				if diff := cmp.Diff(tc.wantExtends, got.Extends); diff != "" {
+					t.Errorf("extends (-want +got):\n%s", diff)
+				}
+				if diff := cmp.Diff(tc.wantFiles, got.Files); diff != "" {
 					t.Errorf("extends (-want +got):\n%s", diff)
 				}
 			}
