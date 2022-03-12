@@ -8,7 +8,100 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	"github.com/stackb/scala-gazelle/pkg/index"
 )
+
+func TestResolveNameInFile(t *testing.T) {
+	for name, tc := range map[string]struct {
+		file index.ScalaFileSpec
+		name string
+		want string
+	}{
+		"degenerate": {
+			want: ``,
+		},
+		"miss": {
+			file: index.ScalaFileSpec{},
+			name: "Bar",
+			want: "",
+		},
+		"hit trait": {
+			file: index.ScalaFileSpec{Traits: []string{"com.foo.Bar"}},
+			name: "Bar",
+			want: "com.foo.Bar",
+		},
+		"hit class": {
+			file: index.ScalaFileSpec{Classes: []string{"com.foo.Bar"}},
+			name: "Bar",
+			want: "com.foo.Bar",
+		},
+		"hit object": {
+			file: index.ScalaFileSpec{Objects: []string{"com.foo.Bar"}},
+			name: "Bar",
+			want: "com.foo.Bar",
+		},
+		"hit type": {
+			file: index.ScalaFileSpec{Types: []string{"com.foo.Bar"}},
+			name: "Bar",
+			want: "com.foo.Bar",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			got, ok := resolveNameInFile(&tc.file)(tc.name)
+			if tc.want == "" && !ok {
+				return
+			}
+			if tc.want == "" && ok {
+				t.Fatal("resolveNameInFile failed: expected miss")
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("TestResolveNameInFile (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestResolveNameInLabelImportMap(t *testing.T) {
+	for name, tc := range map[string]struct {
+		resolved map[string]string
+		name     string
+		want     string
+	}{
+		"degenerate": {
+			want: ``,
+		},
+		"miss": {
+			name: "LazyLogging",
+			want: "",
+		},
+		"hit": {
+			resolved: map[string]string{
+				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+			},
+			name: "LazyLogging",
+			want: "com.typesafe.scalalogging.LazyLogging",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			resolved := make(labelImportMap)
+			for imp, origin := range tc.resolved {
+				l, _ := label.Parse(origin)
+				resolved.Set(l, imp)
+			}
+			got, ok := resolveNameInLabelImportMap(resolved)(tc.name)
+			if tc.want == "" && !ok {
+				return
+			}
+			if tc.want == "" && ok {
+				t.Fatal("resolvedInLabelImportMap failed: expected miss")
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("TestResolvedInLabelImportMap (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
 
 func TestMakeLabeledListExpr(t *testing.T) {
 	for name, tc := range map[string]struct {

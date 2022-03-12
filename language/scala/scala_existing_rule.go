@@ -396,14 +396,6 @@ func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImpor
 		str := &build.StringExpr{Value: dep.String()}
 		list = append(list, str)
 		seen[dep] = true
-		// for first one, list all imports
-		// if i == 0 {
-		// 	for imp := range imports {
-		// 		str.Comments.Before = append(str.Comments.Before, build.Comment{
-		// 			Token: "# import: " + imp,
-		// 		})
-		// 	}
-		// }
 
 		if sc.explainDependencies {
 			if imps, ok := resolved[dep]; ok {
