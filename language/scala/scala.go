@@ -364,12 +364,12 @@ func (sl *scalaLang) Resolve(
 func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	for _, r := range sl.resolvers {
 		if result := r.CrossResolve(c, ix, imp, lang); len(result) > 0 {
-			log.Printf("scala.CrossResolve hit %T %s", r, imp.Imp)
+			// log.Printf("scala.CrossResolve hit %T %s", r, imp.Imp)
 			return result
 		}
 	}
 	if result := sl.importRegistry.CrossResolve(c, ix, imp, lang); len(result) > 0 {
-		log.Printf("scala.CrossResolve hit %T %s", sl.importRegistry, imp.Imp)
+		// log.Printf("scala.CrossResolve hit %T %s", sl.importRegistry, imp.Imp)
 		return result
 	}
 	return nil

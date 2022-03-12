@@ -35,7 +35,20 @@ type ScalaImportRegistry interface {
 	Provider(imp string) (label.Label, bool)
 	// Completions returns concrete symbols under the given prefix
 	Completions(prefix string) map[string]label.Label
+	// ResolveName implements NameResolver
+	ResolveName(name string) (string, bool)
+	// ResolveLabel implements LabelResolver
+	ResolveLabel(name string) (label.Label, bool)
 }
+
+// NameResolver is a function that takes a symbol name.  So for 'LazyLogging' it
+// should return 'com.typesafe.scalalogging.LazyLogging'.
+type NameResolver func(name string) (string, bool)
+
+// LabelResolver is a function that takes a fully-qualified import.  So for
+// 'com.typesafe.scalalogging.LazyLogging' it should return
+// '@maven//:com_typesafe_scala_logging_scala_logging_2_12'.
+type LabelResolver func(name string) (label.Label, bool)
 
 func newImportRegistry(scalaRuleRegistry ScalaRuleRegistry, scalaCompiler ScalaCompiler) *importRegistry {
 	return &importRegistry{
@@ -83,6 +96,21 @@ func (ir *importRegistry) OnResolve() {
 	if err := ir.writeImports(); err != nil {
 		log.Fatalln("could not write imports file:", err)
 	}
+}
+
+func (ir *importRegistry) ResolveName(name string) (string, bool) {
+	suffix := "." + name
+	for imp := range ir.imports {
+		if strings.HasSuffix(imp, suffix) {
+			return imp, true
+		}
+	}
+	return "", false
+}
+
+func (ir *importRegistry) ResolveLabel(imp string) (label.Label, bool) {
+	from, ok := ir.imports[imp]
+	return from, ok
 }
 
 func (ir *importRegistry) Provider(imp string) (label.Label, bool) {

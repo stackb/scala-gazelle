@@ -106,7 +106,6 @@ class ScalaSourceFile {
             }
             if (node.type === 'Term.Name' && node.value) {
                 this.names.add(node.value);
-                this.console.log('Adding name of', stack[stack.length - 1].type);
             }
             return true;
         });

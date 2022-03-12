@@ -165,7 +165,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	dbg := debug
+	dbg := debug || from.String() == "@unity//omnistac/common/util/number:scala"
 	files, ok := importsRaw.([]*index.ScalaFileSpec)
 	if !ok {
 		return
@@ -197,6 +197,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	for k := range imports {
 		stack = stack.push(k)
 	}
+
 	var imp string
 	for !stack.empty() {
 		stack, imp = stack.pop()
@@ -211,19 +212,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	// want to record which imports contributed to from
 	resolved := make(labelImportMap)
-
-	depSet := make(map[label.Label]bool)
-	for _, d := range r.AttrStrings("deps") {
-		l, err := label.Parse(d)
-		if err != nil {
-			continue
-		}
-		depSet[l] = true
-		resolved.Set(l, "<rule attr>")
-	}
-
 	unresolved := make([]string, 0)
-	// resolved := make([]string, 0)
 
 	// determine the resolve kind
 	impLang := r.Kind()
@@ -247,7 +236,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		}
 
 		if len(labels) > 1 {
-			// original := labels
 			disambiguated, err := importRegistry.Disambiguate(c, imp, labels, from)
 			if err != nil {
 				log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, labels, from, err)
@@ -262,85 +250,174 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 				}
 			}
 			labels = disambiguated
-			// resolved = append(resolved, fmt.Sprintf("diambiguated %q: %v => %v", imp, original, disambiguated))
 		}
 
-		for _, l := range labels {
-			if from.Equal(l) || isSameImport(c, from, l) || l == label.NoLabel || l == PlatformLabel {
+		for _, dep := range labels {
+			dep = dep.Rel(from.Repo, from.Pkg)
+			if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
 				continue
 			}
-			l = l.Rel(from.Repo, from.Pkg)
-			depSet[l] = true
-			resolved.Set(l, imp)
-
-			// resolved = append(resolved, imp+" -> "+l.String())
-			if dbg {
-				log.Println("resolved:", imp, "is provided by", l)
-			}
+			resolved.Set(dep, imp)
 		}
 	}
 
+	if len(unresolved) > 0 {
+		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		// r.SetAttr("unresolved_deps", protoc.DeduplicateAndSort(unresolved))
+	}
+
 	r.DelAttr("deps")
+	if len(resolved) > 0 {
+		r.SetAttr("deps", makeLabeledListExpr(c, from, resolved))
+	}
 
-	if len(depSet) > 0 {
-		deps := make([]label.Label, len(depSet))
-		i := 0
-		for dep := range depSet {
-			deps[i] = dep
-			i++
-			// deps = append(deps, dep.String())
+	// TODO(pcj): make this configurable
+	if strings.Contains(r.Kind(), "library") {
+		exported := make([]string, 0)
+		resolveAny := importRegistry.ResolveName
+		resolveFromImports := resolveNameInLabelImportMap(resolved)
+		for _, file := range files {
+			resolve1p := resolveNameInFile(file)
+			exported = append(exported, scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})...)
 		}
-		sort.Slice(deps, func(i, j int) bool {
-			a := deps[i]
-			b := deps[j]
-			return a.String() < b.String()
-		})
-		list := make([]build.Expr, len(deps))
-		for i, dep := range deps {
-			str := &build.StringExpr{Value: dep.String()}
-			list[i] = str
-
-			// for first one, list all imports
-			if i == 0 {
-				for imp := range imports {
-					str.Comments.Before = append(str.Comments.Before, build.Comment{
-						Token: "# import: " + imp,
-					})
+		r.DelAttr("exports")
+		if len(exported) > 0 {
+			exports := make(labelImportMap)
+			for _, exp := range exported {
+				if origin, ok := importRegistry.ResolveLabel(exp); ok {
+					if origin == PlatformLabel || origin == label.NoLabel {
+						continue
+					}
+					if has, ok := exports[origin]; ok {
+						has[exp] = true
+					} else {
+						exports[origin] = map[string]bool{exp: true}
+					}
 				}
 			}
-
-			if imps, ok := resolved[dep]; ok {
-				reasons := make([]string, 0, len(imps))
-				for imp := range imps {
-					reasons = append(reasons, imp)
-				}
-				sort.Strings(reasons)
-				for _, reason := range reasons {
-					str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
-				}
-			}
-		}
-		// r.SetAttr("deps", deps)
-		depsExpr := &build.ListExpr{List: list}
-		r.SetAttr("deps", depsExpr)
-
-		// if true {
-		// 	tags := r.AttrStrings("tags")
-		// 	tags = append(tags, protoc.DeduplicateAndSort(resolved)...)
-		// 	r.SetAttr("tags", tags)
-		// }
-
-		if len(unresolved) > 0 {
-			if true {
-				panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
-			}
-			r.SetAttr("unresolved_deps", protoc.DeduplicateAndSort(unresolved))
+			r.SetAttr("exports", makeLabeledListExpr(c, from, exports))
 		}
 	}
 
 	if dbg {
 		log.Println("-- | ", from, "finished deps resolution.")
 	}
+}
+
+func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) []string {
+	exports := make([]string, 0)
+	for _, names := range file.Extends {
+	loop:
+		for _, name := range names {
+			// log.Println("resolving name %q in file %s", name, file.Filename)
+			for _, resolver := range resolvers {
+				if fqn, ok := resolver(name); ok {
+					exports = append(exports, fqn)
+					continue loop
+				}
+			}
+			log.Printf("failed to resolve name %q in file %s!", name, file.Filename)
+		}
+	}
+
+	return exports
+}
+
+func resolveNameInLabelImportMap(resolved labelImportMap) NameResolver {
+	in := make(map[string][]label.Label)
+	for from, imports := range resolved {
+		for imp := range imports {
+			in[imp] = append(in[imp], from)
+		}
+	}
+	return func(name string) (string, bool) {
+		for imp := range in {
+			if strings.HasSuffix(imp, "."+name) {
+				return imp, true
+			}
+		}
+		return "", false
+	}
+}
+
+func resolveNameInFile(file *index.ScalaFileSpec) NameResolver {
+	return func(name string) (string, bool) {
+		suffix := "." + name
+		for _, sym := range file.Traits {
+			if strings.HasSuffix(sym, suffix) {
+				return sym, true
+			}
+		}
+		for _, sym := range file.Objects {
+			if strings.HasSuffix(sym, suffix) {
+				return sym, true
+			}
+		}
+		for _, sym := range file.Classes {
+			if strings.HasSuffix(sym, suffix) {
+				return sym, true
+			}
+		}
+		for _, sym := range file.Types {
+			if strings.HasSuffix(sym, suffix) {
+				return sym, true
+			}
+		}
+		return "", false
+	}
+}
+
+// imports map[string]*index.ScalaFileSpec,
+func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImportMap) build.Expr {
+	deps := make([]label.Label, len(resolved))
+	i := 0
+	for dep := range resolved {
+		deps[i] = dep
+		i++
+	}
+
+	sort.Slice(deps, func(i, j int) bool {
+		a := deps[i]
+		b := deps[j]
+		return a.String() < b.String()
+	})
+
+	list := make([]build.Expr, 0, len(deps))
+	seen := make(map[label.Label]bool)
+	for _, dep := range deps {
+		dep = dep.Rel(from.Repo, from.Pkg)
+		if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
+			continue
+		}
+		if seen[dep] {
+			continue
+		}
+
+		str := &build.StringExpr{Value: dep.String()}
+		list = append(list, str)
+		seen[dep] = true
+		// for first one, list all imports
+		// if i == 0 {
+		// 	for imp := range imports {
+		// 		str.Comments.Before = append(str.Comments.Before, build.Comment{
+		// 			Token: "# import: " + imp,
+		// 		})
+		// 	}
+		// }
+
+		if imps, ok := resolved[dep]; ok {
+			reasons := make([]string, 0, len(imps))
+			for imp := range imps {
+				reasons = append(reasons, imp)
+			}
+			sort.Strings(reasons)
+			for _, reason := range reasons {
+				str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+			}
+		}
+	}
+
+	return &build.ListExpr{List: list}
 }
 
 // getAttrFiles returns a list of source files for the 'srcs' attribute.  Each

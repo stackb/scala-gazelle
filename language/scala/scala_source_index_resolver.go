@@ -307,7 +307,7 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 	if providers, ok := r.providers[sym]; ok {
 		result := make([]resolve.FindResult, len(providers))
 		for i, p := range providers {
-			log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
+			// log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
 			result[i] = resolve.FindResult{Label: p.label}
 		}
 		return result
@@ -319,7 +319,7 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		// pick the first result -- this might not be correct!
 		result := make([]resolve.FindResult, len(packages))
 		for i, p := range packages {
-			log.Printf("source crossResolve %q package hit %d: %v", imp.Imp, i, p.label)
+			// log.Printf("source crossResolve %q package hit %d: %v", imp.Imp, i, p.label)
 			result[i] = resolve.FindResult{Label: p.label}
 		}
 		return result

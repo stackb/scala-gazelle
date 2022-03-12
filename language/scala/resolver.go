@@ -16,7 +16,7 @@ import (
 const (
 	// ResolverImpLangPrivateKey stores the implementation language override.
 	ResolverImpLangPrivateKey = "_resolve_imp_lang"
-	debug                     = true
+	debug                     = false
 )
 
 type labelImportMap map[label.Label]map[string]bool
@@ -29,7 +29,7 @@ func (m labelImportMap) Set(from label.Label, imp string) {
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, file *index.ScalaFileSpec, lang string, imp string, from label.Label, labelMap labelImportMap) []label.Label {
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, file *index.ScalaFileSpec, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
 	if debug {
 		log.Println("resolveImport:", imp)
 	}
@@ -49,26 +49,26 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	}
 	if len(labels) > 0 {
 		for _, l := range labels {
-			labelMap.Set(l, imp)
+			resolved.Set(l, imp)
 		}
 		return labels
 	}
 
 	// if this is a _root_ import, try without
 	if strings.HasPrefix(imp, "_root_.") {
-		return resolveImport(c, ix, registry, file, lang, strings.TrimPrefix(imp, "_root_."), from, labelMap)
+		return resolveImport(c, ix, registry, file, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
 	}
 
 	// if this is a wildcard import, try without
 	if strings.HasSuffix(imp, "._") {
-		return resolveImport(c, ix, registry, file, lang, strings.TrimSuffix(imp, "._"), from, labelMap)
+		return resolveImport(c, ix, registry, file, lang, strings.TrimSuffix(imp, "._"), from, resolved)
 	}
 
 	// if this has a parent, try parent
 	lastDot := strings.LastIndex(imp, ".")
 	if lastDot > 0 {
 		parent := imp[0:lastDot]
-		return resolveImport(c, ix, registry, file, lang, parent, from, labelMap)
+		return resolveImport(c, ix, registry, file, lang, parent, from, resolved)
 	}
 
 	// we are down to a single symbol now.  Probe the importRegistry for a
@@ -80,7 +80,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 			for actualType, provider := range completions {
 				if imp == actualType {
 					log.Printf("matched in-package import=%s.%s: %v", pkg, imp, provider)
-					labelMap.Set(provider, imp)
+					resolved.Set(provider, imp)
 					return []label.Label{provider}
 				}
 			}
@@ -98,7 +98,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 // generation phase.
 func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) []label.Label {
 	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
-		log.Println(from, "override hit:", l)
+		// log.Println(from, "override hit:", l)
 		return []label.Label{l}
 	}
 	return resolveWithIndex(c, ix, lang, imp, from)
