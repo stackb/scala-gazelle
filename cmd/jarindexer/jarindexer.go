@@ -128,7 +128,8 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 		}
 
 		superClass := c.SuperClassName()
-		if superClass != "" {
+		// save space by leaving out Object
+		if superClass != "" && superClass != "java/lang/Object" {
 			if spec.Extends == nil {
 				spec.Extends = make(map[string]string)
 			}
