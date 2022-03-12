@@ -367,8 +367,8 @@ func resolveNameInFile(file *index.ScalaFileSpec) NameResolver {
 	}
 }
 
-// imports map[string]*index.ScalaFileSpec,
 func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImportMap) build.Expr {
+	sc := getScalaConfig(c)
 	deps := make([]label.Label, len(resolved))
 	i := 0
 	for dep := range resolved {
@@ -405,14 +405,16 @@ func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImpor
 		// 	}
 		// }
 
-		if imps, ok := resolved[dep]; ok {
-			reasons := make([]string, 0, len(imps))
-			for imp := range imps {
-				reasons = append(reasons, imp)
-			}
-			sort.Strings(reasons)
-			for _, reason := range reasons {
-				str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+		if sc.explainDependencies {
+			if imps, ok := resolved[dep]; ok {
+				reasons := make([]string, 0, len(imps))
+				for imp := range imps {
+					reasons = append(reasons, imp)
+				}
+				sort.Strings(reasons)
+				for _, reason := range reasons {
+					str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+				}
 			}
 		}
 	}

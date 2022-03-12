@@ -22,6 +22,8 @@ const (
 	// 'com.typesafe.scalalogging.LazyLogging', it is also going to need
 	// 'org.slf4j.Logger', without mentioning it.
 	indirectDependencyDirective = "indirect_dependency"
+	// scala_explain_dependencies prints the reason why deps are included.
+	scalaExplainDependencies = "scala_explain_dependencies"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -34,6 +36,8 @@ type scalaConfig struct {
 	overrides []*overrideSpec
 	// indirects are parsed from 'gazelle:indirect-dependency scala foo bar'
 	indirects []*indirectDependencySpec
+	// explainDependencies is a flag to print additional comments on deps & exports
+	explainDependencies bool
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -71,6 +75,7 @@ func getOrCreateScalaConfig(config *config.Config) *scalaConfig {
 // Clone copies this config to a new one.
 func (c *scalaConfig) Clone() *scalaConfig {
 	clone := newScalaConfig(c.config)
+	clone.explainDependencies = c.explainDependencies
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
@@ -95,6 +100,8 @@ func (c *scalaConfig) parseDirectives(rel string, directives []rule.Directive) (
 			c.parseOverrideDirective(d)
 		case indirectDependencyDirective:
 			c.parseIndirectDependencyDirective(d)
+		case scalaExplainDependencies:
+			c.parseScalaExplainDependencies(d)
 		}
 	}
 	return
@@ -153,6 +160,15 @@ func (c *scalaConfig) parseIndirectDependencyDirective(d rule.Directive) {
 		imp:  parts[1],
 		deps: parts[2:],
 	})
+}
+
+func (c *scalaConfig) parseScalaExplainDependencies(d rule.Directive) {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		log.Printf("invalid gazelle:scala_explain_dependencies directive: expected 1+ parts, got %d (%v)", len(parts), parts)
+		return
+	}
+	c.explainDependencies = parts[0] == "true"
 }
 
 func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {
