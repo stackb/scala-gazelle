@@ -153,14 +153,13 @@ func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
 	for _, line := range r.Comments() {
 		fields := strings.Fields(line)
 		// ["#", "scala-import:", "org.json4s.CustomSerializer"]
-		if len(fields) != 3 {
+		if len(fields) < 3 {
 			continue
 		}
 		if fields[1] != "scala-import:" {
 			continue
 		}
 		imports = append(imports, fields[2])
-		// log.Println("add scala import from rule comment:", fields[2])
 	}
 	return
 }

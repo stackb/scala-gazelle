@@ -308,8 +308,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 }
 
-func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) ([]string, error) {
-	exports := make([]string, 0)
+func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) (exports []string, err error) {
 	for _, names := range file.Extends {
 	loop:
 		for _, name := range names {
@@ -324,7 +323,7 @@ func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) ([]
 		}
 	}
 
-	return exports, nil
+	return
 }
 
 func resolveNameInLabelImportMap(resolved labelImportMap) NameResolver {

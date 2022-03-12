@@ -14,6 +14,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
+// This looks important: https://github.com/sbt/zinc/blob/7c796ce65217096ce71be986149b2e769f8b33af/internal/zinc-core/src/main/scala/sbt/internal/inc/Relations.scala
+
 func TestScalaExportSymbols(t *testing.T) {
 	for name, tc := range map[string]struct {
 		resolved index.ScalaFileSpec
@@ -21,9 +23,7 @@ func TestScalaExportSymbols(t *testing.T) {
 		want     []string
 		wantErr  error
 	}{
-		"degenerate": {
-			want: []string{},
-		},
+		"degenerate": {},
 		"miss": {
 			resolved: index.ScalaFileSpec{},
 			file: index.ScalaFileSpec{
@@ -35,7 +35,6 @@ func TestScalaExportSymbols(t *testing.T) {
 					},
 				},
 			},
-			want:    []string{},
 			wantErr: fmt.Errorf(`failed to resolve name "LazyLogging" in file foo.scala!`),
 		},
 		"hit": {
@@ -60,7 +59,7 @@ func TestScalaExportSymbols(t *testing.T) {
 			got, err := scalaExportSymbols(&tc.file, resolvers)
 			if err != nil {
 				if tc.wantErr == nil {
-					t.Fatal("unexpected error: %v", err)
+					t.Fatalf("unexpected error: %v", err)
 				}
 				if diff := cmp.Diff(tc.wantErr.Error(), err.Error(), cmpopts.EquateErrors()); diff != "" {
 					t.Errorf("error (-want +got):\n%s", diff)

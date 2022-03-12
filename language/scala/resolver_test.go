@@ -28,6 +28,15 @@ scala_library(
 `,
 			want: []string{"com.foo.Bar"},
 		},
+		"additional content ok": {
+			source: `
+# scala-import: com.foo.Bar // fixme
+scala_library(
+	name="lib",
+)
+`,
+			want: []string{"com.foo.Bar"},
+		},
 		"not plural": {
 			source: `
 # scala-imports: com.foo.Bar

@@ -20,5 +20,13 @@ go_binary(
 go_test(
     name = "jarindexer_test",
     srcs = ["jarindexer_test.go"],
+    data = [
+        "akka-stream-testkit_2.12-2.6.10.jar",
+        "javax.activation-api-1.2.0.jar",
+    ],
     embed = [":jarindexer_lib"],
+    deps = [
+        "@com_github_google_go_cmp//cmp",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
 )
