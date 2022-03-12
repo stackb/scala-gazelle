@@ -14,7 +14,10 @@ require (
 )
 
 require (
+	github.com/RoaringBitmap/roaring v0.9.4 // indirect
+	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
+	github.com/mschoch/smat v0.2.0 // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 	golang.org/x/tools v0.1.7 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect

@@ -30,6 +30,14 @@ def go_repositories():
         version = "v0.29.0",
     )
     go_repository(
+        name = "com_github_bits_and_blooms_bitset",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/bits-and-blooms/bitset",
+        sum = "h1:Kn4yilvwNtMACtf1eYDlG8H77R07mZSPbMjLyS07ChA=",
+        version = "v1.2.0",
+    )
+
+    go_repository(
         name = "com_github_bmatcuk_doublestar",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/bmatcuk/doublestar",
@@ -149,6 +157,14 @@ def go_repositories():
         version = "v0.5.6",
     )
     go_repository(
+        name = "com_github_mschoch_smat",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/mschoch/smat",
+        sum = "h1:8imxQsjDm8yFEAVBe7azKmKSgzSkZXDuKkSq9374khM=",
+        version = "v0.2.0",
+    )
+
+    go_repository(
         name = "com_github_pelletier_go_toml",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/pelletier/go-toml",
@@ -169,6 +185,14 @@ def go_repositories():
         sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
         version = "v0.0.0-20190812154241-14fe0d1b01d4",
     )
+    go_repository(
+        name = "com_github_roaringbitmap_roaring",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/RoaringBitmap/roaring",
+        sum = "h1:ckvZSX5gwCRaJYBNe7syNawCU5oruY9gQmjXlp4riwo=",
+        version = "v0.9.4",
+    )
+
     go_repository(
         name = "com_github_stackb_rules_proto",
         build_file_proto_mode = "disable_global",
