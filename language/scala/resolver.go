@@ -120,18 +120,16 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 	return labels
 }
 
-// isSameImport returns true if the "from" and "to" labels are the same.  If the
-// "to" label is not a canonical label (having a fully-qualified repo name), a
-// canonical label is constructed for comparison using the config.RepoName.
+// isSameImport returns true if the "from" and "to" labels are the same,
+// normalizing to the config.RepoName.
 func isSameImport(c *config.Config, from, to label.Label) bool {
-	if from == to {
-		return true
+	if from.Repo == "" {
+		from.Repo = c.RepoName
 	}
-	if to.Repo != "" {
-		return false
+	if to.Repo == "" {
+		to.Repo = c.RepoName
 	}
-	canonical := label.New(c.RepoName, to.Pkg, to.Name)
-	return from == canonical
+	return from == to
 }
 
 // StripRel removes the rel prefix from a filename (if has matching prefix)
