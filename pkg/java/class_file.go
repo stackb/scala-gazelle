@@ -147,6 +147,13 @@ func (this *ClassFile) Name() string {
 	return this.cpUtf8(this.constantPool[this.thisClass].(*ConstantClassInfo).nameIndex)
 }
 
+func (this *ClassFile) SuperClassName() string {
+	if this.superClass == 0 {
+		return ""
+	}
+	return this.cpUtf8(this.constantPool[this.superClass].(*ConstantClassInfo).nameIndex)
+}
+
 // PackageNames collects a list of packageinfo names in the constant pool.
 func (this *ClassFile) PackageNames() []string {
 	names := make([]string, 0)

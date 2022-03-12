@@ -11,13 +11,15 @@ import (
 func TestParseJarFile(t *testing.T) {
 	for name, tc := range map[string]struct {
 		filename     string
-		wantClasses  []string
 		wantPackages []string
+		wantClasses  []string
+		wantExtends  map[string]string
 		wantErr      error
 	}{
 		// representative java jar
 		"javax.activation": {
-			filename: "cmd/jarindexer/javax.activation-api-1.2.0.jar",
+			filename:     "cmd/jarindexer/javax.activation-api-1.2.0.jar",
+			wantPackages: []string{"javax.activation"},
 			wantClasses: []string{
 				"javax.activation.MimetypesFileTypeMap",
 				"javax.activation.DataHandlerDataSource",
@@ -42,11 +44,39 @@ func TestParseJarFile(t *testing.T) {
 				"javax.activation.CommandInfo$Beans",
 				"javax.activation.MimeType",
 			},
-			wantPackages: []string{"javax.activation"},
+			wantExtends: map[string]string{
+				"javax.activation.ActivationDataFlavor":         "java.awt.datatransfer.DataFlavor",
+				"javax.activation.CommandInfo":                  "java.lang.Object",
+				"javax.activation.CommandInfo$Beans":            "java.lang.Object",
+				"javax.activation.CommandMap":                   "java.lang.Object",
+				"javax.activation.CommandObject":                "java.lang.Object",
+				"javax.activation.DataContentHandler":           "java.lang.Object",
+				"javax.activation.DataContentHandlerFactory":    "java.lang.Object",
+				"javax.activation.DataHandler":                  "java.lang.Object",
+				"javax.activation.DataHandlerDataSource":        "java.lang.Object",
+				"javax.activation.DataSource":                   "java.lang.Object",
+				"javax.activation.DataSourceDataContentHandler": "java.lang.Object",
+				"javax.activation.FileDataSource":               "java.lang.Object",
+				"javax.activation.FileTypeMap":                  "java.lang.Object",
+				"javax.activation.MailcapCommandMap":            "javax.activation.CommandMap",
+				"javax.activation.MimeType":                     "java.lang.Object",
+				"javax.activation.MimeTypeParameterList":        "java.lang.Object",
+				"javax.activation.MimeTypeParseException":       "java.lang.Exception",
+				"javax.activation.MimetypesFileTypeMap":         "javax.activation.FileTypeMap",
+				"javax.activation.ObjectDataContentHandler":     "java.lang.Object",
+				"javax.activation.SecuritySupport":              "java.lang.Object",
+				"javax.activation.URLDataSource":                "java.lang.Object",
+				"javax.activation.UnsupportedDataTypeException": "java.io.IOException",
+			},
 		},
 		// representative scala jar
 		"akka-stream-testkit": {
 			filename: "cmd/jarindexer/akka-stream-testkit_2.12-2.6.10.jar",
+			wantPackages: []string{
+				"akka.stream.testkit",
+				"akka.stream.testkit.javadsl",
+				"akka.stream.testkit.scaladsl",
+			},
 			wantClasses: []string{
 				"akka.stream.testkit.GraphStageMessages$Failure",
 				"akka.stream.testkit.GraphStageMessages$StageFailure",
@@ -81,10 +111,39 @@ func TestParseJarFile(t *testing.T) {
 				"akka.stream.testkit.scaladsl.TestSink",
 				"akka.stream.testkit.scaladsl.TestSource",
 			},
-			wantPackages: []string{
-				"akka.stream.testkit",
-				"akka.stream.testkit.javadsl",
-				"akka.stream.testkit.scaladsl",
+			wantExtends: map[string]string{
+				"akka.stream.testkit.GraphStageMessages":                       "java.lang.Object",
+				"akka.stream.testkit.GraphStageMessages$Failure":               "java.lang.Object",
+				"akka.stream.testkit.GraphStageMessages$StageFailure":          "java.lang.Object",
+				"akka.stream.testkit.GraphStageMessages$StageMessage":          "java.lang.Object",
+				"akka.stream.testkit.StreamTestKit":                            "java.lang.Object",
+				"akka.stream.testkit.StreamTestKit$CompletedSubscription":      "java.lang.Object",
+				"akka.stream.testkit.StreamTestKit$FailedSubscription":         "java.lang.Object",
+				"akka.stream.testkit.StreamTestKit$ProbeSink":                  "akka.stream.impl.SinkModule",
+				"akka.stream.testkit.StreamTestKit$ProbeSource":                "akka.stream.impl.SourceModule",
+				"akka.stream.testkit.StreamTestKit$PublisherProbeSubscription": "java.lang.Object",
+				"akka.stream.testkit.TestPublisher":                            "java.lang.Object",
+				"akka.stream.testkit.TestPublisher$CancelSubscription":         "java.lang.Object",
+				"akka.stream.testkit.TestPublisher$ManualProbe":                "java.lang.Object",
+				"akka.stream.testkit.TestPublisher$Probe":                      "akka.stream.testkit.TestPublisher$ManualProbe",
+				"akka.stream.testkit.TestPublisher$PublisherEvent":             "java.lang.Object",
+				"akka.stream.testkit.TestPublisher$RequestMore":                "java.lang.Object",
+				"akka.stream.testkit.TestPublisher$Subscribe":                  "java.lang.Object",
+				"akka.stream.testkit.TestSinkStage":                            "akka.stream.stage.GraphStageWithMaterializedValue",
+				"akka.stream.testkit.TestSourceStage":                          "akka.stream.stage.GraphStageWithMaterializedValue",
+				"akka.stream.testkit.TestSubscriber":                           "java.lang.Object",
+				"akka.stream.testkit.TestSubscriber$ManualProbe":               "java.lang.Object",
+				"akka.stream.testkit.TestSubscriber$OnError":                   "java.lang.Object",
+				"akka.stream.testkit.TestSubscriber$OnNext":                    "java.lang.Object",
+				"akka.stream.testkit.TestSubscriber$OnSubscribe":               "java.lang.Object",
+				"akka.stream.testkit.TestSubscriber$Probe":                     "akka.stream.testkit.TestSubscriber$ManualProbe",
+				"akka.stream.testkit.TestSubscriber$SubscriberEvent":           "java.lang.Object",
+				"akka.stream.testkit.javadsl.StreamTestKit":                    "java.lang.Object",
+				"akka.stream.testkit.javadsl.TestSink":                         "java.lang.Object",
+				"akka.stream.testkit.javadsl.TestSource":                       "java.lang.Object",
+				"akka.stream.testkit.scaladsl.StreamTestKit":                   "java.lang.Object",
+				"akka.stream.testkit.scaladsl.TestSink":                        "java.lang.Object",
+				"akka.stream.testkit.scaladsl.TestSource":                      "java.lang.Object",
 			},
 		},
 	} {
@@ -108,6 +167,9 @@ func TestParseJarFile(t *testing.T) {
 				}
 				if diff := cmp.Diff(tc.wantPackages, got.Packages); diff != "" {
 					t.Errorf("packages (-want +got):\n%s", diff)
+				}
+				if diff := cmp.Diff(tc.wantExtends, got.Extends); diff != "" {
+					t.Errorf("extends (-want +got):\n%s", diff)
 				}
 			}
 		})

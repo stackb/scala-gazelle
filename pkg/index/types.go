@@ -20,6 +20,8 @@ type JarSpec struct {
 	Classes []string `json:"classes,omitempty"`
 	// Packages is a list of packages represented in the jar
 	Packages []string `json:"packages,omitempty"`
+	// Extends is a mapping from class to symbol that it extends
+	Extends map[string]string `json:"extends,omitempty"`
 }
 
 // ScalaFileSpec describes the symbols provided/required by a single source

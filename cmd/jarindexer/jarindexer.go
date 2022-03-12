@@ -85,6 +85,7 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 		if debug {
 			log.Println("Visiting class:", f.Name, name)
 		}
+
 		// exclude Main$ scala classes
 		if strings.HasSuffix(name, "$") {
 			if debug {
@@ -124,6 +125,14 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 
 		for _, pkgName := range c.PackageNames() {
 			pkgs[convertPackageName(pkgName)] = true
+		}
+
+		superClass := c.SuperClassName()
+		if superClass != "" {
+			if spec.Extends == nil {
+				spec.Extends = make(map[string]string)
+			}
+			spec.Extends[name] = convertClassName(superClass)
 		}
 
 		return nil
