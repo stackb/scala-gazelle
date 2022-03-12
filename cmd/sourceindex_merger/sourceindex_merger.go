@@ -59,7 +59,7 @@ func merge(filenames []string) error {
 		}
 		labels[rule.Label] = true
 
-		idx.Rules = append(idx.Rules, *rule)
+		idx.Rules = append(idx.Rules, rule)
 	}
 
 	if err := index.WriteJSONFile(outputFile, idx); err != nil {
