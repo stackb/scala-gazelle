@@ -278,7 +278,11 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		resolveFromImports := resolveNameInLabelImportMap(resolved)
 		for _, file := range files {
 			resolve1p := resolveNameInFile(file)
-			exported = append(exported, scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})...)
+			fileExports, err := scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})
+			if err != nil {
+				log.Panicf("failed to resolve export symbols: %v", err)
+			}
+			exported = append(exported, fileExports...)
 		}
 		r.DelAttr("exports")
 		if len(exported) > 0 {
@@ -304,7 +308,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 }
 
-func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) []string {
+func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) ([]string, error) {
 	exports := make([]string, 0)
 	for _, names := range file.Extends {
 	loop:
@@ -316,11 +320,11 @@ func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) []s
 					continue loop
 				}
 			}
-			log.Printf("failed to resolve name %q in file %s!", name, file.Filename)
+			return nil, fmt.Errorf("failed to resolve name %q in file %s!", name, file.Filename)
 		}
 	}
 
-	return exports
+	return exports, nil
 }
 
 func resolveNameInLabelImportMap(resolved labelImportMap) NameResolver {

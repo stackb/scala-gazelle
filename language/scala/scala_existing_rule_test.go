@@ -1,9 +1,11 @@
 package scala
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -11,6 +13,66 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
+
+func TestScalaExportSymbols(t *testing.T) {
+	for name, tc := range map[string]struct {
+		resolved index.ScalaFileSpec
+		file     index.ScalaFileSpec
+		want     []string
+		wantErr  error
+	}{
+		"degenerate": {
+			want: []string{},
+		},
+		"miss": {
+			resolved: index.ScalaFileSpec{},
+			file: index.ScalaFileSpec{
+				Filename: "foo.scala",
+				Extends: map[string][]string{
+					"class trumid.common.akka.grpc.AbstractGrpcService": {
+						"LazyLogging",
+						"ReadinessReporter",
+					},
+				},
+			},
+			want:    []string{},
+			wantErr: fmt.Errorf(`failed to resolve name "LazyLogging" in file foo.scala!`),
+		},
+		"hit": {
+			resolved: index.ScalaFileSpec{
+				// contrived these would live in the same file
+				Objects: []string{"com.typesafe.scalalogging.LazyLogging"},
+				Traits:  []string{"com.foo.ReadinessReporter"},
+			},
+			file: index.ScalaFileSpec{
+				Extends: map[string][]string{
+					"class trumid.common.akka.grpc.AbstractGrpcService": {
+						"LazyLogging",
+						"ReadinessReporter",
+					},
+				},
+			},
+			want: []string{"com.typesafe.scalalogging.LazyLogging", "com.foo.ReadinessReporter"},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			resolvers := []NameResolver{resolveNameInFile(&tc.resolved)}
+			got, err := scalaExportSymbols(&tc.file, resolvers)
+			if err != nil {
+				if tc.wantErr == nil {
+					t.Fatal("unexpected error: %v", err)
+				}
+				if diff := cmp.Diff(tc.wantErr.Error(), err.Error(), cmpopts.EquateErrors()); diff != "" {
+					t.Errorf("error (-want +got):\n%s", diff)
+				}
+			} else {
+				if diff := cmp.Diff(tc.want, got); diff != "" {
+					t.Errorf("(-want +got):\n%s", diff)
+				}
+			}
+		})
+	}
+}
 
 func TestResolveNameInFile(t *testing.T) {
 	for name, tc := range map[string]struct {
