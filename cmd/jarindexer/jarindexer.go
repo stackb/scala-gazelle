@@ -139,7 +139,7 @@ func parseJarFile(filename string, spec *index.JarSpec) error {
 			spec.Extends[name] = convertClassName(superClass)
 		}
 
-		classes := c.Classes()
+		classes := c.Symbols()
 		classFile := &index.ClassFileSpec{Name: name}
 		if len(classes) > 0 {
 			classFile.Classes = make([]int, len(classes))

@@ -29,10 +29,11 @@ type ScalaFileParser interface {
 	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error)
 }
 
-// ScalaRuleRegistry keep track of which files are associated under a rule
+// ScalaSourceRuleRegistry keep track of which files are associated under a rule
 // (which has a srcs attribute).
-type ScalaRuleRegistry interface {
-	// GetScalaFiles returns the rule spec for a given label.  If the label is unknown, false is returned.
+type ScalaSourceRuleRegistry interface {
+	// GetScalaFiles returns the rule spec for a given label.  If the label is
+	// unknown, false is returned.
 	GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool)
 }
 
@@ -122,7 +123,7 @@ func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label,
 	return *rule, nil
 }
 
-// GetScalaRule implements ScalaRuleRegistry.
+// GetScalaRule implements ScalaSourceRuleRegistry.
 func (r *scalaSourceIndexResolver) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
 	from.Repo = "" // TODO(pcj): this is correct?  We always want sources in the main repo.
 	rule, ok := r.byRule[from]

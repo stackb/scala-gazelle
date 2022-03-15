@@ -165,7 +165,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	dbg := debug || from.String() == "@unity//omnistac/common/util/number:scala"
+	dbg := debug || from.Pkg == "omnistac/search"
 	files, ok := importsRaw.([]*index.ScalaFileSpec)
 	if !ok {
 		return
@@ -174,22 +174,22 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	sc := getScalaConfig(c)
 
 	// gather imports in a map such that we know the file that the import arose
-	// from.  IN some cases (indirect deps, those provided in rule comments) the
-	// file is not known (nil).
-	imports := make(map[string]*index.ScalaFileSpec)
+	// from.
+	imports := make(map[string]importOrigin)
 
 	// 1: direct imports
 	for _, file := range files {
 		for _, imp := range file.Imports {
-			imports[imp] = file
+			imports[imp] = importOrigin{Kind: "direct", SourceFile: file}
 		}
 	}
 
 	// 2: explicity named in the rule comment.
 	for _, imp := range getScalaImportsFromRuleComment(r) {
-		if _, ok := imports[imp]; !ok {
-			imports[imp] = nil
+		if _, ok := imports[imp]; ok {
+			continue
 		}
+		imports[imp] = importOrigin{Kind: "rule-comment"}
 	}
 
 	// 3: transitive of 1+2.
@@ -198,6 +198,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		stack = stack.push(k)
 	}
 
+	// stack now contains all known direct imports.  Let's get the known transitive of
+	// these?
 	var imp string
 	for !stack.empty() {
 		stack, imp = stack.pop()
@@ -205,7 +207,43 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			// make this is feature tooggle? for transitive indirects?
 			// stack = stack.push(dep)
 			if _, ok := imports[dep]; !ok {
-				imports[dep] = nil
+				imports[dep] = importOrigin{Kind: "indirect", Parent: imp}
+			}
+		}
+	}
+
+	// resolve transitive deps
+	if true {
+		for imp := range imports {
+			transitive, unresolved := importRegistry.TransitiveImports([]string{imp})
+			if debug {
+				if len(unresolved) > 0 {
+					log.Println("unresolved transitive import:", unresolved, imp)
+				}
+			}
+			for _, tImp := range transitive {
+				// log.Println("transitive import:", imp, tImp)
+				if _, ok := imports[tImp]; !ok {
+					imports[tImp] = importOrigin{Kind: "transitive", Parent: imp}
+				}
+			}
+		}
+	} else {
+		all := make([]string, 0)
+		for imp := range imports {
+			all = append(all, imp)
+		}
+		sort.Strings(all)
+		transitive, unresolved := importRegistry.TransitiveImports(all)
+		if debug {
+			if len(unresolved) > 0 {
+				log.Println("unresolved transitive import:", unresolved, all)
+			}
+		}
+		for _, tImp := range transitive {
+			// log.Println("transitive import:", tImp)
+			if _, ok := imports[tImp]; !ok {
+				imports[tImp] = importOrigin{Kind: "transitive", Parent: "(all)"}
 			}
 		}
 	}
@@ -220,12 +258,12 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		impLang = overrideImpLang
 	}
 
-	for imp, file := range imports {
+	for imp, origin := range imports {
 		if dbg {
 			log.Println("---", from, imp, "---")
 		}
 
-		labels := resolveImport(c, ix, importRegistry, file, impLang, imp, from, resolved)
+		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
 
 		if len(labels) == 0 {
 			unresolved = append(unresolved, "no-label: "+imp)
@@ -236,9 +274,9 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		}
 
 		if len(labels) > 1 {
-			disambiguated, err := importRegistry.Disambiguate(c, imp, labels, from)
+			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
 			if err != nil {
-				log.Fatalf("error while disambiguating %q %v (from=%v): %v", imp, labels, from, err)
+				log.Fatalf("disambigation error: %v", err)
 			}
 			if false {
 				if len(labels) > 0 {
@@ -253,11 +291,19 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		}
 
 		for _, dep := range labels {
-			dep = dep.Rel(from.Repo, from.Pkg)
+			// original := dep
+			// // normalize dep to match the repo name
+			// if dep.Repo == c.RepoName {
+			// 	dep.Repo = ""
+			// }
+			// dep = dep.Rel(from.Repo, from.Pkg)
 			if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
 				continue
 			}
-			resolved.Set(dep, imp)
+			if dbg {
+				log.Printf(" --> resolved %q to %v, rel form is: %v", imp, dep, dep.Rel(c.RepoName, from.Pkg))
+			}
+			resolved.Set(dep, imp, origin)
 		}
 	}
 
@@ -273,7 +319,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	// TODO(pcj): make this configurable
 	if strings.Contains(r.Kind(), "library") {
-		exported := make([]string, 0)
+		exported := make(map[string]importOrigin)
 		resolveAny := importRegistry.ResolveName
 		resolveFromImports := resolveNameInLabelImportMap(resolved)
 		for _, file := range files {
@@ -282,20 +328,30 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			if err != nil {
 				log.Panicf("failed to resolve export symbols: %v", err)
 			}
-			exported = append(exported, fileExports...)
+			for _, export := range fileExports {
+				exported[export] = importOrigin{Kind: "export", SourceFile: file}
+			}
 		}
 		r.DelAttr("exports")
 		if len(exported) > 0 {
 			exports := make(labelImportMap)
-			for _, exp := range exported {
-				if origin, ok := importRegistry.ResolveLabel(exp); ok {
-					if origin == PlatformLabel || origin == label.NoLabel {
+			exportKeys := make([]string, len(exported))
+			i := 0
+			for key := range exported {
+				exportKeys[i] = key
+				i++
+			}
+			sort.Strings(exportKeys)
+			for _, exp := range exportKeys {
+				origin := exported[exp]
+				if from, ok := importRegistry.ResolveLabel(exp); ok {
+					if from == PlatformLabel || from == label.NoLabel {
 						continue
 					}
-					if has, ok := exports[origin]; ok {
-						has[exp] = true
+					if has, ok := exports[from]; ok {
+						has[exp] = origin
 					} else {
-						exports[origin] = map[string]bool{exp: true}
+						exports[from] = map[string]importOrigin{exp: origin}
 					}
 				}
 			}
@@ -371,28 +427,36 @@ func resolveNameInFile(file *index.ScalaFileSpec) NameResolver {
 }
 
 func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImportMap) build.Expr {
-	sc := getScalaConfig(c)
-	deps := make([]label.Label, len(resolved))
-	i := 0
-	for dep := range resolved {
-		deps[i] = dep
-		i++
+	dbg := from.String() == "@unity//omnistac/search:app"
+	if from.Repo == "" {
+		from.Repo = c.RepoName
 	}
 
-	sort.Slice(deps, func(i, j int) bool {
-		a := deps[i]
-		b := deps[j]
-		return a.String() < b.String()
-	})
+	sc := getScalaConfig(c)
 
-	list := make([]build.Expr, 0, len(deps))
+	list := make([]build.Expr, 0, len(resolved))
 	seen := make(map[label.Label]bool)
-	for _, dep := range deps {
-		dep = dep.Rel(from.Repo, from.Pkg)
-		if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
-			continue
+	seen[from] = true
+
+	id := 1
+	for dep, imports := range resolved {
+		if dbg {
+			log.Printf("Writing %v dep %d: %v", from, id, dep)
+		}
+
+		if dep.Repo == "" {
+			dep.Repo = c.RepoName
 		}
 		if seen[dep] {
+			continue
+		}
+		if dep == label.NoLabel || dep == PlatformLabel || dep == from || from.Equal(dep) || isSameImport(c, from, dep) {
+			continue
+		}
+
+		// relativize the depenency label.  For self-imports, this transforms into the empty label.
+		dep = dep.Rel(from.Repo, from.Pkg)
+		if dep == label.NoLabel {
 			continue
 		}
 
@@ -401,18 +465,28 @@ func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImpor
 		seen[dep] = true
 
 		if sc.explainDependencies {
-			if imps, ok := resolved[dep]; ok {
-				reasons := make([]string, 0, len(imps))
-				for imp := range imps {
-					reasons = append(reasons, imp)
-				}
-				sort.Strings(reasons)
-				for _, reason := range reasons {
-					str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
-				}
+			reasons := make([]string, 0, len(imports))
+			for imp, origin := range imports {
+				reasons = append(reasons, imp+" ("+origin.String()+")")
+			}
+			if len(reasons) == 0 {
+				reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", importMapKeys(imports)))
+			}
+			sort.Strings(reasons)
+			for _, reason := range reasons {
+				str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
 			}
 		}
+
+		str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
+		id += 1
 	}
+
+	sort.Slice(list, func(i, j int) bool {
+		a := list[i].(*build.StringExpr)
+		b := list[j].(*build.StringExpr)
+		return a.Token < b.Token
+	})
 
 	return &build.ListExpr{List: list}
 }

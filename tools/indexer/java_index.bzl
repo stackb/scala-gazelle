@@ -3,11 +3,12 @@
 
 load(":aspect.bzl", "JarIndexerAspect", "java_indexer_aspect")
 
-def build_jarindex(ctx, basename, jar):
+def build_jarindex(ctx, label, basename, jar):
     """Builds a single jarindex.
 
     Args:
         ctx: the context object
+        label: label to use for the jar
         basename: a string representing a filename prefix for generated files
         jar: the File to parse
     Returns:
@@ -15,7 +16,8 @@ def build_jarindex(ctx, basename, jar):
     """
 
     ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
-    input_file = ctx.actions.declare_file(basename + ".jar.json")
+
+    # input_file = ctx.actions.declare_file(basename + ".jar.json")
     output_file = ctx.actions.declare_file(basename + ".jarindex.json")
 
     ctx.actions.run(
@@ -24,33 +26,49 @@ def build_jarindex(ctx, basename, jar):
         outputs = [ijar],
         arguments = [
             "--target_label",
-            str(ctx.label),
+            str(label),
             jar.path,
             ijar.path,
         ],
         mnemonic = "Ijar",
     )
 
-    ctx.actions.write(
-        content = json.encode(struct(
-            filename = ijar.path,
-        )),
-        output = input_file,
-    )
+    # ctx.actions.write(
+    #     content = json.encode(struct(
+    #         filename = ijar.path,
+    #     )),
+    #     output = input_file,
+    # )
 
-    args = [
-        "--input_file",
-        input_file.path,
-        "--output_file",
-        output_file.path,
-    ]
+    # args = [
+    #     "--input_file",
+    #     input_file.path,
+    #     "--output_file",
+    #     output_file.path,
+    # ]
 
+    # if False:
+    #     ctx.actions.run(
+    #         mnemonic = "JarIndexer",
+    #         progress_message = "Parsing jar file symbols",
+    #         executable = ctx.executable._jarindexer,
+    #         arguments = args,
+    #         inputs = [input_file, ijar],
+    #         outputs = [output_file],
+    #     )
+    # else:
     ctx.actions.run(
-        mnemonic = "JarIndexer",
-        progress_message = "Parsing jar file symbols",
-        executable = ctx.executable._jarindexer,
-        arguments = args,
-        inputs = [input_file, ijar],
+        mnemonic = "JarIndexer2",
+        progress_message = "Indexing jar " + ijar.basename,
+        executable = ctx.executable._jarindexer2,
+        arguments = [
+            "--label",
+            str(label),
+            "--output_file",
+            output_file.path,
+            ijar.path,
+        ],
+        inputs = [ijar],
         outputs = [output_file],
     )
 
@@ -72,6 +90,7 @@ def build_mergeindex(ctx, jarindex_files):
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
     args.add_joined("--predefined", [str(Label(lbl)) for lbl in ctx.attr.predefined], uniquify = True, join_with = ",")
+    args.add_joined("--preferred", [str(Label(lbl)) for lbl in ctx.attr.preferred], uniquify = True, join_with = ",")
     args.add_all(jarindex_files)
 
     ctx.actions.run(
@@ -102,11 +121,10 @@ def _java_index_impl(ctx):
         jarindex_files.extend(info.jar_index_files.to_list())
         transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
-    i = 0
-    for jar in ctx.files.platform_jars:
+    for i, jar in enumerate(ctx.files.platform_jars):
+        label = ctx.attr.platform_jars[i].label
         basename = ctx.label.name + "." + str(i)
-        jarindex_files.append(build_jarindex(ctx, basename, jar))
-        i += 1
+        jarindex_files.append(build_jarindex(ctx, label, basename, jar))
 
     index_file = build_mergeindex(ctx, jarindex_files)
     direct_files.append(index_file)
@@ -134,13 +152,23 @@ java_index = rule(
         "predefined": attr.string_list(
             doc = "list of labels that do not need to be included in deps",
         ),
+        "preferred": attr.string_list(
+            doc = """A list of labels that should be chosen in the case of a resolve ambiguity.
+E.g. ["@maven//:io_grpc_grpc_api"] means, "in the case where io.grpc.CallCredentials resolves to multiple labels, always choose @maven//:io_grpc_grpc_api"
+""",
+        ),
         "_mergeindex": attr.label(
             default = Label("//cmd/mergeindex"),
             cfg = "exec",
             executable = True,
         ),
-        "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer"),
+        # "_jarindexer": attr.label(
+        #     default = Label("//cmd/jarindexer"),
+        #     cfg = "exec",
+        #     executable = True,
+        # ),
+        "_jarindexer2": attr.label(
+            default = Label("//cmd/jarindexer:jarindexer2"),
             cfg = "exec",
             executable = True,
         ),

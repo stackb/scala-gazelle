@@ -3,14 +3,16 @@ package scala
 import (
 	"fmt"
 	"log"
+	"path/filepath"
+	"sort"
 	"strings"
-
-	"github.com/stackb/scala-gazelle/pkg/index"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
 const (
@@ -19,17 +21,47 @@ const (
 	debug                     = false
 )
 
-type labelImportMap map[label.Label]map[string]bool
+type importOrigin struct {
+	Kind       string
+	SourceFile *index.ScalaFileSpec
+	Parent     string
+}
 
-func (m labelImportMap) Set(from label.Label, imp string) {
-	if all, ok := m[from]; ok {
-		all[imp] = true
-	} else {
-		m[from] = map[string]bool{imp: true}
+func importMapKeys(in map[string]importOrigin) []string {
+	keys := make([]string, len(in))
+	i := 0
+	for k := range in {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func (io *importOrigin) String() string {
+	switch io.Kind {
+	case "direct":
+		return io.Kind + " from " + filepath.Base(io.SourceFile.Filename)
+	case "indirect":
+		return io.Kind + " from " + io.Parent
+	case "transitive":
+		return io.Kind + " via " + io.Parent
+	default:
+		return io.Kind
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, file *index.ScalaFileSpec, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
+type labelImportMap map[label.Label]map[string]importOrigin
+
+func (m labelImportMap) Set(from label.Label, imp string, origin importOrigin) {
+	if all, ok := m[from]; ok {
+		all[imp] = origin
+	} else {
+		m[from] = map[string]importOrigin{imp: origin}
+	}
+}
+
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
 	if debug {
 		log.Println("resolveImport:", imp)
 	}
@@ -49,38 +81,38 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	}
 	if len(labels) > 0 {
 		for _, l := range labels {
-			resolved.Set(l, imp)
+			resolved.Set(l, imp, origin)
 		}
 		return labels
 	}
 
 	// if this is a _root_ import, try without
 	if strings.HasPrefix(imp, "_root_.") {
-		return resolveImport(c, ix, registry, file, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
+		return resolveImport(c, ix, registry, origin, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
 	}
 
 	// if this is a wildcard import, try without
 	if strings.HasSuffix(imp, "._") {
-		return resolveImport(c, ix, registry, file, lang, strings.TrimSuffix(imp, "._"), from, resolved)
+		return resolveImport(c, ix, registry, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
 	}
 
 	// if this has a parent, try parent
 	lastDot := strings.LastIndex(imp, ".")
 	if lastDot > 0 {
 		parent := imp[0:lastDot]
-		return resolveImport(c, ix, registry, file, lang, parent, from, resolved)
+		return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
 	}
 
 	// we are down to a single symbol now.  Probe the importRegistry for a
 	// type in our package.
-	if file != nil {
-		for _, pkg := range file.Packages {
+	if origin.SourceFile != nil {
+		for _, pkg := range origin.SourceFile.Packages {
 			log.Printf("probing for %q in package %s", imp, pkg)
 			completions := registry.Completions(pkg)
 			for actualType, provider := range completions {
 				if imp == actualType {
 					log.Printf("matched in-package import=%s.%s: %v", pkg, imp, provider)
-					resolved.Set(provider, imp)
+					resolved.Set(provider, imp, origin)
 					return []label.Label{provider}
 				}
 			}

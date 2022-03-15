@@ -155,12 +155,13 @@ func (this *ClassFile) SuperClassName() string {
 }
 
 /**
- * Classes returns the list of classinfo names in the constant pool.
+ * Symbols returns the list of classinfo names in the constant pool.
  */
-func (this *ClassFile) Classes() (classes []string) {
+func (this *ClassFile) Symbols() (classes []string) {
 	name := this.Name()
 	for _, item := range this.constantPool {
-		if info, ok := item.(*ConstantClassInfo); ok {
+		switch info := item.(type) {
+		case *ConstantClassInfo:
 			className := this.cpUtf8(info.nameIndex)
 			switch className {
 			case name:
@@ -170,8 +171,41 @@ func (this *ClassFile) Classes() (classes []string) {
 			default:
 				classes = append(classes, className)
 			}
+		case *ConstantMethodTypeInfo:
+			descriptor := this.constantPool[info.descriptorIndex]
+			log.Panicf("got method %T", descriptor)
+			// if info, ok := descriptor.(*Constant); ok {
+			// 	methodName := this.cpUtf8(info.nameIndex)
+			// 	classes = append(classes, methodName+" (method)")
+			// }
+		case *ConstantMethodrefInfo:
+			// className := this.cpUtf8(info.classIndex)
+			nameAndType := this.constantPool[info.nameAndTypeIndex]
+			if info, ok := nameAndType.(*ConstantNameAndTypeInfo); ok {
+				methodName := this.cpUtf8(info.nameIndex)
+				classes = append(classes, methodName+" (method)")
+			}
+		case *ConstantUtf8Info:
+			break
+		case nil:
+			break
+		default:
+			log.Printf("skipped pool item %v %T", item, item)
 		}
 	}
+	superClass := this.SuperClassName()
+	if superClass != "" {
+		log.Printf("%s extends %s", name, superClass)
+		classes = append(classes, superClass)
+	}
+
+	for _, method := range this.methods {
+		methodName := this.cpUtf8(method.nameIndex)
+		classes = append(classes, methodName)
+		// descriptor := this.constantPool[method.descriptorIndex]
+		log.Printf("%s.%s desciprtor %q", name, methodName, this.cpUtf8(method.descriptorIndex))
+	}
+
 	return
 }
 

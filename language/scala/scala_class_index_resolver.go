@@ -17,9 +17,12 @@ import (
 // Example: 'java.lang.Boolean'.
 var PlatformLabel = label.New("platform", "", "do_not_import")
 
-func newScalaClassIndexResolver() *scalaClassIndexResolver {
+func newScalaClassIndexResolver(depsRecorder DependencyRecorder) *scalaClassIndexResolver {
 	return &scalaClassIndexResolver{
-		byLabel: make(map[string][]label.Label),
+		byLabel:      make(map[string][]label.Label),
+		preferred:    make(map[label.Label]bool),
+		symbols:      NewSymbolTable(),
+		depsRecorder: depsRecorder,
 	}
 }
 
@@ -36,11 +39,18 @@ func newScalaClassIndexResolver() *scalaClassIndexResolver {
 // value should be added to deps.  If a query for 'java.lang.Boolean' yields the
 // PlatformLabel, it can be skipped.
 type scalaClassIndexResolver struct {
+	// depsRecorder is used to write dependencies that are discovered when the
+	// JarSpecIndex is read.
+	depsRecorder DependencyRecorder
 	// indexIn is the filesystem path to the index.
 	indexIn string
 	// byLabel is a mapping from an import string to the label that provides it.
 	// It is possible more than one label provides a class.
 	byLabel map[string][]label.Label
+	// the full list of symbols
+	symbols *SymbolTable
+	// preferred is a mapping of preferred labels
+	preferred map[label.Label]bool
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
@@ -53,6 +63,10 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 	if r.indexIn == "" {
 		return nil
 	}
+	return r.readIndex()
+}
+
+func (r *scalaClassIndexResolver) readIndex() error {
 	// perform indexing here
 	index, err := index.ReadIndexSpec(r.indexIn)
 	if err != nil {
@@ -66,6 +80,14 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 			return fmt.Errorf("bad predefined label %q: %v", v, err)
 		}
 		isPredefined[lbl] = true
+	}
+
+	for _, v := range index.Preferred {
+		lbl, err := label.Parse(v)
+		if err != nil {
+			return fmt.Errorf("bad preferred label %q: %v", v, err)
+		}
+		r.preferred[lbl] = true
 	}
 
 	for _, jarSpec := range index.JarSpecs {
@@ -88,9 +110,38 @@ func (r *scalaClassIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config)
 		for _, class := range jarSpec.Classes {
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
 		}
+
+		for _, file := range jarSpec.Files {
+			r.byLabel[file.Name] = append(r.byLabel[file.Name], jarLabel)
+
+			// transform "org.json4s.package$MappingException" ->
+			// "org.json4s.MappingException" so that
+			// "org.json4s.MappingException" is resolveable.
+			pkgIndex := strings.LastIndex(file.Name, ".package$")
+			if pkgIndex != -1 && !strings.HasSuffix(file.Name, ".package$") {
+				name := file.Name[0:pkgIndex] + "." + file.Name[pkgIndex+len(".package$"):]
+				r.byLabel[name] = append(r.byLabel[name], jarLabel)
+			}
+
+			for _, idx := range file.Classes {
+				dst := jarSpec.Symbols[idx]
+				r.addDependency(file.Name, dst)
+			}
+			for _, symbol := range file.Symbols {
+				r.addDependency(file.Name, symbol)
+			}
+		}
 	}
 
 	return nil
+}
+
+func (r *scalaClassIndexResolver) addDependency(src, dst string) {
+	r.depsRecorder(src, dst)
+	// record a dependency like akka.grpc.GrpcClientSettings$ -> io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder as well.
+	if strings.HasSuffix(src, "$") {
+		r.depsRecorder(src[:len(src)-1], dst)
+	}
 }
 
 // OnResolvePhase implements GazellePhaseTransitionListener.
@@ -129,6 +180,9 @@ func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.Rul
 
 	result := make([]resolve.FindResult, len(resolved))
 	for i, v := range resolved {
+		if r.preferred[v] {
+			return []resolve.FindResult{{Label: v}}
+		}
 		result[i] = resolve.FindResult{Label: v}
 	}
 

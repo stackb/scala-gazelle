@@ -148,7 +148,7 @@ func TestResolveNameInLabelImportMap(t *testing.T) {
 			resolved := make(labelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp)
+				resolved.Set(l, imp, importOrigin{Kind: "test"})
 			}
 			got, ok := resolveNameInLabelImportMap(resolved)(tc.name)
 			if tc.want == "" && !ok {
@@ -198,7 +198,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			want: `testkind(
     name = "testname",
     deps = [
-        # com.typesafe.scalalogging.LazyLogging
+        # com.typesafe.scalalogging.LazyLogging (test)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )
@@ -213,7 +213,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			resolved := make(labelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp)
+				resolved.Set(l, imp, importOrigin{Kind: "test"})
 			}
 			expr := makeLabeledListExpr(c, from, resolved)
 			r := rule.NewRule("testkind", "testname")

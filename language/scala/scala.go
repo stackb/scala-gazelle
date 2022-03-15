@@ -23,20 +23,26 @@ const (
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
+	var importRegistry *importRegistry
+	depends := func(src, dst string) {
+		importRegistry.Depends(src, dst)
+	}
+
 	sourceResolver := newScalaSourceIndexResolver()
+	classResolver := newScalaClassIndexResolver(depends)
 	scalaCompiler := newScalaCompiler()
-	importRegistry := newImportRegistry(sourceResolver, scalaCompiler)
+	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
 
 	return &scalaLang{
 		ruleRegistry:    globalRuleRegistry,
 		scalaFileParser: sourceResolver,
 		scalaCompiler:   scalaCompiler,
 		packages:        make(map[string]*scalaPackage),
+		importRegistry:  importRegistry,
 		resolvers: []ConfigurableCrossResolver{
 			sourceResolver,
-			newScalaClassIndexResolver(),
+			classResolver,
 		},
-		importRegistry: importRegistry,
 	}
 }
 

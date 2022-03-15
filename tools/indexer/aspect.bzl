@@ -305,44 +305,60 @@ def _get_compile_flags(dep):
 def build_jar_index(ctx, target, jar):
     """Builds the java package manifest for the given source files."""
 
-    ijar_file = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
-    input_file = ctx.actions.declare_file(target.label.name + ".jar.json")
+    ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
+
+    # input_file = ctx.actions.declare_file(target.label.name + ".jar.json")
     output_file = ctx.actions.declare_file(target.label.name + ".jarindex.json")
 
     ctx.actions.run(
         executable = ctx.executable._ijar,
         inputs = [jar],
-        outputs = [ijar_file],
+        outputs = [ijar],
         arguments = [
             "--target_label",
             str(ctx.label),
             jar.path,
-            ijar_file.path,
+            ijar.path,
         ],
         mnemonic = "Ijar",
     )
 
-    ctx.actions.write(
-        content = json.encode(struct(
-            label = str(target.label),
-            filename = ijar_file.path,
-        )),
-        output = input_file,
-    )
+    # ctx.actions.write(
+    #     content = json.encode(struct(
+    #         label = str(target.label),
+    #         filename = ijar_file.path,
+    #     )),
+    #     output = input_file,
+    # )
 
-    args = [
-        "--input_file",
-        input_file.path,
-        "--output_file",
-        output_file.path,
-    ]
+    # args = [
+    #     "--input_file",
+    #     input_file.path,
+    #     "--output_file",
+    #     output_file.path,
+    # ]
+
+    # ctx.actions.run(
+    #     mnemonic = "IJarIndexer",
+    #     progress_message = "Extracting symbols from: " + jar.basename,
+    #     executable = ctx.executable._jarindexer,
+    #     arguments = args,
+    #     inputs = [input_file, ijar_file],
+    #     outputs = [output_file],
+    # )
 
     ctx.actions.run(
-        mnemonic = "IJarIndexer",
-        progress_message = "Extracting symbols from: " + jar.basename,
-        executable = ctx.executable._jarindexer,
-        arguments = args,
-        inputs = [input_file, ijar_file],
+        mnemonic = "JarIndexer2",
+        progress_message = "Indexing " + ijar.basename,
+        executable = ctx.executable._jarindexer2,
+        arguments = [
+            "--label",
+            str(ctx.label),
+            "--output_file",
+            output_file.path,
+            ijar.path,
+        ],
+        inputs = [ijar],
         outputs = [output_file],
     )
 
@@ -665,8 +681,13 @@ java_indexer_aspect = aspect(
         "_cc_toolchain": attr.label(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
         ),
-        "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer"),
+        # "_jarindexer": attr.label(
+        #     default = Label("//cmd/jarindexer"),
+        #     cfg = "exec",
+        #     executable = True,
+        # ),
+        "_jarindexer2": attr.label(
+            default = Label("//cmd/jarindexer:jarindexer2"),
             cfg = "exec",
             executable = True,
         ),

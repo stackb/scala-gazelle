@@ -16,6 +16,7 @@ const debug = false
 var (
 	outputFile       string
 	predefinedLabels string
+	preferredLabels  string
 )
 
 func main() {
@@ -70,6 +71,7 @@ func readParamsFile(filename string) ([]string, error) {
 func parseFlags(args []string) (files []string, err error) {
 	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError) // flag.ContinueOnError
 	fs.StringVar(&predefinedLabels, "predefined", "", "a comma-separated list of labels to be considered predefined")
+	fs.StringVar(&preferredLabels, "preferred", "", "a comma-separated list of labels to be considered preferred")
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "usage: mergeindex @PARAMS_FILE | mergeindex OPTIONS FILES")
@@ -98,6 +100,7 @@ func merge(filenames []string) error {
 	// spec is the final object to write as output
 	var spec index.IndexSpec
 	spec.Predefined = strings.Split(predefinedLabels, ",")
+	spec.Preferred = strings.Split(preferredLabels, ",")
 
 	// jarLabels is used to prevent duplicate entries for a given jar.
 	labels := make(map[string]bool)
@@ -105,6 +108,16 @@ func merge(filenames []string) error {
 	// labelByClass is used to check if more than one label provides a given
 	// class.
 	labelByClass := make(map[string][]string)
+
+	// predefinedSymbols is the set of symbols we can remove from each class
+	// files' list of symbols; these will never need to be resolved.
+	predefinedLabels := make(map[string]struct{})
+	for _, l := range spec.Predefined {
+		predefinedLabels[l] = struct{}{}
+	}
+	predefinedSymbols := map[string]struct{}{
+		"java.lang.Object": {},
+	}
 
 	for _, filename := range filenames {
 		jarSpec, err := index.ReadJarSpec(filename)
@@ -116,11 +129,31 @@ func merge(filenames []string) error {
 			continue
 		}
 		labels[jarSpec.Label] = true
+		if _, ok := predefinedLabels[jarSpec.Label]; ok {
+			for _, file := range jarSpec.Files {
+				predefinedSymbols[file.Name] = struct{}{}
+			}
+		}
 
 		for _, class := range jarSpec.Classes {
 			labelByClass[class] = append(labelByClass[class], jarSpec.Label)
 		}
+
 		spec.JarSpecs = append(spec.JarSpecs, jarSpec)
+	}
+
+	// 2nd pass to remove predefined symbols
+	for _, jarSpec := range spec.JarSpecs {
+		for _, file := range jarSpec.Files {
+			resolvable := make([]string, 0)
+			for _, sym := range file.Symbols {
+				if _, ok := predefinedSymbols[sym]; ok {
+					continue
+				}
+				resolvable = append(resolvable, sym)
+			}
+			file.Symbols = resolvable
+		}
 	}
 
 	for classname, labels := range labelByClass {
