@@ -72,7 +72,7 @@ type scalaCompiler struct {
 
 // RegisterFlags implements part of the Configurer interface.
 func (p *scalaCompiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&p.jarPath, "scala_compiler_jar", "scala_compiler.jar", "filesystem path to the scala compiler tool jar")
+	fs.StringVar(&p.jarPath, "scala_compiler_jar_path", "scala_compiler.jar", "filesystem path to the scala compiler tool jar")
 	fs.StringVar(&p.backendRawURL, "scala_compiler_url", "http://127.0.0.1:8040", "bind address for the server")
 	fs.StringVar(&p.cacheDir, "scala_cache_dir", "/tmp/scala_compiler", "Cache directory for scala compiler.  If unset, diables the cache")
 	fs.BoolVar(&p.startSubprocess, "scala_compiler_subprocess", false, "whether to start the compiler subprocess")
@@ -120,7 +120,7 @@ func (p *scalaCompiler) initHTTPClient() error {
 
 	p.client = http.Client{Transport: transport, Timeout: p.maxCompileRequestSeconds}
 
-	log.Println("Created compiler http client:", p.backendURL)
+	// log.Println("Created compiler http client:", p.backendURL)
 
 	timeout := 1 * time.Second
 	conn, err := net.DialTimeout("tcp", p.backendURL.Hostname()+":"+p.backendURL.Port(), timeout)

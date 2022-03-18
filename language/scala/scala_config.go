@@ -181,30 +181,24 @@ func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) 
 	return r, nil
 }
 
-func (c *scalaConfig) GetIndirectDependencies(lang, imp string) []string {
-	// dbg := imp == "com.typesafe.scalalogging.LazyLogging"
+func (c *scalaConfig) GetIndirectDependencies(lang, imp string) (deps []string) {
 	dbg := false
 	if dbg {
 		log.Println("checking indirect deps", imp, len(c.indirects))
 	}
 	for _, d := range c.indirects {
 		if d.lang != lang {
-			if dbg {
-				log.Println("skipping indirect dep (wrong lang)", d.imp, d.lang, lang)
-			}
 			continue
 		}
-		if d.imp == imp {
-			if dbg {
-				log.Println("matched indirect dep", d.imp, d.lang, lang)
-			}
-			return d.deps
+		if d.imp != imp {
+			continue
 		}
-		if dbg {
-			log.Println("skipping indirect dep (not matched)", d.imp, d.lang, lang)
-		}
+		deps = append(deps, d.deps...)
 	}
-	return nil
+	if dbg {
+		log.Println("indirect:", imp, deps)
+	}
+	return
 }
 
 func (c *scalaConfig) GetConfiguredRule(name string) (*RuleConfig, bool) {

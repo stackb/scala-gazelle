@@ -25,6 +25,7 @@ func init() {
 
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library")
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
 
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library")
@@ -165,7 +166,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	dbg := debug || from.Pkg == "omnistac/search"
+	dbg := debug
 	files, ok := importsRaw.([]*index.ScalaFileSpec)
 	if !ok {
 		return
@@ -192,7 +193,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		imports[imp] = importOrigin{Kind: "rule-comment"}
 	}
 
-	// 3: transitive of 1+2.
+	// 4: transitive of 1+2+3.
 	stack := make(importStack, 0, len(imports))
 	for k := range imports {
 		stack = stack.push(k)
@@ -214,7 +215,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	// resolve transitive deps
 	if true {
-		for imp := range imports {
+		for imp, origin := range imports {
 			transitive, unresolved := importRegistry.TransitiveImports([]string{imp})
 			if debug {
 				if len(unresolved) > 0 {
@@ -227,6 +228,9 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 					imports[tImp] = importOrigin{Kind: "transitive", Parent: imp}
 				}
 			}
+			log.Println(from, "transitive imports:", imp, transitive)
+			origin.Children = transitive
+			imports[imp] = origin
 		}
 	} else {
 		all := make([]string, 0)
@@ -261,6 +265,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	for imp, origin := range imports {
 		if dbg {
 			log.Println("---", from, imp, "---")
+			// log.Println("resolved:\n", resolved.String())
 		}
 
 		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
@@ -274,36 +279,29 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		}
 
 		if len(labels) > 1 {
+			original := labels
 			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
 			if err != nil {
-				log.Fatalf("disambigation error: %v", err)
-			}
-			if false {
-				if len(labels) > 0 {
-					if strings.HasSuffix(imp, "._") {
-						log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class without a wildcard import, or manually add deps with '# keep' comments): %v", from, imp, labels)
-					} else {
-						log.Fatalf("%v: %q is ambiguous. Use a 'gazelle:resolve' directive, refactor the class, or manually add deps with '# keep' comments): %v", from, imp, labels)
-					}
-				}
-			}
-			labels = disambiguated
-		}
-
-		for _, dep := range labels {
-			// original := dep
-			// // normalize dep to match the repo name
-			// if dep.Repo == c.RepoName {
-			// 	dep.Repo = ""
-			// }
-			// dep = dep.Rel(from.Repo, from.Pkg)
-			if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
-				continue
+				log.Panicf("disambigation error: %v", err)
 			}
 			if dbg {
-				log.Printf(" --> resolved %q to %v, rel form is: %v", imp, dep, dep.Rel(c.RepoName, from.Pkg))
+				log.Println(from, imp, original, "--[Disambiguate]-->", disambiguated)
 			}
-			resolved.Set(dep, imp, origin)
+			labels = disambiguated
+
+			for _, dep := range disambiguated {
+				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
+					continue
+				}
+				resolved.Set(dep, imp, origin)
+			}
+		} else {
+			for _, dep := range labels {
+				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(c, from, dep) {
+					continue
+				}
+				resolved.Set(dep, imp, origin)
+			}
 		}
 	}
 
@@ -318,7 +316,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 
 	// TODO(pcj): make this configurable
-	if strings.Contains(r.Kind(), "library") {
+	if false && strings.Contains(r.Kind(), "library") {
 		exported := make(map[string]importOrigin)
 		resolveAny := importRegistry.ResolveName
 		resolveFromImports := resolveNameInLabelImportMap(resolved)
@@ -361,6 +359,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	if dbg {
 		log.Println("-- | ", from, "finished deps resolution.")
+		printRules(r)
 	}
 }
 
@@ -426,8 +425,12 @@ func resolveNameInFile(file *index.ScalaFileSpec) NameResolver {
 	}
 }
 
+func shouldExcludeDep(c *config.Config, from label.Label) bool {
+	return from.Name == "tests"
+}
+
 func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImportMap) build.Expr {
-	dbg := from.String() == "@unity//omnistac/search:app"
+	dbg := debug
 	if from.Repo == "" {
 		from.Repo = c.RepoName
 	}
@@ -451,6 +454,9 @@ func makeLabeledListExpr(c *config.Config, from label.Label, resolved labelImpor
 			continue
 		}
 		if dep == label.NoLabel || dep == PlatformLabel || dep == from || from.Equal(dep) || isSameImport(c, from, dep) {
+			continue
+		}
+		if shouldExcludeDep(c, dep) {
 			continue
 		}
 

@@ -28,7 +28,7 @@ func NewLanguage() language.Language {
 		importRegistry.Depends(src, dst)
 	}
 
-	sourceResolver := newScalaSourceIndexResolver()
+	sourceResolver := newScalaSourceIndexResolver(depends)
 	classResolver := newScalaClassIndexResolver(depends)
 	scalaCompiler := newScalaCompiler()
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)

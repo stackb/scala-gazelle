@@ -155,7 +155,7 @@ func (ir *importRegistry) Depends(src, dst string) {
 		ir.dependencies[i] = deps
 	}
 	deps.Add(j)
-	// log.Printf("depends: %s -> %s", src, dst)
+	log.Printf("depends: %s -> %s", src, dst)
 }
 
 func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved []string) {
@@ -164,7 +164,7 @@ func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved
 	for _, dep := range deps {
 		// log.Println("resolving transitive imports of", dep)
 		if id, ok := ir.symbols.Get(dep); ok {
-			ir.importsFor(id, transitive, false)
+			ir.importsFor(id, transitive, true)
 		} else {
 			unresolved = append(unresolved, dep)
 		}
@@ -232,21 +232,21 @@ func (ir *importRegistry) Disambiguate(c *config.Config, ix *resolve.RuleIndex, 
 	debug := false
 
 	fail := func(reason string) ([]label.Label, error) {
-		return labels, fmt.Errorf(`%[1]q is provided by more than one rule.  Efforts to reduce that to a single label failed.
+		return labels, fmt.Errorf(`%[1]q is ambiguous (symbol is provided by multiple rules %[2]v)
+
+Failed to automatically disambiguate it to a single label, or matching to an unambiguous list. 
 
 Reason: %[4]s
-
-Got: %[2]v
-
-Want: a single label
 
 Rule where the error originated: %[3]v
 
 Possible solutions:
 
-1. Use '# gazelle:resolve scala scala %[1]s LABEL' to manually choose one.
-2. Use '# gazelle:override scala glob quickfix.field.* @maven//:org_quickfixj_quickfixj_core' to manually choose one (using glob).
-3. Remove ambiguous labels from indexing.
+1. Use '# gazelle:resolve scala scala %[1]s LABEL' to pick one.
+   - Alternatively: '# gazelle:override scala glob GLOB LABEL' .
+2. If this is a wildcard import, remove the wildcard and be explicit.
+3. If this is a jar, add the desired choice to the 'preferred' attribute (java_index rule).
+4. If this is a jar, remove duplicate providers from the 'deps' attribute (java_index rule).
 `, imp.Imp, labels, from, reason)
 	}
 
@@ -304,7 +304,7 @@ Possible solutions:
 		}
 	}
 	if len(files) == 0 {
-		return fail(fmt.Sprintf("attempted to use the rule %v has no srcs"))
+		return fail(fmt.Sprintf("did not find a source file in %v that actually imports %q; can't use source file symbols to help disambiguate futher", from, imp.Imp))
 	}
 
 	// step 4: use the scala compiler to list the unknown types in the source file.

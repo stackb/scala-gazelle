@@ -316,7 +316,6 @@ class ScalaSourceFile {
                             this.extendsMap.set(key, symbols);
                         }
                         symbols.push(tpe);
-                        this.console.log(`${key} extends ${tpe}`);
                     }
                 }
             }
@@ -375,6 +374,8 @@ class ScalaSourceFile {
      */
     parseName(ref) {
         switch (ref.type) {
+            case 'Type.Apply':
+                return this.parseName(ref.tpe);
             case 'Type.Name':
                 return ref.value;
             case 'Term.Name':
@@ -390,6 +391,7 @@ class ScalaSourceFile {
                 return names.join('.');
             default:
                 this.console.warn('unhandled ref type:', ref.type);
+                this.printNode(ref);
         }
     }
 

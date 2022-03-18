@@ -31,8 +31,8 @@ type scalaSourceParser struct {
 func (p *scalaSourceParser) start() error {
 	parseTool, err := bazel.Runfile(p.parserToolPath)
 	if err != nil {
-		log.Printf("failed to initialize parser: %v\n", err)
 		index.ListFiles(".")
+		log.Fatalf("failed to initialize parser: %v\n", err)
 		return err
 	}
 

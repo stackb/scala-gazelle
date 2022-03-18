@@ -25,6 +25,7 @@ type importOrigin struct {
 	Kind       string
 	SourceFile *index.ScalaFileSpec
 	Parent     string
+	Children   []string // transitive imports triggered for an import
 }
 
 func importMapKeys(in map[string]importOrigin) []string {
@@ -39,16 +40,26 @@ func importMapKeys(in map[string]importOrigin) []string {
 }
 
 func (io *importOrigin) String() string {
+	var s string
 	switch io.Kind {
 	case "direct":
-		return io.Kind + " from " + filepath.Base(io.SourceFile.Filename)
+		s = io.Kind + " from " + filepath.Base(io.SourceFile.Filename)
+		if io.Parent != "" {
+			s += " (materialized from " + io.Parent + ")"
+		}
 	case "indirect":
-		return io.Kind + " from " + io.Parent
+		s = io.Kind + " from " + io.Parent
+	case "superclass":
+		s = io.Kind + " of " + io.Parent
 	case "transitive":
-		return io.Kind + " via " + io.Parent
+		s = io.Kind + " via " + io.Parent
 	default:
 		return io.Kind
 	}
+	if len(io.Children) > 0 {
+		s += fmt.Sprintf(" (requires %v)", io.Children)
+	}
+	return s
 }
 
 type labelImportMap map[label.Label]map[string]importOrigin
@@ -59,11 +70,30 @@ func (m labelImportMap) Set(from label.Label, imp string, origin importOrigin) {
 	} else {
 		m[from] = map[string]importOrigin{imp: origin}
 	}
+	if debug {
+		log.Printf(" --> resolved %q (%s) to %v", imp, origin.String(), from)
+	}
+}
+
+func (m labelImportMap) String() string {
+	var sb strings.Builder
+	for from, imports := range m {
+		sb.WriteString(from.String())
+		sb.WriteString(":\n")
+		for imp, origin := range imports {
+			sb.WriteString(" -- ")
+			sb.WriteString(imp)
+			sb.WriteString(" -> ")
+			sb.WriteString(origin.String())
+			sb.WriteString("\n")
+		}
+	}
+	return sb.String()
 }
 
 func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
 	if debug {
-		log.Println("resolveImport:", imp)
+		log.Println("resolveImport:", imp, origin.String())
 	}
 
 	// if the import is empty, we may have reached the root symbol.
@@ -76,14 +106,8 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 		log.Println("resolveAnyKind:", imp, labels)
 	}
 
-	if len(labels) > 1 {
-		labels = dedupLabels(labels)
-	}
 	if len(labels) > 0 {
-		for _, l := range labels {
-			resolved.Set(l, imp, origin)
-		}
-		return labels
+		return dedupLabels(labels)
 	}
 
 	// if this is a _root_ import, try without
@@ -201,9 +225,6 @@ func dedupLabels(in []label.Label) (out []label.Label) {
 	seen := make(map[label.Label]bool)
 	for _, l := range in {
 		if seen[l] {
-			continue
-		}
-		if l == label.NoLabel || l == PlatformLabel {
 			continue
 		}
 		seen[l] = true

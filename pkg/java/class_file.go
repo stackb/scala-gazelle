@@ -195,15 +195,12 @@ func (this *ClassFile) Symbols() (classes []string) {
 	}
 	superClass := this.SuperClassName()
 	if superClass != "" {
-		log.Printf("%s extends %s", name, superClass)
 		classes = append(classes, superClass)
 	}
 
 	for _, method := range this.methods {
 		methodName := this.cpUtf8(method.nameIndex)
 		classes = append(classes, methodName)
-		// descriptor := this.constantPool[method.descriptorIndex]
-		log.Printf("%s.%s desciprtor %q", name, methodName, this.cpUtf8(method.descriptorIndex))
 	}
 
 	return

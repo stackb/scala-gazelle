@@ -37,7 +37,7 @@ type ScalaSourceRuleRegistry interface {
 	GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool)
 }
 
-func newScalaSourceIndexResolver() *scalaSourceIndexResolver {
+func newScalaSourceIndexResolver(depsRecorder DependencyRecorder) *scalaSourceIndexResolver {
 	return &scalaSourceIndexResolver{
 		providers:    make(map[string][]*provider),
 		packages:     make(map[string][]*provider),
@@ -45,6 +45,7 @@ func newScalaSourceIndexResolver() *scalaSourceIndexResolver {
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
 		parser:       &scalaSourceParser{},
 		providersMux: &sync.Mutex{},
+		depsRecorder: depsRecorder,
 	}
 }
 
@@ -60,6 +61,9 @@ func newScalaSourceIndexResolver() *scalaSourceIndexResolver {
 // and out, creating a configuration loop such that only new/modified .scala
 // files need to be parsed on subsequent gazelle executions.
 type scalaSourceIndexResolver struct {
+	// depsRecorder is used to write dependencies of classes based on extends
+	// clauses.
+	depsRecorder DependencyRecorder
 	// filesystem path to the indexes to read/write.
 	indexIn, indexOut string
 	// providers and packages is a mapping from an import symbol to the things
@@ -159,7 +163,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 			// log.Printf("file cache hit: <%s> (%s)", filename, sha256)
 			return file, nil
 		} else {
-			log.Printf("sha256 mismatch: <%s> (%s, %s)", filename, file.Sha256, sha256)
+			// log.Printf("sha256 mismatch: <%s> (%s, %s)", filename, file.Sha256, sha256)
 		}
 	} else {
 		// log.Printf("file cache miss: <%s>", filename)
@@ -171,7 +175,7 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	}
 	file.Filename = filename
 	file.Sha256 = sha256
-	log.Printf("Parsed: <%s>", filename)
+	log.Printf("Parsed <%s>", filename)
 	return file, nil
 }
 
@@ -268,10 +272,38 @@ func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, rul
 	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
+func (r *scalaSourceIndexResolver) addDependency(src, dst string) {
+	r.depsRecorder(src, dst)
+}
+
 // OnResolvePhase implements GazellePhaseTransitionListener.
 func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()
+
+	// record source file dependencies
+	for _, rule := range r.byRule {
+		for _, file := range rule.Srcs {
+			for token, symbols := range file.Extends {
+				log.Println(file.Filename, "adding extends for:", token)
+				for _, sym := range symbols {
+					suffix := "." + sym
+					var matched bool
+					for _, imp := range file.Imports {
+						if strings.HasSuffix(imp, suffix) {
+							fields := strings.Fields(token)
+							r.addDependency(fields[1], imp)
+							matched = true
+							break
+						}
+					}
+					if !matched {
+						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
+					}
+				}
+			}
+		}
+	}
 
 	// dump the index
 	return r.writeIndex()
