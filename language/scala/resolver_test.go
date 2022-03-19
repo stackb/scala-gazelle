@@ -66,6 +66,7 @@ scala_library(
 func TestIsSameImport(t *testing.T) {
 	for name, tc := range map[string]struct {
 		repoName string
+		kind     string
 		from, to label.Label
 		want     bool
 	}{
@@ -105,7 +106,8 @@ func TestIsSameImport(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			got := isSameImport(c, tc.from, tc.to)
+			sc := newScalaConfig(c)
+			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -129,9 +131,9 @@ func TestDedupLabels(t *testing.T) {
 			in:   []string{"//b", "//a", "//a", "//c"},
 			want: []string{"//b", "//a", "//c"},
 		},
-		"strips platform": {
+		"does not strip do_not_import": {
 			in:   []string{"@platform//:do_not_import"},
-			want: []string{},
+			want: []string{"@platform//:do_not_import"},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {

@@ -9,6 +9,10 @@ const { parseSource } = require('scalameta-parsers');
 
 const debug = false;
 const delim = Buffer.from([0x00]);
+// enableNestedImports will capture imports not at the top-level.  This can be
+// useful, but in-practive is often used to narrow an import already named at
+// the top-level, which then must be suppressed with resolve directives.
+const enableNestedImports = false;
 
 /**
  * ScalaSourceFile parses a scala source file and aggregates symbols discovered
@@ -106,6 +110,12 @@ class ScalaSourceFile {
             }
             if (node.type === 'Term.Name' && node.value) {
                 this.names.add(node.value);
+            }
+            if (enableNestedImports) {
+                if (node.type === 'Import') {
+                    this.visitImport(node);
+                    return false;
+                }
             }
             return true;
         });

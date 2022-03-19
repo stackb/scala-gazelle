@@ -129,7 +129,7 @@ func TestImportRegistryTransitiveImports(t *testing.T) {
 				}).
 				build(),
 			imps: []string{"a"},
-			want: []string{"b"},
+			want: []string{"b", "c", "d"},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {

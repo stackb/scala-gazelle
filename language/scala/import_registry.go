@@ -430,3 +430,15 @@ func (r *importRegistry) writeImports() error {
 
 	return nil
 }
+
+func findPackageSymbolCompletion(registry ScalaImportRegistry, packages []string, want string) (string, label.Label) {
+	for _, pkg := range packages {
+		completions := registry.Completions(pkg)
+		for got, from := range completions {
+			if got == want {
+				return got, from
+			}
+		}
+	}
+	return "", label.NoLabel
+}

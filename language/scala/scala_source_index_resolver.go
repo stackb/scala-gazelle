@@ -335,13 +335,21 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		return nil
 	}
 
+	sc := getScalaConfig(c)
 	sym := imp.Imp
+
+	// if imp.Imp == "omnistac.core.pubsub.BinaryMessageFormatter" && !hasMapping {
+	// 	log.Panicln("CrossResolving", imp.Imp, "!!!", imp.Lang, mapping)
+	// }
 
 	if providers, ok := r.providers[sym]; ok {
 		result := make([]resolve.FindResult, len(providers))
 		for i, p := range providers {
 			// log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
 			result[i] = resolve.FindResult{Label: p.label}
+			if mapping, ok := sc.mapKindImportNames[p.rule.Kind]; ok {
+				result[i].Label = mapping.Rename(result[i].Label)
+			}
 		}
 		return result
 	}

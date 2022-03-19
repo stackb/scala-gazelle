@@ -148,7 +148,7 @@ func TestResolveNameInLabelImportMap(t *testing.T) {
 			resolved := make(labelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp, importOrigin{Kind: "test"})
+				resolved.Set(l, imp, &importOrigin{Kind: "test"})
 			}
 			got, ok := resolveNameInLabelImportMap(resolved)(tc.name)
 			if tc.want == "" && !ok {
@@ -168,6 +168,8 @@ func TestMakeLabeledListExpr(t *testing.T) {
 	for name, tc := range map[string]struct {
 		// prelude is an optional chunk of BUILD file content
 		directives []rule.Directive
+		// kind is the kind of rule being processed
+		kind string
 		// resolved is a mapping from import -> label
 		resolved map[string]string
 		// want is the expected rule appearance
@@ -213,9 +215,9 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			resolved := make(labelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp, importOrigin{Kind: "test"})
+				resolved.Set(l, imp, &importOrigin{Kind: "test"})
 			}
-			expr := makeLabeledListExpr(c, from, resolved)
+			expr := makeLabeledListExpr(c, tc.kind, from, resolved)
 			r := rule.NewRule("testkind", "testname")
 			r.SetAttr("deps", expr)
 			want := tc.want

@@ -26,9 +26,10 @@ type importOrigin struct {
 	SourceFile *index.ScalaFileSpec
 	Parent     string
 	Children   []string // transitive imports triggered for an import
+	Actual     string   // the effective string for the import.
 }
 
-func importMapKeys(in map[string]importOrigin) []string {
+func importMapKeys(in map[string]*importOrigin) []string {
 	keys := make([]string, len(in))
 	i := 0
 	for k := range in {
@@ -62,13 +63,13 @@ func (io *importOrigin) String() string {
 	return s
 }
 
-type labelImportMap map[label.Label]map[string]importOrigin
+type labelImportMap map[label.Label]map[string]*importOrigin
 
-func (m labelImportMap) Set(from label.Label, imp string, origin importOrigin) {
+func (m labelImportMap) Set(from label.Label, imp string, origin *importOrigin) {
 	if all, ok := m[from]; ok {
 		all[imp] = origin
 	} else {
-		m[from] = map[string]importOrigin{imp: origin}
+		m[from] = map[string]*importOrigin{imp: origin}
 	}
 	if debug {
 		log.Printf(" --> resolved %q (%s) to %v", imp, origin.String(), from)
@@ -91,7 +92,114 @@ func (m labelImportMap) String() string {
 	return sb.String()
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
+func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin) {
+	sc := getScalaConfig(c)
+
+	stack := make(importStack, 0, len(imports))
+	for k := range imports {
+		stack = stack.push(k)
+	}
+	var imp string
+	for !stack.empty() {
+		stack, imp = stack.pop()
+		for _, dep := range sc.GetIndirectDependencies(ScalaLangName, imp) {
+			// make this is feature tooggle? for transitive indirects?
+			stack = stack.push(dep)
+			if _, ok := imports[dep]; !ok {
+				imports[dep] = &importOrigin{Kind: "indirect", Parent: imp}
+			}
+		}
+	}
+}
+
+func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
+	// at this point we expect 'resolved' to hold a set of 'actual' imports that
+	// represent concrete types. build a second set of imports to be resolved
+	// from that set.
+	transitiveImports := make(map[string]*importOrigin)
+
+	for lbl, imps := range resolved {
+		if lbl == label.NoLabel {
+			continue
+		}
+		for _, origin := range imps {
+			if origin.Actual == "" {
+				log.Panicln("unknown actual import!", lbl, origin.String())
+			}
+			transitive, unresolved := importRegistry.TransitiveImports([]string{origin.Actual})
+			if debug {
+				if len(unresolved) > 0 {
+					log.Println("unresolved transitive import:", unresolved, origin.Actual)
+				}
+			}
+			for _, tImp := range transitive {
+				// log.Println("transitive import:", imp, tImp)
+				if _, ok := imports[tImp]; !ok {
+					transitiveImports[tImp] = &importOrigin{Kind: "transitive", Parent: origin.Actual}
+				}
+			}
+			log.Println(from, "transitive imports:", origin.Actual, transitive)
+			origin.Children = transitive
+		}
+	}
+
+	// another round of indirects
+	gatherIndirectDependencies(c, transitiveImports)
+
+	// finally, resolve the transitive set
+	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved)
+}
+
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
+	sc := getScalaConfig(c)
+
+	dbg := false
+	for imp, origin := range imports {
+		if dbg {
+			log.Println("---", from, imp, "---")
+			// log.Println("resolved:\n", resolved.String())
+		}
+
+		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
+
+		if len(labels) == 0 {
+			resolved[label.NoLabel][imp] = origin
+			if dbg {
+				log.Println("unresolved:", imp)
+			}
+			continue
+		}
+
+		if len(labels) > 1 {
+			original := labels
+			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
+			if err != nil {
+				log.Panicf("disambigation error: %v", err)
+			}
+			if dbg {
+				log.Println(from, imp, original, "--[Disambiguate]-->", disambiguated)
+			}
+			labels = disambiguated
+
+			for _, dep := range disambiguated {
+				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
+					continue
+				}
+				resolved.Set(dep, imp, origin)
+			}
+		} else {
+			for _, dep := range labels {
+				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
+					continue
+				}
+				resolved.Set(dep, imp, origin)
+			}
+		}
+	}
+}
+
+// resolveImport should return a different thing than
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
 	if debug {
 		log.Println("resolveImport:", imp, origin.String())
 	}
@@ -107,6 +215,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	}
 
 	if len(labels) > 0 {
+		origin.Actual = imp
 		return dedupLabels(labels)
 	}
 
@@ -130,16 +239,11 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	// we are down to a single symbol now.  Probe the importRegistry for a
 	// type in our package.
 	if origin.SourceFile != nil {
-		for _, pkg := range origin.SourceFile.Packages {
-			log.Printf("probing for %q in package %s", imp, pkg)
-			completions := registry.Completions(pkg)
-			for actualType, provider := range completions {
-				if imp == actualType {
-					log.Printf("matched in-package import=%s.%s: %v", pkg, imp, provider)
-					resolved.Set(provider, imp, origin)
-					return []label.Label{provider}
-				}
-			}
+		got, provider := findPackageSymbolCompletion(registry, origin.SourceFile.Packages, imp)
+		if got != "" {
+			origin.Actual = imp
+			resolved.Set(provider, imp, origin)
+			return []label.Label{provider}
 		}
 	}
 
@@ -168,7 +272,7 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 	labels := make([]label.Label, len(matches))
 	for i, match := range matches {
 		if match.IsSelfImport(from) {
-			labels[i] = label.NoLabel
+			labels[i] = PlatformLabel
 		} else {
 			labels[i] = match.Label
 		}
@@ -178,12 +282,15 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 
 // isSameImport returns true if the "from" and "to" labels are the same,
 // normalizing to the config.RepoName.
-func isSameImport(c *config.Config, from, to label.Label) bool {
+func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
 	if from.Repo == "" {
-		from.Repo = c.RepoName
+		from.Repo = sc.config.RepoName
 	}
 	if to.Repo == "" {
-		to.Repo = c.RepoName
+		to.Repo = sc.config.RepoName
+	}
+	if mapping, ok := sc.mapKindImportNames[kind]; ok {
+		from = mapping.Rename(from)
 	}
 	return from == to
 }

@@ -24,6 +24,8 @@ const (
 	indirectDependencyDirective = "indirect_dependency"
 	// scala_explain_dependencies prints the reason why deps are included.
 	scalaExplainDependencies = "scala_explain_dependencies"
+	// mapKindImportNameDirective allows renaming of resolved labels.
+	mapKindImportNameDirective = "map_kind_import_name"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -36,6 +38,8 @@ type scalaConfig struct {
 	overrides []*overrideSpec
 	// indirects are parsed from 'gazelle:indirect-dependency scala foo bar'
 	indirects []*indirectDependencySpec
+	// map kinds are parsed from 'gazelle:map_kind_import_name
+	mapKindImportNames map[string]mapKindImportNameSpec
 	// explainDependencies is a flag to print additional comments on deps & exports
 	explainDependencies bool
 }
@@ -43,10 +47,11 @@ type scalaConfig struct {
 // newScalaConfig initializes a new scalaConfig.
 func newScalaConfig(config *config.Config) *scalaConfig {
 	return &scalaConfig{
-		config:    config,
-		rules:     make(map[string]*RuleConfig),
-		overrides: make([]*overrideSpec, 0),
-		indirects: make([]*indirectDependencySpec, 0),
+		config:             config,
+		rules:              make(map[string]*RuleConfig),
+		overrides:          make([]*overrideSpec, 0),
+		indirects:          make([]*indirectDependencySpec, 0),
+		mapKindImportNames: make(map[string]mapKindImportNameSpec),
 	}
 }
 
@@ -79,6 +84,9 @@ func (c *scalaConfig) Clone() *scalaConfig {
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
+	for k, v := range c.mapKindImportNames {
+		clone.mapKindImportNames[k] = v
+	}
 	clone.overrides = c.overrides[:]
 	clone.indirects = c.indirects[:]
 	return clone
@@ -102,6 +110,8 @@ func (c *scalaConfig) parseDirectives(rel string, directives []rule.Directive) (
 			c.parseIndirectDependencyDirective(d)
 		case scalaExplainDependencies:
 			c.parseScalaExplainDependencies(d)
+		case mapKindImportNameDirective:
+			c.parseMapKindImportNameDirective(d)
 		}
 	}
 	return
@@ -160,6 +170,19 @@ func (c *scalaConfig) parseIndirectDependencyDirective(d rule.Directive) {
 		imp:  parts[1],
 		deps: parts[2:],
 	})
+}
+
+func (c *scalaConfig) parseMapKindImportNameDirective(d rule.Directive) {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 3 {
+		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", mapKindImportNameDirective, parts)
+		return
+	}
+	kind := parts[0]
+	src := parts[1]
+	dst := parts[2]
+
+	c.mapKindImportNames[kind] = mapKindImportNameSpec{src: src, dst: dst}
 }
 
 func (c *scalaConfig) parseScalaExplainDependencies(d rule.Directive) {
@@ -248,4 +271,20 @@ type indirectDependencySpec struct {
 	imp string
 	// dep is the "destination" dependencies (e.g. org.slf4j.Logger)
 	deps []string
+}
+
+type mapKindImportNameSpec struct {
+	// src is the label name to match
+	src string
+	// dst is the label name to rewrite
+	dst string
+}
+
+func (m *mapKindImportNameSpec) Rename(from label.Label) label.Label {
+	if !(m.src == from.Name || m.src == "%{name}") {
+		return from
+	}
+	to := label.New(from.Repo, from.Pkg, strings.ReplaceAll(m.dst, "%{name}", from.Name))
+	// log.Printf("matched map_kind_import_name", m, from, "->", to)
+	return to
 }
