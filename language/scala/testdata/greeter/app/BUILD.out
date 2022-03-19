@@ -1,0 +1,12 @@
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
+
+scala_library(
+    name = "client",
+    srcs = glob(["src/main/scala/**/*.scala"]),
+    deps = [
+        "//proto:proto_scala_library",
+        "@maven//:com_typesafe_akka_akka_actor_2_12",
+        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+        "@maven//:org_scala_lang_scala_library",
+    ],
+)

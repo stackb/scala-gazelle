@@ -166,19 +166,23 @@ func (r *scalaClassIndexResolver) Provided(lang, impLang string) map[label.Label
 }
 
 // CrossResolve implements the CrossResolver interface.
-func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	if lang != "scala" {
-		return nil
+func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
+	defer func() {
+		log.Println("(scala class resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
+	}()
+
+	if !(lang == ScalaLangName || imp.Lang == ScalaLangName) {
+		return
 	}
 
 	sym := strings.TrimSuffix(imp.Imp, "._")
 
 	resolved := r.byLabel[sym]
 	if len(resolved) == 0 {
-		return nil
+		return
 	}
 
-	result := make([]resolve.FindResult, len(resolved))
+	result = make([]resolve.FindResult, len(resolved))
 	for i, v := range resolved {
 		if r.preferred[v] {
 			return []resolve.FindResult{{Label: v}}
@@ -186,5 +190,5 @@ func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.Rul
 		result[i] = resolve.FindResult{Label: v}
 	}
 
-	return result
+	return
 }

@@ -12,6 +12,8 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
+import proto.ApiRequest
+
 object GreeterClient extends LazyLogging {
   implicit val sys = ActorSystem("HelloWorldClient")
   implicit val mat: Materializer = Materializer(sys)

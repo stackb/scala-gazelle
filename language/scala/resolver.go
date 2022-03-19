@@ -138,7 +138,7 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 					transitiveImports[tImp] = &importOrigin{Kind: "transitive", Parent: origin.Actual}
 				}
 			}
-			log.Println(from, "transitive imports:", origin.Actual, transitive)
+			// log.Println(from, "transitive imports:", origin.Actual, transitive)
 			origin.Children = transitive
 		}
 	}

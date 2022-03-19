@@ -15,7 +15,7 @@ gazelle_binary(
         "@bazel_gazelle//language/go",
         "@bazel_gazelle//language/proto",
         "@build_stack_rules_proto//language/protobuf",
-        # "//language/scala",
+        "//language/scala",
     ],
     visibility = ["//visibility:public"],
 )

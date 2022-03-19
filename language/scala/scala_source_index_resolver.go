@@ -330,9 +330,13 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 }
 
 // CrossResolve implements the CrossResolver interface.
-func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	if lang != "scala" {
-		return nil
+func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
+	defer func() {
+		log.Println("(scala source resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
+	}()
+
+	if !(lang == ScalaLangName || imp.Lang == ScalaLangName) {
+		return
 	}
 
 	sc := getScalaConfig(c)
@@ -343,7 +347,7 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 	// }
 
 	if providers, ok := r.providers[sym]; ok {
-		result := make([]resolve.FindResult, len(providers))
+		result = make([]resolve.FindResult, len(providers))
 		for i, p := range providers {
 			// log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
 			result[i] = resolve.FindResult{Label: p.label}
@@ -351,23 +355,23 @@ func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 				result[i].Label = mapping.Rename(result[i].Label)
 			}
 		}
-		return result
+		return
 	}
 
 	sym = strings.TrimSuffix(sym, "._")
 
 	if packages, ok := r.packages[sym]; ok {
 		// pick the first result -- this might not be correct!
-		result := make([]resolve.FindResult, len(packages))
+		result = make([]resolve.FindResult, len(packages))
 		for i, p := range packages {
 			// log.Printf("source crossResolve %q package hit %d: %v", imp.Imp, i, p.label)
 			result[i] = resolve.FindResult{Label: p.label}
 		}
-		return result
+		return
 	}
 
 	// log.Println("source crossResolve miss:", imp.Imp)
-	return nil
+	return
 }
 
 // fileSha256 computes the sha256 hash of a file

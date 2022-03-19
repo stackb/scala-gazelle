@@ -1,20 +1,9 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
-
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
 
-scala_library(
-    name = "client",
-    srcs = glob(["src/main/scala/**/*.scala"]),
-    resources = ["foo"],
-    deps = [
-        "//examples/helloworld/greeter/proto:monitor_hello_request_scala_library",
-        "//examples/helloworld/greeter/proto:service_scala_grpc_proto",
-        "//examples/helloworld/greeter/proto:service_scala_proto",
-        "@maven//:com_lightbend_akka_grpc_akka_grpc_runtime_2_12",
-        "@maven//:com_typesafe_akka_akka_actor_2_12",
-        "@maven//:com_typesafe_akka_akka_stream_2_12",
-        "@maven//:com_typesafe_config_1_4_0",
-        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
-        "@maven//:org_slf4j_slf4j_api",
-    ],
-)
+# gazelle:proto_plugin scala implementation scalapb:scalapb:protoc-gen-scala
+# gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile
+# gazelle:proto_rule proto_scala_library implementation stackb:rules_proto:proto_scala_library
+# gazelle:proto_rule proto_scala_library visibility //visibility:public
+# gazelle:proto_language scala plugin scala
+# gazelle:proto_language scala rule proto_compile
+# gazelle:proto_language scala rule proto_scala_library

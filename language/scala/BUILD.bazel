@@ -100,7 +100,7 @@ go_test(
         "resolver_test.go",
         "scala_compiler_test.go",
         "scala_existing_rule_test.go",
-        # "scala_test.go",
+        "scala_test.go",
     ],
     data = [
         ":gazelle",
