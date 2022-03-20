@@ -1,1 +1,2 @@
 proto,proto,thirdparty/protobuf/scalapb/scalapb.proto,@scalapis//scalapb:scalapb_proto
+protobuf,scala,thirdparty/protobuf/scalapb/scalapb.proto,@scalapis//scalapb:scalapb_proto_scala_library

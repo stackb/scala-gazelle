@@ -169,6 +169,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 			Lang: lang,
 			Imp:  imp,
 		}
+		// log.Println("scalaExistingRule.Imports()", lang, r.Kind(), r.Name(), i, imp)
 	}
 
 	return specs

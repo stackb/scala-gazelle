@@ -20,5 +20,8 @@ proto_scala_library(
     name = "proto_scala_library",
     srcs = ["proto_scala.srcjar"],
     visibility = ["//visibility:public"],
-    deps = ["//lib:options"],
+    deps = [
+        "//lib:options",
+        "@scalapis//scalapb:scalapb_proto_scala_library",
+    ],
 )
