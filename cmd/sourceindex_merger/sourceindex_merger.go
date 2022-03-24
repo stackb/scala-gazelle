@@ -8,9 +8,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-const (
-	debug = false
-)
+const debug = false
 
 // outputFile holds the value of --output_file
 var outputFile string

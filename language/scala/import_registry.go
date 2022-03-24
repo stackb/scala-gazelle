@@ -155,7 +155,7 @@ func (ir *importRegistry) Depends(src, dst string) {
 		ir.dependencies[i] = deps
 	}
 	deps.Add(j)
-	log.Printf("depends: %s -> %s", src, dst)
+	// log.Printf("importRegistry.depends: %s -> %s", src, dst)
 }
 
 func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved []string) {

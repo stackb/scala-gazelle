@@ -168,38 +168,80 @@ func TestMakeLabeledListExpr(t *testing.T) {
 	for name, tc := range map[string]struct {
 		// prelude is an optional chunk of BUILD file content
 		directives []rule.Directive
-		// kind is the kind of rule being processed
-		kind string
+		// in is the existing rule
+		in string
 		// resolved is a mapping from import -> label
 		resolved map[string]string
 		// want is the expected rule appearance
 		want string
 	}{
 		"degenerate": {
-			want: `testkind(
-    name = "testname",
+			in: `scala_library(name="test")`,
+			want: `scala_library(
+    name = "test",
     deps = [],
 )
 `,
 		},
 		"simple": {
+			in: `scala_library(name="test")`,
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
-			want: `testkind(
-    name = "testname",
+			want: `scala_library(
+    name = "test",
     deps = ["@maven//:com_typesafe_scala_logging_scala_logging_2_12"],
 )
 `,
 		},
 		"simple+reason": {
+			in:         `scala_library(name="test")`,
 			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
-			want: `testkind(
-    name = "testname",
+			want: `scala_library(
+    name = "test",
     deps = [
+        # com.typesafe.scalalogging.LazyLogging (test)
+        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+    ],
+)
+`,
+		},
+		"keep": {
+			in: `scala_library(
+    name="test",
+    deps=[
+        ":foo",  # keep
+    ],
+)
+`,
+			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
+			want: `scala_library(
+    name = "test",
+    deps = [
+        ":foo",  # keep
+    ],
+)
+`,
+		},
+		"keep+resolved": {
+			in: `scala_library(
+    name="test",
+    deps=[
+        ":foo",  # keep
+    ],
+)
+`,
+			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
+			resolved: map[string]string{
+				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+			},
+			want: `scala_library(
+    name = "test",
+    deps = [
+        ":foo",  # keep
         # com.typesafe.scalalogging.LazyLogging (test)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
@@ -217,11 +259,20 @@ func TestMakeLabeledListExpr(t *testing.T) {
 				l, _ := label.Parse(origin)
 				resolved.Set(l, imp, &importOrigin{Kind: "test"})
 			}
-			expr := makeLabeledListExpr(c, tc.kind, from, resolved)
-			r := rule.NewRule("testkind", "testname")
-			r.SetAttr("deps", expr)
+
+			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(tc.in))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(file.Rules) != 1 {
+				t.Fatal("expected single in rule, got %d", len(file.Rules))
+			}
+			target := file.Rules[0]
+
+			expr := makeLabeledListExpr(c, target.Kind(), target.Attr("deps"), from, resolved)
+			target.SetAttr("deps", expr)
 			want := tc.want
-			got := printRule(r)
+			got := printRule(target)
 			if diff := cmp.Diff(want, got); diff != "" {
 				t.Errorf("TestMakeLabeledListExpr (-want +got):\n%s", diff)
 			}

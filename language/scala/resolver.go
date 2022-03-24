@@ -15,11 +15,11 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-const (
-	// ResolverImpLangPrivateKey stores the implementation language override.
-	ResolverImpLangPrivateKey = "_resolve_imp_lang"
-	debug                     = false
-)
+// ResolverImpLangPrivateKey stores the implementation language override.
+const ResolverImpLangPrivateKey = "_resolve_imp_lang"
+
+// debug is a developer setting
+const debug = true
 
 type importOrigin struct {
 	Kind       string
@@ -48,6 +48,8 @@ func (io *importOrigin) String() string {
 		if io.Parent != "" {
 			s += " (materialized from " + io.Parent + ")"
 		}
+	case "export":
+		s = io.Kind + " by " + filepath.Base(io.SourceFile.Filename)
 	case "indirect":
 		s = io.Kind + " from " + io.Parent
 	case "superclass":
@@ -63,6 +65,8 @@ func (io *importOrigin) String() string {
 	return s
 }
 
+// labelImportMap describes the imports provided be a label, and where each of
+// those imports was derived from.
 type labelImportMap map[label.Label]map[string]*importOrigin
 
 func (m labelImportMap) Set(from label.Label, imp string, origin *importOrigin) {
@@ -96,8 +100,8 @@ func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrig
 	sc := getScalaConfig(c)
 
 	stack := make(importStack, 0, len(imports))
-	for k := range imports {
-		stack = stack.push(k)
+	for imp := range imports {
+		stack = stack.push(imp)
 	}
 	var imp string
 	for !stack.empty() {
@@ -312,14 +316,14 @@ func printRules(rules ...*rule.Rule) {
 	fmt.Println(string(file.Format()))
 }
 
-func getScalaImportsFromRuleComment(r *rule.Rule) (imports []string) {
+func getScalaImportsFromRuleComment(prefix string, r *rule.Rule) (imports []string) {
 	for _, line := range r.Comments() {
 		fields := strings.Fields(line)
 		// ["#", "scala-import:", "org.json4s.CustomSerializer"]
 		if len(fields) < 3 {
 			continue
 		}
-		if fields[1] != "scala-import:" {
+		if fields[1] != prefix {
 			continue
 		}
 		imports = append(imports, fields[2])

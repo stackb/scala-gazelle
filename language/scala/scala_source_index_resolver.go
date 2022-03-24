@@ -297,6 +297,11 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 							break
 						}
 					}
+					// NOTE: we could try and iterate packages here and probe
+					// symbols in the current package, but since that would be a
+					// self-label, it shouldn't be needed?
+					// for _, pkg := range file.Packages {
+					// }
 					if !matched {
 						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
 					}

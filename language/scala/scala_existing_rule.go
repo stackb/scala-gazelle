@@ -18,32 +18,33 @@ import (
 )
 
 func init() {
-	mustRegister := func(load, kind string) {
+	mustRegister := func(load, kind string, isBinaryRule bool) {
 		fqn := load + "%" + kind
-		Rules().MustRegisterRule(fqn, &scalaExistingRule{load, kind})
+		Rules().MustRegisterRule(fqn, &scalaExistingRule{load, kind, isBinaryRule})
 	}
 
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", true)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", false)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library", false)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test", true)
 
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library")
-	mustRegister("//bazel_tools:scala.bzl", "scala_app")
-	mustRegister("//bazel_tools:scala.bzl", "scala_app_test")
-	mustRegister("//bazel_tools:scala.bzl", "scala_app_library")
-	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_library")
-	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_test")
-	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app")
-	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app")
-	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library", false)
+	mustRegister("//bazel_tools:scala.bzl", "scala_app", false)
+	mustRegister("//bazel_tools:scala.bzl", "scala_app_test", true)
+	mustRegister("//bazel_tools:scala.bzl", "scala_app_library", false)
+	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_library", false)
+	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_test", true)
+	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app", false)
+	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app", false)
+	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test", true)
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
 // already in the build file.  It does not create any new rules.  This rule
 // implementation is to parse files named in 'srcs' and update 'deps'.
 type scalaExistingRule struct {
-	load, name string
+	load, name   string
+	isBinaryRule bool
 }
 
 // Name implements part of the RuleInfo interface.
@@ -56,11 +57,12 @@ func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
 		// TODO(pcj): understand better why deps needs to be in MergeableAttrs
 		// here rather than ResolveAttrs.
-		MergeableAttrs: map[string]bool{
-			"deps": true,
-		},
+		// MergeableAttrs: map[string]bool{
+		// 	"deps": true,
+		// },
 		ResolveAttrs: map[string]bool{
-			"deps": true,
+			"deps":    true,
+			"exports": true,
 		},
 	}
 }
@@ -82,14 +84,8 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
-	// TODO(pcj): is this rule copying actually necessary?  Introduced this when
-	// trying to debug a bug where I wasn't sure if state inside the rule was
-	// the issue.
-	// r := rule.NewRule(existing.Kind(), existing.Name())
-	// for _, key := range existing.AttrKeys() {
-	// 	r.SetAttr(key, existing.Attr(key))
-	// }
-	// r.DelAttr("deps") // make sure the "source" rule has no deps to start
+	from := label.New("", pkg.Rel(), r.Name())
+	files := make([]*index.ScalaFileSpec, 0)
 
 	srcs, err := getAttrFiles(pkg, r, "srcs")
 	if err != nil {
@@ -97,32 +93,31 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 		return nil
 	}
 
-	// If we cannot find any srcs for the rule, skip it.
-	if len(srcs) == 0 {
-		log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
-		return nil
-	}
+	if len(srcs) > 0 {
 
-	from := label.New("", pkg.Rel(), r.Name())
+		// log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
+		// return nil
+		files, err = resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
+		if err != nil {
+			log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
+			return nil
+		}
 
-	files, err := resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
-	if err != nil {
-		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
-		return nil
 	}
 
 	r.SetPrivateAttr(config.GazelleImportsKey, files)
-	r.SetPrivateAttr(ResolverImpLangPrivateKey, "scala")
+	r.SetPrivateAttr(ResolverImpLangPrivateKey, ScalaLangName)
 
-	return &scalaExistingRuleRule{cfg, pkg, r, files}
+	return &scalaExistingRuleRule{cfg, pkg, r, files, s.isBinaryRule}
 }
 
 // scalaExistingRuleRule implements RuleProvider for existing scala rules.
 type scalaExistingRuleRule struct {
-	cfg   *RuleConfig
-	pkg   ScalaPackage
-	rule  *rule.Rule
-	files []*index.ScalaFileSpec
+	cfg          *RuleConfig
+	pkg          ScalaPackage
+	rule         *rule.Rule
+	files        []*index.ScalaFileSpec
+	isBinaryRule bool
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -142,6 +137,10 @@ func (s *scalaExistingRuleRule) Rule() *rule.Rule {
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
+	if s.isBinaryRule {
+		return nil
+	}
+
 	provides := make([]string, 0)
 	for _, file := range s.files {
 		provides = append(provides, file.Packages...)
@@ -177,13 +176,17 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
+	dbg := debug
+	if dbg {
+		log.Println(">>> BEGIN RESOLVE", from)
+	}
+
 	files, ok := importsRaw.([]*index.ScalaFileSpec)
 	if !ok {
 		return
 	}
 
 	// Local variables
-	dbg := debug
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(map[string]*importOrigin)
 
@@ -206,15 +209,21 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 
 	// 2: explicity named in the rule comment.
-	for _, imp := range getScalaImportsFromRuleComment(r) {
+	for _, imp := range getScalaImportsFromRuleComment("scala-import:", r) {
 		if _, ok := imports[imp]; ok {
 			continue
 		}
 		imports[imp] = &importOrigin{Kind: "rule-comment"}
 	}
 
+	// 3: if this rule has a main_class
+	if mainClass := r.AttrString("main_class"); mainClass != "" {
+		imports[mainClass] = &importOrigin{Kind: "main_class"}
+	}
+
 	// 3: transitive of 1+2.
 	gatherIndirectDependencies(c, imports)
+
 	// resolve this (mostly direct) initial set
 	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
 	// resolve transitive set
@@ -225,62 +234,76 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
 	}
 
-	r.DelAttr("deps")
 	if len(resolved) > 0 {
-		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), from, resolved))
+		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), r.Attr("deps"), from, resolved))
+	}
+
+	exports := computeExports(c, r, importRegistry, files, resolved)
+	if len(exports) > 0 {
+		r.SetAttr("exports", makeLabeledListExpr(c, r.Kind(), r.Attr("exports"), from, exports))
 	}
 
 	if dbg {
-		log.Println("-- | ", from, "finished deps resolution.")
-		printRules(r)
+		log.Println("<<< END RESOLVE", from)
+		// printRules(r)
 	}
 }
 
-// func doExports() {
-// // TODO(pcj): make this configurable
-// if false && strings.Contains(r.Kind(), "library") {
-// 	exported := make(map[string]*importOrigin)
-// 	resolveAny := importRegistry.ResolveName
-// 	resolveFromImports := resolveNameInLabelImportMap(resolved)
-// 	for _, file := range files {
-// 		resolve1p := resolveNameInFile(file)
-// 		fileExports, err := scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})
-// 		if err != nil {
-// 			log.Panicf("failed to resolve export symbols: %v", err)
-// 		}
-// 		for _, export := range fileExports {
-// 			exported[export] = &importOrigin{Kind: "export", SourceFile: file}
-// 		}
-// 	}
-// 	r.DelAttr("exports")
-// 	if len(exported) > 0 {
-// 		exports := make(labelImportMap)
-// 		exportKeys := make([]string, len(exported))
-// 		i := 0
-// 		for key := range exported {
-// 			exportKeys[i] = key
-// 			i++
-// 		}
-// 		sort.Strings(exportKeys)
-// 		for _, exp := range exportKeys {
-// 			origin := exported[exp]
-// 			if from, ok := importRegistry.ResolveLabel(exp); ok {
-// 				if from == PlatformLabel || from == label.NoLabel {
-// 					continue
-// 				}
-// 				if has, ok := exports[from]; ok {
-// 					has[exp] = origin
-// 				} else {
-// 					exports[from] = map[string]*importOrigin{exp: origin}
-// 				}
-// 			}
-// 		}
-// 		r.SetAttr("exports", makeLabeledListExpr(c, from, exports))
-// 	}
-// }
-// }
+// computeExports: given the full set of resolved imports, export those that
+// contain symbols that were extended by objects, classes, etc in this rule.
+func computeExports(c *config.Config, r *rule.Rule, registry ScalaImportRegistry, files []*index.ScalaFileSpec, resolved labelImportMap) labelImportMap {
+	// TODO(pcj): make this configurable
+	if !strings.Contains(r.Kind(), "library") {
+		return nil
+	}
 
-func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) (exports []string, err error) {
+	exported := make(map[string]*importOrigin)
+	for _, imp := range getScalaImportsFromRuleComment("scala-export:", r) {
+		if _, ok := exported[imp]; ok {
+			continue
+		}
+		exported[imp] = &importOrigin{Kind: "rule-comment"}
+	}
+
+	resolveAny := registry.ResolveName
+	resolveFromImports := resolveNameInLabelImportMap(resolved)
+
+	for _, file := range files {
+		resolve1p := resolveNameInFile(file)
+		fileExports, unresolved := scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})
+		if len(unresolved) > 0 {
+			log.Printf("failed to resolve export symbols in file <%s>: %v", file.Filename, unresolved)
+		}
+		for _, export := range fileExports {
+			exported[export] = &importOrigin{Kind: "export", SourceFile: file}
+		}
+	}
+
+	if len(exported) == 0 {
+		return nil
+	}
+
+	resolvedImports := make(map[string]label.Label)
+	for from, imports := range resolved {
+		for imp := range imports {
+			resolvedImports[imp] = from
+		}
+	}
+
+	exports := make(labelImportMap)
+	for exp, origin := range exported {
+		from := resolvedImports[exp]
+		if has, ok := exports[from]; ok {
+			has[exp] = origin
+		} else {
+			exports[from] = map[string]*importOrigin{exp: origin}
+		}
+	}
+
+	return exports
+}
+
+func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) (exports, unresolved []string) {
 	for _, names := range file.Extends {
 	loop:
 		for _, name := range names {
@@ -291,7 +314,7 @@ func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) (ex
 					continue loop
 				}
 			}
-			return nil, fmt.Errorf("failed to resolve name %q in file %s!", name, file.Filename)
+			unresolved = append(unresolved, name)
 		}
 	}
 
@@ -346,8 +369,9 @@ func shouldExcludeDep(c *config.Config, from label.Label) bool {
 	return from.Name == "tests"
 }
 
-func makeLabeledListExpr(c *config.Config, kind string, from label.Label, resolved labelImportMap) build.Expr {
+func makeLabeledListExpr(c *config.Config, kind string, existingDeps build.Expr, from label.Label, resolved labelImportMap) build.Expr {
 	dbg := debug
+
 	if from.Repo == "" {
 		from.Repo = c.RepoName
 	}
@@ -358,60 +382,92 @@ func makeLabeledListExpr(c *config.Config, kind string, from label.Label, resolv
 	seen := make(map[label.Label]bool)
 	seen[from] = true
 
-	id := 1
+	if deps, ok := existingDeps.(*build.ListExpr); ok {
+		for _, expr := range deps.List {
+			if rule.ShouldKeep(expr) {
+				list = append(list, expr)
+				if dbg {
+					log.Printf("XXX %v: kept %T", expr, (expr.(*build.StringExpr)).Value)
+				}
+			}
+		}
+	}
+
+	// make a mapping of final deps to be included.  Getting strange behavior by
+	// just creating a build.ListExpr and sorting that list directly.
+	keeps := make(map[string]map[string]*importOrigin)
+
 	for dep, imports := range resolved {
 		if dbg {
-			log.Printf("Writing %v dep %d: %v", from, id, dep)
+			log.Println("makeLabeledListExpr: processing: ", dep)
 		}
 
 		if dep.Repo == "" {
 			dep.Repo = c.RepoName
 		}
 		if seen[dep] {
+			if dbg {
+				log.Println("makeLabeledListExpr: seen: ", dep)
+			}
 			continue
 		}
 		if dep == label.NoLabel || dep == PlatformLabel || dep == from || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
+			if dbg {
+				log.Println("makeLabeledListExpr: none-or-self: ", dep)
+			}
 			continue
 		}
-		if shouldExcludeDep(c, dep) {
-			continue
-		}
+		// if shouldExcludeDep(c, dep) {
+		// 	if dbg {
+		// 		log.Println("makeLabeledListExpr: should-exclude: ", dep)
+		// 	}
+		// 	continue
+		// }
 
 		// relativize the depenency label.  For self-imports, this transforms into the empty label.
 		dep = dep.Rel(from.Repo, from.Pkg)
 		if dep == label.NoLabel {
+			if dbg {
+				log.Println("makeLabeledListExpr: relative no-label: ", dep)
+			}
 			continue
 		}
 
-		str := &build.StringExpr{Value: dep.String()}
-		list = append(list, str)
+		keeps[dep.String()] = imports
 		seen[dep] = true
-
-		if sc.explainDependencies {
-			reasons := make([]string, 0, len(imports))
-			for imp, origin := range imports {
-				reasons = append(reasons, imp+" ("+origin.String()+")")
-			}
-			if len(reasons) == 0 {
-				reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", importMapKeys(imports)))
-			}
-			sort.Strings(reasons)
-			for _, reason := range reasons {
-				str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
-			}
-		}
-
-		// str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
-		id += 1
 	}
 
-	sort.Slice(list, func(i, j int) bool {
-		a := list[i].(*build.StringExpr)
-		b := list[j].(*build.StringExpr)
-		return a.Token < b.Token
-	})
+	keys := make([]string, 0, len(keeps))
+	for key := range keeps {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, dep := range keys {
+		imports := keeps[dep]
+		str := &build.StringExpr{Value: dep}
+		if sc.explainDependencies {
+			explainDependencies(str, imports)
+		}
+		list = append(list, str)
+		// str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
+	}
 
 	return &build.ListExpr{List: list}
+}
+
+func explainDependencies(str *build.StringExpr, imports map[string]*importOrigin) {
+	reasons := make([]string, 0, len(imports))
+	for imp, origin := range imports {
+		reasons = append(reasons, imp+" ("+origin.String()+")")
+	}
+	if len(reasons) == 0 {
+		reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", importMapKeys(imports)))
+	}
+	sort.Strings(reasons)
+	for _, reason := range reasons {
+		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+	}
 }
 
 // getAttrFiles returns a list of source files for the 'srcs' attribute.  Each
