@@ -1,11 +1,9 @@
 package scala
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -18,10 +16,10 @@ import (
 
 func TestScalaExportSymbols(t *testing.T) {
 	for name, tc := range map[string]struct {
-		resolved index.ScalaFileSpec
-		file     index.ScalaFileSpec
-		want     []string
-		wantErr  error
+		resolved       index.ScalaFileSpec
+		file           index.ScalaFileSpec
+		want           []string
+		wantUnresolved []string
 	}{
 		"degenerate": {},
 		"miss": {
@@ -35,7 +33,7 @@ func TestScalaExportSymbols(t *testing.T) {
 					},
 				},
 			},
-			wantErr: fmt.Errorf(`failed to resolve name "LazyLogging" in file foo.scala!`),
+			wantUnresolved: []string{"LazyLogging", "ReadinessReporter"},
 		},
 		"hit": {
 			resolved: index.ScalaFileSpec{
@@ -56,18 +54,12 @@ func TestScalaExportSymbols(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			resolvers := []NameResolver{resolveNameInFile(&tc.resolved)}
-			got, err := scalaExportSymbols(&tc.file, resolvers)
-			if err != nil {
-				if tc.wantErr == nil {
-					t.Fatalf("unexpected error: %v", err)
-				}
-				if diff := cmp.Diff(tc.wantErr.Error(), err.Error(), cmpopts.EquateErrors()); diff != "" {
-					t.Errorf("error (-want +got):\n%s", diff)
-				}
-			} else {
-				if diff := cmp.Diff(tc.want, got); diff != "" {
-					t.Errorf("(-want +got):\n%s", diff)
-				}
+			got, unresolved := scalaExportSymbols(&tc.file, resolvers)
+			if diff := cmp.Diff(tc.wantUnresolved, unresolved); diff != "" {
+				t.Errorf("unresolved (-want +got):\n%s", diff)
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("resolved (-want +got):\n%s", diff)
 			}
 		})
 	}

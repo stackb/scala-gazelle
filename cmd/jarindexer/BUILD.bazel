@@ -4,6 +4,7 @@ go_library(
     name = "jarindexer_lib",
     srcs = ["jarindexer.go"],
     importpath = "github.com/stackb/scala-gazelle/cmd/jarindexer",
+    visibility = ["//visibility:private"],
     deps = [
         "//pkg/index",
         "//pkg/java",
@@ -13,6 +14,7 @@ go_library(
 go_binary(
     name = "jarindexer",
     embed = [":jarindexer_lib"],
+    visibility = ["//visibility:public"],
     # visibility = ["//visibility:public"],
 )
 

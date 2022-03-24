@@ -55,7 +55,7 @@ scala_library(
 			if len(file.Rules) != 1 {
 				t.Fatal("test case should decare one rule")
 			}
-			got := getScalaImportsFromRuleComment(file.Rules[0])
+			got := getScalaImportsFromRuleComment("scala-import:", file.Rules[0])
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

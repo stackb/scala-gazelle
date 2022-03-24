@@ -1,6 +1,24 @@
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
+def gazelle_extension_deps():
+    go_repository(
+        name = "com_github_emicklei_dot",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/emicklei/dot",
+        sum = "h1:7PseyizTgeQ/aSF1eo4LcEfWlQSlzamFZpzY/nMB9EY=",
+        version = "v0.16.0",
+    )
+    go_repository(
+        name = "com_github_bmatcuk_doublestar_v4",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/bmatcuk/doublestar/v4",
+        sum = "h1:X0krlUVAVmtr2cRoTqR8aDMrDqnB36ht8wpWTiQ3jsA=",
+        version = "v4.0.2",
+    )
+
 def go_repositories():
+    gazelle_extension_deps()
+
     go_repository(
         name = "co_honnef_go_tools",
         build_file_proto_mode = "disable_global",
@@ -43,13 +61,6 @@ def go_repositories():
         importpath = "github.com/bmatcuk/doublestar",
         sum = "h1:gPypJ5xD31uhX6Tf54sDPUOBXTqKH4c9aPY66CyQrS0=",
         version = "v1.3.4",
-    )
-    go_repository(
-        name = "com_github_bmatcuk_doublestar_v4",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/bmatcuk/doublestar/v4",
-        sum = "h1:X0krlUVAVmtr2cRoTqR8aDMrDqnB36ht8wpWTiQ3jsA=",
-        version = "v4.0.2",
     )
     go_repository(
         name = "com_github_burntsushi_toml",
@@ -100,14 +111,6 @@ def go_repositories():
         sum = "h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=",
         version = "v1.1.1",
     )
-    go_repository(
-        name = "com_github_emicklei_dot",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/emicklei/dot",
-        sum = "h1:7PseyizTgeQ/aSF1eo4LcEfWlQSlzamFZpzY/nMB9EY=",
-        version = "v0.16.0",
-    )
-
     go_repository(
         name = "com_github_emicklei_proto",
         build_file_proto_mode = "disable_global",

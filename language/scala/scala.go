@@ -32,6 +32,7 @@ func NewLanguage() language.Language {
 	classResolver := newScalaClassIndexResolver(depends)
 	scalaCompiler := newScalaCompiler()
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
+	vizServer := newGraphvizServer(importRegistry)
 
 	return &scalaLang{
 		ruleRegistry:    globalRuleRegistry,
@@ -43,6 +44,7 @@ func NewLanguage() language.Language {
 			sourceResolver,
 			classResolver,
 		},
+		viz: vizServer,
 	}
 }
 
@@ -73,6 +75,8 @@ type scalaLang struct {
 	// are two: one to help with third-party code, one to help with first-partt
 	// code.
 	resolvers []ConfigurableCrossResolver
+	// viz is the dependency vizualization engine
+	viz *graphvizServer
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -110,7 +114,9 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 	for _, r := range sl.resolvers {
 		r.RegisterFlags(fs, cmd, c)
 	}
+
 	sl.scalaCompiler.RegisterFlags(fs, cmd, c)
+	sl.viz.RegisterFlags(fs, cmd, c)
 }
 
 // Configure implements part of the config.Configurer
@@ -121,6 +127,9 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 		}
 	}
 	if err := sl.scalaCompiler.CheckFlags(fs, c); err != nil {
+		return err
+	}
+	if err := sl.viz.CheckFlags(fs, c); err != nil {
 		return err
 	}
 	return nil
@@ -315,6 +324,10 @@ func (sl *scalaLang) onResolvePhase() error {
 		}
 	}
 	if err := sl.scalaCompiler.OnResolvePhase(); err != nil {
+		return err
+	}
+
+	if err := sl.viz.OnResolvePhase(); err != nil {
 		return err
 	}
 
