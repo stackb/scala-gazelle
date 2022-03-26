@@ -119,9 +119,14 @@ document.onkeyup = function(e) {
 </style>
 {{ end }}
 
+{{ define "statelabel" }}
+<div class="float-left State State--{{ .State }} p-2 mr-2">{{ .Label }} </div>
+{{ end }}
+
+
 {{ define "subhead" }}
     <div class="Subhead">
-    <h2 class="Subhead-heading">{{ . }}</h2>
+        <h2 class="Subhead-heading">{{ .Title }}</h2>
     </div>
 {{ end }}
 
@@ -159,16 +164,50 @@ document.onkeyup = function(e) {
 <script>
     const graph = {{ . }};
 </script>
-<script>
-    const Module = {"TOTAL_MEMORY": 1677721600 };
-    let viz = new Viz({ Module });
 
-    viz.renderSVGElement(graph).then(function(element) {
-        $('#graphviz').empty().append(element);
-    }).catch(error => {
-        viz = new Viz();
-        console.error(error);
-    });
+<script type="module">
+    import Viz from "https://unpkg.com/@aduh95/viz.js";
+
+    const locateFile = (fileName) =>
+        "https://unpkg.com/@aduh95/viz.js/dist/" + fileName;
+    const onmessage = async function (event) {
+        if (this.messageHandler === undefined) {
+            // Lazy loading actual handler
+            const { default: init, onmessage } = await import(
+            Module.locateFile("render.browser.js")
+            );
+            // Removing default MessageEvent handler
+            removeEventListener("message", onmessage);
+            await init(Module);
+            this.messageHandler = onmessage;
+        }
+        return this.messageHandler(event);
+    };
+    const vizOptions = {
+        workerURL: URL.createObjectURL(
+            new Blob(
+            [
+                "const Module = { locateFile:",
+                locateFile.toString(),
+                "};",
+                "onmessage=",
+                onmessage.toString(),
+            ],
+            { type: "application/javascript" }
+            )
+        ),
+    };
+
+    async function dot2svg(dot, options) {
+        const viz = new Viz(vizOptions);
+        return viz.renderString(dot, options);
+    }
+
+    dot2svg(graph)
+        .then(str => new DOMParser().parseFromString(str, 'image/svg+xml').documentElement)
+        .then(el => $('#graphviz').empty().append(el))
+        .catch(err => console.warn(err));
 </script>
+
 {{ end }}
 

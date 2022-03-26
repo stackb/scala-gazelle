@@ -3,6 +3,7 @@ package scala
 import (
 	"embed"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"html/template"
@@ -81,12 +82,13 @@ func newServeMux(env *Env) *http.ServeMux {
 
 	mux.Handle("/api/imports", Handler{env, applicationJSON(apiImports)})
 
-	mux.Handle("/ui/home", Handler{env, textHTML(uiHome)})
 	mux.Handle("/ui/symbols", Handler{env, textHTML(uiSymbols)})
 	mux.Handle("/ui/imp/", Handler{env, textHTML(uiImport)})
 	mux.Handle("/ui/rules", Handler{env, textHTML(uiRules)})
 	mux.Handle("/ui/rule/", Handler{env, textHTML(uiRule)})
 	mux.Handle("/ui/file/", Handler{env, textHTML(uiFile)})
+	mux.Handle("/ui/home", Handler{env, textHTML(uiHome)})
+	mux.Handle("/", Handler{env, textHTML(uiHome)})
 
 	return mux
 }
@@ -161,21 +163,21 @@ func apiImports(e *Env, r *http.Request) (interface{}, error) {
 func uiHome(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 	data := newPageData(e)
 
-	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "home.gohtml"))
+	tmpl := newFSTemplate("home.gohtml")
 	return data, tmpl, nil
 }
 
 func uiSymbols(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 	data := newPageData(e)
 
-	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "symbols.gohtml"))
+	tmpl := newFSTemplate("symbols.gohtml")
 	return data, tmpl, nil
 }
 
 func uiRules(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 	data := newPageData(e)
 
-	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "rules.gohtml"))
+	tmpl := newFSTemplate("rules.gohtml")
 	return data, tmpl, nil
 }
 
@@ -204,7 +206,7 @@ func uiImport(e *Env, r *http.Request) (interface{}, *template.Template, error) 
 	}
 	data.Graph = g.String()
 
-	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "import.gohtml"))
+	tmpl := newFSTemplate("import.gohtml")
 	return data, tmpl, nil
 }
 
@@ -238,10 +240,10 @@ func uiRule(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 
 	if sourceRule := e.Registry.sourceRuleRegistry.GetScalaRules()[from]; sourceRule != nil {
 		data.Rule = sourceRule
-		tmpl = template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "rule.gohtml"))
+		tmpl = newFSTemplate("rule.gohtml")
 	} else if jar, ok := e.Registry.classFileRegistry.LookupJar(from); ok {
 		data.Jar = jar
-		tmpl = template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "jar.gohtml"))
+		tmpl = newFSTemplate("jar.gohtml")
 	} else {
 		return nil, nil, StatusError{404, fmt.Errorf("%v not found", from)}
 	}
@@ -272,7 +274,7 @@ func uiFile(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 	}
 	data.Graph = g.String()
 
-	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "file.gohtml"))
+	tmpl := newFSTemplate("file.gohtml")
 	return data, tmpl, nil
 }
 
@@ -365,7 +367,7 @@ func newGraph() *dot.Graph {
 			n.Attr("fontcolor", "white")
 			n.Attr("fillcolor", "red")
 		case "rule":
-			n.Attr("fontcolor", "black")
+			n.Attr("fontcolor", "white")
 			n.Attr("fillcolor", "green")
 		}
 	})
@@ -396,6 +398,25 @@ func newPageData(e *Env) *PageData {
 		Symbols: symbols,
 		Rules:   rules,
 	}
+}
+
+func newFSTemplate(files ...string) *template.Template {
+	return template.Must(template.New("index").Funcs(template.FuncMap{
+		"dict": func(values ...interface{}) (map[string]interface{}, error) {
+			if len(values)%2 != 0 {
+				return nil, errors.New("invalid dict call")
+			}
+			dict := make(map[string]interface{}, len(values)/2)
+			for i := 0; i < len(values); i += 2 {
+				key, ok := values[i].(string)
+				if !ok {
+					return nil, errors.New("dict keys must be strings")
+				}
+				dict[key] = values[i+1]
+			}
+			return dict, nil
+		},
+	}).ParseFS(gen, append([]string{"index.gohtml", "header.gohtml"}, files...)...))
 }
 
 // func (h *graphvizHandler) transitiveDeps2(e *Env, typeName string) (*dot.Graph, error) {

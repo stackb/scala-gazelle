@@ -5,6 +5,7 @@
 
 {{ define "body" }}
     {{ with .Jar }}
-        {{ template "subhead" .Label }}
+        {{ template "statelabel" dict "State" "merged" "Label" "Jar"  }}
+        {{ template "subhead" dict "Title" .Label }}
     {{ end }}
 {{ end }}

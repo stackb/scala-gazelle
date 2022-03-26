@@ -5,12 +5,13 @@
 
 {{ define "body" }}
     {{ with .Rule }}
-        {{ template "subhead" .Label }}
+        {{ template "statelabel" dict "State" "open" "Label" "Rule"  }}
+        {{ template "subhead" dict "Title" .Label }}
 
-        {{ with .Srcs }}
+        {{/* {{ with .Srcs }}
             {{ template "subhead" "Srcs" }}
             {{ template "filelist" . }}
-        {{ end }}
+        {{ end }} */}}
 
     {{ end }}
 {{ end }}

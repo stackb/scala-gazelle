@@ -5,9 +5,10 @@
 
 {{ define "body" }}
     {{ with .File }}
-        {{ template "subhead" .Filename }}
+        {{ template "statelabel" dict "State" "closed" "Label" "File"  }}
+        {{ template "subhead" dict "Title" .Filename }}
 
-        {{ with .Imports }}
+        {{/* {{ with .Imports }}
             {{ template "subhead" "Imports" }}
             {{ template "importlist" . }}
         {{ end }}
@@ -30,7 +31,7 @@
         {{ with .Traits }}
             {{ template "subhead" "Traits" }}
             {{ template "importlist" . }}
-        {{ end }}
+        {{ end }} */}}
 
     {{ end }}
 {{ end }}

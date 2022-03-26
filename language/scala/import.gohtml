@@ -5,9 +5,10 @@
 
 {{ define "body" }}
     {{ with .Import }}
-        {{ template "subhead" .Name }}
+        {{ template "statelabel" dict "State" "draft" "Label" "Import"  }}
+        {{ template "subhead" dict "Title" .Name }}
 
-        {{ with .Directs }}
+        {{/* {{ with .Directs }}
             {{ template "subhead" "Direct Dependencies" }}
             {{ template "importlist" . }}
         {{ end }}
@@ -15,7 +16,7 @@
         {{ with .Transitives }}
             {{ template "subhead" "Transitive Dependencies" }}
             {{ template "importlist" . }}
-        {{ end }}
+        {{ end }} */}}
 
     {{ end }}
 {{ end }}

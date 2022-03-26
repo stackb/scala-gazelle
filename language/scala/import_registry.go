@@ -243,12 +243,8 @@ func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, allTra
 	stack := make(collections.UInt32Stack, 0)
 	stack.Push(dep)
 
-	log.Println("resolving transitive imports of", dep)
-
 	for !stack.IsEmpty() {
 		current, _ := stack.Pop()
-		log.Println("current:", current)
-
 		if _, ok := seen[current]; ok {
 			continue
 		}
@@ -256,7 +252,6 @@ func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, allTra
 
 		deps, ok := ir.dependencies[current]
 		if !ok {
-			log.Println("no deps for", dep, current, ir.dependencies)
 			continue
 		}
 		transitive.Or(deps)

@@ -321,31 +321,25 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 				r.addDependency(fileNodeID, impNodeID, "import")
 			}
 
-			// for token, symbols := range file.Extends {
-			// 	log.Println(file.Filename, "adding extends for:", token)
-			// 	for _, sym := range symbols {
-			// 		suffix := "." + sym
-			// 		var matched bool
-			// 		for _, imp := range file.Imports {
-			// 			if strings.HasSuffix(imp, suffix) {
-			// 				fields := strings.Fields(token)
-			// 				src := path.Join("imp", fields[1])
-			// 				dst := path.Join("imp", imp)
-			// 				r.addDependency(src, dst, "extends")
-			// 				matched = true
-			// 				break
-			// 			}
-			// 		}
-			// 		// NOTE: we could try and iterate packages here and probe
-			// 		// symbols in the current package, but since that would be a
-			// 		// self-label, it shouldn't be needed?
-			// 		// for _, pkg := range file.Packages {
-			// 		// }
-			// 		if !matched {
-			// 			log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
-			// 		}
-			// 	}
-			// }
+			for token, symbols := range file.Extends {
+				for _, sym := range symbols {
+					suffix := "." + sym
+					var matched bool
+					for _, imp := range file.Imports {
+						if strings.HasSuffix(imp, suffix) {
+							fields := strings.Fields(token)
+							src := path.Join("imp", fields[1])
+							dst := path.Join("imp", imp)
+							r.addDependency(src, dst, "extends")
+							matched = true
+							break
+						}
+					}
+					if !matched {
+						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
+					}
+				}
+			}
 		}
 	}
 
