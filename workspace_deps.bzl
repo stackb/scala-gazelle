@@ -1,4 +1,4 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
@@ -13,6 +13,7 @@ def workspace_deps():
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
+    viz_js_lite()
 
 def io_bazel_rules_go():
     _maybe(
@@ -136,4 +137,17 @@ def com_google_protobuf():
         urls = [
             "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
         ],
+    )
+
+def viz_js_lite():
+    # HTTP/2.0 200 OK
+    # Content-Type: application/javascript; charset=utf-8
+    # Date: Sat, 26 Mar 2022 00:35:46 GMT
+    # Last-Modified: Mon, 04 May 2020 16:17:44 GMT
+    # Size: 1439383 (1.4 MB)
+    _maybe(
+        http_file,
+        name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
+        sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
+        urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
     )

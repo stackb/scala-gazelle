@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"path"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -17,8 +18,15 @@ import (
 // Example: 'java.lang.Boolean'.
 var PlatformLabel = label.New("platform", "", "do_not_import")
 
+type ScalaJarResolver interface {
+	resolve.CrossResolver
+
+	LookupJar(from label.Label) (*index.JarSpec, bool)
+}
+
 func newScalaClassIndexResolver(depsRecorder DependencyRecorder) *scalaClassIndexResolver {
 	return &scalaClassIndexResolver{
+		jars:         make(map[label.Label]*index.JarSpec),
 		byLabel:      make(map[string][]label.Label),
 		preferred:    make(map[label.Label]bool),
 		symbols:      NewSymbolTable(),
@@ -47,6 +55,8 @@ type scalaClassIndexResolver struct {
 	// byLabel is a mapping from an import string to the label that provides it.
 	// It is possible more than one label provides a class.
 	byLabel map[string][]label.Label
+	// jars holds the loaded jars, by label.
+	jars map[label.Label]*index.JarSpec
 	// the full list of symbols
 	symbols *SymbolTable
 	// preferred is a mapping of preferred labels
@@ -100,6 +110,13 @@ func (r *scalaClassIndexResolver) readIndex() error {
 				continue
 			}
 		}
+
+		if jarSpec.Filename == "" {
+			log.Panicf("unnamed jar? %+v", jarSpec)
+		}
+
+		r.jars[jarLabel] = jarSpec
+
 		if isPredefined[jarLabel] {
 			jarLabel = PlatformLabel
 		}
@@ -111,9 +128,10 @@ func (r *scalaClassIndexResolver) readIndex() error {
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
 		}
 
+		ruleNodeID := "rule/" + jarSpec.Label
+
 		for _, file := range jarSpec.Files {
 			r.byLabel[file.Name] = append(r.byLabel[file.Name], jarLabel)
-
 			// transform "org.json4s.package$MappingException" ->
 			// "org.json4s.MappingException" so that
 			// "org.json4s.MappingException" is resolveable.
@@ -123,12 +141,16 @@ func (r *scalaClassIndexResolver) readIndex() error {
 				r.byLabel[name] = append(r.byLabel[name], jarLabel)
 			}
 
-			for _, idx := range file.Classes {
-				dst := jarSpec.Symbols[idx]
-				r.addDependency(file.Name, dst)
-			}
+			fileNodeID := path.Join("imp", file.Name)
+			r.addDependency(fileNodeID, ruleNodeID, "rule")
+
+			// for _, idx := range file.Classes {
+			// 	dst := path.Join("imp", jarSpec.Symbols[idx])
+			// 	r.addDependency(src, dst, "requires-class")
+			// }
 			for _, symbol := range file.Symbols {
-				r.addDependency(file.Name, symbol)
+				impNodeID := path.Join("imp", symbol)
+				r.addDependency(fileNodeID, impNodeID, "import")
 			}
 		}
 	}
@@ -136,11 +158,11 @@ func (r *scalaClassIndexResolver) readIndex() error {
 	return nil
 }
 
-func (r *scalaClassIndexResolver) addDependency(src, dst string) {
-	r.depsRecorder(src, dst)
+func (r *scalaClassIndexResolver) addDependency(src, dst, kind string) {
+	r.depsRecorder(src, dst, kind)
 	// record a dependency like akka.grpc.GrpcClientSettings$ -> io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder as well.
 	if strings.HasSuffix(src, "$") {
-		r.depsRecorder(src[:len(src)-1], dst)
+		r.depsRecorder(src[:len(src)-1], dst, kind)
 	}
 }
 
@@ -163,6 +185,12 @@ func (r *scalaClassIndexResolver) Provided(lang, impLang string) map[label.Label
 	}
 
 	return result
+}
+
+// LookupJar implements part of the ScalaJarResolver interface.
+func (r *scalaClassIndexResolver) LookupJar(from label.Label) (*index.JarSpec, bool) {
+	jar, ok := r.jars[from]
+	return jar, ok
 }
 
 // CrossResolve implements the CrossResolver interface.

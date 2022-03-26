@@ -120,26 +120,31 @@ func merge(filenames []string) error {
 	}
 
 	for _, filename := range filenames {
-		jarSpec, err := index.ReadJarSpec(filename)
+		jar, err := index.ReadJarSpec(filename)
 		if err != nil {
-			return err
+			return fmt.Errorf("%s read error: %w", filename, err)
 		}
-		if labels[jarSpec.Label] {
-			log.Println("duplicate jar spec:", jarSpec.Label)
+		if labels[jar.Label] {
+			log.Println("duplicate jar spec:", jar.Label)
 			continue
 		}
-		labels[jarSpec.Label] = true
-		if _, ok := predefinedLabels[jarSpec.Label]; ok {
-			for _, file := range jarSpec.Files {
+
+		if jar.Filename == "" {
+			log.Panicf("unnamed jar file name? %+v", jar.Label)
+		}
+
+		labels[jar.Label] = true
+		if _, ok := predefinedLabels[jar.Label]; ok {
+			for _, file := range jar.Files {
 				predefinedSymbols[file.Name] = struct{}{}
 			}
 		}
 
-		for _, class := range jarSpec.Classes {
-			labelByClass[class] = append(labelByClass[class], jarSpec.Label)
+		for _, class := range jar.Classes {
+			labelByClass[class] = append(labelByClass[class], jar.Label)
 		}
 
-		spec.JarSpecs = append(spec.JarSpecs, jarSpec)
+		spec.JarSpecs = append(spec.JarSpecs, jar)
 	}
 
 	// 2nd pass to remove predefined symbols

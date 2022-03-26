@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -35,6 +36,10 @@ type ScalaSourceRuleRegistry interface {
 	// GetScalaFiles returns the rule spec for a given label.  If the label is
 	// unknown, false is returned.
 	GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool)
+	// GetScalaRules
+	GetScalaRules() map[label.Label]*index.ScalaRuleSpec
+	// GetScalaFile
+	GetScalaFile(filename string) *index.ScalaFileSpec
 }
 
 func newScalaSourceIndexResolver(depsRecorder DependencyRecorder) *scalaSourceIndexResolver {
@@ -127,11 +132,21 @@ func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label,
 	return *rule, nil
 }
 
-// GetScalaRule implements ScalaSourceRuleRegistry.
+// GetScalaRule implements part of ScalaSourceRuleRegistry.
 func (r *scalaSourceIndexResolver) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
 	from.Repo = "" // TODO(pcj): this is correct?  We always want sources in the main repo.
 	rule, ok := r.byRule[from]
 	return rule, ok
+}
+
+// GetScalaRules implements part of ScalaSourceRuleRegistry.
+func (r *scalaSourceIndexResolver) GetScalaRules() map[label.Label]*index.ScalaRuleSpec {
+	return r.byRule
+}
+
+// GetScalaFile implements part of ScalaSourceRuleRegistry.
+func (r *scalaSourceIndexResolver) GetScalaFile(filename string) *index.ScalaFileSpec {
+	return r.byFilename[filename]
 }
 
 // Provided implements the protoc.ImportProvider interface.
@@ -272,8 +287,8 @@ func (r *scalaSourceIndexResolver) providePackage(rule *index.ScalaRuleSpec, rul
 	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *scalaSourceIndexResolver) addDependency(src, dst string) {
-	r.depsRecorder(src, dst)
+func (r *scalaSourceIndexResolver) addDependency(src, dst, kind string) {
+	r.depsRecorder(src, dst, kind)
 }
 
 // OnResolvePhase implements GazellePhaseTransitionListener.
@@ -281,32 +296,56 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()
 
-	// record source file dependencies
+	// record dependency graph
 	for _, rule := range r.byRule {
+		ruleNodeID := "rule/" + rule.Label
+
 		for _, file := range rule.Srcs {
-			for token, symbols := range file.Extends {
-				log.Println(file.Filename, "adding extends for:", token)
-				for _, sym := range symbols {
-					suffix := "." + sym
-					var matched bool
-					for _, imp := range file.Imports {
-						if strings.HasSuffix(imp, suffix) {
-							fields := strings.Fields(token)
-							r.addDependency(fields[1], imp)
-							matched = true
-							break
-						}
-					}
-					// NOTE: we could try and iterate packages here and probe
-					// symbols in the current package, but since that would be a
-					// self-label, it shouldn't be needed?
-					// for _, pkg := range file.Packages {
-					// }
-					if !matched {
-						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
-					}
-				}
+			fileNodeID := path.Join("file", file.Filename)
+
+			r.addDependency(fileNodeID, ruleNodeID, "rule")
+
+			var symbols []string
+			symbols = append(symbols, file.Objects...)
+			symbols = append(symbols, file.Classes...)
+			symbols = append(symbols, file.Traits...)
+			symbols = append(symbols, file.Types...)
+
+			for _, sym := range symbols {
+				impNodeID := path.Join("imp", sym)
+				r.addDependency(impNodeID, fileNodeID, "file")
 			}
+
+			for _, imp := range file.Imports {
+				impNodeID := path.Join("imp", imp)
+				r.addDependency(fileNodeID, impNodeID, "import")
+			}
+
+			// for token, symbols := range file.Extends {
+			// 	log.Println(file.Filename, "adding extends for:", token)
+			// 	for _, sym := range symbols {
+			// 		suffix := "." + sym
+			// 		var matched bool
+			// 		for _, imp := range file.Imports {
+			// 			if strings.HasSuffix(imp, suffix) {
+			// 				fields := strings.Fields(token)
+			// 				src := path.Join("imp", fields[1])
+			// 				dst := path.Join("imp", imp)
+			// 				r.addDependency(src, dst, "extends")
+			// 				matched = true
+			// 				break
+			// 			}
+			// 		}
+			// 		// NOTE: we could try and iterate packages here and probe
+			// 		// symbols in the current package, but since that would be a
+			// 		// self-label, it shouldn't be needed?
+			// 		// for _, pkg := range file.Packages {
+			// 		// }
+			// 		if !matched {
+			// 			log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
+			// 		}
+			// 	}
+			// }
 		}
 	}
 

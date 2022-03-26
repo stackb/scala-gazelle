@@ -61,6 +61,9 @@ func run() error {
 
 	sort.Strings(spec.Classes)
 
+	if spec.Filename == "" {
+		log.Panicln("unnamed jar file?")
+	}
 	if err := index.WriteJSONFile(outputFile, spec); err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/RoaringBitmap/roaring"
@@ -58,11 +59,11 @@ type LabelResolver func(name string) (label.Label, bool)
 // DependencyRecorder is a function that records a dependency between src and
 // dst.  For example, class java.util.ArrayList (src) has a dependency on
 // java.util.List (dst).
-type DependencyRecorder func(src, dst string)
+type DependencyRecorder func(src, dst, kind string)
 
 type dependencyMatrix map[uint32]*roaring.Bitmap
 
-func newImportRegistry(sourceRuleRegistry ScalaSourceRuleRegistry, classFileRegistry resolve.CrossResolver, scalaCompiler ScalaCompiler) *importRegistry {
+func newImportRegistry(sourceRuleRegistry ScalaSourceRuleRegistry, classFileRegistry ScalaJarResolver, scalaCompiler ScalaCompiler) *importRegistry {
 	return &importRegistry{
 		importsOut:         "/tmp/scala-gazelle-imports.csv",
 		sourceRuleRegistry: sourceRuleRegistry,
@@ -73,6 +74,7 @@ func newImportRegistry(sourceRuleRegistry ScalaSourceRuleRegistry, classFileRegi
 		classes:            make(map[string][]label.Label),
 		symbols:            NewSymbolTable(),
 		dependencies:       make(dependencyMatrix),
+		depEdges:           make(map[string]string),
 	}
 }
 
@@ -81,7 +83,7 @@ type importRegistry struct {
 	// sourceRuleRegistry is used to assist with disambigation
 	sourceRuleRegistry ScalaSourceRuleRegistry
 	// classFileRegistry is used to assist with disambigation
-	classFileRegistry resolve.CrossResolver
+	classFileRegistry ScalaJarResolver
 	// scalaCompiler is used to assist with disambigation
 	scalaCompiler ScalaCompiler
 	// provides is a mapping of 'from' labels representing the concrete types that from provides.
@@ -97,6 +99,8 @@ type importRegistry struct {
 	symbols *SymbolTable
 	// dependencies is a sparse matrix representing class dependencies in the symbol table.
 	dependencies dependencyMatrix
+	// depEdges records the kind of edge between i and j
+	depEdges map[string]string
 }
 
 func (ir *importRegistry) OnResolve() {
@@ -145,52 +149,114 @@ func (ir *importRegistry) Provides(l label.Label, imports []string) {
 	ir.provides[l] = append(ir.provides[l], imports...)
 }
 
-// Depends records a compile-time dependency of src on dst.
-func (ir *importRegistry) Depends(src, dst string) {
+// AddDependency records a compile-time dependency of src on dst.  The kind
+// argument can be any string prefix, typically, 'import', 'file', etc.
+func (ir *importRegistry) EdgeKind(src, dst uint32) string {
+	return ir.depEdges[fmt.Sprintf("%d.%d", src, dst)]
+}
+
+// AddDependency records a compile-time dependency of src on dst.  The kind
+// argument can be any string prefix, typically, 'import', 'file', etc.
+func (ir *importRegistry) AddDependency(src, dst, kind string) {
+	if src == "" {
+		return
+	}
 	i := ir.symbols.Add(src)
-	j := ir.symbols.Add(dst)
+	// if the caller has used an empty dst, this is a means to just add the
+	// symbol to the symbol-table.
+	if dst == "" {
+		return
+	}
+
 	deps, ok := ir.dependencies[i]
 	if !ok {
 		deps = roaring.New()
 		ir.dependencies[i] = deps
 	}
+
+	j := ir.symbols.Add(dst)
 	deps.Add(j)
-	// log.Printf("importRegistry.depends: %s -> %s", src, dst)
+
+	edgeKey := fmt.Sprintf("%d.%d", i, j)
+	ir.depEdges[edgeKey] = kind
+
+	log.Printf("importRegistry.depends: %s --[%s]--> %s", src, kind, dst)
+}
+
+func (ir *importRegistry) Previous(dst string) *roaring.Bitmap {
+	prev := roaring.New()
+
+	id, ok := ir.symbols.Get(dst)
+	if !ok {
+		return prev
+	}
+
+	suffix := fmt.Sprintf(".%d", id)
+
+	for k := range ir.depEdges {
+		if strings.HasSuffix(k, suffix) {
+			value, err := strconv.Atoi(k[:len(k)-len(suffix)])
+			if err != nil {
+				log.Panicf("malformed edge key: %q: %v", k, err)
+			}
+			prev.Add(uint32(value))
+		}
+	}
+
+	return prev
+}
+
+func (ir *importRegistry) DirectImports(dep string) (resolved, unresolved []string) {
+	transitive := roaring.New()
+
+	// log.Println("resolving transitive imports of", dep)
+	if id, ok := ir.symbols.Get(dep); ok {
+		ir.depsFor(id, transitive, false)
+	} else {
+		unresolved = append(unresolved, dep)
+	}
+
+	resolved = ir.symbols.ResolveAll(&roaringBitSet{transitive}, "imp")
+
+	return
 }
 
 func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved []string) {
 	transitive := roaring.New()
 
 	for _, dep := range deps {
-		// log.Println("resolving transitive imports of", dep)
+		log.Println("resolving transitive imports of", dep)
 		if id, ok := ir.symbols.Get(dep); ok {
-			ir.importsFor(id, transitive, true)
+			ir.depsFor(id, transitive, true)
 		} else {
 			unresolved = append(unresolved, dep)
 		}
 	}
 
-	resolved = ir.symbols.ResolveAll(&roaringBitSet{transitive})
+	resolved = ir.symbols.ResolveAll(&roaringBitSet{transitive}, "imp")
 
 	return
 }
 
-func (ir *importRegistry) importsFor(dep uint32, transitive *roaring.Bitmap, allTransitive bool) {
+func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, allTransitive bool) {
 	seen := make(map[uint32]struct{})
 	stack := make(collections.UInt32Stack, 0)
 	stack.Push(dep)
 
+	log.Println("resolving transitive imports of", dep)
+
 	for !stack.IsEmpty() {
 		current, _ := stack.Pop()
+		log.Println("current:", current)
 
 		if _, ok := seen[current]; ok {
 			continue
 		}
 		seen[current] = struct{}{}
-		// transitive.Add(current)
 
 		deps, ok := ir.dependencies[current]
 		if !ok {
+			log.Println("no deps for", dep, current, ir.dependencies)
 			continue
 		}
 		transitive.Or(deps)

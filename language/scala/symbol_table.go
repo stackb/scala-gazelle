@@ -3,6 +3,7 @@ package scala
 import (
 	"log"
 	"sort"
+	"strings"
 
 	"github.com/RoaringBitmap/roaring"
 )
@@ -10,30 +11,37 @@ import (
 func NewSymbolTable() *SymbolTable {
 	return &SymbolTable{
 		symbols: make([]string, 0),
-		indices: make(map[string]uint32),
+		ids:     make(map[string]uint32),
 	}
 }
 
 // SymbolTable provides an unsychronized set of strings.
 type SymbolTable struct {
 	symbols []string
-	indices map[string]uint32
+	ids     map[string]uint32
 }
 
 func (s *SymbolTable) Get(value string) (uint32, bool) {
-	id, ok := s.indices[value]
+	id, ok := s.ids[value]
 	return id, ok
 }
 
 func (s *SymbolTable) Add(value string) uint32 {
-	if index, ok := s.indices[value]; ok {
-		return index
-	} else {
-		index := uint32(len(s.symbols))
-		s.symbols = append(s.symbols, value)
-		s.indices[value] = index
-		return index
+	id, ok := s.ids[value]
+	if ok {
+		return id
 	}
+	id = uint32(len(s.symbols))
+	s.symbols = append(s.symbols, value)
+	s.ids[value] = id
+
+	if got := s.resolveAt(id); got != value {
+		log.Panicf("dep %q (id=%d) was not idempotent to add (got %q instead)", value, id, got)
+	}
+
+	log.Printf("symbolTable: added %q (id=%d)", value, id)
+
+	return id
 }
 
 func (s *SymbolTable) AddAll(values []string) BitSet {
@@ -44,17 +52,22 @@ func (s *SymbolTable) AddAll(values []string) BitSet {
 	return &roaringBitSet{b}
 }
 
-func (s *SymbolTable) Resolve(idx uint32) string {
-	if int(idx) > len(s.symbols) {
+func (s *SymbolTable) resolveAt(idx uint32) string {
+	if int(idx) >= len(s.symbols) {
 		log.Panicf("index out of bounds: %d > %d", idx, len(s.symbols)-1)
 	}
 	return s.symbols[idx]
 }
 
-func (s *SymbolTable) ResolveAll(bits BitSet) (out []string) {
+func (s *SymbolTable) ResolveAll(bits BitSet, kind string) (out []string) {
+	prefix := kind + "/"
 	it := bits.Iterator()
 	for it.HasNext() {
-		out = append(out, s.Resolve(it.Next()))
+		got := s.resolveAt(it.Next())
+		if !strings.HasPrefix(got, prefix) {
+			continue
+		}
+		out = append(out, strings.TrimPrefix(got, prefix))
 	}
 	sort.Strings(out)
 	return

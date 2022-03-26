@@ -120,15 +120,15 @@ func TestImportRegistryTransitiveImports(t *testing.T) {
 				depends(map[string]string{}).
 				build(),
 		},
-		"first-order deps resolve": {
+		"transitive deps resolve": {
 			registry: newImportRegistryBuilder(t).
 				depends(map[string]string{
-					"a": "b",
-					"b": "c",
-					"c": "d",
+					"imp/a": "imp/b",
+					"imp/b": "imp/c",
+					"imp/c": "imp/d",
 				}).
 				build(),
-			imps: []string{"a"},
+			imps: []string{"imp/a"},
 			want: []string{"b", "c", "d"},
 		},
 	} {
@@ -175,7 +175,6 @@ func newImportRegistryBuilder(t *testing.T) *importRegistryBuilder {
 	cr := &fakeClassRegistry{
 		t: t,
 	}
-
 	c := &fakeCompiler{
 		t:       t,
 		results: make(map[string]*index.ScalaCompileSpec),
@@ -230,7 +229,7 @@ func (b *importRegistryBuilder) provides(from string, imports ...string) *import
 
 func (b *importRegistryBuilder) depends(deps map[string]string) *importRegistryBuilder {
 	for src, dst := range deps {
-		b.registry.Depends(src, dst)
+		b.registry.AddDependency(src, dst, "<kind>")
 	}
 	return b
 }
@@ -250,13 +249,24 @@ func (rr *fakeRuleRegistry) GetScalaRule(from label.Label) (*index.ScalaRuleSpec
 	return rule, ok
 }
 
+func (rr *fakeRuleRegistry) GetScalaRules() map[label.Label]*index.ScalaRuleSpec {
+	return rr.rules
+}
+
+func (rr *fakeRuleRegistry) GetScalaFile(filename string) *index.ScalaFileSpec {
+	return nil
+}
+
 type fakeClassRegistry struct {
 	t *testing.T
 }
 
-// CrossResolve implements the CrossResolver interface.
 func (r *fakeClassRegistry) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
 	return nil
+}
+
+func (r *fakeClassRegistry) LookupJar(from label.Label) (*index.JarSpec, bool) {
+	return nil, false
 }
 
 type fakeCompiler struct {

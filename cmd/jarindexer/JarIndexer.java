@@ -50,7 +50,7 @@ public class JarIndexer {
                 .enableAllInfo()
                 .scan();
 
-        return new Index(label,
+        return new Index(label, filename,
                 scanResult.getAllClasses()
                         .stream()
                         .filter(cls -> !cls.isExternalClass())
@@ -63,6 +63,9 @@ public class JarIndexer {
         final String label;
 
         @Expose()
+        final String filename;
+
+        @Expose()
         final Set<String> classes;
 
         @Expose()
@@ -71,8 +74,9 @@ public class JarIndexer {
         @Expose
         final Collection<String> packages = new TreeSet<>();
 
-        Index(String label, List<File> files) {
+        Index(String label, String filename, List<File> files) {
             this.label = label;
+            this.filename = filename;
 
             this.files = files;
             this.files.sort((File a, File b) -> a.name.compareTo(b.name));

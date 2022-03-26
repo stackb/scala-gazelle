@@ -1,0 +1,21 @@
+{{ define "title" }}<title>Scala-Gazelle: {{ .Import.Name }}</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ with .Import }}
+        {{ template "subhead" .Name }}
+
+        {{ with .Directs }}
+            {{ template "subhead" "Direct Dependencies" }}
+            {{ template "importlist" . }}
+        {{ end }}
+
+        {{ with .Transitives }}
+            {{ template "subhead" "Transitive Dependencies" }}
+            {{ template "importlist" . }}
+        {{ end }}
+
+    {{ end }}
+{{ end }}

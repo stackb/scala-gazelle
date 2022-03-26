@@ -24,8 +24,8 @@ const (
 // binary.
 func NewLanguage() language.Language {
 	var importRegistry *importRegistry
-	depends := func(src, dst string) {
-		importRegistry.Depends(src, dst)
+	depends := func(src, dst, kind string) {
+		importRegistry.AddDependency(src, dst, kind)
 	}
 
 	sourceResolver := newScalaSourceIndexResolver(depends)

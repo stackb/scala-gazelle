@@ -1,0 +1,16 @@
+{{ define "title" }}<title>Scala-Gazelle: {{ .Rule.Name }}</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ with .Rule }}
+        {{ template "subhead" .Label }}
+
+        {{ with .Srcs }}
+            {{ template "subhead" "Srcs" }}
+            {{ template "filelist" . }}
+        {{ end }}
+
+    {{ end }}
+{{ end }}

@@ -11,14 +11,18 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"sort"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/emicklei/dot"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-// go:embed ..
+//go:embed *
 var gen embed.FS
 
 type graphvizServer struct {
@@ -27,6 +31,7 @@ type graphvizServer struct {
 	port           string
 	blockOnResolve bool
 	env            *Env
+	mux            *http.ServeMux
 }
 
 func newGraphvizServer(registry *importRegistry) *graphvizServer {
@@ -38,13 +43,14 @@ func (v *graphvizServer) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.C
 	fs.StringVar(&v.host, "graphviz_host", "localhost", "bind host name for the graphviz server")
 	fs.StringVar(&v.port, "graphviz_port", "", "port number for the graphviz server")
 	fs.BoolVar(&v.blockOnResolve, "graphviz_block_on_resolve", false, "if true, block the process at the beginning of resolve phase (Ctrl-C to continue)")
+	log.Println("all flags registered")
 }
 
 // CheckFlags implements part of the Configurer interface.
 func (v *graphvizServer) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	// configuring an empty port disables the server
 	if v.port == "" {
-		return nil
+		return fmt.Errorf("no port configured")
 	}
 
 	// Initialise our app-wide environment with the services/info we need.
@@ -54,25 +60,33 @@ func (v *graphvizServer) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 		Port:     getenv("PORT", v.port),
 	}
 
+	v.mux = newServeMux(v.env)
+
 	// Logs the error if ListenAndServe fails.
 	go func() {
 		hostPort := fmt.Sprintf("%s:%s", v.env.Host, v.env.Port)
 		log.Println("starting graphviz server:", hostPort)
-		log.Fatal(http.ListenAndServe(hostPort, newServeMux(v.env)))
+		log.Fatal(http.ListenAndServe(hostPort, v.mux))
 	}()
 
 	return nil
 }
 
+func (v *graphvizServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	v.mux.ServeHTTP(w, r)
+}
+
 func newServeMux(env *Env) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	// Note that we're using http.Handle, not http.HandleFunc. The
-	// latter only accepts the http.HandlerFunc type, which is not
-	// what we have here.
 	mux.Handle("/api/imports", Handler{env, applicationJSON(apiImports)})
-	mux.Handle("/dot/transitive/", Handler{env, textGraphviz(transitiveImports)})
-	mux.Handle("/ui/imports", Handler{env, textHTML(uiImports)})
+
+	mux.Handle("/ui/home", Handler{env, textHTML(uiHome)})
+	mux.Handle("/ui/symbols", Handler{env, textHTML(uiSymbols)})
+	mux.Handle("/ui/imp/", Handler{env, textHTML(uiImport)})
+	mux.Handle("/ui/rules", Handler{env, textHTML(uiRules)})
+	mux.Handle("/ui/rule/", Handler{env, textHTML(uiRule)})
+	mux.Handle("/ui/file/", Handler{env, textHTML(uiFile)})
 
 	return mux
 }
@@ -91,6 +105,8 @@ func (v *graphvizServer) OnResolvePhase() error {
 	}
 	return nil
 }
+
+// ***************** CONTENT-TYPES *****************
 
 func textGraphviz(callback func(e *Env, r *http.Request) (*dot.Graph, error)) func(e *Env, w http.ResponseWriter, r *http.Request) error {
 	return func(e *Env, w http.ResponseWriter, r *http.Request) error {
@@ -127,92 +143,262 @@ func textHTML(callback func(e *Env, r *http.Request) (interface{}, *template.Tem
 			return err
 		}
 		w.Header().Add("Content-Type", "text/html")
-		if err := tmpl.Execute(w, data); err != nil {
+		if err := tmpl.ExecuteTemplate(w, "index.gohtml", data); err != nil {
 			log.Println("html rendering error: %v", err)
 		}
 		return nil
 	}
 }
 
-func transitiveImports(e *Env, r *http.Request) (*dot.Graph, error) {
-	typeName := path.Base(r.URL.Path)
-	deps := []string{typeName}
+// ***************** API ENTRYPOINTS *****************
 
-	g := newGraph()
-	unresolved := []string{}
-	seen := make(map[uint32]struct{})
+func apiImports(e *Env, r *http.Request) (interface{}, error) {
+	return e.Registry.symbols.symbols, nil
+}
 
-	for _, dep := range deps {
-		// log.Println("resolving transitive imports of", dep)
-		id, ok := e.Registry.symbols.Get(dep)
-		if !ok {
-			unresolved = append(unresolved, dep)
-		}
+// ***************** UI ENTRYPOINTS *****************
 
-		stack := make(collections.UInt32Stack, 0)
-		stack.Push(id)
-		src := g.Node(dep)
+func uiHome(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	data := newPageData(e)
 
-		for !stack.IsEmpty() {
-			current, _ := stack.Pop()
+	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "home.gohtml"))
+	return data, tmpl, nil
+}
 
-			if _, ok := seen[current]; ok {
-				continue
-			}
-			seen[current] = struct{}{}
+func uiSymbols(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	data := newPageData(e)
 
-			deps, ok := e.Registry.dependencies[current]
-			if !ok {
-				continue
-			}
+	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "symbols.gohtml"))
+	return data, tmpl, nil
+}
 
-			it := deps.Iterator()
-			for it.HasNext() {
-				next := it.Next()
-				other := e.Registry.symbols.Resolve(next)
-				dst := g.Node(other)
-				g.Edge(src, dst)
-				stack.Push(next)
-			}
+func uiRules(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	data := newPageData(e)
 
-		}
+	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "rules.gohtml"))
+	return data, tmpl, nil
+}
+
+func uiImport(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	imp := path.Join("imp", path.Base(r.URL.Path))
+	if _, ok := e.Registry.symbols.Get(imp); !ok {
+		return nil, nil, StatusError{404, fmt.Errorf(imp + " not found")}
 	}
 
-	if len(unresolved) > 0 {
-		src := g.Node("unresolved")
-		for _, name := range unresolved {
-			dst := g.Node(name)
-			g.Edge(src, dst)
+	directs, _ := e.Registry.DirectImports(imp)
+	sort.Strings(directs)
+
+	transitives, _ := e.Registry.TransitiveImports([]string{imp})
+	sort.Strings(transitives)
+
+	data := newPageData(e)
+	data.Import = ImportData{
+		Name:        imp,
+		Directs:     directs,
+		Transitives: transitives,
+	}
+
+	g, err := transitiveDeps(e.Registry, imp)
+	if err != nil {
+		return nil, nil, StatusError{500, err}
+	}
+	data.Graph = g.String()
+
+	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "import.gohtml"))
+	return data, tmpl, nil
+}
+
+func uiRule(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	rest := strings.TrimPrefix(r.URL.Path, "/ui/rule/")
+
+	var repo, pkg, name string
+
+	if strings.HasPrefix(rest, "@") {
+		slash := strings.IndexRune(rest, '/')
+		repo = rest[1:slash]
+		rest = rest[slash+1:]
+	}
+
+	pkg = path.Dir(rest)
+	if pkg == "." {
+		pkg = ""
+	}
+	name = path.Base(rest)
+	colon := strings.LastIndex(name, ":")
+	if colon != -1 {
+		pkg = path.Join(pkg, name[:colon])
+		name = name[colon+1:]
+	} else {
+		pkg = path.Join(pkg, name)
+	}
+	from := label.New(repo, pkg, name)
+
+	data := newPageData(e)
+	var tmpl *template.Template
+
+	if sourceRule := e.Registry.sourceRuleRegistry.GetScalaRules()[from]; sourceRule != nil {
+		data.Rule = sourceRule
+		tmpl = template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "rule.gohtml"))
+	} else if jar, ok := e.Registry.classFileRegistry.LookupJar(from); ok {
+		data.Jar = jar
+		tmpl = template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "jar.gohtml"))
+	} else {
+		return nil, nil, StatusError{404, fmt.Errorf("%v not found", from)}
+	}
+
+	g, err := transitiveDeps(e.Registry, "rule/"+from.String())
+	if err != nil {
+		return nil, nil, StatusError{500, err}
+	}
+	data.Graph = g.String()
+
+	return data, tmpl, nil
+}
+
+func uiFile(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	filename := strings.TrimPrefix(r.URL.Path, "/ui/file/")
+
+	file := e.Registry.sourceRuleRegistry.GetScalaFile(filename)
+	if file == nil {
+		return nil, nil, StatusError{404, fmt.Errorf(filename + " not found")}
+	}
+
+	data := newPageData(e)
+	data.File = file
+
+	g, err := transitiveDeps(e.Registry, path.Join("file", filename))
+	if err != nil {
+		return nil, nil, StatusError{500, err}
+	}
+	data.Graph = g.String()
+
+	tmpl := template.Must(template.ParseFS(gen, "index.gohtml", "header.gohtml", "file.gohtml"))
+	return data, tmpl, nil
+}
+
+// ***************** SUPPORT FUNCTIONS *****************
+
+func transitiveDeps(registry *importRegistry, dep string) (*dot.Graph, error) {
+	g := newGraph()
+	seen := make(map[uint32]struct{})
+
+	// log.Println("resolving transitive imports of", dep)
+	id, ok := registry.symbols.Get(dep)
+	if !ok {
+		return nil, StatusError{404, fmt.Errorf("symbol not found: %s", dep)}
+	}
+
+	if got := registry.symbols.resolveAt(id); got != dep {
+		log.Panicf("dep %q (id=%d) was not idempotent to add (got %q instead)", dep, id, got)
+	}
+
+	dst := g.Node(dep)
+	in := registry.Previous(dep)
+	it := in.Iterator()
+	for it.HasNext() {
+		next := it.Next()
+		that := registry.symbols.resolveAt(next)
+		src := g.Node(that)
+		edge := g.Edge(src, dst)
+		edge.Label(registry.EdgeKind(next, id))
+	}
+
+	stack := make(collections.UInt32Stack, 0)
+	stack.Push(id)
+
+	for !stack.IsEmpty() {
+		current, _ := stack.Pop()
+		if _, ok := seen[current]; ok {
+			continue
+		}
+		seen[current] = struct{}{}
+
+		out, ok := registry.dependencies[current]
+		if !ok {
+			continue
+		}
+
+		this := registry.symbols.resolveAt(current)
+		src := g.Node(this)
+
+		it := out.Iterator()
+		for it.HasNext() {
+			next := it.Next()
+			that := registry.symbols.resolveAt(next)
+			dst := g.Node(that)
+			edge := g.Edge(src, dst)
+			edge.Label(registry.EdgeKind(current, next))
+			if len(stack) < 4 {
+				stack.Push(next)
+			}
 		}
 	}
 
 	return g, nil
 }
 
-func apiImports(e *Env, r *http.Request) (interface{}, error) {
-	return e.Registry.symbols.symbols, nil
-}
-
-func uiImports(e *Env, r *http.Request) (interface{}, *template.Template, error) {
-	tmpl := template.Must(template.ParseFS(gen, "imports.tmpl"))
-	return e.Registry.symbols.symbols, tmpl, nil
-}
-
 func newGraph() *dot.Graph {
 	g := dot.NewGraph(dot.Directed)
 	g.Attr("rankdir", "LR")
 	g.EdgeInitializer(func(e dot.Edge) {
-		e.Attr("color", "gray50")
+		e.Attr("color", "gray85")
+		e.Attr("arrowsize", "0.7")
 	})
 	g.NodeInitializer(func(n dot.Node) {
+		id := n.Value("label").(string)
+		fields := strings.SplitN(id, "/", 2)
+		kind := fields[0]
+		label := fields[1]
+		n.Label(label)
+		n.Attr("URL", fmt.Sprintf("/ui/%v", id))
 		n.Attr("shape", "record")
 		n.Attr("style", "filled")
-		n.Attr("fillcolor", "gray95")
+
+		switch kind {
+		case "imp":
+			n.Attr("fillcolor", "gray95")
+		case "file":
+			n.Attr("fontcolor", "white")
+			n.Attr("color", "darkred")
+			n.Attr("fillcolor", "red")
+		case "jar":
+			n.Attr("fontcolor", "white")
+			n.Attr("fillcolor", "red")
+		case "rule":
+			n.Attr("fontcolor", "black")
+			n.Attr("fillcolor", "green")
+		}
 	})
 	return g
 }
 
-// func (h *graphvizHandler) transitiveImports2(e *Env, typeName string) (*dot.Graph, error) {
+func newPageData(e *Env) *PageData {
+	symbols := e.Registry.symbols.symbols
+
+	byLabel := e.Registry.sourceRuleRegistry.GetScalaRules()
+	byKey := make(map[string]*index.ScalaRuleSpec)
+	keys := make([]string, 0, len(byLabel))
+
+	for from, rule := range byLabel {
+		key := from.String()
+		keys = append(keys, key)
+		byKey[key] = rule
+	}
+
+	sort.Strings(keys)
+
+	rules := make([]*index.ScalaRuleSpec, len(keys))
+	for i, key := range keys {
+		rules[i] = byKey[key]
+	}
+
+	return &PageData{
+		Symbols: symbols,
+		Rules:   rules,
+	}
+}
+
+// func (h *graphvizHandler) transitiveDeps2(e *Env, typeName string) (*dot.Graph, error) {
 // 	transitive, unresolved := e.Registry.TransitiveImports([]string{typeName})
 
 // 	g := h.newGraph()
@@ -236,6 +422,9 @@ func newGraph() *dot.Graph {
 // }
 
 // A (simple) example of our application-wide configuration.
+
+// ***************** SUPPORT TYPES *****************
+
 type Env struct {
 	Registry *importRegistry
 	Port     string
@@ -297,4 +486,20 @@ func getenv(key, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+type PageData struct {
+	Symbols []string
+	Rules   []*index.ScalaRuleSpec
+	Import  ImportData
+	Rule    *index.ScalaRuleSpec
+	File    *index.ScalaFileSpec
+	Jar     *index.JarSpec
+	Graph   string
+}
+
+type ImportData struct {
+	Name        string
+	Directs     []string
+	Transitives []string
 }
