@@ -20,7 +20,7 @@ type RuleProvider interface {
 	// Resolve performs deps resolution, similar to the gazelle Resolver
 	// interface.  Imports here are always the scala_library file .proto
 	// imports.
-	Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label)
+	Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label)
 	// Imports implements part of the Resolver interface
 	Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec
 }

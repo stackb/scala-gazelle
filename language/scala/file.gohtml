@@ -1,0 +1,37 @@
+{{ define "title" }}<title>Scala-Gazelle: {{ .Filename }}</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ with .File }}
+        {{ template "statelabel" dict "State" "closed" "Label" "File"  }}
+        {{ template "subhead" dict "Title" .Filename }}
+
+        {{/* {{ with .Imports }}
+            {{ template "subhead" "Imports" }}
+            {{ template "importlist" . }}
+        {{ end }}
+
+        {{ with .Packages }}
+            {{ template "subhead" "Packages" }}
+            {{ template "packagelist" . }}
+        {{ end }}
+
+        {{ with .Classes }}
+            {{ template "subhead" "Classes" }}
+            {{ template "importlist" . }}
+        {{ end }}
+
+        {{ with .Objects }}
+            {{ template "subhead" "Objects" }}
+            {{ template "importlist" . }}
+        {{ end }}
+
+        {{ with .Traits }}
+            {{ template "subhead" "Traits" }}
+            {{ template "importlist" . }}
+        {{ end }} */}}
+
+    {{ end }}
+{{ end }}

@@ -11,6 +11,8 @@ import (
 
 // RuleConfig carries metadata about a rule and its dependencies.
 type RuleConfig struct {
+	// Rel is the relative directory of this config
+	Rel string
 	// Config is the parent gazelle Config
 	Config *config.Config
 	// Deps is a mapping from label to +/- intent.

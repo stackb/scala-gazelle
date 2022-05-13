@@ -1,0 +1,3 @@
+-proto_imports_in=imports.csv
+-scala_class_index_file=classes.json
+#-scala_source_index_in=sources.json

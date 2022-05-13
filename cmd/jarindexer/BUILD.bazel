@@ -1,0 +1,62 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+
+go_library(
+    name = "jarindexer_lib",
+    srcs = ["jarindexer.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/jarindexer",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//pkg/index",
+        "//pkg/java",
+    ],
+)
+
+go_binary(
+    name = "jarindexer",
+    embed = [":jarindexer_lib"],
+    visibility = ["//visibility:public"],
+    # visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "jarindexer_test",
+    srcs = ["jarindexer_test.go"],
+    data = [
+        "akka-grpc-runtime_2.12-1.0.1.jar",
+        "akka-stream-testkit_2.12-2.6.10.jar",
+        "javax.activation-api-1.2.0.jar",
+    ],
+    embed = [":jarindexer_lib"],
+    deps = [
+        "//pkg/index",
+        "@com_github_google_go_cmp//cmp",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
+)
+
+java_import(
+    name = "classgraph",
+    jars = ["classgraph-4.8.141.jar"],
+)
+
+java_import(
+    name = "akka-grpc-runtime",
+    jars = ["akka-grpc-runtime_2.12-1.0.1.jar"],
+)
+
+java_import(
+    name = "gson",
+    jars = ["gson-2.9.0.jar"],
+)
+
+java_binary(
+    name = "jarindexer2",
+    srcs = ["JarIndexer.java"],
+    main_class = "JarIndexer",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":akka-grpc-runtime",
+        ":classgraph",
+        ":gson",
+    ],
+)

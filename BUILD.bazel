@@ -5,6 +5,9 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # ----------------------------------------------------
 # gazelle:prefix github.com/stackb/scala-gazelle
 # gazelle:exclude vendor
+# gazelle:resolve go go github.com/stackb/rules_proto/pkg/protoc @build_stack_rules_proto//pkg/protoc
+# gazelle:resolve go go github.com/stackb/rules_proto/pkg/goldentest @build_stack_rules_proto//pkg/goldentest
+# gazelle:resolve go go github.com/bazelbuild/buildtools/build @com_github_bazelbuild_buildtools//build:go_default_library
 
 gazelle_binary(
     name = "gazelle-scala",
@@ -19,5 +22,24 @@ gazelle_binary(
 
 gazelle(
     name = "gazelle",
+    args = [
+        "-scala_parser_tool_path=$(rootpath //cmd/sourceindexer)",
+        "-scala_compiler_jar_path=$(rootpath //cmd/scalacparse:scala_compiler_deploy.jar)",
+    ],
+    data = [
+        "//cmd/scalacparse:scala_compiler_deploy.jar",
+        "//cmd/sourceindexer",
+    ],
     gazelle = ":gazelle-scala",
+)
+
+gazelle(
+    name = "update_go_repositories",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=go_repos.bzl%go_repositories",
+        "-build_file_proto_mode=disable_global",
+        "-prune=true",
+    ],
+    command = "update-repos",
 )

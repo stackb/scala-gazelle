@@ -1,0 +1,12 @@
+syntax = "proto3";
+package proto;
+
+import "thirdparty/protobuf/scalapb/scalapb.proto";
+
+option (scalapb.options) = {
+  import: "example.lib.ApiOptions"
+};
+
+message ApiRequest{
+    string id = 1;
+}

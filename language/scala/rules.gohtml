@@ -1,0 +1,27 @@
+{{ define "title" }}<title>Scala-Gazelle: Rules</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ if eq (len .Rules) 0 }}
+        No rules found.
+    {{ else }}
+        <div class="Box">
+            <div class="Box-header">
+                Rules ({{ len .Rules }})
+            </div>
+            <ul>
+                {{range .Rules }}
+                    <li class="Box-row"><span class="Label Label--primary float-right px-2">{{.Kind}}</span><a href="/ui/rule/{{.Label}}">{{.Label}}</a></li>
+                {{ end }}
+            </ul>
+        </div>
+        <div class="markdown-body m-5">
+            <pre><code>{{range .Rules }}
+{{.Label}}
+{{ end }}
+            </code></pre>
+        </div>
+    {{ end }}
+{{ end }}

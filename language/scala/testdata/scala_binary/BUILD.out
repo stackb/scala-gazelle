@@ -1,0 +1,12 @@
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
+
+# gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
+
+scala_binary(
+    name = "app",
+    srcs = ["Main.scala"],
+    deps = [
+        "@maven//:com_google_code_gson_gson",
+        "@maven//:com_typesafe_slick_slick_2_12",
+    ],
+)

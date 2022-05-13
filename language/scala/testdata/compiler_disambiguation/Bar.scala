@@ -1,0 +1,3 @@
+package libx
+
+object Bar {}
