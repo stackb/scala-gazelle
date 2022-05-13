@@ -23,5 +23,6 @@ type ConfigurableCrossResolver interface {
 // GazellePhaseTransitionListener is an optional interface for a cross-resolver
 // that wants phase transition notification.  Errors are considered fatal.
 type GazellePhaseTransitionListener interface {
-	OnResolvePhase() error
+	OnResolve()
+	OnEnd()
 }

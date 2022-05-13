@@ -44,7 +44,7 @@ type ScalaImportRegistry interface {
 	// ResolveLabel implements LabelResolver
 	ResolveLabel(name string) (label.Label, bool)
 	// TransitiveImports calculates the dependencies of the given deps.
-	TransitiveImports(deps []string) (resolved, unresolved []string)
+	TransitiveImports(deps []string, depth int) (resolved, unresolved []string)
 }
 
 // NameResolver is a function that takes a symbol name.  So for 'LazyLogging' it
@@ -180,7 +180,7 @@ func (ir *importRegistry) AddDependency(src, dst, kind string) {
 	edgeKey := fmt.Sprintf("%d.%d", i, j)
 	ir.depEdges[edgeKey] = kind
 
-	log.Printf("importRegistry.depends: %s --[%s]--> %s", src, kind, dst)
+	// log.Printf("importRegistry.depends: %s --[%s]--> %s", src, kind, dst)
 }
 
 func (ir *importRegistry) Previous(dst string) *roaring.Bitmap {
@@ -211,7 +211,7 @@ func (ir *importRegistry) DirectImports(dep string) (resolved, unresolved []stri
 
 	// log.Println("resolving transitive imports of", dep)
 	if id, ok := ir.symbols.Get(dep); ok {
-		ir.depsFor(id, transitive, false)
+		ir.depsFor(id, transitive, 1)
 	} else {
 		unresolved = append(unresolved, dep)
 	}
@@ -221,13 +221,13 @@ func (ir *importRegistry) DirectImports(dep string) (resolved, unresolved []stri
 	return
 }
 
-func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved []string) {
+func (ir *importRegistry) TransitiveImports(deps []string, depth int) (resolved, unresolved []string) {
 	transitive := roaring.New()
+	seen := make(map[uint32]struct{})
 
 	for _, dep := range deps {
-		log.Println("resolving transitive imports of", dep)
 		if id, ok := ir.symbols.Get(dep); ok {
-			ir.depsFor(id, transitive, true)
+			ir.depsOf(id, transitive, seen, depth)
 		} else {
 			unresolved = append(unresolved, dep)
 		}
@@ -238,8 +238,9 @@ func (ir *importRegistry) TransitiveImports(deps []string) (resolved, unresolved
 	return
 }
 
-func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, allTransitive bool) {
+func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, depth int) {
 	seen := make(map[uint32]struct{})
+
 	stack := make(collections.UInt32Stack, 0)
 	stack.Push(dep)
 
@@ -256,12 +257,35 @@ func (ir *importRegistry) depsFor(dep uint32, transitive *roaring.Bitmap, allTra
 		}
 		transitive.Or(deps)
 
-		if allTransitive {
+		if depth < 0 || len(stack) <= depth {
 			it := deps.Iterator()
 			for it.HasNext() {
 				stack.Push(it.Next())
 			}
 		}
+	}
+}
+
+func (ir *importRegistry) depsOf(dep uint32, transitive *roaring.Bitmap, seen map[uint32]struct{}, depth int) {
+	if _, ok := seen[dep]; ok {
+		return
+	}
+	seen[dep] = struct{}{}
+
+	deps, ok := ir.dependencies[dep]
+	if !ok {
+		return
+	}
+	transitive.Or(deps)
+
+	depth--
+	if depth == 0 {
+		return
+	}
+
+	it := deps.Iterator()
+	for it.HasNext() {
+		ir.depsOf(it.Next(), transitive, seen, depth)
 	}
 }
 

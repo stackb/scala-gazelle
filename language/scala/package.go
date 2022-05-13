@@ -3,6 +3,10 @@ package scala
 import (
 	"log"
 
+	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/repo"
+	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
@@ -39,6 +43,10 @@ type scalaPackage struct {
 	cfg *scalaConfig
 	// the generated and empty rule providers
 	gen, empty []RuleProvider
+	// parent is the parent package
+	parent *scalaPackage
+	// resolved is the final state of generated rules, by name.
+	rules map[string]*rule.Rule
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -50,11 +58,23 @@ func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser,
 		ruleRegistry:        ruleRegistry,
 		file:                file,
 		cfg:                 cfg,
+		rules:               make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
 
 	return s
+}
+
+// Config returns the the underlying config.
+func (s *scalaPackage) Config() *scalaConfig {
+	return s.cfg
+}
+
+// getRule returns the named rule, if it exists
+func (s *scalaPackage) getRule(name string) (*rule.Rule, bool) {
+	got, ok := s.rules[name]
+	return got, ok
 }
 
 // ruleProvider returns the provider of a rule or nil if not known.
@@ -63,6 +83,23 @@ func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
 		return provider
 	}
 	return nil
+}
+
+func (s *scalaPackage) Resolve(
+	c *config.Config,
+	ix *resolve.RuleIndex,
+	rc *repo.RemoteCache,
+	r *rule.Rule,
+	importsRaw interface{},
+	from label.Label,
+) {
+	provider := s.ruleProvider(r)
+	if provider == nil {
+		log.Printf("no known rule provider for %v", from)
+		return
+	}
+	provider.Resolve(c, ix, r, importsRaw, from)
+	s.rules[r.Name()] = r
 }
 
 // generateRules constructs a list of rules based on the configured set of rule
@@ -99,10 +136,6 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 		}
 		delete(existingRulesByFQN, rc.Implementation)
 	}
-
-	// for fqn := range existingRulesByFQN {
-	// 	log.Println("no config for rule:", fqn)
-	// }
 
 	return rules
 }
@@ -196,6 +229,7 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 			// record the association of the rule provider here for the resolver.
 			r.SetPrivateAttr(ruleProviderKey, p)
 			// log.Println("provided rule %s %s", r.Kind(), r.Name())
+			s.rules[r.Name()] = r
 		}
 		rules = append(rules, r)
 	}

@@ -133,7 +133,7 @@ func TestImportRegistryTransitiveImports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got, err := tc.registry.TransitiveImports(tc.imps)
+			got, err := tc.registry.TransitiveImports(tc.imps, -1)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}

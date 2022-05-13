@@ -33,7 +33,7 @@ func TestVizServer(t *testing.T) {
 			fs := flag.NewFlagSet("", flag.ExitOnError)
 			c := config.New()
 
-			viz := newGraphvizServer(tc.registry)
+			viz := newGraphvizServer(nil, tc.registry)
 			viz.RegisterFlags(fs, "fix", c)
 
 			if tc.useFreePort {
@@ -59,7 +59,7 @@ func TestVizServer(t *testing.T) {
 
 			viz.ServeHTTP(wr, req)
 
-			if err := viz.OnResolvePhase(); err != nil {
+			if err := viz.OnResolve(); err != nil {
 				t.Fatal(err)
 			}
 

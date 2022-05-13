@@ -39,7 +39,7 @@ func (s *SymbolTable) Add(value string) uint32 {
 		log.Panicf("dep %q (id=%d) was not idempotent to add (got %q instead)", value, id, got)
 	}
 
-	log.Printf("symbolTable: added %q (id=%d)", value, id)
+	// log.Printf("symbolTable: added %q (id=%d)", value, id)
 
 	return id
 }

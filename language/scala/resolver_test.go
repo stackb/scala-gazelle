@@ -3,11 +3,12 @@ package scala
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestGetScalaImportsFromRuleComment(t *testing.T) {
@@ -16,35 +17,48 @@ func TestGetScalaImportsFromRuleComment(t *testing.T) {
 		want   []string
 	}{
 		"degenerate": {
-			source: `scala_library(name="lib")`,
+			source: `scala_library(name="lib", deps=[])`,
 			want:   nil,
 		},
 		"ok": {
 			source: `
-# scala-import: com.foo.Bar
 scala_library(
-	name="lib",
+    name="lib",
+    # scala-import: com.foo.Bar
+    deps = [],
 )
 `,
 			want: []string{"com.foo.Bar"},
 		},
 		"additional content ok": {
 			source: `
-# scala-import: com.foo.Bar // fixme
 scala_library(
-	name="lib",
+    name="lib",
+    # scala-import: com.foo.Bar // fixme
+    deps = [],
 )
 `,
 			want: []string{"com.foo.Bar"},
 		},
 		"not plural": {
 			source: `
-# scala-imports: com.foo.Bar
 scala_library(
-	name="lib",
+    name="lib",
+    # scala-imports: com.foo.Bar
+    deps = [],
 )
 `,
 			want: nil,
+		},
+		"with comment": {
+			source: `
+scala_library(
+    name="lib",
+    # scala-import:com.foo.Bar   // needed by foo
+    deps = [],
+)
+`,
+			want: []string{"com.foo.Bar"},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -55,7 +69,20 @@ scala_library(
 			if len(file.Rules) != 1 {
 				t.Fatal("test case should decare one rule")
 			}
-			got := getScalaImportsFromRuleComment("scala-import:", file.Rules[0])
+
+			content := string(file.Format())
+			t.Log("content:", content)
+
+			if false {
+				spew.Dump(file)
+				if diff := cmp.Diff(tc.source, content); diff != "" {
+					t.Errorf("content (-want +got):\n%s", diff)
+				}
+			}
+
+			t.Logf("lhs: %+v", file.File.Stmt[0].(*build.CallExpr).List[1].(*build.AssignExpr).LHS)
+			t.Logf("rhs: %+v", file.File.Stmt[0].(*build.CallExpr).List[1].(*build.AssignExpr).RHS)
+			got := getScalaImportsFromRuleAttrComment("deps", "scala-import:", file.Rules[0])
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

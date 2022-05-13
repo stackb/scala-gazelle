@@ -17,5 +17,11 @@
                 {{ end }}
             </ul>
         </div>
+        <div class="markdown-body m-5">
+            <pre><code>{{range .Rules }}
+{{.Label}}
+{{ end }}
+            </code></pre>
+        </div>
     {{ end }}
 {{ end }}

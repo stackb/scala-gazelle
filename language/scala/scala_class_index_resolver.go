@@ -166,9 +166,12 @@ func (r *scalaClassIndexResolver) addDependency(src, dst, kind string) {
 	}
 }
 
-// OnResolvePhase implements GazellePhaseTransitionListener.
-func (r *scalaClassIndexResolver) OnResolvePhase() error {
-	return nil
+// OnResolve implements GazellePhaseTransitionListener.
+func (r *scalaClassIndexResolver) OnResolve() {
+}
+
+// OnEnd implements GazellePhaseTransitionListener.
+func (r *scalaClassIndexResolver) OnEnd() {
 }
 
 // Provided implements the protoc.ImportProvider interface.
@@ -195,9 +198,9 @@ func (r *scalaClassIndexResolver) LookupJar(from label.Label) (*index.JarSpec, b
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaClassIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
-	defer func() {
-		log.Println("(scala class resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
-	}()
+	// defer func() {
+	// 	log.Println("(scala class resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
+	// }()
 
 	if !(lang == ScalaLangName || imp.Lang == ScalaLangName) {
 		return

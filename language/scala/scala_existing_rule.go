@@ -186,6 +186,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		return
 	}
 
+	g := newGraph()
+
 	// Local variables
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(map[string]*importOrigin)
@@ -200,42 +202,51 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	resolved[label.NoLabel] = make(map[string]*importOrigin)
 
 	// --- Gather imports ---
+	src := g.Node("rule/" + from.String())
 
 	// 1: direct
 	for _, file := range files {
 		for _, imp := range file.Imports {
 			imports[imp] = &importOrigin{Kind: "direct", SourceFile: file}
+			dst := g.Node("imp/" + imp)
+			g.Edge(src, dst, "direct")
 		}
 	}
 
 	// 2: explicity named in the rule comment.
-	for _, imp := range getScalaImportsFromRuleComment("scala-import:", r) {
+	for _, imp := range getScalaImportsFromRuleAttrComment("deps", "scala-import:", r) {
 		if _, ok := imports[imp]; ok {
 			continue
 		}
-		imports[imp] = &importOrigin{Kind: "rule-comment"}
+		imports[imp] = &importOrigin{Kind: "scala-import-comment"}
+		dst := g.Node("imp/" + imp)
+		g.Edge(src, dst, "scala-import-comment")
 	}
 
 	// 3: if this rule has a main_class
 	if mainClass := r.AttrString("main_class"); mainClass != "" {
 		imports[mainClass] = &importOrigin{Kind: "main_class"}
+		dst := g.Node("imp/" + mainClass)
+		g.Edge(src, dst, "main-class")
 	}
 
 	// 3: transitive of 1+2.
-	gatherIndirectDependencies(c, imports)
+	gatherIndirectDependencies(c, imports, g)
 
 	// resolve this (mostly direct) initial set
-	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
+	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
 	// resolve transitive set
-	resolveTransitive(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
+	resolveTransitive(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
-		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		// panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		log.Printf("%v has unresolved dependencies: %v", from, unresolved)
 	}
 
 	if len(resolved) > 0 {
 		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), r.Attr("deps"), from, resolved))
+		r.SetPrivateAttr("deps_graph", g.String())
 	}
 
 	exports := computeExports(c, r, importRegistry, files, resolved)
@@ -258,11 +269,11 @@ func computeExports(c *config.Config, r *rule.Rule, registry ScalaImportRegistry
 	}
 
 	exported := make(map[string]*importOrigin)
-	for _, imp := range getScalaImportsFromRuleComment("scala-export:", r) {
+	for _, imp := range getScalaImportsFromRuleAttrComment("exports", "scala-export:", r) {
 		if _, ok := exported[imp]; ok {
 			continue
 		}
-		exported[imp] = &importOrigin{Kind: "rule-comment"}
+		exported[imp] = &importOrigin{Kind: "scala-export-comment"}
 	}
 
 	resolveAny := registry.ResolveName
@@ -297,6 +308,13 @@ func computeExports(c *config.Config, r *rule.Rule, registry ScalaImportRegistry
 			has[exp] = origin
 		} else {
 			exports[from] = map[string]*importOrigin{exp: origin}
+		}
+	}
+
+	// export all 3p deps from the resolved list
+	for from, imports := range resolved {
+		if from.Repo != "" && from.Repo != c.RepoName {
+			exports[from] = imports
 		}
 	}
 

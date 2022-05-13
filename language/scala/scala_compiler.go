@@ -159,9 +159,12 @@ func (p *scalaCompiler) stop() {
 	}
 }
 
-// OnResolvePhase implements GazellePhaseTransitionListener.
-func (p *scalaCompiler) OnResolvePhase() error {
-	return nil
+// OnResolve implements GazellePhaseTransitionListener.
+func (p *scalaCompiler) OnResolve() {
+}
+
+// OnEnd implements GazellePhaseTransitionListener.
+func (p *scalaCompiler) OnEnd() {
 }
 
 // Compile a Scala file and returns the index. An error is raised if

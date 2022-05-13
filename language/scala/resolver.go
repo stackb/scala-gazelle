@@ -11,6 +11,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	// "github.com/bazelbuild/buildtools/build"
+	"github.com/emicklei/dot"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
@@ -96,7 +98,7 @@ func (m labelImportMap) String() string {
 	return sb.String()
 }
 
-func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin) {
+func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
 	stack := make(importStack, 0, len(imports))
@@ -111,12 +113,15 @@ func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrig
 			stack = stack.push(dep)
 			if _, ok := imports[dep]; !ok {
 				imports[dep] = &importOrigin{Kind: "indirect", Parent: imp}
+				src := g.Node("imp/" + imp)
+				dst := g.Node("imp/" + dep)
+				g.Edge(src, dst, "indirect")
 			}
 		}
 	}
 }
 
-func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
+func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
 	// at this point we expect 'resolved' to hold a set of 'actual' imports that
 	// represent concrete types. build a second set of imports to be resolved
 	// from that set.
@@ -130,16 +135,18 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 			if origin.Actual == "" {
 				log.Panicln("unknown actual import!", lbl, origin.String())
 			}
-			transitive, unresolved := importRegistry.TransitiveImports([]string{origin.Actual})
+			src := g.Node("imp/" + origin.Actual)
+			transitive, unresolved := importRegistry.TransitiveImports([]string{"imp/" + origin.Actual}, -1)
 			if debug {
 				if len(unresolved) > 0 {
 					log.Println("unresolved transitive import:", unresolved, origin.Actual)
 				}
 			}
 			for _, tImp := range transitive {
-				// log.Println("transitive import:", imp, tImp)
 				if _, ok := imports[tImp]; !ok {
 					transitiveImports[tImp] = &importOrigin{Kind: "transitive", Parent: origin.Actual}
+					dst := g.Node("imp/" + tImp)
+					g.Edge(src, dst, "transitive")
 				}
 			}
 			// log.Println(from, "transitive imports:", origin.Actual, transitive)
@@ -148,23 +155,31 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 	}
 
 	// another round of indirects
-	gatherIndirectDependencies(c, transitiveImports)
+	gatherIndirectDependencies(c, transitiveImports, g)
 
 	// finally, resolve the transitive set
-	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved)
+	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved, g)
 }
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
 	dbg := false
 	for imp, origin := range imports {
+		src := g.Node("imp/" + imp)
+
 		if dbg {
 			log.Println("---", from, imp, "---")
 			// log.Println("resolved:\n", resolved.String())
 		}
 
 		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
+
+		if imp != origin.Actual {
+			dst := g.Node("imp/" + origin.Actual)
+			g.Edge(src, dst, "actual")
+			src = dst
+		}
 
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
@@ -178,7 +193,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			original := labels
 			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
 			if err != nil {
-				log.Panicf("disambigation error: %v", err)
+				log.Printf("disambigation error: %v", err)
 			}
 			if dbg {
 				log.Println(from, imp, original, "--[Disambiguate]-->", disambiguated)
@@ -197,6 +212,8 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 					continue
 				}
 				resolved.Set(dep, imp, origin)
+				dst := g.Node("rule/" + dep.String())
+				g.Edge(src, dst, "label")
 			}
 		}
 	}
@@ -316,17 +333,24 @@ func printRules(rules ...*rule.Rule) {
 	fmt.Println(string(file.Format()))
 }
 
-func getScalaImportsFromRuleComment(prefix string, r *rule.Rule) (imports []string) {
-	for _, line := range r.Comments() {
-		fields := strings.Fields(line)
-		// ["#", "scala-import:", "org.json4s.CustomSerializer"]
-		if len(fields) < 3 {
+func getScalaImportsFromRuleAttrComment(attrName, prefix string, r *rule.Rule) (imports []string) {
+	assign := r.AttrAssignment(attrName)
+	if assign == nil {
+		return
+	}
+
+	for _, comment := range assign.Before {
+		line := comment.Token
+		line = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(line), "#"))
+		if !strings.HasPrefix(line, prefix) {
 			continue
 		}
-		if fields[1] != prefix {
-			continue
+		line = strings.TrimSpace(strings.TrimPrefix(line, prefix))
+		dblslash := strings.Index(line, "//")
+		if dblslash != -1 {
+			line = strings.TrimSpace(line[:dblslash])
 		}
-		imports = append(imports, fields[2])
+		imports = append(imports, line)
 	}
 	return
 }

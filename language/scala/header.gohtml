@@ -13,6 +13,9 @@
   <a href="/ui/home" class="Header-item">
     Home
   </a>
+  <a href="/ui/packages" class="Header-item">
+    Packages
+  </a>
   <a href="/ui/symbols" class="Header-item">
     Symbols
   </a>
@@ -161,10 +164,6 @@ document.onkeyup = function(e) {
 {{ end }}
 
 {{ define "graphviz" }}
-<script>
-    const graph = {{ . }};
-</script>
-
 <script type="module">
     import Viz from "https://unpkg.com/@aduh95/viz.js";
 
@@ -203,11 +202,11 @@ document.onkeyup = function(e) {
         return viz.renderString(dot, options);
     }
 
-    dot2svg(graph)
+    dot2svg({{ .Dot }})
         .then(str => new DOMParser().parseFromString(str, 'image/svg+xml').documentElement)
-        .then(el => $('#graphviz').empty().append(el))
+        .then(svg => {
+            $('#{{ .Id }}').empty().append(svg);
+        })
         .catch(err => console.warn(err));
 </script>
-
 {{ end }}
-

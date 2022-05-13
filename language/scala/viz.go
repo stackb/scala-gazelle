@@ -10,13 +10,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"path"
 	"sort"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/emicklei/dot"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -27,6 +27,7 @@ import (
 var gen embed.FS
 
 type graphvizServer struct {
+	packages       map[string]*scalaPackage
 	registry       *importRegistry
 	host           string
 	port           string
@@ -35,8 +36,11 @@ type graphvizServer struct {
 	mux            *http.ServeMux
 }
 
-func newGraphvizServer(registry *importRegistry) *graphvizServer {
-	return &graphvizServer{registry: registry}
+func newGraphvizServer(packages map[string]*scalaPackage, registry *importRegistry) *graphvizServer {
+	return &graphvizServer{
+		packages: packages,
+		registry: registry,
+	}
 }
 
 // RegisterFlags implements part of the Configurer interface.
@@ -51,12 +55,14 @@ func (v *graphvizServer) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.C
 func (v *graphvizServer) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	// configuring an empty port disables the server
 	if v.port == "" {
-		return fmt.Errorf("no port configured")
+		// return fmt.Errorf("no port configured")
+		return nil
 	}
 
 	// Initialise our app-wide environment with the services/info we need.
 	v.env = &Env{
 		Registry: v.registry,
+		Packages: v.packages,
 		Host:     getenv("HOST", v.host),
 		Port:     getenv("PORT", v.port),
 	}
@@ -84,6 +90,8 @@ func newServeMux(env *Env) *http.ServeMux {
 
 	mux.Handle("/ui/symbols", Handler{env, textHTML(uiSymbols)})
 	mux.Handle("/ui/imp/", Handler{env, textHTML(uiImport)})
+	mux.Handle("/ui/pkg/", Handler{env, textHTML(uiPkg)})
+	mux.Handle("/ui/packages", Handler{env, textHTML(uiPackages)})
 	mux.Handle("/ui/rules", Handler{env, textHTML(uiRules)})
 	mux.Handle("/ui/rule/", Handler{env, textHTML(uiRule)})
 	mux.Handle("/ui/file/", Handler{env, textHTML(uiFile)})
@@ -93,19 +101,29 @@ func newServeMux(env *Env) *http.ServeMux {
 	return mux
 }
 
-// OnResolvePhase implements part of GazellePhaseTransitionListener.
-func (v *graphvizServer) OnResolvePhase() error {
+// OnResolve implements part of GazellePhaseTransitionListener.
+func (v *graphvizServer) OnResolve() error {
+	// if v.blockOnResolve {
+	// 	if v.blockOnResolve {
+	// 		v.waitForInterrupt()
+	// 	}
+	// }
+	return nil
+}
+
+// OnEnd implements part of GazellePhaseTransitionListener.
+func (v *graphvizServer) OnEnd() error {
 	if v.blockOnResolve {
-		log.Printf("graphviz server waiting for requests on http://%s:%s, use ctrl-c to continue", v.env.Host, v.env.Port)
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt)
-		for sig := range c {
-			// sig is a ^C, handle it
-			log.Println("graphviz server: caught", sig)
-			break
-		}
+		v.waitForInterrupt()
 	}
 	return nil
+}
+
+// waitForInterrupt blocks until the user presses ctrl-c
+func (v *graphvizServer) waitForInterrupt() {
+	log.Printf("graphviz server waiting for requests on http://%s:%s", v.env.Host, v.env.Port)
+	log.Println("(press Enter to continue)")
+	fmt.Scanln()
 }
 
 // ***************** CONTENT-TYPES *****************
@@ -146,7 +164,7 @@ func textHTML(callback func(e *Env, r *http.Request) (interface{}, *template.Tem
 		}
 		w.Header().Add("Content-Type", "text/html")
 		if err := tmpl.ExecuteTemplate(w, "index.gohtml", data); err != nil {
-			log.Println("html rendering error: %v", err)
+			log.Printf("html rendering error: %v", err)
 		}
 		return nil
 	}
@@ -165,6 +183,60 @@ func uiHome(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 
 	tmpl := newFSTemplate("home.gohtml")
 	return data, tmpl, nil
+}
+
+func uiPackages(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	data := newPageData(e)
+
+	for name := range e.Packages {
+		data.Packages = append(data.Packages, name)
+	}
+	sort.Strings(data.Packages)
+
+	g, err := transitiveDeps(e.Registry, "ws/default")
+	if err != nil {
+		return nil, nil, StatusError{500, err}
+	}
+	data.Graph = g.String()
+
+	tmpl := newFSTemplate("packages.gohtml")
+	return data, tmpl, nil
+}
+
+func uiPkg(e *Env, r *http.Request) (interface{}, *template.Template, error) {
+	pkg := strings.TrimPrefix(r.URL.Path, "/ui/pkg/")
+
+	data := newPageData(e)
+	data.Package = e.Packages[pkg]
+	data.LabelMappings = makeReverseLabelMappings(data.Package, e.Packages)
+	tmpl := newFSTemplate("pkg.gohtml")
+
+	g, err := transitiveDeps(e.Registry, "pkg/"+pkg)
+	if err != nil {
+		return nil, nil, StatusError{500, err}
+	}
+	data.Graph = g.String()
+
+	return data, tmpl, nil
+}
+
+// makeReverseLabelMappings create a slice of LabelMapping. Each mapping .From
+// represents the "actual" bazel label, whereas .To represents the name of the
+// rule found in the BUILD file.
+func makeReverseLabelMappings(pkg *scalaPackage, packages map[string]*scalaPackage) []*LabelMapping {
+	mappings := make([]*LabelMapping, 0)
+	for pkg, p := range packages {
+		for _, r := range p.rules {
+			from := label.New("", pkg, r.Name())
+			if mapping, ok := p.cfg.mapKindImportNames[r.Kind()]; ok {
+				mappings = append(mappings, &LabelMapping{
+					From: mapping.Rename(from),
+					To:   from,
+				})
+			}
+		}
+	}
+	return mappings
 }
 
 func uiSymbols(e *Env, r *http.Request) (interface{}, *template.Template, error) {
@@ -190,7 +262,7 @@ func uiImport(e *Env, r *http.Request) (interface{}, *template.Template, error) 
 	directs, _ := e.Registry.DirectImports(imp)
 	sort.Strings(directs)
 
-	transitives, _ := e.Registry.TransitiveImports([]string{imp})
+	transitives, _ := e.Registry.TransitiveImports([]string{imp}, -1)
 	sort.Strings(transitives)
 
 	data := newPageData(e)
@@ -236,10 +308,19 @@ func uiRule(e *Env, r *http.Request) (interface{}, *template.Template, error) {
 	from := label.New(repo, pkg, name)
 
 	data := newPageData(e)
+
+	scalaPkg := e.Packages[pkg]
+	if scalaPkg != nil {
+		rule, _ := scalaPkg.getRule(name)
+		data.Rule = rule
+	} else {
+		log.Println("warning: no scala package known for:", pkg)
+	}
+
 	var tmpl *template.Template
 
 	if sourceRule := e.Registry.sourceRuleRegistry.GetScalaRules()[from]; sourceRule != nil {
-		data.Rule = sourceRule
+		data.RuleSpec = sourceRule
 		tmpl = newFSTemplate("rule.gohtml")
 	} else if jar, ok := e.Registry.classFileRegistry.LookupJar(from); ok {
 		data.Jar = jar
@@ -369,6 +450,9 @@ func newGraph() *dot.Graph {
 		case "rule":
 			n.Attr("fontcolor", "white")
 			n.Attr("fillcolor", "green")
+		case "pkg":
+			n.Attr("fontcolor", "white")
+			n.Attr("fillcolor", "blue")
 		}
 	})
 	return g
@@ -402,6 +486,36 @@ func newPageData(e *Env) *PageData {
 
 func newFSTemplate(files ...string) *template.Template {
 	return template.Must(template.New("index").Funcs(template.FuncMap{
+		"printRule": func(values ...interface{}) (string, error) {
+			if len(values) != 1 {
+				return "", errors.New("invalid printRule call")
+			}
+			r, ok := values[0].(*rule.Rule)
+			if !ok {
+				return "", errors.New("printRule arg must have type *rule.Rule")
+			}
+			file := rule.EmptyFile("", "")
+			r.Insert(file)
+			return string(file.Format()), nil
+		},
+		"privateAttrString": func(values ...interface{}) (string, error) {
+			if len(values) != 2 {
+				return "", errors.New("invalid privateAttrString call (want RULE ATTR_NAME)")
+			}
+			r, ok := values[0].(*rule.Rule)
+			if !ok {
+				return "", errors.New("privateAttrString arg.0 must have type *rule.Rule")
+			}
+			attrName, ok := values[1].(string)
+			if !ok {
+				return "", errors.New("privateAttrString arg.1 must have type string")
+			}
+			value, ok := r.PrivateAttr(attrName).(string)
+			if !ok {
+				return "", nil
+			}
+			return value, nil
+		},
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {
 				return nil, errors.New("invalid dict call")
@@ -448,6 +562,7 @@ func newFSTemplate(files ...string) *template.Template {
 
 type Env struct {
 	Registry *importRegistry
+	Packages map[string]*scalaPackage
 	Port     string
 	Host     string
 }
@@ -510,17 +625,26 @@ func getenv(key, fallback string) string {
 }
 
 type PageData struct {
-	Symbols []string
-	Rules   []*index.ScalaRuleSpec
-	Import  ImportData
-	Rule    *index.ScalaRuleSpec
-	File    *index.ScalaFileSpec
-	Jar     *index.JarSpec
-	Graph   string
+	Symbols       []string
+	Rules         []*index.ScalaRuleSpec
+	Packages      []string
+	Package       *scalaPackage
+	Import        ImportData
+	RuleSpec      *index.ScalaRuleSpec
+	Rule          *rule.Rule
+	LabelMappings []*LabelMapping
+	File          *index.ScalaFileSpec
+	Jar           *index.JarSpec
+	Graph         string
 }
 
 type ImportData struct {
 	Name        string
 	Directs     []string
 	Transitives []string
+}
+
+type LabelMapping struct {
+	From label.Label
+	To   label.Label
 }

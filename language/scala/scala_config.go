@@ -244,6 +244,14 @@ func (c *scalaConfig) configuredRules() []*RuleConfig {
 	return rules
 }
 
+func (c *scalaConfig) Overrides() []*overrideSpec {
+	return c.overrides
+}
+
+func (c *scalaConfig) Indirects() []*indirectDependencySpec {
+	return c.indirects
+}
+
 // DeduplicateAndSort removes duplicate entries and sorts the list
 func DeduplicateAndSort(in []string) (out []string) {
 	seen := make(map[string]bool)

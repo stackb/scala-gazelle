@@ -291,8 +291,8 @@ func (r *scalaSourceIndexResolver) addDependency(src, dst, kind string) {
 	r.depsRecorder(src, dst, kind)
 }
 
-// OnResolvePhase implements GazellePhaseTransitionListener.
-func (r *scalaSourceIndexResolver) OnResolvePhase() error {
+// OnResolve implements GazellePhaseTransitionListener.
+func (r *scalaSourceIndexResolver) OnResolve() {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.stop()
 
@@ -316,9 +316,11 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 				r.addDependency(impNodeID, fileNodeID, "file")
 			}
 
-			for _, imp := range file.Imports {
-				impNodeID := path.Join("imp", imp)
-				r.addDependency(fileNodeID, impNodeID, "import")
+			if false {
+				for _, imp := range file.Imports {
+					impNodeID := path.Join("imp", imp)
+					r.addDependency(fileNodeID, impNodeID, "import")
+				}
 			}
 
 			for token, symbols := range file.Extends {
@@ -335,6 +337,9 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 							break
 						}
 					}
+					// TODO: prepend predefined symbols here as a match
+					// heuristic.  Examples: scala.AnyVal or
+					// java.lang.Exception.
 					if !matched {
 						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
 					}
@@ -344,7 +349,13 @@ func (r *scalaSourceIndexResolver) OnResolvePhase() error {
 	}
 
 	// dump the index
-	return r.writeIndex()
+	if err := r.writeIndex(); err != nil {
+		log.Fatal("failed to write index: %v", err)
+	}
+}
+
+// OnEnd implements GazellePhaseTransitionListener.
+func (r *scalaSourceIndexResolver) OnEnd() {
 }
 
 func (r *scalaSourceIndexResolver) writeIndex() error {
@@ -369,9 +380,9 @@ func (r *scalaSourceIndexResolver) writeIndex() error {
 
 // CrossResolve implements the CrossResolver interface.
 func (r *scalaSourceIndexResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
-	defer func() {
-		log.Println("(scala source resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
-	}()
+	// defer func() {
+	// 	log.Println("(scala source resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
+	// }()
 
 	if !(lang == ScalaLangName || imp.Lang == ScalaLangName) {
 		return

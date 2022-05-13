@@ -6,7 +6,9 @@ def _maybe(repo_rule, name, **kwargs):
 
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
-    bazel_gazelle()  # via <TOP>
+
+    # bazel_gazelle()  # via <TOP>
+    local_bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
     build_stack_rules_proto()
     build_bazel_rules_nodejs()  # via <TOP>
@@ -35,6 +37,13 @@ def bazel_gazelle():
         urls = [
             "https://github.com/bazelbuild/bazel-gazelle/archive/425d85daecb9aeffa1ae24b83df7b97b534dcf05.tar.gz",
         ],
+    )
+
+def local_bazel_gazelle():
+    _maybe(
+        native.local_repository,
+        name = "bazel_gazelle",
+        path = "/Users/i868039/go/src/github.com/bazelbuild/bazel-gazelle",
     )
 
 def rules_proto():

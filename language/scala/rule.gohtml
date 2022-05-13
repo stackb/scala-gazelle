@@ -4,14 +4,29 @@
 {{ end }}
 
 {{ define "body" }}
-    {{ with .Rule }}
+
+    {{ with .RuleSpec }}
         {{ template "statelabel" dict "State" "open" "Label" "Rule"  }}
         {{ template "subhead" dict "Title" .Label }}
+    {{ end }}
 
-        {{/* {{ with .Srcs }}
-            {{ template "subhead" "Srcs" }}
-            {{ template "filelist" . }}
-        {{ end }} */}}
+    {{ with .Rule }}
+        <div class="markdown-body">
+            <pre>
+                <code class="language-python">
+{{ . | printRule }}
+                </code>
+            </pre>
+        </div>
+
+        {{ with privateAttrString . "deps_graph" }}
+            <div class="m-3 border" id="deps"></div>
+            {{ template "graphviz" dict "Dot" . "Id" "deps" }}
+        {{ else }}
+            No deps_graph
+            {{ . }}
+        {{ end }}
 
     {{ end }}
+
 {{ end }}
