@@ -1,0 +1,15 @@
+{{ define "title" }}<title>Scala-Gazelle: Packages</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ template "subhead" dict "Title" "All Packages" }}
+
+    <ul>
+        {{ range .Packages }}
+            <li><a href="/ui/pkg/{{.}}">package {{.}}</a></li>
+        {{ end }}
+    </ul>
+
+{{ end }}
