@@ -7,8 +7,7 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
-    # bazel_gazelle()  # via <TOP>
-    local_bazel_gazelle()  # via <TOP>
+    bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
     build_stack_rules_proto()
     build_bazel_rules_nodejs()  # via <TOP>
@@ -18,25 +17,37 @@ def workspace_deps():
     viz_js_lite()
 
 def io_bazel_rules_go():
+    # Release: v0.35.0
+    # TargetCommitish: release-0.35
+    # Date: 2022-09-11 15:59:49 +0000 UTC
+    # URL: https://github.com/bazelbuild/rules_go/releases/tag/v0.35.0
+    # Size: 931734 (932 kB)
     _maybe(
         http_archive,
         name = "io_bazel_rules_go",
-        sha256 = "38171ce619b2695fa095427815d52c2a115c716b15f4cd0525a88c376113f584",
-        strip_prefix = "rules_go-0.28.0",
-        urls = [
-            "https://github.com/bazelbuild/rules_go/archive/v0.28.0.tar.gz",
-        ],
+        sha256 = "cc027f11f98aef8bc52c472ced0714994507a16ccd3a0820b2df2d6db695facd",
+        strip_prefix = "rules_go-0.35.0",
+        urls = ["https://github.com/bazelbuild/rules_go/archive/v0.35.0.tar.gz"],
     )
 
 def bazel_gazelle():
+    # Branch: master
+    # Commit: c4ec7765fad672d87548bdc43e740fb5843f0839
+    # Date: 2022-10-18 17:28:02 +0000 UTC
+    # URL: https://github.com/bazelbuild/bazel-gazelle/commit/c4ec7765fad672d87548bdc43e740fb5843f0839
+    #
+    # Add size argument to `gazelle_generation_test` (#1351)
+    #
+    # * Add size argument to gazelle integration test macro
+    # Size: 1573804 (1.6 MB)
     _maybe(
         http_archive,
         name = "bazel_gazelle",
-        sha256 = "cb05501bd37e2cbfdea8e23b28e5a7fe4ff4f12cef30eeb1924a0b8c3c0cea61",
-        strip_prefix = "bazel-gazelle-425d85daecb9aeffa1ae24b83df7b97b534dcf05",
-        urls = [
-            "https://github.com/bazelbuild/bazel-gazelle/archive/425d85daecb9aeffa1ae24b83df7b97b534dcf05.tar.gz",
-        ],
+        patch_args = ["-p1"],
+        patches = ["//third_party/bazelbuild/bazel-gazelle:rule-attrassignment-api.patch"],
+        sha256 = "33ad1ec6020e6660e921cab57ea8d49009af1b26b2434c986930ddab620feeb7",
+        strip_prefix = "bazel-gazelle-c4ec7765fad672d87548bdc43e740fb5843f0839",
+        urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/c4ec7765fad672d87548bdc43e740fb5843f0839.tar.gz"],
     )
 
 def local_bazel_gazelle():
@@ -58,10 +69,16 @@ def rules_proto():
     )
 
 def build_stack_rules_proto():
-    _maybe(
-        native.local_repository,
+    # Release: v2.0.1
+    # TargetCommitish: master
+    # Date: 2022-10-20 02:38:27 +0000 UTC
+    # URL: https://github.com/stackb/rules_proto/releases/tag/v2.0.1
+    # Size: 2071295 (2.1 MB)
+    http_archive(
         name = "build_stack_rules_proto",
-        path = "/Users/i868039/go/src/github.com/stackb/rules_proto",
+        sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
+        strip_prefix = "rules_proto-2.0.1",
+        urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
     )
 
 def build_bazel_rules_nodejs():

@@ -1,0 +1,1 @@
+exports_files(["rule-attrassignment-api.patch"])

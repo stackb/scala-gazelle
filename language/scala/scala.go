@@ -69,11 +69,11 @@ type scalaLang struct {
 	packages map[string]*scalaPackage
 	// isResolvePhase is a flag that is tracks if at least one Resolve() call
 	// has occurred.  It can be used to determine when the rule indexing phase
-	// has completed and deps resolution phase has started (and calls
+	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
 	// resolvers is a list of cross resolver implementations.  Typically there
-	// are two: one to help with third-party code, one to help with first-partt
+	// are two: one to help with third-party code, one to help with first-party
 	// code.
 	resolvers []ConfigurableCrossResolver
 	// viz is the dependency vizualization engine

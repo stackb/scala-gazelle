@@ -16,7 +16,7 @@ load(
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.16.2")
+go_register_toolchains(version = "1.18.2")
 
 # ----------------------------------------------------
 # Gazelle
