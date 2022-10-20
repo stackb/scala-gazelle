@@ -3,7 +3,11 @@ package scala
 import (
 	"flag"
 	"log"
+	"path/filepath"
 	"sort"
+	"strings"
+
+	"github.com/stackb/rules_proto/pkg/protoc"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -20,16 +24,64 @@ const (
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
+	var importRegistry *importRegistry
+	depends := func(src, dst, kind string) {
+		importRegistry.AddDependency(src, dst, kind)
+	}
+	packages := make(map[string]*scalaPackage)
+	sourceResolver := newScalaSourceIndexResolver(depends)
+	classResolver := newScalaClassIndexResolver(depends)
+	scalaCompiler := newScalaCompiler()
+	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
+	vizServer := newGraphvizServer(packages, importRegistry)
+
 	return &scalaLang{
-		ruleRegistry: globalRegistry,
-		packages:     make(map[string]*scalaPackage),
+		ruleRegistry:    globalRuleRegistry,
+		scalaFileParser: sourceResolver,
+		scalaCompiler:   scalaCompiler,
+		packages:        packages,
+		importRegistry:  importRegistry,
+		resolvers: []ConfigurableCrossResolver{
+			sourceResolver,
+			classResolver,
+		},
+		viz: vizServer,
 	}
 }
 
 // scalaLang implements language.Language.
 type scalaLang struct {
+	// ruleRegistry is the rule registry implementation.  This holds the rules
+	// configured via gazelle directives by the user.
 	ruleRegistry RuleRegistry
-	packages     map[string]*scalaPackage
+	// importRegistry instance tracks all known info about imports and rules and
+	// is used during import disambiguation.
+	importRegistry *importRegistry
+	// scalaFileParser is the parser implementation.  This is given to each
+	// ScalaPackage during GenerateRules such that rule implementations can use
+	// it.
+	scalaFileParser ScalaFileParser
+	// scalaCompiler is the compiler implementation.  This is passed to the
+	// importRegistry for use during import disambiguation.
+	scalaCompiler *scalaCompiler
+	// packages is map from the config.Rel to *scalaPackage for the
+	// workspace-relative packate name.
+	packages map[string]*scalaPackage
+	// isResolvePhase is a flag that is tracks if at least one Resolve() call
+	// has occurred.  It can be used to determine when the rule indexing phase
+	// has completed and deps resolution phase has started (it calls
+	// onResolvePhase).
+	isResolvePhase bool
+	// resolvers is a list of cross resolver implementations.  Typically there
+	// are two: one to help with third-party code, one to help with first-party
+	// code.
+	resolvers []ConfigurableCrossResolver
+	// viz is the dependency vizualization engine
+	viz *graphvizServer
+	// lastPackage tracks if this is the last generated package
+	lastPackage *scalaPackage
+	// remainingRules is a counter that tracks when all rules have been resolved.
+	remainingRules int
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -37,46 +89,109 @@ type scalaLang struct {
 // generates "go_library" rules.
 func (sl *scalaLang) Name() string { return ScalaLangName }
 
+// OnBegin implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnBegin() {
+	log.Println("-- BEGIN ---")
+}
+
+// OnIndex implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnIndex() {
+	log.Println("-- INDEX PHASE ---")
+}
+
+// OnResolve implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnResolve() {
+	log.Println("-- RESOLVE PHASE ---")
+
+	for _, r := range sl.resolvers {
+		if l, ok := r.(GazellePhaseTransitionListener); ok {
+			l.OnResolve()
+		}
+	}
+
+	sl.scalaCompiler.OnResolve()
+	sl.viz.OnResolve()
+
+	// gather proto imports
+	for from, imports := range protoc.GlobalResolver().Provided(ScalaLangName, ScalaLangName) {
+		sl.importRegistry.Provides(from, imports)
+	}
+
+	// gather 1p/3p imports
+	for _, rslv := range sl.resolvers {
+		if ip, ok := rslv.(protoc.ImportProvider); ok {
+			for from, imports := range ip.Provided(ScalaLangName, ScalaLangName) {
+				sl.importRegistry.Provides(from, imports)
+			}
+		}
+	}
+
+	sl.importRegistry.OnResolve()
+}
+
+// OnEnd implements part of the language.Lifecycler interface.
+func (sl *scalaLang) OnEnd() {
+	log.Println("-- END ---")
+	sl.scalaCompiler.stop()
+	// sl.recordDeps()
+	sl.viz.OnEnd()
+}
+
+// recordDeps writes deps info to the graph once all rules resolved.
+func (sl *scalaLang) recordDeps() {
+	for _, pkg := range sl.packages {
+		for _, r := range pkg.rules {
+			from := label.New("", pkg.rel, r.Name())
+			for _, dep := range r.AttrStrings("deps") {
+				to, err := label.Parse(dep)
+				if err != nil {
+					continue
+				}
+				sl.importRegistry.AddDependency("rule/"+from.String(), "rule/"+to.String(), "depends")
+			}
+		}
+	}
+}
+
 // The following methods are implemented to satisfy the
 // https://pkg.go.dev/github.com/bazelbuild/bazel-gazelle/resolve?tab=doc#Resolver
 // interface, but are otherwise unused.
-func (*scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	getOrCreateScalaConfig(c) // ignoring return value, only want side-effect
+
+	for _, r := range sl.resolvers {
+		r.RegisterFlags(fs, cmd, c)
+	}
+
+	sl.scalaCompiler.RegisterFlags(fs, cmd, c)
+	sl.viz.RegisterFlags(fs, cmd, c)
 }
 
-func (*scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error { return nil }
+// Configure implements part of the config.Configurer
+func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	for _, r := range sl.resolvers {
+		if err := r.CheckFlags(fs, c); err != nil {
+			return err
+		}
+	}
+	if err := sl.scalaCompiler.CheckFlags(fs, c); err != nil {
+		return err
+	}
+	if err := sl.viz.CheckFlags(fs, c); err != nil {
+		return err
+	}
+	return nil
+}
 
+// Configure implements part of the config.Configurer
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
 		ruleDirective,
+		overrideDirective,
+		indirectDependencyDirective,
+		scalaExplainDependencies,
+		mapKindImportNameDirective,
 	}
-}
-
-// Configure implements config.Configurer
-func (sl *scalaLang) Configure(c *config.Config, rel string, f *rule.File) {
-	if f == nil {
-		return
-	}
-	if err := getOrCreateScalaConfig(c).ParseDirectives(rel, f.Directives); err != nil {
-		log.Fatalf("error while parsing rule directives in package %q: %v", rel, err)
-	}
-}
-
-// Kinds returns a map of maps rule names (kinds) and information on how to
-// match and merge attributes that may be found in rules of those kinds. All
-// kinds of rules generated for this language may be found here.
-func (sl *scalaLang) Kinds() map[string]rule.KindInfo {
-	kinds := make(map[string]rule.KindInfo)
-
-	for _, name := range sl.ruleRegistry.RuleNames() {
-		rule, err := sl.ruleRegistry.LookupRule(name)
-		if err != nil {
-			log.Fatal("Kinds:", err)
-		}
-		kinds[rule.Name()] = rule.KindInfo()
-	}
-
-	return kinds
 }
 
 // Loads returns .bzl files and symbols they define. Every rule generated by
@@ -116,10 +231,119 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 	return loads
 }
 
+// Configure implements part of the config.Configurer
+func (sl *scalaLang) Configure(c *config.Config, rel string, f *rule.File) {
+	if f == nil {
+		return
+	}
+	if err := getOrCreateScalaConfig(c).parseDirectives(rel, f.Directives); err != nil {
+		log.Fatalf("error while parsing rule directives in package %q: %v", rel, err)
+	}
+}
+
+// Kinds returns a map of maps rule names (kinds) and information on how to
+// match and merge attributes that may be found in rules of those kinds. All
+// kinds of rules generated for this language may be found here.
+func (sl *scalaLang) Kinds() map[string]rule.KindInfo {
+	kinds := make(map[string]rule.KindInfo)
+
+	for _, name := range sl.ruleRegistry.RuleNames() {
+		rule, err := sl.ruleRegistry.LookupRule(name)
+		if err != nil {
+			log.Fatal("Kinds:", err)
+		}
+		kinds[rule.Name()] = rule.KindInfo()
+	}
+
+	return kinds
+}
+
 // Fix repairs deprecated usage of language-specific rules in f. This is called
 // before the file is indexed. Unless c.ShouldFix is true, fixes that delete or
 // rename rules should not be performed.
-func (*scalaLang) Fix(c *config.Config, f *rule.File) {}
+func (sl *scalaLang) Fix(c *config.Config, f *rule.File) {
+}
+
+// GenerateRules extracts build metadata from source files in a directory.
+// GenerateRules is called in each directory where an update is requested in
+// depth-first post-order.
+//
+// args contains the arguments for GenerateRules. This is passed as a struct to
+// avoid breaking implementations in the future when new fields are added.
+//
+// A GenerateResult struct is returned. Optional fields may be added to this
+// type in the future.
+//
+// Any non-fatal errors this function encounters should be logged using
+// log.Print.
+func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+	if debug {
+		log.Println("visiting", args.Rel)
+	}
+
+	cfg := getOrCreateScalaConfig(args.Config)
+
+	pkg := newScalaPackage(sl.ruleRegistry, sl.scalaFileParser, sl.importRegistry, args.Rel, args.File, cfg)
+	// search for child packages, but only assign if a parent has not already
+	// been assigned.  Given that gazelle uses a DFS walk, we should assign the
+	// child to the nearest parent.
+	for rel, child := range sl.packages {
+		if child.parent != nil {
+			continue
+		}
+		if !strings.HasPrefix(rel, args.Rel) {
+			continue
+		}
+		child.parent = pkg
+		sl.importRegistry.AddDependency("pkg/"+args.Rel, "pkg/"+rel, "pkg")
+	}
+	sl.packages[args.Rel] = pkg
+	sl.importRegistry.AddDependency("ws/default", "pkg/"+args.Rel, "ws")
+	sl.lastPackage = pkg
+
+	for _, r := range args.OtherGen {
+		if r.Kind() != "proto_library2" {
+			continue
+		}
+		if !hasPackageProto(args.RegularFiles) {
+			continue
+		}
+		srcs := r.AttrStrings("srcs")
+		if len(srcs) > 0 {
+			newSrcs := make([]string, 0)
+			for _, src := range srcs {
+				if src == "package.proto" {
+					continue
+				}
+				newSrcs = append(newSrcs, src)
+			}
+			r.SetAttr("srcs", protoc.DeduplicateAndSort(srcs))
+			// log.Printf("added package.proto to %s //%s:%s", r.Kind(), args.Rel, r.Name())
+			// deps := append(r.AttrStrings("deps"), "//thirdparty/protobuf/scalapb:scalapb_proto")
+			// r.SetAttr("deps", protoc.DeduplicateAndSort(deps))
+		}
+	}
+
+	rules := pkg.Rules()
+	sl.remainingRules += len(rules)
+	// empty := pkg.Empty()
+
+	imports := make([]interface{}, len(rules))
+	for i, r := range rules {
+		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
+		sl.importRegistry.AddDependency("pkg/"+args.Rel, "rule/"+label.New("", args.Rel, r.Name()).String(), "rule")
+	}
+
+	if debug && args.File != nil {
+		log.Println("visited", args.Rel)
+	}
+
+	return language.GenerateResult{
+		Gen: rules,
+		// Empty:   empty,
+		Imports: imports,
+	}
+}
 
 // Imports returns a list of ImportSpecs that can be used to import the rule r.
 // This is used to populate RuleIndex.
@@ -131,13 +355,16 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 
 	pkg, ok := sl.packages[from.Pkg]
 	if !ok {
-		log.Println("Unknown package", from.Pkg)
+		// log.Println("scala.Imports(): Unknown package", from.Pkg)
 		return nil
 	}
 
 	provider := pkg.ruleProvider(r)
+	// NOTE: gazelle attempts to index rules found in the build file regardless
+	// of whether we returned the rule from GenerateRules or not, so this will
+	// be nil in that case.
 	if provider == nil {
-		log.Printf("Unknown rule provider for //%s:%s %p", f.Pkg, r.Name(), r)
+		// log.Println("scala.Imports(): Unknown provider", from)
 		return nil
 	}
 
@@ -165,66 +392,46 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
+	if !sl.isResolvePhase {
+		sl.isResolvePhase = true
+		sl.OnResolve()
+	}
+
 	if pkg, ok := sl.packages[from.Pkg]; ok {
-		provider := pkg.ruleProvider(r)
-		if provider == nil {
-			log.Printf("no known rule provider for %v", from)
-		}
-		if imports, ok := importsRaw.([]string); ok {
-			provider.Resolve(c, ix, r, imports, from)
-		} else {
-			log.Printf("warning: resolve imports: expected []string, got %T", importsRaw)
+		pkg.Resolve(c, ix, rc, r, importsRaw, from)
+
+		sl.remainingRules--
+
+		if sl.remainingRules == 0 {
+			sl.OnEnd()
+		} else if sl.remainingRules&8 == 1 {
+			log.Println("Remaining rules:", sl.remainingRules)
 		}
 	} else {
 		log.Printf("no known rule package for %v", from.Pkg)
 	}
 }
 
-// GenerateRules extracts build metadata from source files in a directory.
-// GenerateRules is called in each directory where an update is requested in
-// depth-first post-order.
-//
-// args contains the arguments for GenerateRules. This is passed as a struct to
-// avoid breaking implementations in the future when new fields are added.
-//
-// A GenerateResult struct is returned. Optional fields may be added to this
-// type in the future.
-//
-// Any non-fatal errors this function encounters should be logged using
-// log.Print.
-func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	cfg := getOrCreateScalaConfig(args.Config)
-
-	files := make([]*ScalaFile, 0)
-
-	for _, f := range args.RegularFiles {
-		if !isScalaFile(f) {
-			continue
+// CrossResolve calls all known resolvers and returns the first non-empty result.
+func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+	for _, r := range sl.resolvers {
+		if result := r.CrossResolve(c, ix, imp, lang); len(result) > 0 {
+			// log.Printf("scala.CrossResolve hit %T %s", r, imp.Imp)
+			return result
 		}
-		file, err := ParseScalaFile(f)
-		if err != nil {
-			log.Println("error parsing scala file:", f, err.Error())
-			continue
+	}
+	if result := sl.importRegistry.CrossResolve(c, ix, imp, lang); len(result) > 0 {
+		// log.Printf("scala.CrossResolve hit %T %s", sl.importRegistry, imp.Imp)
+		return result
+	}
+	return nil
+}
+
+func hasPackageProto(files []string) bool {
+	for _, f := range files {
+		if filepath.Base(f) == "package.proto" {
+			return true
 		}
-		files = append(files, file)
 	}
-
-	pkg := newScalaPackage(sl.ruleRegistry, args.Rel, cfg, files...)
-	sl.packages[args.Rel] = pkg
-
-	rules := pkg.Rules()
-	empty := pkg.Empty()
-
-	imports := make([]interface{}, len(rules))
-	for i, r := range rules {
-		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
-		// internalLabel := label.New("", args.Rel, r.Name())
-		// protoc.GlobalRuleIndex().Put(internalLabel, r)
-	}
-
-	return language.GenerateResult{
-		Gen:     rules,
-		Empty:   empty,
-		Imports: imports,
-	}
+	return false
 }

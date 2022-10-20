@@ -1,0 +1,49 @@
+{{ define "title" }}<title>Scala-Gazelle: Package</title>{{ end }}
+
+{{ define "sidebar" }}
+{{ end }}
+
+{{ define "body" }}
+    {{ with .Package }}
+        {{ template "statelabel" dict "State" "open" "Label" "Package"  }}
+        {{ template "subhead" dict "Title" .Rel }}
+
+        <hr>
+        
+        {{ with .Config }}
+            {{ template "subhead" dict "Title" "Config" }}
+
+            {{ with .Overrides }}
+                {{ template "subhead" dict "Title" "Overrides" }}
+                <ul>
+                    {{ range . }}
+                        <li><code>{{ . }}</code></li>
+                    {{ end }}
+                </ul>
+            {{ end }}
+
+            {{ with .Indirects }}
+                {{ template "subhead" dict "Title" "Indirects" }}
+                <ul>
+                    {{ range . }}
+                        <li><code>{{ . | printf "%+v" }}</code></li>
+                    {{ end }}
+                </ul>
+            {{ end }}
+        {{ end }}
+    {{ end }}
+
+    {{ with .LabelMappings }}
+        {{ template "subhead" dict "Title" "Label Mappings" }}
+        <p>
+            Label mappings represent the mapping between (key) labels that are known to bazel as scala targets
+            and (value) labels that exist in the BUILD file.
+            They occur as a rule of the <code>map_kind_import_name</code> directive (e.g.<code>gazelle:map_kind_import_name scala_app %{name} %{name}_lib</code>).
+        </p>
+        <div class="markdown-body m-5">
+            <pre><code>{{{range . }}
+  "{{.From}}": "{{.To}}",{{ end }}
+}</code></pre>
+        </div>
+    {{ end }}
+{{ end }}

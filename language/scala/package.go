@@ -5,39 +5,76 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/repo"
+	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 const (
 	ruleProviderKey = "_scala_rule_provider"
 )
 
+type ScalaPackage interface {
+	// Rel returns the relative path to this package
+	Rel() string
+	// Dir returns the absolute path to the worksace
+	Dir() string
+	// File returns the BUILD file for the package
+	File() *rule.File
+	// ScalaFileParser returns the parser instance to use.
+	ScalaFileParser() ScalaFileParser
+	// ScalaImportRegistry returns the registry instance.
+	ScalaImportRegistry() ScalaImportRegistry
+}
+
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
+	// parser is the file parser
+	scalaFileParser ScalaFileParser
+	// shared import registry
+	scalaImportRegistry ScalaImportRegistry
+	// rel is the package (args.Rel)
+	rel string
 	// the registry to use
 	ruleRegistry RuleRegistry
-	// relative path of build file
-	rel string
+	// the build file
+	file *rule.File
 	// the config for this package
 	cfg *scalaConfig
-	// the list of '.scala' files
-	files []*ScalaFile
 	// the generated and empty rule providers
 	gen, empty []RuleProvider
+	// parent is the parent package
+	parent *scalaPackage
+	// resolved is the final state of generated rules, by name.
+	rules map[string]*rule.Rule
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, rel string, cfg *scalaConfig, files ...*ScalaFile) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
-		ruleRegistry: ruleRegistry,
-		rel:          rel,
-		cfg:          cfg,
-		files:        files,
+		scalaFileParser:     scalaFileParser,
+		scalaImportRegistry: scalaImportRegistry,
+		rel:                 rel,
+		ruleRegistry:        ruleRegistry,
+		file:                file,
+		cfg:                 cfg,
+		rules:               make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
-	s.empty = s.generateRules(false)
+	// s.empty = s.generateRules(false)
+
 	return s
+}
+
+// Config returns the the underlying config.
+func (s *scalaPackage) Config() *scalaConfig {
+	return s.cfg
+}
+
+// getRule returns the named rule, if it exists
+func (s *scalaPackage) getRule(name string) (*rule.Rule, bool) {
+	got, ok := s.rules[name]
+	return got, ok
 }
 
 // ruleProvider returns the provider of a rule or nil if not known.
@@ -48,39 +85,118 @@ func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
 	return nil
 }
 
-// generateRules constructs a list of rules based on the configured set of
-// languages.
+func (s *scalaPackage) Resolve(
+	c *config.Config,
+	ix *resolve.RuleIndex,
+	rc *repo.RemoteCache,
+	r *rule.Rule,
+	importsRaw interface{},
+	from label.Label,
+) {
+	provider := s.ruleProvider(r)
+	if provider == nil {
+		log.Printf("no known rule provider for %v", from)
+		return
+	}
+	provider.Resolve(c, ix, r, importsRaw, from)
+	s.rules[r.Name()] = r
+}
+
+// generateRules constructs a list of rules based on the configured set of rule
+// configurations.
 func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	rules := make([]RuleProvider, 0)
 
+	existingRulesByFQN := make(map[string][]*rule.Rule)
+	if s.file != nil {
+		for _, r := range s.file.Rules {
+			fqn := FullyQualifiedName(s.file.Loads, r.Kind())
+			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
+		}
+	}
+
 	for _, rc := range s.cfg.configuredRules() {
-		if enabled != rc.Enabled {
+		// if enabled != rc.Enabled {
+		if !rc.Enabled {
+			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
 			continue
 		}
-		rules = append(rules, s.provideRule(rc))
+		rule := s.provideRule(rc)
+		if rule != nil {
+			rules = append(rules, rule)
+		}
+		existing := existingRulesByFQN[rc.Implementation]
+		if len(existing) > 0 {
+			for _, r := range existing {
+				rule := s.resolveRule(rc, r)
+				if rule != nil {
+					rules = append(rules, rule)
+				}
+			}
+		}
+		delete(existingRulesByFQN, rc.Implementation)
 	}
 
 	return rules
 }
 
 func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
-	impl, err := globalRegistry.LookupRule(rc.Implementation)
+	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
-			s.rel,
+			s.Rel(),
 			rc.Implementation,
-			globalRegistry.RuleNames(),
+			s.ruleRegistry.RuleNames(),
 		)
 	}
 	rc.Impl = impl
 
-	rule := impl.ProvideRule(rc, s.files)
-	if rule == nil {
-		return nil
+	return impl.ProvideRule(rc, s)
+}
+
+func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
+	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
+	if err == ErrUnknownRule {
+		log.Fatalf(
+			"%s: rule not registered: %q (available: %v)",
+			s.Rel(),
+			rc.Implementation,
+			globalRuleRegistry.RuleNames(),
+		)
+	}
+	rc.Impl = impl
+
+	if rr, ok := impl.(RuleResolver); ok {
+		return rr.ResolveRule(rc, s, r)
 	}
 
-	return rule
+	return nil
+}
+
+// ScalaImportRegistry implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaImportRegistry() ScalaImportRegistry {
+	return s.scalaImportRegistry
+}
+
+// ScalaFileParser implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaFileParser() ScalaFileParser {
+	return s.scalaFileParser
+}
+
+// File implements part of the ScalaPackage interface.
+func (s *scalaPackage) File() *rule.File {
+	return s.file
+}
+
+// Rel implements part of the ScalaPackage interface.
+func (s *scalaPackage) Rel() string {
+	return s.rel
+}
+
+// Dir implements part of the ScalaPackage interface.
+func (s *scalaPackage) Dir() string {
+	return s.cfg.config.RepoRoot
 }
 
 // Rules provides the aggregated rule list for the package.
@@ -109,41 +225,30 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 		if r == nil {
 			continue
 		}
-
 		if shouldResolve {
 			// record the association of the rule provider here for the resolver.
 			r.SetPrivateAttr(ruleProviderKey, p)
-
-			// imports := r.PrivateAttr(config.GazelleImportsKey)
-			// if imports == nil {
-			// 	lib := s.ruleLibs[p]
-			// 	r.SetPrivateAttr(ProtoLibraryKey, lib)
-			// }
-
-			// NOTE: this is a bit of a hack: it would be preferable to populate
-			// the global resolver with import specs during the .Imports()
-			// function.  One would think that the RuleProvider could be set as
-			// a PrivateAttr to be retrieved in the Imports() function. However,
-			// the rule ref seems to have changed by that time, the PrivateAttr
-			// is removed.  Maybe this is due to rule merges?  Very difficult to
-			// track down bug that cost me days.
-			from := label.New("", s.rel, r.Name())
-			file := rule.EmptyFile("", s.rel)
-			provideResolverImportSpecs(s.cfg.config, p, r, file, from)
+			// log.Println("provided rule %s %s", r.Kind(), r.Name())
+			s.rules[r.Name()] = r
 		}
-
 		rules = append(rules, r)
 	}
 	return rules
 }
 
-func provideResolverImportSpecs(c *config.Config, provider RuleProvider, r *rule.Rule, f *rule.File, from label.Label) {
-	for _, imp := range provider.Imports(c, r, f) {
-		protoc.GlobalResolver().Provide(
-			"scala",
-			imp.Lang,
-			imp.Imp,
-			from,
-		)
+func FullyQualifiedName(loads []*rule.Load, kind string) string {
+	for _, load := range loads {
+		for _, pair := range load.SymbolPairs() {
+			// when there is no aliasing, pair.From == pair.To, so this covers
+			// both cases (aliases and not).
+			if pair.From == pair.To && pair.From == kind {
+				return load.Name() + "%" + pair.From
+			}
+			if pair.To == kind {
+				return load.Name() + "%" + pair.From
+			}
+		}
 	}
+	// no match, just return the kind (e.g. native.java_binary)
+	return kind
 }

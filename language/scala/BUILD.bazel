@@ -5,23 +5,52 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "scala",
     srcs = [
+        "cross_resolver_registry.go",
+        "glob.go",
+        "import_registry.go",
         "intent.go",
         "package.go",
-        "registry.go",
+        "parser.go",
         "resolver.go",
         "rule_config.go",
         "rule_info.go",
         "rule_provider.go",
+        "rule_registry.go",
         "scala.go",
+        "scala_class_index_resolver.go",
+        "scala_compiler.go",
         "scala_config.go",
-        "scala_file.go",
+        "scala_existing_rule.go",
         "scala_library.go",
+        "scala_source_index_resolver.go",
+        "symbol_table.go",
+        "viz.go",
+    ],
+    data = [
+        ":node",
+        ":scala_compiler.jar",
+        ":sourceindexer",
+    ],
+    embedsrcs = [
+        "file.gohtml",
+        "header.gohtml",
+        "home.gohtml",
+        "import.gohtml",
+        "index.gohtml",
+        "jar.gohtml",
+        "rule.gohtml",
+        "rules.gohtml",
+        "pkg.gohtml",
+        "packages.gohtml",
+        "symbols.gohtml",
+        "@cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js//file",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
-        "//antlr:parser",  # keep
-        "@antlr4_runtimes//:go",
+        "//pkg/collections",
+        "//pkg/index",
+        "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",
@@ -29,7 +58,46 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@build_stack_rules_proto//pkg/protoc",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_bmatcuk_doublestar_v4//:doublestar",
+        "@com_github_davecgh_go_spew//spew",
+        "@com_github_emicklei_dot//:dot",
+        "@com_github_roaringbitmap_roaring//:roaring",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@net_starlark_go//starlark",
     ],
+)
+
+genrule(
+    name = "sourceindexer_tool",
+    outs = ["sourceindexer"],
+    cmd = "cp $(location //cmd/sourceindexer) $@",
+    executable = True,
+    tools = ["//cmd/sourceindexer"],
+)
+
+genrule(
+    name = "scala_compiler_jar",
+    outs = ["scala_compiler.jar"],
+    cmd = "cp $(location //cmd/scalacparse:scala_compiler_deploy.jar) $@",
+    executable = True,
+    tools = ["//cmd/scalacparse:scala_compiler_deploy.jar"],
+)
+
+# genrule(
+#     name = "scala_compiler_jar_old",
+#     outs = ["scala_compiler.jar"],
+#     cmd = "cp $(location //cmd/scalacparse:scalacparse_deploy.jar) $@",
+#     executable = True,
+#     tools = ["//cmd/scalacparse:scalacparse_deploy.jar"],
+# )
+
+genrule(
+    name = "node_bin",
+    outs = ["node"],
+    cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
+    executable = True,
+    tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
 )
 
 genrule(
@@ -42,8 +110,33 @@ genrule(
 
 go_test(
     name = "scala_test",
-    srcs = ["scala_test.go"],
-    data = [":gazelle"] + glob(["testdata/**"]),
+    srcs = [
+        "glob_test.go",
+        "import_resolver_test.go",
+        "resolver_test.go",
+        "scala_compiler_test.go",
+        "scala_existing_rule_test.go",
+        "scala_test.go",
+        "viz_test.go",
+    ],
+    data = [
+        ":gazelle",
+        ":sourceindexer",
+        ":scala_compiler.jar",
+    ] + glob(["testdata/**"]),
     embed = [":scala"],
-    deps = ["@build_stack_rules_proto//pkg/goldentest"],
+    deps = [
+        "//pkg/index",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@build_stack_rules_proto//pkg/goldentest",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_davecgh_go_spew//spew",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
 )

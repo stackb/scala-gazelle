@@ -1,0 +1,43 @@
+{
+    "jarSpecs": [
+        {
+            "label": "@maven//:com_google_code_gson_gson",
+            "filename": "bazel-out/darwin-fastbuild/bin/external/maven/v1/https/repo.maven.apache.org/maven2/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar",
+            "classes": [
+                "com.google.gson.Gson"
+            ],
+            "packages": [
+                "com.google.gson"
+            ]
+        },
+        {
+            "label": "@maven//:com_typesafe_slick_slick_2_12",
+            "filename": "bazel-out/darwin-fastbuild/bin/external/maven/v1/https/repo.maven.apache.org/maven2/com/typesafe/slick/slick_2.12/3.3.2/slick_2.12-3.3.2.jar",
+            "classes": [
+                "slick.jdbc.PostgresProfile"
+            ],
+            "packages": [
+                "slick.jdbc"
+            ]
+        },
+        {
+            "label": "@maven//:org_scala_lang_scala_library",
+            "filename": "bazel-out/darwin-fastbuild/bin/external/maven/v1/https/repo.maven.apache.org/maven2/org/scala-lang/scala-library/2.12.10/scala-library-2.12.10.jar",
+            "classes": [
+                "scala.Byte"
+            ],
+            "packages": [
+                "scala"
+            ]
+        },
+        {
+            "filename": "bazel-out/darwin-fastbuild/bin/external/bazel_tools/tools/jdk/platformclasspath.jar",
+            "classes": [
+                "java.lang.Boolean"
+            ],
+            "packages": [
+                "java.lang"
+            ]
+        }
+    ]
+}

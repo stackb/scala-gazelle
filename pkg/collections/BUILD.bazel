@@ -1,0 +1,8 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "collections",
+    srcs = ["uint32stack.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/collections",
+    visibility = ["//visibility:public"],
+)

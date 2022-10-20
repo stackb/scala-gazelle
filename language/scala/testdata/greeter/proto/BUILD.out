@@ -1,0 +1,27 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules/scala:proto_scala_library.bzl", "proto_scala_library")
+load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
+
+proto_library(
+    name = "proto_proto",
+    srcs = ["api.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["@scalapis//scalapb:scalapb_proto"],
+)
+
+proto_compile(
+    name = "proto_scala_compile",
+    outputs = ["proto_scala.srcjar"],
+    plugins = ["@build_stack_rules_proto//plugin/scalapb/scalapb:protoc-gen-scala"],
+    proto = "proto_proto",
+)
+
+proto_scala_library(
+    name = "proto_scala_library",
+    srcs = ["proto_scala.srcjar"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//lib:options",
+        "@scalapis//scalapb:scalapb_proto_scala_library",
+    ],
+)

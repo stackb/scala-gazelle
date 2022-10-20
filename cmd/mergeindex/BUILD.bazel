@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "mergeindex_lib",
+    srcs = ["mergeindex.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/mergeindex",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/index",
+    ],
+)
+
+go_binary(
+    name = "mergeindex",
+    embed = [":mergeindex_lib"],
+    visibility = ["//visibility:public"],
+)

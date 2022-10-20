@@ -1,6 +1,8 @@
 package scala
 
 import (
+	"path/filepath"
+
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
@@ -18,7 +20,7 @@ const (
 )
 
 func init() {
-	Rules().MustRegisterRule("stackb:rules_scala:"+scalaLibraryRuleName,
+	Rules().MustRegisterRule("stackb:rules_scala:experimental:"+scalaLibraryRuleName,
 		&scalaLibrary{
 			kindName: scalaLibraryRuleName,
 		})
@@ -55,22 +57,27 @@ func (s *scalaLibrary) LoadInfo() rule.LoadInfo {
 }
 
 // ProvideRule implements part of the RuleInfo interface.
-func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, files []*ScalaFile) RuleProvider {
+func (s *scalaLibrary) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleProvider {
+	// files := pkg.Files()
+	// if len(files) == 0 {
+	// 	return nil
+	// }
+
 	return &scalaLibraryRule{
 		kindName:       s.kindName,
 		ruleNameSuffix: scalaLibraryRuleSuffix,
 		ruleConfig:     cfg,
-		files:          files,
+		rel:            pkg.Rel(),
+		// files:          files,
 	}
 }
 
 // scalaLibraryRule implements RuleProvider for 'scala_library'-derived rules.
 type scalaLibraryRule struct {
+	rel            string
 	kindName       string
 	ruleNameSuffix string
-	srcs           []string
 	ruleConfig     *RuleConfig
-	files          []*ScalaFile
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -80,15 +87,13 @@ func (s *scalaLibraryRule) Kind() string {
 
 // Name implements part of the ruleProvider interface.
 func (s *scalaLibraryRule) Name() string {
-	return "fixme" + s.ruleNameSuffix
+	prefix := filepath.Base(s.rel)
+	return prefix + s.ruleNameSuffix
 }
 
 // Srcs computes the srcs list for the rule.
 func (s *scalaLibraryRule) Srcs() []string {
 	srcs := make([]string, 0)
-	for _, file := range s.files {
-		srcs = append(srcs, file.Name)
-	}
 	return srcs
 }
 
@@ -101,11 +106,6 @@ func (s *scalaLibraryRule) Deps() []string {
 // imports computes the set of (scala) imports for the rule.
 func (s *scalaLibraryRule) imports() []string {
 	imps := make([]string, 0)
-	for _, file := range s.files {
-		for _, imp := range file.Imports {
-			imps = append(imps, imp.Name)
-		}
-	}
 	return DeduplicateAndSort(imps)
 }
 
@@ -143,6 +143,5 @@ func (s *scalaLibraryRule) Imports(c *config.Config, r *rule.Rule, file *rule.Fi
 }
 
 // Resolve implements part of the RuleProvider interface.
-func (s *scalaLibraryRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports []string, from label.Label) {
-	resolveDeps("deps")(c, ix, r, imports, from)
+func (s *scalaLibraryRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, imports interface{}, from label.Label) {
 }

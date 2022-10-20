@@ -16,11 +16,12 @@ load(
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.16.2")
+go_register_toolchains(version = "1.18.2")
 
 # ----------------------------------------------------
 # Gazelle
 # ----------------------------------------------------
+# gazelle:repository_macro go_repos.bzl%go_repositories
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 
@@ -36,11 +37,32 @@ load("@build_stack_rules_proto//:go_deps.bzl", "gazelle_protobuf_extension_go_de
 
 gazelle_protobuf_extension_go_deps()
 
+load("//:go_repos.bzl", "go_repositories")
+
+go_repositories()
+
 # ----------------------------------------------------
-# Antlr
+# NodeJS
 # ----------------------------------------------------
 
-load("@rules_antlr//antlr:repositories.bzl", "rules_antlr_dependencies")
-load("@rules_antlr//antlr:lang.bzl", "GO")
+load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories")
 
-rules_antlr_dependencies("4.8", GO)
+node_repositories()
+
+register_toolchains("//tools/toolchains:nodejs")
+
+# ----------------------------------------------------
+# Scala
+# ----------------------------------------------------
+
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
+
+scala_config(scala_version = "2.13.2")
+
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+
+scala_repositories()
+
+load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
+
+scala_register_toolchains()

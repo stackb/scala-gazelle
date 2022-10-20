@@ -1,0 +1,9 @@
+# gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
+
+# gazelle:proto_plugin scala implementation scalapb:scalapb:protoc-gen-scala
+# gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile
+# gazelle:proto_rule proto_scala_library implementation stackb:rules_proto:proto_scala_library
+# gazelle:proto_rule proto_scala_library visibility //visibility:public
+# gazelle:proto_language scala plugin scala
+# gazelle:proto_language scala rule proto_compile
+# gazelle:proto_language scala rule proto_scala_library
