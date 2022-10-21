@@ -435,12 +435,10 @@ function parse(inputs) {
 function main() {
     const args = process.argv.slice(2);
     if (debug) {
-        console.warn('usage: sourceindexer.js -o OUTPUT_FILE -l LABEL [INPUT_FILES]');
+        console.warn('usage: sourceindexer.js -l LABEL [INPUT_FILES] > result.json');
         console.warn('args:', args);
     }
 
-    // the output to write to (only valid when not in server mode)
-    let output = process.stdout;
     // label is the bazel label that contains the file we are parsing, so it can
     // be included in the result json
     let label = '';
@@ -452,10 +450,6 @@ function main() {
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         switch (arg) {
-            // case '-o':
-            //     outputFile = args[i + 1];
-            //     i++;
-            //     break;
             case '-l':
                 label = args[i + 1];
                 i++;
@@ -475,7 +469,6 @@ function main() {
         const srcs = parse(inputs)
         const result = JSON.stringify({ label, srcs }, null, 2);
         process.stdout.write(result);
-        // fs.writeFileSync(output, result);
         if (debug) {
             console.warn(`Wrote ${output} (${result.length} bytes)`);
         }
