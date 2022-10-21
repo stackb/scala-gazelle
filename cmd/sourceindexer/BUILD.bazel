@@ -2,41 +2,41 @@ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
 go_library(
     name = "sourceindexer_lib",
-    srcs = ["sourceindexer.go"],
+    srcs = [
+        "assets.go",
+        "options.go",
+        "sourceindexer.go",
+    ],
+    embedsrcs = [
+        "node_modules/scalameta-parsers/index.js",
+        "node_modules/scalameta-parsers/package.json",
+        "sourceindexer.js",
+        ":node.exe",
+    ],
     importpath = "github.com/stackb/scala-gazelle/cmd/sourceindexer",
     visibility = ["//visibility:public"],
 )
 
 go_binary(
     name = "sourceindexer",
-    data = [
-        "node_modules/scalameta-parsers/index.js",
-        "node_modules/scalameta-parsers/package.json",
-        "sourceindexer.js",
-        "@build_bazel_rules_nodejs//toolchains/node:node_bin",
-    ],
     embed = [":sourceindexer_lib"],
     visibility = ["//visibility:public"],
 )
 
-# go_embed_data(
-#     name = "assets",
-#     srcs = [
-#     ],
-#     package = "main",
-#     var = "embeddedAssets",
-# )
-
-# go_embed_data(
-#     name = "interpreter",
-#     srcs = [
-#     ],
-#     package = "main",
-#     var = "embeddedInterpreter",
-# )
-
 go_test(
     name = "sourceindexer_test",
-    srcs = ["sourceindexer_test.go"],
+    srcs = [
+        "assets_test.go",
+        "options_test.go",
+    ],
     embed = [":sourceindexer_lib"],
+    deps = ["@com_github_google_go_cmp//cmp"],
+)
+
+genrule(
+    name = "node_exe",
+    outs = ["node.exe"],
+    cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
+    executable = True,
+    tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
 )
