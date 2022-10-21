@@ -1,0 +1,42 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+
+go_library(
+    name = "cycler_lib",
+    srcs = [
+        "action.go",
+        "buildevents.go",
+        "buildozer_recommendation.go",
+        "config.go",
+        "cycler.go",
+        "env.go",
+        "io.go",
+        "missing_symbol.go",
+        "no_such_target.go",
+        "not_found_symbol.go",
+        "progress.go",
+        "types.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/cmd/cycler",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//pkg/index",
+        "@bazel_gazelle//label:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "cycler",
+    embed = [":cycler_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "cycler_test",
+    srcs = [
+        "buildevents_test.go",
+        "cycler_test.go",
+        "progress_test.go",
+    ],
+    embed = [":cycler_lib"],
+    deps = ["@com_github_google_go_cmp//cmp"],
+)
