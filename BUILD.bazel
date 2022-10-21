@@ -15,17 +15,17 @@ gazelle_binary(
         "@bazel_gazelle//language/go",
         "@bazel_gazelle//language/proto",
         "@build_stack_rules_proto//language/protobuf",
-        "//language/scala",
+        # "//language/scala",
     ],
     visibility = ["//visibility:public"],
 )
 
 gazelle(
     name = "gazelle",
-    args = [
-        "-scala_parser_tool_path=$(rootpath //cmd/sourceindexer)",
-        "-scala_compiler_jar_path=$(rootpath //cmd/scalacparse:scala_compiler_deploy.jar)",
-    ],
+    # args = [
+    #     "-scala_parser_tool_path=$(rootpath //cmd/sourceindexer)",
+    #     "-scala_compiler_jar_path=$(rootpath //cmd/scalacparse:scala_compiler_deploy.jar)",
+    # ],
     data = [
         "//cmd/scalacparse:scala_compiler_deploy.jar",
         "//cmd/sourceindexer",

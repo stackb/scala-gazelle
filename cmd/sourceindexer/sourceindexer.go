@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -9,6 +10,8 @@ import (
 	"path/filepath"
 	"syscall"
 )
+
+var assets embed.FS
 
 type options struct {
 	debug                bool
@@ -34,8 +37,8 @@ func parseOptions(args []string) (*options, error) {
 
 	if opts.restoreEmbeddedFiles {
 		tmpDir := os.TempDir()
-		mustRestore(&opts, tmpDir, embeddedInterpreter)
-		mustRestore(&opts, tmpDir, embeddedAssets)
+		// mustRestore(&opts, tmpDir, embeddedInterpreter)
+		// mustRestore(&opts, tmpDir, embeddedAssets)
 		if opts.nodeBinPath == "" {
 			opts.nodeBinPath = filepath.Join(tmpDir, "external/nodejs_darwin_amd64/bin/nodejs/bin/node")
 		}
