@@ -5,7 +5,6 @@ import (
 )
 
 func TestEmbed(t *testing.T) {
-	listFiles(".")
 	if len(sourceindexerJs) == 0 {
 		t.Error("embedded sourceindexer.js script is missing")
 	}

@@ -6,6 +6,7 @@ go_library(
         "assets.go",
         "exec.go",
         "options.go",
+        "parse.go",
         "sourceindexer.go",
     ],
     embedsrcs = [
@@ -30,9 +31,14 @@ go_test(
         "assets_test.go",
         "exec_test.go",
         "options_test.go",
+        "parse_test.go",
     ],
     embed = [":sourceindexer_lib"],
-    deps = ["@com_github_google_go_cmp//cmp"],
+    deps = [
+        "@bazel_gazelle//testtools:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
 )
 
 genrule(

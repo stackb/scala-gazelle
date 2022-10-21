@@ -452,10 +452,10 @@ function main() {
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         switch (arg) {
-            case '-o':
-                outputFile = args[i + 1];
-                i++;
-                break;
+            // case '-o':
+            //     outputFile = args[i + 1];
+            //     i++;
+            //     break;
             case '-l':
                 label = args[i + 1];
                 i++;
@@ -474,11 +474,11 @@ function main() {
     if (inputs.length > 0) {
         const srcs = parse(inputs)
         const result = JSON.stringify({ label, srcs }, null, 2);
-        fs.writeFileSync(output, result);
+        process.stdout.write(result);
+        // fs.writeFileSync(output, result);
         if (debug) {
             console.warn(`Wrote ${output} (${result.length} bytes)`);
         }
-
     } else {
         async function run() {
             for await (const line of nextRequest()) {
@@ -486,10 +486,8 @@ function main() {
                 // console.warn(`parse file: "${line}"`, srcs);
                 process.stdout.write(JSON.stringify(srcs[0]));
                 process.stdout.write(delim);
-
             }
         }
-
         run();
     }
 
