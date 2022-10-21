@@ -4,17 +4,18 @@ go_library(
     name = "sourceindexer_lib",
     srcs = [
         "assets.go",
+        "exec.go",
         "options.go",
         "sourceindexer.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
-        "node_modules/scalameta-parsers/package.json",
         "sourceindexer.js",
-        ":node.exe",
+        "node.exe",
     ],
     importpath = "github.com/stackb/scala-gazelle/cmd/sourceindexer",
     visibility = ["//visibility:public"],
+    deps = ["@com_github_amenzhinsky_go_memexec//:go-memexec"],
 )
 
 go_binary(
@@ -27,6 +28,7 @@ go_test(
     name = "sourceindexer_test",
     srcs = [
         "assets_test.go",
+        "exec_test.go",
         "options_test.go",
     ],
     embed = [":sourceindexer_lib"],

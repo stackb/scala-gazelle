@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"syscall"
+
+	"github.com/amenzhinsky/go-memexec"
 )
 
 func main() {
@@ -36,13 +38,19 @@ func main() {
 
 // run a command
 func run(entrypoint string, args []string, dir string, env []string) (int, error) {
-	cmd := exec.Command(entrypoint, args...)
+	exe, err := memexec.New(nodeExe)
+	if err != nil {
+		return 1, err
+	}
+	defer exe.Close()
+
+	cmd := exe.Command(args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Env = env
 	cmd.Dir = dir
-	err := cmd.Run()
+	err = cmd.Run()
 
 	var exitCode int
 	if err != nil {
