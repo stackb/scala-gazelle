@@ -12,6 +12,9 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
+// debugParse is a debug flag for use by a developer
+const debugParse = false
+
 type SourceFile struct {
 	Filename string `json:"filename,omitempty"`
 
@@ -32,7 +35,7 @@ type ParseResult struct {
 	Srcs  []SourceFile `json:"srcs"`
 }
 
-// Parse runs the embedded parser
+// Parse runs the embedded parser in batch mode.
 func Parse(label string, files []string) (*ParseResult, int, error) {
 	tmpDir, err := bazel.NewTmpDir("")
 	if err != nil {
@@ -64,10 +67,13 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	if false { // TODO: pass options, conditionally add this
 		env = append(env, "NODE_OPTIONS=--inspect-brk")
 	}
+
+	if debugParse {
+		listFiles(".")
+	}
+
 	var stdout, stderr bytes.Buffer
 
-	log.Println("args:", args)
-	listFiles(tmpDir)
 	exitCode, err := ExecNode(tmpDir, args, env, os.Stdin, &stdout, &stderr)
 	if err != nil {
 		return nil, exitCode, err
@@ -75,8 +81,6 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	if exitCode != 0 {
 		return nil, exitCode, fmt.Errorf(stderr.String())
 	}
-
-	log.Println("stdout:", stdout.String())
 
 	var result ParseResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
