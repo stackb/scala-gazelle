@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/amenzhinsky/go-memexec v0.7.0 // indirect
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect

@@ -7,6 +7,7 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
+    scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
     build_stack_rules_proto()
@@ -28,6 +29,22 @@ def io_bazel_rules_go():
         sha256 = "cc027f11f98aef8bc52c472ced0714994507a16ccd3a0820b2df2d6db695facd",
         strip_prefix = "rules_go-0.35.0",
         urls = ["https://github.com/bazelbuild/rules_go/archive/v0.35.0.tar.gz"],
+    )
+
+def scalameta_parsers():
+    _maybe(
+        http_archive,
+        name = "scalameta_parsers",
+        sha256 = "661081f106ebdc9592543223887de999d2a2b6229bd1aa22b1376ba6b695675d",
+        strip_prefix = "package",
+        build_file_content = """
+filegroup(
+    name = "module",
+    srcs = ["index.js"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.4.17.tgz"],
     )
 
 def bazel_gazelle():

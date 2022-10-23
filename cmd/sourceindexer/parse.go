@@ -14,6 +14,17 @@ import (
 
 type SourceFile struct {
 	Filename string `json:"filename,omitempty"`
+
+	Classes  []string `json:"classes,omitempty"`
+	Imports  []string `json:"imports,omitempty"`
+	Names    []string `json:"names,omitempty"`
+	Objects  []string `json:"objects,omitempty"`
+	Packages []string `json:"packages,omitempty"`
+	Traits   []string `json:"traits,omitempty"`
+	Types    []string `json:"types,omitempty"`
+	Error    string   `json:"error,omitempty"`
+
+	Extends map[string][]string `json:"extends,omitempty"`
 }
 
 type ParseResult struct {
@@ -50,6 +61,9 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	env := []string{
 		"NODE_PATH=" + tmpDir,
 	}
+	if false { // TODO: pass options, conditionally add this
+		env = append(env, "NODE_OPTIONS=--inspect-brk")
+	}
 	var stdout, stderr bytes.Buffer
 
 	log.Println("args:", args)
@@ -61,6 +75,8 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	if exitCode != 0 {
 		return nil, exitCode, fmt.Errorf(stderr.String())
 	}
+
+	log.Println("stdout:", stdout.String())
 
 	var result ParseResult
 	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {

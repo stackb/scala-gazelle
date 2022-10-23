@@ -102,7 +102,7 @@ class ScalaSourceFile {
         }
         const buffer = fs.readFileSync(this.filename);
         const tree = parseSource(buffer.toString());
-        // this.printNode(tree);
+        this.printNode(tree);
 
         this.traverse(tree, [], (key, node, stack) => {
             if (!node) {

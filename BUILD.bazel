@@ -28,7 +28,7 @@ gazelle(
     # ],
     data = [
         "//cmd/scalacparse:scala_compiler_deploy.jar",
-        "//cmd/sourceindexer",
+        # "//cmd/sourceindexer",
     ],
     gazelle = ":gazelle-scala",
 )

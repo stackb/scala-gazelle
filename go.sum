@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/RoaringBitmap/roaring v0.9.4 h1:ckvZSX5gwCRaJYBNe7syNawCU5oruY9gQmjXlp4riwo=
 github.com/RoaringBitmap/roaring v0.9.4/go.mod h1:icnadbWcNyfEHlYdr+tDlOTih1Bf/h+rzPpv4sbomAA=
+github.com/amenzhinsky/go-memexec v0.7.0 h1:BAoex/mFSJiPJQkJinBmT2vgkpUZBvJngjbhEhFrRa4=
+github.com/amenzhinsky/go-memexec v0.7.0/go.mod h1:mQNWoiLTmL4+AUb/y3KkDE7xh7qnEO/as+rkLZRqXYg=
 github.com/bazelbuild/bazel-gazelle v0.24.0 h1:gPaI2C0hRAhNT4w3bdSCift3nFjq0j07I4bmSDeneA4=
 github.com/bazelbuild/bazel-gazelle v0.24.0/go.mod h1:yyyf2EFW/ukgXBmyUXB70frjexdQcGcH899OVQJbJ+o=
 github.com/bazelbuild/buildtools v0.0.0-20210408102303-2b0a1af1a898/go.mod h1:689QdV3hBP7Vo9dJMmzhoYIyo/9iMhEmHkJcnaPRCbo=

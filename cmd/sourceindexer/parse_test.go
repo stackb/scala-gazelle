@@ -13,23 +13,169 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+// See https://github.com/scalameta/scalameta/tree/main/semanticdb/integration/src/main/scala/example for syntax examples
+
 func TestParse(t *testing.T) {
 	for name, tc := range map[string]struct {
 		label string
 		files []testtools.FileSpec
 		want  ParseResult
 	}{
-		// "degenerate": {},
+		"parse-error": {
+			label: "//src/main/scala/app:app",
+			files: []testtools.FileSpec{
+				{
+					Path:    "test/error.scala",
+					Content: "packge foo",
+				},
+			},
+			want: ParseResult{
+				Label: "//src/main/scala/app:app",
+				Srcs: []SourceFile{
+					{
+						Filename: "test/error.scala",
+						Error:    "foo",
+					},
+				},
+			},
+		},
 		"simple": {
 			label: "//src/main/scala/app:app",
 			files: []testtools.FileSpec{
-				{Path: "test/A.scala", Content: "package a\n\nclass A{}"},
+				{
+					Path:    "test/A.scala",
+					Content: "package a\n\nclass A{}",
+				},
 			},
 			want: ParseResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{
 						Filename: "test/A.scala",
+						Packages: []string{"a"},
+						Classes:  []string{"a.A"},
+						Names:    []string{"a"},
+					},
+				},
+			},
+		},
+		"classes": {
+			label: "//src/main/scala/app:app",
+			files: []testtools.FileSpec{
+				{
+					Path: "test/classes.scala",
+					Content: `
+package users
+class User {}
+`,
+				},
+			},
+			want: ParseResult{
+				Label: "//src/main/scala/app:app",
+				Srcs: []SourceFile{
+					{
+						Filename: "test/classes.scala",
+						Packages: []string{"users"},
+						Classes:  []string{"users.User"},
+						Names:    []string{"users"},
+					},
+				},
+			},
+		},
+		"imports": {
+			label: "//src/main/scala/app:app",
+			files: []testtools.FileSpec{
+				{
+					Path: "test/imports.scala",
+					Content: `
+					import users._  // import everything from the users package
+					import users.User  // import the class User
+					import users.{User, UserPreferences}  // Only imports selected members
+					import users.{UserPreferences => UPrefs}  // import and rename for convenience
+					`,
+				},
+			},
+			want: ParseResult{
+				Label: "//src/main/scala/app:app",
+				Srcs: []SourceFile{
+					{
+						Filename: "test/imports.scala",
+						Imports:  []string{"users.User", "users.UserPreferences", "users._"},
+						Names:    []string{"users"},
+					},
+				},
+			},
+		},
+
+		"kitchen-sink": {
+			label: "//src/main/scala/app:app",
+			files: []testtools.FileSpec{
+				{
+					Path: "test/A.scala",
+					Content: `
+package a
+
+import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
+import scala.util.{Failure, Success}
+import java.time._
+import java.util.{Map}
+
+trait Trait {}
+abstract class AbstractClass extends Trait {}
+class ConcreteClass extends AbstractClass {}
+class AConfigFactory extends ConfigFactory {}
+object ALogger extends LazyLogging {
+	type Id = String
+
+}
+case class CaseClass(
+    id: String,
+)
+`,
+				},
+			},
+			want: ParseResult{
+				Label: "//src/main/scala/app:app",
+				Srcs: []SourceFile{
+					{
+						Filename: "test/A.scala",
+						Packages: []string{"a"},
+						Imports: []string{
+							"com.typesafe.config.ConfigFactory",
+							"com.typesafe.scalalogging.LazyLogging",
+							"java.time._",
+							"java.util.Map",
+							"scala.util.Failure",
+							"scala.util.Success",
+						},
+						Classes: []string{
+							"a.AConfigFactory",
+							"a.AbstractClass",
+							"a.CaseClass",
+							"a.ConcreteClass",
+						},
+						Objects: []string{"a.ALogger"},
+						Traits:  []string{"a.Trait"},
+						Names: []string{
+							"ALogger",
+							"a",
+							"com",
+							"config",
+							"id",
+							"java",
+							"scala",
+							"scalalogging",
+							"time",
+							"typesafe",
+							"util",
+						},
+						Extends: map[string][]string{
+							"class a.AConfigFactory": {"ConfigFactory"},
+							"class a.AbstractClass":  {"Trait"},
+							"class a.ConcreteClass":  {"AbstractClass"},
+							"object a.ALogger":       {"LazyLogging"},
+						},
 					},
 				},
 			},

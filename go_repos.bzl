@@ -27,6 +27,14 @@ def go_repositories():
         version = "v0.0.0-20190523083050-ea95bdfd59fc",
     )
     go_repository(
+        name = "com_github_amenzhinsky_go_memexec",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/amenzhinsky/go-memexec",
+        sum = "h1:BAoex/mFSJiPJQkJinBmT2vgkpUZBvJngjbhEhFrRa4=",
+        version = "v0.7.0",
+    )
+
+    go_repository(
         name = "com_github_bazelbuild_bazel_gazelle",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/bazelbuild/bazel-gazelle",

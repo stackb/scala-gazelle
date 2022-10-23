@@ -16,7 +16,10 @@ go_library(
     ],
     importpath = "github.com/stackb/scala-gazelle/cmd/sourceindexer",
     visibility = ["//visibility:public"],
-    deps = ["@com_github_amenzhinsky_go_memexec//:go-memexec"],
+    deps = [
+        "@com_github_amenzhinsky_go_memexec//:go-memexec",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
 )
 
 go_binary(
@@ -39,6 +42,13 @@ go_test(
         "@com_github_google_go_cmp//cmp",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
+)
+
+genrule(
+    name = "scalameta-parsers-module",
+    srcs = ["@scalameta_parsers//:module"],
+    outs = ["node_modules/scalameta-parsers/index.js"],
+    cmd = "cp $(locations @scalameta_parsers//:module) $@",
 )
 
 genrule(
