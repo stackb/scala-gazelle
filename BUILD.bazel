@@ -23,12 +23,12 @@ gazelle_binary(
 gazelle(
     name = "gazelle",
     # args = [
-    #     "-scala_parser_tool_path=$(rootpath //cmd/sourceindexer)",
+    #     "-scala_parser_tool_path=$(rootpath //pkg/scalaparse)",
     #     "-scala_compiler_jar_path=$(rootpath //cmd/scalacparse:scala_compiler_deploy.jar)",
     # ],
     data = [
         "//cmd/scalacparse:scala_compiler_deploy.jar",
-        # "//cmd/sourceindexer",
+        # "//pkg/scalaparse",
     ],
     gazelle = ":gazelle-scala",
 )

@@ -87,7 +87,7 @@ scala_indexer_aspect = aspect(
     attr_aspects = ["deps"],
     attrs = {
         "_sourceindexer": attr.label(
-            default = Label("//cmd/sourceindexer"),
+            default = Label("//pkg/scalaparse"),
             cfg = "exec",
             executable = True,
         ),

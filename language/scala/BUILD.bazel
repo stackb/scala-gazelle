@@ -104,9 +104,9 @@ go_library(
 genrule(
     name = "sourceindexer_tool",
     outs = ["sourceindexer"],
-    cmd = "cp $(location //cmd/sourceindexer) $@",
+    cmd = "cp $(location //pkg/scalaparse) $@",
     executable = True,
-    tools = ["//cmd/sourceindexer"],
+    tools = ["//pkg/scalaparse"],
 )
 
 genrule(

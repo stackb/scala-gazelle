@@ -1,31 +1,24 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "sourceindexer_lib",
+    name = "scalaparse_lib",
     srcs = [
         "assets.go",
         "exec.go",
         "options.go",
         "parse.go",
-        "sourceindexer.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
         "sourceindexer.js",
         "node.exe",
     ],
-    importpath = "github.com/stackb/scala-gazelle/cmd/sourceindexer",
+    importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
     visibility = ["//visibility:public"],
     deps = [
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
-)
-
-go_binary(
-    name = "sourceindexer",
-    embed = [":sourceindexer_lib"],
-    visibility = ["//visibility:public"],
 )
 
 go_test(
@@ -36,7 +29,7 @@ go_test(
         "options_test.go",
         "parse_test.go",
     ],
-    embed = [":sourceindexer_lib"],
+    embed = [":scalaparse_lib"],
     deps = [
         "@bazel_gazelle//testtools:go_default_library",
         "@com_github_google_go_cmp//cmp",

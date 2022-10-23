@@ -46,10 +46,10 @@ func ParseOptions(tmpDir, toolPath string, args []string) (*Options, error) {
 			opts.NodeBinPath = filepath.Join(tmpDir, "external/nodejs_darwin_amd64/bin/nodejs/bin/node")
 		}
 		if opts.NodePath == "" {
-			opts.NodePath = filepath.Join(tmpDir, "cmd/sourceindexer")
+			opts.NodePath = filepath.Join(tmpDir, "pkg/scalaparse")
 		}
 		if opts.ScriptPath == "" {
-			opts.ScriptPath = filepath.Join(tmpDir, "cmd/sourceindexer/sourceindexer.js")
+			opts.ScriptPath = filepath.Join(tmpDir, "pkg/scalaparse/sourceindexer.js")
 		}
 	}
 
@@ -60,10 +60,10 @@ func ParseOptions(tmpDir, toolPath string, args []string) (*Options, error) {
 		opts.NodeBinPath = filepath.Join(runfilesDir, "nodejs_darwin_amd64/bin/nodejs/bin/node")
 	}
 	if opts.NodePath == "" {
-		opts.NodePath = filepath.Join(runfilesDir, "scala_gazelle/cmd/sourceindexer")
+		opts.NodePath = filepath.Join(runfilesDir, "scala_gazelle/pkg/scalaparse")
 	}
 	if opts.ScriptPath == "" {
-		opts.ScriptPath = filepath.Join(runfilesDir, "scala_gazelle/cmd/sourceindexer/sourceindexer.js")
+		opts.ScriptPath = filepath.Join(runfilesDir, "scala_gazelle/pkg/scalaparse/sourceindexer.js")
 	}
 
 	return &opts, nil

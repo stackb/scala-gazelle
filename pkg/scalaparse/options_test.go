@@ -16,8 +16,8 @@ func TestParseOptions(t *testing.T) {
 			want: &Options{
 				RestoreEmbeddedFiles: true,
 				NodeBinPath:          "faketmpdir/external/nodejs_darwin_amd64/bin/nodejs/bin/node",
-				NodePath:             "faketmpdir/cmd/sourceindexer",
-				ScriptPath:           "faketmpdir/cmd/sourceindexer/sourceindexer.js",
+				NodePath:             "faketmpdir/pkg/scalaparse",
+				ScriptPath:           "faketmpdir/pkg/scalaparse/sourceindexer.js",
 			},
 		},
 	} {

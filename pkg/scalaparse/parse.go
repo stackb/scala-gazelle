@@ -84,3 +84,16 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	}
 	return &result, 0, nil
 }
+
+// listFiles - convenience debugging function to log the files under a given dir
+func listFiles(dir string) error {
+	log.Println("Listing files under " + dir)
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("%v\n", err)
+			return err
+		}
+		log.Println(path)
+		return nil
+	})
+}
