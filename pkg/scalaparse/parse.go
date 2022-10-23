@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -31,15 +30,18 @@ type SourceFile struct {
 }
 
 type ParseResult struct {
-	Label string       `json:"label"`
-	Srcs  []SourceFile `json:"srcs"`
+	Label    string       `json:"label"`
+	Srcs     []SourceFile `json:"srcs"`
+	Stdout   string
+	Stderr   string
+	ExitCode int
 }
 
 // Parse runs the embedded parser in batch mode.
-func Parse(label string, files []string) (*ParseResult, int, error) {
+func Parse(label string, files []string) (*ParseResult, error) {
 	tmpDir, err := bazel.NewTmpDir("")
 	if err != nil {
-		return nil, -1, err
+		return nil, err
 	}
 	defer os.RemoveAll(tmpDir)
 
@@ -47,13 +49,17 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	parserPath := filepath.Join(tmpDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
-		return nil, -1, err
+		return nil, err
 	}
 	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerJs), os.ModePerm); err != nil {
-		return nil, -1, err
+		return nil, err
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
-		return nil, -1, err
+		return nil, err
+	}
+
+	if debugParse {
+		listFiles(".")
 	}
 
 	args := append([]string{
@@ -64,29 +70,29 @@ func Parse(label string, files []string) (*ParseResult, int, error) {
 	env := []string{
 		"NODE_PATH=" + tmpDir,
 	}
-	if false { // TODO: pass options, conditionally add this
-		env = append(env, "NODE_OPTIONS=--inspect-brk")
-	}
-
-	if debugParse {
-		listFiles(".")
-	}
 
 	var stdout, stderr bytes.Buffer
 
 	exitCode, err := ExecNode(tmpDir, args, env, os.Stdin, &stdout, &stderr)
-	if err != nil {
-		return nil, exitCode, err
-	}
-	if exitCode != 0 {
-		return nil, exitCode, fmt.Errorf(stderr.String())
+
+	result := &ParseResult{
+		Stderr:   stderr.String(),
+		Stdout:   stdout.String(),
+		ExitCode: exitCode,
 	}
 
-	var result ParseResult
-	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
-		return nil, exitCode, err
+	if err != nil || exitCode != 0 {
+		return result, err
 	}
-	return &result, 0, nil
+
+	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+		return nil, err
+	}
+
+	// after a successful json parse, unset the stdout, we don't care anymore
+	result.Stdout = ""
+
+	return result, nil
 }
 
 // listFiles - convenience debugging function to log the files under a given dir

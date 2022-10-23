@@ -22,7 +22,7 @@ go_library(
 )
 
 go_test(
-    name = "sourceindexer_test",
+    name = "scalaparse_test",
     srcs = [
         "assets_test.go",
         "exec_test.go",

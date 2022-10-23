@@ -34,9 +34,19 @@ func TestParse(t *testing.T) {
 				Srcs: []SourceFile{
 					{
 						Filename: "test/error.scala",
-						Error:    "foo",
+						Error:    "expected class or object definition identifier",
 					},
 				},
+				Stderr: `{
+  "error": "expected class or object definition identifier",
+  "pos": {
+    "start": 0,
+    "end": 6
+  },
+  "lineNumber": 0,
+  "columnNumber": 0
+}
+`,
 			},
 		},
 		"simple": {
@@ -65,9 +75,9 @@ func TestParse(t *testing.T) {
 				{
 					Path: "test/classes.scala",
 					Content: `
-package users
-class User {}
-`,
+		package users
+		class User {}
+		`,
 				},
 			},
 			want: ParseResult{
@@ -88,11 +98,11 @@ class User {}
 				{
 					Path: "test/imports.scala",
 					Content: `
-					import users._  // import everything from the users package
-					import users.User  // import the class User
-					import users.{User, UserPreferences}  // Only imports selected members
-					import users.{UserPreferences => UPrefs}  // import and rename for convenience
-					`,
+							import users._  // import everything from the users package
+							import users.User  // import the class User
+							import users.{User, UserPreferences}  // Only imports selected members
+							import users.{UserPreferences => UPrefs}  // import and rename for convenience
+							`,
 				},
 			},
 			want: ParseResult{
@@ -113,26 +123,26 @@ class User {}
 				{
 					Path: "test/A.scala",
 					Content: `
-package a
+		package a
 
-import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.LazyLogging
-import scala.util.{Failure, Success}
-import java.time._
-import java.util.{Map}
+		import com.typesafe.config.ConfigFactory
+		import com.typesafe.scalalogging.LazyLogging
+		import scala.util.{Failure, Success}
+		import java.time._
+		import java.util.{Map}
 
-trait Trait {}
-abstract class AbstractClass extends Trait {}
-class ConcreteClass extends AbstractClass {}
-class AConfigFactory extends ConfigFactory {}
-object ALogger extends LazyLogging {
-	type Id = String
+		trait Trait {}
+		abstract class AbstractClass extends Trait {}
+		class ConcreteClass extends AbstractClass {}
+		class AConfigFactory extends ConfigFactory {}
+		object ALogger extends LazyLogging {
+			type Id = String
 
-}
-case class CaseClass(
-    id: String,
-)
-`,
+		}
+		case class CaseClass(
+		    id: String,
+		)
+		`,
 				},
 			},
 			want: ParseResult{
@@ -203,12 +213,12 @@ case class CaseClass(
 				filenames = append(filenames, abs)
 			}
 
-			got, exitCode, err := Parse(tc.label, filenames)
+			got, err := Parse(tc.label, filenames)
 			if err != nil {
-				t.Fatal("parse error:", got, exitCode, err)
+				t.Fatal("parse error:", got, err)
 			}
-			if exitCode != 0 {
-				t.Fatal("parse exit:", got, exitCode)
+			if got.ExitCode != 0 {
+				t.Fatal("parse exit:", got, got.ExitCode)
 			}
 			// strip abs filename result for purposes of test comparison
 			for i := range got.Srcs {

@@ -7,6 +7,7 @@ const readline = require('readline');
 const { Console } = require('console');
 const { parseSource } = require('scalameta-parsers');
 
+const version = "1.0.0";
 const debug = false;
 const delim = Buffer.from([0x00]);
 // enableNestedImports will capture imports not at the top-level.  This can be
@@ -48,6 +49,12 @@ class ScalaSourceFile {
          * @type {Set<string>}
          */
         this.imports = new Set();
+
+        /**
+         * An error, if the tree failed to parse.
+         * @type {string|undefined}
+         */
+        this.error = undefined;
 
         /**
          * A set of top-level objects, qualified by their package name.
@@ -102,7 +109,7 @@ class ScalaSourceFile {
         }
         const buffer = fs.readFileSync(this.filename);
         const tree = parseSource(buffer.toString());
-        this.printNode(tree);
+        //this.printNode(tree);
 
         this.traverse(tree, [], (key, node, stack) => {
             if (!node) {
@@ -167,6 +174,7 @@ class ScalaSourceFile {
     }
 
     visitError(node) {
+        this.error = node.error;
         this.printNode(node);
     }
 
@@ -336,6 +344,9 @@ class ScalaSourceFile {
         const obj = {
             filename: this.filename,
         };
+        if (this.error) {
+            obj.error = this.error;
+        }
 
         const maybeAssignList = (set, prop) => {
             const list = Array.from(set);
@@ -425,7 +436,6 @@ function parse(inputs) {
                 filename: filename,
                 error: e.message,
             });
-            console.warn('error parsing', filename, e);
         }
     });
 
@@ -434,10 +444,6 @@ function parse(inputs) {
 
 function main() {
     const args = process.argv.slice(2);
-    if (debug) {
-        console.warn('usage: sourceindexer.js -l LABEL [INPUT_FILES] > result.json');
-        console.warn('args:', args);
-    }
 
     // label is the bazel label that contains the file we are parsing, so it can
     // be included in the result json
@@ -458,14 +464,17 @@ function main() {
                 repoRoot = args[i + 1];
                 i++;
                 break;
+            case '--version':
+                process.stdout.write(`${version}\n`);
+                process.exit(0);
             default:
                 inputs.push(arg);
         }
     }
 
-    // if the user supplied a list of files on the command line, parse those in
-    // batch.  Otherwise, wait on stdin for parse requests.
     if (inputs.length > 0) {
+        // if the user supplied a list of files on the command line, parse those in
+        // batch.
         const srcs = parse(inputs)
         const result = JSON.stringify({ label, srcs }, null, 2);
         process.stdout.write(result);
@@ -473,6 +482,7 @@ function main() {
             console.warn(`Wrote ${output} (${result.length} bytes)`);
         }
     } else {
+        // otherwise, wait on stdin for parse requests and write NUL delimited json messages.
         async function run() {
             for await (const line of nextRequest()) {
                 const srcs = parse([line]);
