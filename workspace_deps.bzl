@@ -7,6 +7,7 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
+    bun_darwin()
     scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
@@ -193,4 +194,22 @@ def viz_js_lite():
         name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
         sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
         urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
+    )
+
+def bun_darwin():
+    _maybe(
+        http_archive,
+        name = "bun_darwin",
+        sha256 = "8976309239260f8089377980cf9399e99a6e352f22878b59fc9804e7a8b98b7b",
+        strip_prefix = "bun-darwin-x64",
+        build_file_content = """
+filegroup(
+    name = "bin",
+    srcs = ["bun"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        urls = [
+            "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
+        ],
     )

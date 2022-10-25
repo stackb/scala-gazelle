@@ -1,4 +1,4 @@
-package main
+package scalaparse
 
 import (
 	"io"
@@ -9,9 +9,9 @@ import (
 	"github.com/amenzhinsky/go-memexec"
 )
 
-// ExecNode runs the embedded node interpreter
-func ExecNode(dir string, args, env []string, in io.Reader, stdout, stderr io.Writer) (int, error) {
-	exe, err := memexec.New(nodeExe)
+// ExecJS runs the embedded js runtime interpreter
+func ExecJS(dir string, args, env []string, in io.Reader, stdout, stderr io.Writer) (int, error) {
+	exe, err := memexec.New(bunExe)
 	if err != nil {
 		return 1, err
 	}

@@ -1,23 +1,29 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "scalaparse_lib",
+    name = "scalaparse",
     srcs = [
         "assets.go",
         "exec.go",
         "options.go",
         "parse.go",
+        "server.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
         "sourceindexer.js",
+        "bun.exe",
         "node.exe",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
     visibility = ["//visibility:public"],
     deps = [
+        "//api/scalaparse:scalaparse_go_proto",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
     ],
 )
 
@@ -27,12 +33,15 @@ go_test(
         "assets_test.go",
         "exec_test.go",
         "options_test.go",
-        "parse_test.go",
+        # "parse_test.go",
+        "server_test.go",
     ],
-    embed = [":scalaparse_lib"],
+    embed = [":scalaparse"],
     deps = [
+        "//api/scalaparse:scalaparse_go_proto",
         "@bazel_gazelle//testtools:go_default_library",
         "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
 )
@@ -50,4 +59,12 @@ genrule(
     cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
     executable = True,
     tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
+)
+
+genrule(
+    name = "bun_exe",
+    outs = ["bun.exe"],
+    cmd = "cp $(location @bun_darwin//:bin) $@",
+    executable = True,
+    tools = ["@bun_darwin//:bin"],
 )

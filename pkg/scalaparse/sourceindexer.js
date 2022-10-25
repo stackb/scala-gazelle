@@ -3,7 +3,7 @@
  * JSON summary of top-level symbols to stdout.
  */
 const fs = require('fs');
-const readline = require('readline');
+import { serve } from "bun";
 const { Console } = require('console');
 const { parseSource } = require('scalameta-parsers');
 
@@ -442,73 +442,92 @@ function parse(inputs) {
     return srcs;
 }
 
-function main() {
-    const args = process.argv.slice(2);
+const server = serve({
+    port: process.env.PORT || 3000,
+    fetch(request) {
+        return new Response("Welcome to Bun!");
+    },
+});
 
-    // label is the bazel label that contains the file we are parsing, so it can
-    // be included in the result json
-    let label = '';
-    // repoRoot is the absolute path to the root.
-    let repoRoot = '';
-    // inputs is a list of input files
-    const inputs = [];
+// Stop the server after 5 seconds
+setTimeout(() => {
+    server.stop();
+}, 5000);
 
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-        switch (arg) {
-            case '-l':
-                label = args[i + 1];
-                i++;
-                break;
-            case '-d':
-                repoRoot = args[i + 1];
-                i++;
-                break;
-            case '--version':
-                process.stdout.write(`${version}\n`);
-                process.exit(0);
-            default:
-                inputs.push(arg);
-        }
-    }
 
-    if (inputs.length > 0) {
-        // if the user supplied a list of files on the command line, parse those in
-        // batch.
-        const srcs = parse(inputs)
-        const result = JSON.stringify({ label, srcs }, null, 2);
-        process.stdout.write(result);
-        if (debug) {
-            console.warn(`Wrote ${output} (${result.length} bytes)`);
-        }
-    } else {
-        // otherwise, wait on stdin for parse requests and write NUL delimited json messages.
-        async function run() {
-            for await (const line of nextRequest()) {
-                const srcs = parse([line]);
-                // console.warn(`parse file: "${line}"`, srcs);
-                process.stdout.write(JSON.stringify(srcs[0]));
-                process.stdout.write(delim);
-            }
-        }
-        run();
-    }
+// function main() {
+//     const args = process.argv.slice(2);
 
-}
+//     // label is the bazel label that contains the file we are parsing, so it can
+//     // be included in the result json
+//     let label = '';
+//     // repoRoot is the absolute path to the root.
+//     let repoRoot = '';
+//     // inputs is a list of input files
+//     const inputs = [];
 
-main();
+//     for (let i = 0; i < args.length; i++) {
+//         const arg = args[i];
+//         switch (arg) {
+//             case '-l':
+//                 label = args[i + 1];
+//                 i++;
+//                 break;
+//             case '-d':
+//                 repoRoot = args[i + 1];
+//                 i++;
+//                 break;
+//             case '--version':
+//                 process.stdout.write(`${version}\n`);
+//                 process.exit(0);
+//             default:
+//                 inputs.push(arg);
+//         }
+//     }
 
-async function* nextRequest() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: undefined,
-    });
 
-    try {
-        for (; ;) {
-            yield new Promise((resolve) => rl.question("", resolve));
-        }
-    } finally {
-        rl.close();
-    }
-}
+
+//     if (inputs.length > 0) {
+//         // if the user supplied a list of files on the command line, parse those in
+//         // batch.
+//         const srcs = parse(inputs)
+//         const result = JSON.stringify({ label, srcs }, null, 2);
+//         process.stdout.write(result);
+//         if (debug) {
+//             console.warn(`Wrote ${output} (${result.length} bytes)`);
+//         }
+//     } else {
+//         // otherwise, wait on stdin for parse requests and write NUL delimited json messages.
+//         // exit when we see a request line 'EXIT'
+//         async function run() {
+//             for await (const line of nextRequest()) {
+//                 if (line === 'EXIT') {
+//                     process.exit(0);
+//                 }
+//                 const srcs = parse([line]);
+//                 // console.warn(`parse file: "${line}"`, srcs);
+//                 process.stdout.write(JSON.stringify(srcs[0]));
+//                 process.stdout.write(delim);
+//             }
+//         }
+//         run();
+//     }
+
+// }
+
+// main();
+
+// async function* nextRequest() {
+//     const rl = readline.createInterface({
+//         input: process.stdin,
+//         output: undefined,
+//     });
+
+//     try {
+//         for (; ;) {
+//             yield new Promise((resolve) => rl.question("", resolve));
+//         }
+//     } finally {
+//         rl.close();
+//     }
+// }

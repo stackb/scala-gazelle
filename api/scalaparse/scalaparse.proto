@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api.scalaparse;
+
+option go_package = "github.com/stackb/scala-gazelle/api/scalaparse";
+
+message ScalaFile {
+    string filename = 1;
+    repeated string import = 2;
+}
+
+message ScalaParseRequest {
+    string label = 1;
+    repeated string filename = 2;
+}
+
+message ScalaParseResponse {
+    string label = 1;
+    repeated ScalaFile file = 2;
+}
+
+service ScalaParser {
+    rpc Parse(ScalaParseRequest) returns (ScalaParseResponse) {}
+}
+

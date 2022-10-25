@@ -1,4 +1,4 @@
-package main
+package scalaparse
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ func TestParse(t *testing.T) {
 	for name, tc := range map[string]struct {
 		label string
 		files []testtools.FileSpec
-		want  ParseResult
+		want  ExecResult
 	}{
 		"parse-error": {
 			label: "//src/main/scala/app:app",
@@ -29,7 +29,7 @@ func TestParse(t *testing.T) {
 					Content: "packge foo",
 				},
 			},
-			want: ParseResult{
+			want: ExecResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{
@@ -57,7 +57,7 @@ func TestParse(t *testing.T) {
 					Content: "package a\n\nclass A{}",
 				},
 			},
-			want: ParseResult{
+			want: ExecResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{
@@ -80,7 +80,7 @@ func TestParse(t *testing.T) {
 		`,
 				},
 			},
-			want: ParseResult{
+			want: ExecResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{
@@ -105,7 +105,7 @@ func TestParse(t *testing.T) {
 							`,
 				},
 			},
-			want: ParseResult{
+			want: ExecResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{
@@ -145,7 +145,7 @@ func TestParse(t *testing.T) {
 		`,
 				},
 			},
-			want: ParseResult{
+			want: ExecResult{
 				Label: "//src/main/scala/app:app",
 				Srcs: []SourceFile{
 					{

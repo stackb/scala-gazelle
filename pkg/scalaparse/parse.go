@@ -1,4 +1,4 @@
-package main
+package scalaparse
 
 import (
 	"bytes"
@@ -13,6 +13,9 @@ import (
 
 // debugParse is a debug flag for use by a developer
 const debugParse = false
+
+// Exit is a special filename token that stops the parser.
+const EXIT = "EXIT"
 
 type SourceFile struct {
 	Filename string `json:"filename,omitempty"`
@@ -29,16 +32,27 @@ type SourceFile struct {
 	Extends map[string][]string `json:"extends,omitempty"`
 }
 
-type ParseResult struct {
-	Label    string       `json:"label"`
-	Srcs     []SourceFile `json:"srcs"`
+type ExecResult struct {
 	Stdout   string
 	Stderr   string
 	ExitCode int
 }
 
+type ParseResult struct {
+	Label string       `json:"label"`
+	Srcs  []SourceFile `json:"srcs"`
+}
+
+type ParseRequest struct {
+	Label string   `json:"label"`
+	Srcs  []string `json:"srcs"`
+	Done  bool
+}
+
+// re-implement this as a client-streaming type thing?
+
 // Parse runs the embedded parser in batch mode.
-func Parse(label string, files []string) (*ParseResult, error) {
+func Parse(label string, files []string) (*ExecResult, error) {
 	tmpDir, err := bazel.NewTmpDir("")
 	if err != nil {
 		return nil, err
@@ -73,9 +87,9 @@ func Parse(label string, files []string) (*ParseResult, error) {
 
 	var stdout, stderr bytes.Buffer
 
-	exitCode, err := ExecNode(tmpDir, args, env, os.Stdin, &stdout, &stderr)
+	exitCode, err := ExecJS(tmpDir, args, env, os.Stdin, &stdout, &stderr)
 
-	result := &ParseResult{
+	result := &ExecResult{
 		Stderr:   stderr.String(),
 		Stdout:   stdout.String(),
 		ExitCode: exitCode,
