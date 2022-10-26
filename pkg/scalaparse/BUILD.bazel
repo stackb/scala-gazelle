@@ -11,7 +11,7 @@ go_library(
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
-        "sourceindexer.js",
+        "sourceindexer.mjs",
         "bun.exe",
         "node.exe",
     ],

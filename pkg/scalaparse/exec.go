@@ -11,7 +11,7 @@ import (
 
 // ExecJS runs the embedded js runtime interpreter
 func ExecJS(dir string, args, env []string, in io.Reader, stdout, stderr io.Writer) (int, error) {
-	exe, err := memexec.New(bunExe)
+	exe, err := memexec.New(nodeExe)
 	if err != nil {
 		return 1, err
 	}

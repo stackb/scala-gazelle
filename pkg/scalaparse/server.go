@@ -2,13 +2,18 @@ package scalaparse
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
+	"net/http/httputil"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -21,7 +26,13 @@ import (
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
+const contentTypeJSON = "application/json"
+
 type ScalaParseClient struct {
+}
+
+func NewScalaParseServer() *ScalaParseServer {
+	return &ScalaParseServer{}
 }
 
 type ScalaParseServer struct {
@@ -29,6 +40,8 @@ type ScalaParseServer struct {
 
 	process    *memexec.Exec
 	processDir string
+	cmd        *exec.Cmd
+
 	grpcServer *grpc.Server
 
 	httpClient *http.Client
@@ -38,17 +51,26 @@ type ScalaParseServer struct {
 }
 
 func (s *ScalaParseServer) Stop() {
+	log.Println("stopping server")
+	if s.httpClient != nil {
+		log.Println("closing idle http connections")
+		s.httpClient.CloseIdleConnections()
+		s.httpClient = nil
+	}
+	if s.cmd != nil {
+		s.cmd.Process.Kill()
+		s.cmd = nil
+	}
+
 	if s.process != nil {
+		log.Println("stopping server process")
 		s.process.Close()
 		s.process = nil
 	}
 	if s.processDir != "" {
+		log.Println("cleaning temp processDir", s.processDir)
 		os.RemoveAll(s.processDir)
 		s.processDir = ""
-	}
-	if s.httpClient != nil {
-		s.httpClient.CloseIdleConnections()
-		s.httpClient = nil
 	}
 }
 
@@ -61,13 +83,13 @@ func (s *ScalaParseServer) Start() error {
 		return err
 	}
 
-	scriptPath := filepath.Join(processDir, "sourceindexer.js")
+	scriptPath := filepath.Join(processDir, "sourceindexer.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerJs), os.ModePerm); err != nil {
+	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerMjs), os.ModePerm); err != nil {
 		return err
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
@@ -88,6 +110,7 @@ func (s *ScalaParseServer) Start() error {
 		}
 		s.HttpPort = port
 	}
+	s.httpUrl = fmt.Sprintf("http://127.0.0.1:%d", s.HttpPort)
 
 	//
 	// Setup the bun process
@@ -101,7 +124,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("./sourceindexer.js")
+	cmd := exe.Command("./sourceindexer.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
@@ -110,23 +133,65 @@ func (s *ScalaParseServer) Start() error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	s.cmd = cmd
 
+	log.Println("starting process")
 	if err := cmd.Start(); err != nil {
 		return err
+	}
+
+	go func() {
+		log.Println("waiting on process")
+		if err := cmd.Wait(); err != nil {
+			log.Printf("command wait err: %v", err)
+		}
+	}()
+
+	if true {
+		//
+		// Wait for connection to become available
+		//
+		var wg sync.WaitGroup
+		wg.Add(1)
+		then := time.Now()
+
+		go func() {
+			defer wg.Done()
+			for {
+				log.Printf("checking connection available for %s...", s.httpUrl)
+
+				_, err := net.Dial("tcp", fmt.Sprintf("localhost:%d", s.HttpPort))
+				if err == nil {
+					log.Printf("%s is available after %s", s.httpUrl, time.Since(then))
+					break
+				}
+				time.Sleep(time.Second)
+			}
+		}()
+
+		wg.Wait()
+	} else {
+		time.Sleep(time.Second)
 	}
 
 	//
 	// Setup the http client
 	//
 	s.httpClient = &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: 10 * time.Second,
+		// Transport: &http.Transport{
+		// 	Dial: (&net.Dialer{
+		// 		Timeout: 5 * time.Second,
+		// 	}).Dial,
+		// 	TLSHandshakeTimeout: 5 * time.Second,
+		// },
 	}
-	s.httpUrl = fmt.Sprintf("http://localhost:%d", s.HttpPort)
 
+	// time.Sleep(1 * time.Second)
 	return nil
 }
 
-func (s *ScalaParseServer) Parse(in *sppb.ScalaParseRequest) (*sppb.ScalaParseResponse, error) {
+func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest) (*sppb.ScalaParseResponse, error) {
 	if false {
 		return nil, status.Error(codes.Unimplemented, "not implemented")
 	}
@@ -140,11 +205,23 @@ func (s *ScalaParseServer) Parse(in *sppb.ScalaParseRequest) (*sppb.ScalaParseRe
 		return nil, status.Errorf(codes.Internal, "response error: %v", err)
 	}
 
+	respDump, err := httputil.DumpResponse(w, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("RESPONSE:\n%s", string(respDump))
+
+	contentType := w.Header.Get("Content-Type")
+	if contentType != contentTypeJSON {
+		return nil, status.Errorf(codes.Internal, "response content-type error, want %q, got: %q", contentTypeJSON, contentType)
+	}
+
 	data, err := ioutil.ReadAll(w.Body)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "response data error: %v", err)
 	}
 
+	log.Printf("response body: %q", string(data))
 	var response sppb.ScalaParseResponse
 	if err := json.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v", err)

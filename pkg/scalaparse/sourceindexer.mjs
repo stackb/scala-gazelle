@@ -1,15 +1,19 @@
 /**
- * @fileoverview sourceindexer.js parses a list of source files and outputs a
+ * @fileoverview sourceindexer.mjs parses a list of source files and outputs a
  * JSON summary of top-level symbols to stdout.
  */
-const fs = require('fs');
-import { serve } from "bun";
-const { Console } = require('console');
-const { parseSource } = require('scalameta-parsers');
+import * as fs from 'node:fs';
+import * as http from 'node:http';
+import * as path from 'node:path';
+import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
+import { Console } from 'node:console';
+import { parseSource } from 'scalameta-parsers';
 
+const __filename = new URL('', import.meta.url).pathname;
 const version = "1.0.0";
 const debug = false;
 const delim = Buffer.from([0x00]);
+
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
 // the top-level, which then must be suppressed with resolve directives.
@@ -419,115 +423,115 @@ class ScalaSourceFile {
 }
 
 /**
- * parse takes a list of input files and write a JSON.
+ * parse takes a list of input files and returns a list of .
+ * 
+ * @param {string>} filename The file to parse (relative or absolute)
+ * @returns {!ScalaSourceInfo}
+ */
+function parseFile(filename) {
+    const start = new Date().getTime();
+    try {
+        const src = new ScalaSourceFile(filename);
+        src.parse();
+        const result = src.toObject();
+        result.elapsedMillis = new Date().getTime() - start;
+        return result;
+    } catch (e) {
+        return {
+            filename: filename,
+            error: e.message,
+        };
+    }
+}
+
+/**
+ * parse takes a list of input files and returns a list of .
  * 
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
  * @returns {!Array<ScalaSourceInfo>}
  */
-function parse(inputs) {
-    const srcs = [];
-    inputs.forEach(filename => {
-        try {
-            const src = new ScalaSourceFile(filename);
-            src.parse();
-            srcs.push(src.toObject());
-        } catch (e) {
-            srcs.push({
-                filename: filename,
-                error: e.message,
-            });
-        }
-    });
-
-    return srcs;
+async function parseFiles(inputs) {
+    return inputs.map(parseFile);
 }
 
-const server = serve({
-    port: process.env.PORT || 3000,
-    fetch(request) {
-        return new Response("Welcome to Bun!");
-    },
-});
+/**
+ * parse takes a list of input files and returns a list of .
+ * 
+ * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
+ * @returns {!Array<ScalaSourceInfo>}
+ */
+async function parseFilesParallel(inputs) {
+    const work = inputs.map(filename => {
+        return new Promise((resolve, reject) => {
+            const worker = new Worker(__filename, { workerData: filename });
+            worker.on('message', resolve);
+            worker.on('error', reject);
+        });
+    });
+    return Promise.all(work);
+}
 
-// Stop the server after 5 seconds
-setTimeout(() => {
-    server.stop();
-}, 5000);
+/**
+ * Process a parse request
+ * @param {{files: !Array<string>}} request 
+ * @returns Array<!Object>
+ */
+async function processJSONRequest(request) {
+    if (!Array.isArray(request.files)) {
+        throw new Error(`bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`);
+    }
 
+    const start = new Date().getTime();
+    let srcs = [];
+    if (process.env.PARALLEL_MODE) {
+        srcs = await parseFilesParallel(request.files);
+    } else {
+        srcs = await parseFiles(request.files);
+    }
+    const elapsedMillis = new Date().getTime() - start;
 
-// function main() {
-//     const args = process.argv.slice(2);
+    return { srcs, elapsedMillis };
+}
 
-//     // label is the bazel label that contains the file we are parsing, so it can
-//     // be included in the result json
-//     let label = '';
-//     // repoRoot is the absolute path to the root.
-//     let repoRoot = '';
-//     // inputs is a list of input files
-//     const inputs = [];
+function processApplicationJSON(data) {
+    return processJSONRequest(JSON.parse(data));
+}
 
-//     for (let i = 0; i < args.length; i++) {
-//         const arg = args[i];
-//         switch (arg) {
-//             case '-l':
-//                 label = args[i + 1];
-//                 i++;
-//                 break;
-//             case '-d':
-//                 repoRoot = args[i + 1];
-//                 i++;
-//                 break;
-//             case '--version':
-//                 process.stdout.write(`${version}\n`);
-//                 process.exit(0);
-//             default:
-//                 inputs.push(arg);
-//         }
-//     }
+const requestHandler = (req, res) => {
+    if (req.method != 'POST') {
+        res.writeHead(400, { "Content-type": "application/json" });
+        res.end(JSON.stringify({ error: "this server only services POST requests" }));
+        return;
+    }
 
+    const data = [];
+    req.on('data', (chunk) => {
+        data.push(chunk);
+    });
 
+    req.on('end', async () => {
+        try {
+            const result = await processApplicationJSON(data);
+            res.writeHead(200, { "Content-type": "application/json" });;
+            res.end(JSON.stringify(result));
+        } catch (err) {
+            res.writeHead(500, { "Content-type": "application/json" });;
+            res.end(JSON.stringify({ error: err.message }));
+        }
+    });
+}
 
-//     if (inputs.length > 0) {
-//         // if the user supplied a list of files on the command line, parse those in
-//         // batch.
-//         const srcs = parse(inputs)
-//         const result = JSON.stringify({ label, srcs }, null, 2);
-//         process.stdout.write(result);
-//         if (debug) {
-//             console.warn(`Wrote ${output} (${result.length} bytes)`);
-//         }
-//     } else {
-//         // otherwise, wait on stdin for parse requests and write NUL delimited json messages.
-//         // exit when we see a request line 'EXIT'
-//         async function run() {
-//             for await (const line of nextRequest()) {
-//                 if (line === 'EXIT') {
-//                     process.exit(0);
-//                 }
-//                 const srcs = parse([line]);
-//                 // console.warn(`parse file: "${line}"`, srcs);
-//                 process.stdout.write(JSON.stringify(srcs[0]));
-//                 process.stdout.write(delim);
-//             }
-//         }
-//         run();
-//     }
-
-// }
-
-// main();
-
-// async function* nextRequest() {
-//     const rl = readline.createInterface({
-//         input: process.stdin,
-//         output: undefined,
-//     });
-
-//     try {
-//         for (; ;) {
-//             yield new Promise((resolve) => rl.question("", resolve));
-//         }
-//     } finally {
-//         rl.close();
-//     }
-// }
+if (true) {
+    const server = http.createServer(requestHandler)
+    const port = process.env.PORT || 3000;
+    server.listen(port, (err) => {
+        if (err) {
+            return console.log('something bad happened', err)
+        }
+        console.log(`server is listening on ${port} (${__filename})`);
+    });
+} else {
+    const filename = workerData;
+    const result = parseFile(filename);
+    parentPort.postMessage(result);
+}

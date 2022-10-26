@@ -17,6 +17,7 @@ message ScalaParseRequest {
 message ScalaParseResponse {
     string label = 1;
     repeated ScalaFile file = 2;
+    string error = 3;
 }
 
 service ScalaParser {

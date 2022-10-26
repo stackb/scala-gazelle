@@ -5,8 +5,8 @@ import (
 )
 
 func TestEmbed(t *testing.T) {
-	if len(sourceindexerJs) == 0 {
-		t.Error("embedded sourceindexer.js script is missing")
+	if len(sourceindexerMjs) == 0 {
+		t.Error("embedded sourceindexer.mjs script is missing")
 	}
 	if len(scalametaParsersIndexJs) == 0 {
 		t.Error("embedded node_modules/scalameta-parsers/index.js script is missing")

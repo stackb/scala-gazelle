@@ -59,13 +59,13 @@ func Parse(label string, files []string) (*ExecResult, error) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	scriptPath := filepath.Join(tmpDir, "sourceindexer.js")
+	scriptPath := filepath.Join(tmpDir, "sourceindexer.mjs")
 	parserPath := filepath.Join(tmpDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
 		return nil, err
 	}
-	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerJs), os.ModePerm); err != nil {
+	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerMjs), os.ModePerm); err != nil {
 		return nil, err
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
@@ -77,7 +77,7 @@ func Parse(label string, files []string) (*ExecResult, error) {
 	}
 
 	args := append([]string{
-		"./sourceindexer.js",
+		"./sourceindexer.mjs",
 		"-l", label,
 	}, files...)
 

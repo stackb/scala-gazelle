@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 )
 
-//go:embed sourceindexer.js
-var sourceindexerJs string
+//go:embed sourceindexer.mjs
+var sourceindexerMjs string
 
 //go:embed node_modules/scalameta-parsers/index.js
 var scalametaParsersIndexJs string
