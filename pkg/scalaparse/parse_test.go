@@ -2,9 +2,7 @@ package scalaparse
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -198,20 +196,7 @@ func TestParse(t *testing.T) {
 			}
 			defer os.RemoveAll(tmpDir)
 
-			var filenames []string
-			for _, file := range tc.files {
-				abs := filepath.Join(tmpDir, file.Path)
-				dir := filepath.Dir(abs)
-				if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-					t.Fatal(err)
-				}
-				if !file.NotExist {
-					if err := ioutil.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
-						t.Fatal(err)
-					}
-				}
-				filenames = append(filenames, abs)
-			}
+			filenames := mustWriteTestFiles(t, tmpDir, tc.files)
 
 			got, err := Parse(tc.label, filenames)
 			if err != nil {

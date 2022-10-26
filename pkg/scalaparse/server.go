@@ -16,9 +16,9 @@ import (
 	"sync"
 	"time"
 
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/amenzhinsky/go-memexec"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
@@ -42,8 +42,6 @@ type ScalaParseServer struct {
 	processDir string
 	cmd        *exec.Cmd
 
-	grpcServer *grpc.Server
-
 	httpClient *http.Client
 	httpUrl    string
 
@@ -51,9 +49,7 @@ type ScalaParseServer struct {
 }
 
 func (s *ScalaParseServer) Stop() {
-	log.Println("stopping server")
 	if s.httpClient != nil {
-		log.Println("closing idle http connections")
 		s.httpClient.CloseIdleConnections()
 		s.httpClient = nil
 	}
@@ -61,14 +57,11 @@ func (s *ScalaParseServer) Stop() {
 		s.cmd.Process.Kill()
 		s.cmd = nil
 	}
-
 	if s.process != nil {
-		log.Println("stopping server process")
 		s.process.Close()
 		s.process = nil
 	}
 	if s.processDir != "" {
-		log.Println("cleaning temp processDir", s.processDir)
 		os.RemoveAll(s.processDir)
 		s.processDir = ""
 	}
@@ -115,7 +108,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Setup the bun process
 	//
-	exe, err := memexec.New(bunExe)
+	exe, err := memexec.New(nodeExe)
 	if err != nil {
 		return err
 	}
@@ -124,7 +117,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("./sourceindexer.mjs")
+	cmd := exe.Command("sourceindexer.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
@@ -135,67 +128,36 @@ func (s *ScalaParseServer) Start() error {
 	cmd.Stderr = os.Stderr
 	s.cmd = cmd
 
-	log.Println("starting process")
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-
 	go func() {
-		log.Println("waiting on process")
+		// does it make sense to wait for the process?  We kill it forcefully
+		// at the end anyway...
 		if err := cmd.Wait(); err != nil {
 			log.Printf("command wait err: %v", err)
 		}
 	}()
 
-	if true {
-		//
-		// Wait for connection to become available
-		//
-		var wg sync.WaitGroup
-		wg.Add(1)
-		then := time.Now()
-
-		go func() {
-			defer wg.Done()
-			for {
-				log.Printf("checking connection available for %s...", s.httpUrl)
-
-				_, err := net.Dial("tcp", fmt.Sprintf("localhost:%d", s.HttpPort))
-				if err == nil {
-					log.Printf("%s is available after %s", s.httpUrl, time.Since(then))
-					break
-				}
-				time.Sleep(time.Second)
-			}
-		}()
-
-		wg.Wait()
-	} else {
-		time.Sleep(time.Second)
-	}
+	waitForConnectionAvailable("localhost", s.HttpPort, 3*time.Second)
 
 	//
 	// Setup the http client
 	//
 	s.httpClient = &http.Client{
 		Timeout: 10 * time.Second,
-		// Transport: &http.Transport{
-		// 	Dial: (&net.Dialer{
-		// 		Timeout: 5 * time.Second,
-		// 	}).Dial,
-		// 	TLSHandshakeTimeout: 5 * time.Second,
-		// },
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout: 5 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout: 5 * time.Second,
+		},
 	}
 
-	// time.Sleep(1 * time.Second)
 	return nil
 }
 
 func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest) (*sppb.ScalaParseResponse, error) {
-	if false {
-		return nil, status.Error(codes.Unimplemented, "not implemented")
-	}
-
 	req, err := newHttpScalaParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
@@ -205,11 +167,13 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest
 		return nil, status.Errorf(codes.Internal, "response error: %v", err)
 	}
 
-	respDump, err := httputil.DumpResponse(w, true)
-	if err != nil {
-		log.Fatal(err)
+	if debugParse {
+		respDump, err := httputil.DumpResponse(w, true)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("HTTP_RESPONSE:\n%s", string(respDump))
 	}
-	fmt.Printf("RESPONSE:\n%s", string(respDump))
 
 	contentType := w.Header.Get("Content-Type")
 	if contentType != contentTypeJSON {
@@ -221,9 +185,12 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest
 		return nil, status.Errorf(codes.Internal, "response data error: %v", err)
 	}
 
-	log.Printf("response body: %q", string(data))
+	if debugParse {
+		log.Printf("response body: %s", string(data))
+	}
 	var response sppb.ScalaParseResponse
-	if err := json.Unmarshal(data, &response); err != nil {
+
+	if err := protojson.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v", err)
 	}
 
@@ -265,4 +232,41 @@ func newHttpScalaParseRequest(url string, in *sppb.ScalaParseRequest) (*http.Req
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
+}
+
+// waitForConnectionAvailable pings a tcp connection every 250 milliseconds
+// until it connects and returns true.  If it fails to connect by the timeout
+// deadline, returns false.
+func waitForConnectionAvailable(host string, port int, timeout time.Duration) bool {
+	target := fmt.Sprintf("%s:%d", host, port)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	then := time.Now()
+
+	success := make(chan bool, 1)
+
+	go func() {
+		go func() {
+			defer wg.Done()
+			for {
+				_, err := net.Dial("tcp", target)
+				if err == nil {
+					if debugParse {
+						log.Printf("%s is available after %s", target, time.Since(then))
+					}
+					break
+				}
+				time.Sleep(250 * time.Millisecond)
+			}
+		}()
+		wg.Wait()
+		success <- true
+	}()
+
+	select {
+	case <-success:
+		return true
+	case <-time.After(timeout):
+		return false
+	}
 }

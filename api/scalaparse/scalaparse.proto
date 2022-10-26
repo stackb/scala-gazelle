@@ -6,7 +6,13 @@ option go_package = "github.com/stackb/scala-gazelle/api/scalaparse";
 
 message ScalaFile {
     string filename = 1;
-    repeated string import = 2;
+    repeated string packages = 2;
+    repeated string imports = 3;
+    repeated string names = 4;
+    repeated string classes = 5;
+    repeated string types = 6;
+    repeated string traits = 7;
+    int64 elapsed_millis = 8;
 }
 
 message ScalaParseRequest {
@@ -16,8 +22,9 @@ message ScalaParseRequest {
 
 message ScalaParseResponse {
     string label = 1;
-    repeated ScalaFile file = 2;
+    repeated ScalaFile scala_files = 2;
     string error = 3;
+    int64 elapsed_millis = 4;
 }
 
 service ScalaParser {

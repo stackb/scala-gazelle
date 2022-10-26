@@ -6,8 +6,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
@@ -15,34 +20,68 @@ import (
 
 func TestServerParse(t *testing.T) {
 	for name, tc := range map[string]struct {
-		in   sppb.ScalaParseRequest
-		want sppb.ScalaParseResponse
+		files []testtools.FileSpec
+		in    sppb.ScalaParseRequest
+		want  sppb.ScalaParseResponse
 	}{
 		"degenerate": {
 			want: sppb.ScalaParseResponse{
 				Error: `bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`,
 			},
 		},
+		"single file": {
+			files: []testtools.FileSpec{
+				{
+					Path: "A.scala",
+					Content: `package a
+import java.util.Map
+`,
+				},
+			},
+			want: sppb.ScalaParseResponse{
+				ScalaFiles: []*sppb.ScalaFile{
+					{
+						Filename: "A.scala",
+						Packages: []string{"a"},
+						Imports:  []string{"java.util.Map"},
+						Names:    []string{"a", "java", "util"},
+					},
+				},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			tmpDir, err := bazel.NewTmpDir("")
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer os.RemoveAll(tmpDir)
+
+			files := mustWriteTestFiles(t, tmpDir, tc.files)
+			tc.in.Filename = files
+
 			server := NewScalaParseServer()
-			server.HttpPort = 3000
 			if err := server.Start(); err != nil {
 				t.Fatal("server start:", err)
 			}
 			defer server.Stop()
 
-			if true {
-				got, err := server.Parse(context.Background(), &tc.in)
-				if err != nil {
-					t.Fatal(err)
-				}
+			got, err := server.Parse(context.Background(), &tc.in)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got.ElapsedMillis = 0
 
-				if diff := cmp.Diff(tc.want, got); diff != "" {
-					t.Errorf(".Parse (-want +got):\n%s", diff)
+			// remove tmpdir prefix and zero the time delta for diff comparison
+			for i := range got.ScalaFiles {
+				got.ScalaFiles[i].ElapsedMillis = 0
+				if strings.HasPrefix(got.ScalaFiles[i].Filename, tmpDir) {
+					got.ScalaFiles[i].Filename = got.ScalaFiles[i].Filename[len(tmpDir)+1:]
 				}
-			} else {
-				t.Fatal("wtf")
+			}
+
+			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(sppb.ScalaParseResponse{}, sppb.ScalaFile{})); diff != "" {
+				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -139,4 +178,22 @@ func mustParseURL(t *testing.T, raw string) *url.URL {
 		t.Fatal("url parse error: %v", err)
 	}
 	return u
+}
+
+func mustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec) []string {
+	var filenames []string
+	for _, file := range files {
+		abs := filepath.Join(tmpDir, file.Path)
+		dir := filepath.Dir(abs)
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			t.Fatal(err)
+		}
+		if !file.NotExist {
+			if err := ioutil.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
+				t.Fatal(err)
+			}
+		}
+		filenames = append(filenames, abs)
+	}
+	return filenames
 }
