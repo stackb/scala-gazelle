@@ -5,6 +5,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # ----------------------------------------------------
 # gazelle:prefix github.com/stackb/scala-gazelle
 # gazelle:exclude vendor
+# gazelle:go_generate_proto false
 # gazelle:resolve go go github.com/stackb/rules_proto/pkg/protoc @build_stack_rules_proto//pkg/protoc
 # gazelle:resolve go go github.com/stackb/rules_proto/pkg/goldentest @build_stack_rules_proto//pkg/goldentest
 # gazelle:resolve go go github.com/bazelbuild/buildtools/build @com_github_bazelbuild_buildtools//build:go_default_library
@@ -15,15 +16,14 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # gazelle:proto_plugin protoc-gen-go-grpc deps @org_golang_google_grpc//codes
 # gazelle:proto_plugin protoc-gen-go-grpc deps @org_golang_google_grpc//status
 
-# gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile
+# gazelle:proto_rule proto_compiled_sources implementation stackb:rules_proto:proto_compiled_sources
 # gazelle:proto_rule proto_go_library implementation stackb:rules_proto:proto_go_library
 # gazelle:proto_rule proto_go_library deps @org_golang_google_protobuf//reflect/protoreflect
 # gazelle:proto_rule proto_go_library deps @org_golang_google_protobuf//runtime/protoimpl
 # gazelle:proto_rule proto_go_library visibility //visibility:public
 # gazelle:proto_language go plugin protoc-gen-go
 # gazelle:proto_language go plugin protoc-gen-go-grpc
-# gazelle:proto_language go rule proto_compile
-# gazelle:proto_language go rule proto_go_library
+# gazelle:proto_language go rule proto_compiled_sources
 
 gazelle_binary(
     name = "gazelle-scala",

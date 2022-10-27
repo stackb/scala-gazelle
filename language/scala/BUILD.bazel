@@ -81,7 +81,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
-        "//api/scalaparse:scalaparse_go_proto",
+        "//api/scalaparse",
         "//pkg/collections",
         "//pkg/index",
         "//pkg/progress",

@@ -1,5 +1,5 @@
-load("@build_stack_rules_proto//rules/go:proto_go_library.bzl", "proto_go_library")
-load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 proto_library(
@@ -8,15 +8,15 @@ proto_library(
     visibility = ["//visibility:public"],
 )
 
-proto_compile(
-    name = "scalaparse_go_compile",
+proto_compiled_sources(
+    name = "scalaparse_go_compiled_sources",
+    srcs = [
+        "scalaparse.pb.go",
+        "scalaparse_grpc.pb.go",
+    ],
     output_mappings = [
         "scalaparse.pb.go=github.com/stackb/scala-gazelle/api/scalaparse/scalaparse.pb.go",
         "scalaparse_grpc.pb.go=github.com/stackb/scala-gazelle/api/scalaparse/scalaparse_grpc.pb.go",
-    ],
-    outputs = [
-        "scalaparse.pb.go",
-        "scalaparse_grpc.pb.go",
     ],
     plugins = [
         "@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go",
@@ -25,8 +25,8 @@ proto_compile(
     proto = "scalaparse_proto",
 )
 
-proto_go_library(
-    name = "scalaparse_go_proto",
+go_library(
+    name = "scalaparse",
     srcs = [
         "scalaparse.pb.go",
         "scalaparse_grpc.pb.go",
