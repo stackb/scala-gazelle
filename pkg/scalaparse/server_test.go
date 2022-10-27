@@ -87,7 +87,7 @@ import java.util.Map
 	}
 }
 
-func SkipTestGetFreePort(t *testing.T) {
+func TestGetFreePort(t *testing.T) {
 	got, err := getFreePort()
 	if err != nil {
 		t.Fatal(err)
@@ -97,7 +97,7 @@ func SkipTestGetFreePort(t *testing.T) {
 	}
 }
 
-func SkipTestNewHttpScalaParseRequest(t *testing.T) {
+func TestNewHttpScalaParseRequest(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url      string
 		in       *sppb.ScalaParseRequest
@@ -146,7 +146,7 @@ func SkipTestNewHttpScalaParseRequest(t *testing.T) {
 	}
 }
 
-func SkipTestNewHttpScalaParseRequestError(t *testing.T) {
+func TestNewHttpScalaParseRequestError(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url  string
 		in   *sppb.ScalaParseRequest

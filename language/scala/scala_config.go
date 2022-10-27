@@ -15,7 +15,8 @@ import (
 const (
 	// ruleDirective is the directive for toggling rule generation.
 	ruleDirective = "scala_rule"
-	// overrideDirective is the directive for disambiguation overrides.
+	// overrideDirective is the well-know gazelle:override directive for
+	// disambiguation overrides.
 	overrideDirective = "override"
 	// indirectDependencyDirective is the directive for declaring indirect
 	// dependencies.  For example, if a class explicitly imports

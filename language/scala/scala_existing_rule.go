@@ -41,7 +41,7 @@ func init() {
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
 // already in the build file.  It does not create any new rules.  This rule
-// implementation is to parse files named in 'srcs' and update 'deps'.
+// implementation is used to parse files named in 'srcs' and update 'deps'.
 type scalaExistingRule struct {
 	load, name   string
 	isBinaryRule bool
@@ -55,11 +55,6 @@ func (s *scalaExistingRule) Name() string {
 // KindInfo implements part of the RuleInfo interface.
 func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
-		// TODO(pcj): understand better why deps needs to be in MergeableAttrs
-		// here rather than ResolveAttrs.
-		// MergeableAttrs: map[string]bool{
-		// 	"deps": true,
-		// },
 		ResolveAttrs: map[string]bool{
 			"deps":    true,
 			"exports": true,
@@ -94,7 +89,6 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 	}
 
 	if len(srcs) > 0 {
-
 		// log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
 		// return nil
 		files, err = resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())

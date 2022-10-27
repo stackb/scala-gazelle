@@ -15,6 +15,20 @@ def gazelle_extension_deps():
         sum = "h1:X0krlUVAVmtr2cRoTqR8aDMrDqnB36ht8wpWTiQ3jsA=",
         version = "v4.0.2",
     )
+    go_repository(
+        name = "com_github_roaringbitmap_roaring",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/RoaringBitmap/roaring",
+        sum = "h1:ckvZSX5gwCRaJYBNe7syNawCU5oruY9gQmjXlp4riwo=",
+        version = "v0.9.4",
+    )
+    go_repository(
+        name = "com_github_amenzhinsky_go_memexec",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/amenzhinsky/go-memexec",
+        sum = "h1:BAoex/mFSJiPJQkJinBmT2vgkpUZBvJngjbhEhFrRa4=",
+        version = "v0.7.0",
+    )
 
 def go_repositories():
     gazelle_extension_deps()
@@ -25,13 +39,6 @@ def go_repositories():
         importpath = "honnef.co/go/tools",
         sum = "h1:/hemPrYIhOhy8zYrNj+069zDB68us2sMGsfkFJO0iZs=",
         version = "v0.0.0-20190523083050-ea95bdfd59fc",
-    )
-    go_repository(
-        name = "com_github_amenzhinsky_go_memexec",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/amenzhinsky/go-memexec",
-        sum = "h1:BAoex/mFSJiPJQkJinBmT2vgkpUZBvJngjbhEhFrRa4=",
-        version = "v0.7.0",
     )
     go_repository(
         name = "com_github_antihax_optional",
@@ -272,13 +279,6 @@ def go_repositories():
         importpath = "github.com/prometheus/client_model",
         sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
         version = "v0.0.0-20190812154241-14fe0d1b01d4",
-    )
-    go_repository(
-        name = "com_github_roaringbitmap_roaring",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/RoaringBitmap/roaring",
-        sum = "h1:ckvZSX5gwCRaJYBNe7syNawCU5oruY9gQmjXlp4riwo=",
-        version = "v0.9.4",
     )
     go_repository(
         name = "com_github_rogpeppe_fastuuid",

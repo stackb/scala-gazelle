@@ -7,7 +7,6 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
-    bun_darwin()
     scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>

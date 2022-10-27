@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"flag"
@@ -18,15 +19,16 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
+
+	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
 type ScalaFileParser interface {
 	// ParseScalaFiles is used to parse a list of source files.  The list of srcs
 	// is expected to be relative to the from.Pkg rel field, and the absolute path
-	// of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
-	// cache entry for the given file and the current sha256 matches the cached one,
-	// the cached entry will be returned.  Kind is used to determine if the rule is
-	// a test rule.
+	// of a file is expected at (dir, from.Pkg, src).  Kind is used to determine
+	// if the rule is a test rule.
 	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error)
 }
 
@@ -48,7 +50,7 @@ func newScalaSourceIndexResolver(depsRecorder DependencyRecorder) *scalaSourceIn
 		packages:     make(map[string][]*provider),
 		byFilename:   make(map[string]*index.ScalaFileSpec),
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
-		parser:       &scalaSourceParser{},
+		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
 		depsRecorder: depsRecorder,
 	}
@@ -86,7 +88,7 @@ type scalaSourceIndexResolver struct {
 	// byRule is a mapping of the scala rule to the spec
 	byRule map[label.Label]*index.ScalaRuleSpec
 	// parser is an instance of the scala source parser
-	parser *scalaSourceParser
+	parser *scalaparse.ScalaParseServer
 }
 
 type provider struct {
@@ -99,7 +101,6 @@ type provider struct {
 func (r *scalaSourceIndexResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&r.indexIn, "scala_source_index_in", "", "name of the scala source index file to read")
 	fs.StringVar(&r.indexOut, "scala_source_index_out", "", "name of the scala source index file to write")
-	fs.StringVar(&r.parser.parserToolPath, "scala_parser_tool_path", "sourceindexer", "filesystem path to the parser tool")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
@@ -110,7 +111,7 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 		}
 	}
 	// start the parser backend process
-	return r.parser.start()
+	return r.parser.Start()
 }
 
 // ParseScalaFiles implements ScalaFileParser
@@ -184,13 +185,27 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 		// log.Printf("file cache miss: <%s>", filename)
 	}
 
-	file, err = r.parser.parse(abs)
+	response, err := r.parser.Parse(context.Background(), sppb.ScalaParseRequest{
+		Files: []string{filename},
+	})
+
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
-	file.Filename = filename
-	file.Sha256 = sha256
 	log.Printf("Parsed <%s>", filename)
+
+	scalaFile := response.ScalaFiles[0]
+	file = &index.ScalaFileSpec{
+		Filename: filename,
+		Packages: scalaFile.Packages,
+		Imports:  scalaFile.Imports,
+		Classes:  scalaFile.Classes,
+		Types:    scalaFile.Types,
+		Vals:     scalaFile.Vals,
+		Objects:  scalaFile.Objects,
+		Traits:   scalaFile.Traits,
+		Sha256:   sha256,
+	}
 	return file, nil
 }
 
