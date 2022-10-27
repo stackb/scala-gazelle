@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "progress",
+    srcs = [
+        "formatprogress.go",
+        "jsonerror.go",
+        "jsonmessage.go",
+        "jsonprogress.go",
+        "out.go",
+        "output.go",
+        "progress.go",
+        "progressoutput.go",
+        "progressreader.go",
+        "rawprogressformatter.go",
+        "stream.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/progress",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_docker_go_units//:go-units",
+        "@com_github_moby_term//:term",
+        "@com_github_morikuni_aec//:aec",
+        "@org_golang_x_time//rate",
+    ],
+)

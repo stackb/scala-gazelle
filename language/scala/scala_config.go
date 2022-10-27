@@ -126,7 +126,7 @@ func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
 	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
 	r, err := c.getOrCreateRuleConfig(c.config, name)
 	if err != nil {
-		return fmt.Errorf("invalid proto_rule directive %+v: %w", d, err)
+		return fmt.Errorf("invalid scala_rule directive %+v: %w", d, err)
 	}
 	return r.parseDirective(c, name, param, value)
 }

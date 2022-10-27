@@ -12,7 +12,10 @@ message ScalaFile {
     repeated string classes = 5;
     repeated string types = 6;
     repeated string traits = 7;
-    int64 elapsed_millis = 8;
+    repeated string vals = 8;
+    repeated string objects = 9;
+    int64 elapsed_millis = 10;
+    string error = 11;
 }
 
 message ScalaParseRequest {

@@ -185,8 +185,8 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 		// log.Printf("file cache miss: <%s>", filename)
 	}
 
-	response, err := r.parser.Parse(context.Background(), sppb.ScalaParseRequest{
-		Files: []string{filename},
+	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
+		Filename: []string{filename},
 	})
 
 	if err != nil {
@@ -309,7 +309,7 @@ func (r *scalaSourceIndexResolver) addDependency(src, dst, kind string) {
 // OnResolve implements GazellePhaseTransitionListener.
 func (r *scalaSourceIndexResolver) OnResolve() {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
-	r.parser.stop()
+	r.parser.Stop()
 
 	// record dependency graph
 	for _, rule := range r.byRule {

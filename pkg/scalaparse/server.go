@@ -135,7 +135,9 @@ func (s *ScalaParseServer) Start() error {
 		// does it make sense to wait for the process?  We kill it forcefully
 		// at the end anyway...
 		if err := cmd.Wait(); err != nil {
-			log.Printf("command wait err: %v", err)
+			if err.Error() != "signal: killed" {
+				log.Printf("command wait err: %v", err)
+			}
 		}
 	}()
 
@@ -191,7 +193,7 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest
 	var response sppb.ScalaParseResponse
 
 	if err := protojson.Unmarshal(data, &response); err != nil {
-		return nil, status.Errorf(codes.Internal, "response body error: %v", err)
+		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
 	}
 
 	return &response, nil

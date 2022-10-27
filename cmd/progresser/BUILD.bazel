@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "progresser_lib",
+    srcs = ["progresser.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/progresser",
+    visibility = ["//visibility:private"],
+    deps = ["//pkg/progress"],
+)
+
+go_binary(
+    name = "progresser",
+    embed = [":progresser_lib"],
+    visibility = ["//visibility:public"],
+)

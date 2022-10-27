@@ -82,16 +82,19 @@ func (p *scalaCompiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Co
 
 // CheckFlags implements part of the Configurer interface.
 func (p *scalaCompiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	tool, err := bazel.Runfile(p.jarPath)
-	if err != nil {
-		log.Printf("failed to initialize compiler: %v\n", err)
-		index.ListFiles(".")
-		return err
-	}
-	p.toolPath = tool
 
-	if err := p.initHTTPClient(); err != nil {
-		return err
+	if false {
+		tool, err := bazel.Runfile(p.jarPath)
+		if err != nil {
+			log.Printf("failed to initialize compiler: %v\n", err)
+			index.ListFiles(".")
+			return err
+		}
+		p.toolPath = tool
+
+		if err := p.initHTTPClient(); err != nil {
+			return err
+		}
 	}
 
 	return nil
