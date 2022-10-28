@@ -234,8 +234,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
-		// panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
-		log.Printf("%v has unresolved dependencies: %v", from, unresolved)
+		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		// log.Printf("%v has unresolved dependencies: %v", from, unresolved)
 	}
 
 	if len(resolved) > 0 {

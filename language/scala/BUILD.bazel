@@ -80,6 +80,8 @@ go_library(
         "viz_test.go",
         "maven_resolver.go",
         "golden_test.go",
+        "gazelle",
+        "scala.WORKSPACE",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
@@ -147,13 +149,14 @@ go_test(
     name = "scala_test",
     srcs = [
         # "glob_test.go",
+        "glob_test.go",
         "golden_test.go",
-        # "import_resolver_test.go",
-        # "resolver_test.go",
-        # "scala_compiler_test.go",
-        # "scala_existing_rule_test.go",
-        # "scala_test.go",
-        # "viz_test.go",
+        "import_resolver_test.go",
+        "resolver_test.go",
+        "scala_compiler_test.go",
+        "scala_existing_rule_test.go",
+        "scala_test.go",
+        "viz_test.go",
     ],
     data = [
         ":gazelle",
@@ -179,6 +182,12 @@ go_test(
 gazelle_testdata_example(
     name = "maven_resolver",
     srcs = glob(["testdata/maven_resolver/*"]),
+    workspace_template = "scala.WORKSPACE",
+)
+
+gazelle_testdata_example(
+    name = "platform_resolver",
+    srcs = glob(["testdata/platform_resolver/*"]),
     workspace_template = "scala.WORKSPACE",
 )
 

@@ -185,7 +185,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
 			if dbg {
-				log.Println("unresolved:", imp)
+				log.Println("resolved:", imp)
 			}
 			continue
 		}
