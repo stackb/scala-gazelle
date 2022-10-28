@@ -52,7 +52,7 @@ func (r *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) erro
 		mavenInstallFile := filepath.Join(c.WorkDir, r.mavenInstallFile)
 		resolver, err := maven.NewResolver(mavenInstallFile, r.mavenWorkspaceName)
 		if err != nil {
-			return fmt.Errorf("initializing maven resolver: %v", err)
+			return fmt.Errorf("initializing maven resolver: %w", err)
 		}
 		r.resolver = resolver
 	} else {

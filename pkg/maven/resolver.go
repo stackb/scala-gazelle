@@ -28,9 +28,7 @@ func NewResolver(installFile, mavenWorkspaceName string) (Resolver, error) {
 
 	c, err := loadConfiguration(installFile)
 	if err != nil {
-		log.Printf("error while loading %s: %v", installFile, err)
-		// r.logger.Warn().Err(err).Msg("not loading maven dependencies")
-		return &r, nil
+		return nil, fmt.Errorf("loading configuration %s: %w", installFile, err)
 	}
 
 	// r.logger.Debug().Int("count", len(c.DependencyTree.Dependencies)).Msg("Dependency count")
