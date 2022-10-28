@@ -66,7 +66,7 @@ func (r *MavenCrossResolver) CrossResolve(c *config.Config, ix *resolve.RuleInde
 	if r.resolver == nil {
 		return
 	}
-	if !(lang == r.lang || imp.Lang == r.lang) {
+	if !crossResolverNameMatches(r.lang, lang, imp) {
 		return
 	}
 	match, err := r.resolver.Resolve(imp.Imp)

@@ -26,3 +26,7 @@ type GazellePhaseTransitionListener interface {
 	OnResolve()
 	OnEnd()
 }
+
+func crossResolverNameMatches(resolverLang, lang string, imp resolve.ImportSpec) bool {
+	return lang == resolverLang || imp.Lang == resolverLang
+}

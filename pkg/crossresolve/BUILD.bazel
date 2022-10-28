@@ -5,10 +5,12 @@ go_library(
     srcs = [
         "configurable_cross_resolver.go",
         "dependency_recorder.go",
+        "jar_index_cross_resolver.go",
         "maven_cross_resolver.go",
         "scala_file_parser.go",
         "scala_source_cross_resolver.go",
         "scala_source_rule_registry.go",
+        "symbol_table.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/crossresolve",
     visibility = ["//visibility:public"],
@@ -20,16 +22,21 @@ go_library(
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
+        "@com_github_roaringbitmap_roaring//:roaring",
     ],
 )
 
 go_test(
     name = "crossresolve_test",
-    srcs = ["maven_cross_resolver_test.go"],
+    srcs = [
+        "jar_index_cross_resolver_test.go",
+        "maven_cross_resolver_test.go",
+    ],
     embed = [":crossresolve"],
     deps = [
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
