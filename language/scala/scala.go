@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/bazel-contrib/rules_jvm/java/gazelle/private/maven"
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -34,6 +33,7 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 	sourceResolver := newScalaSourceIndexResolver(depends)
 	classResolver := newScalaClassIndexResolver(depends)
+	mavenResolver := newMavenResolver()
 	scalaCompiler := newScalaCompiler()
 	// var scalaCompiler *scalaCompiler
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
@@ -50,10 +50,10 @@ func NewLanguage() language.Language {
 		resolvers: []ConfigurableCrossResolver{
 			sourceResolver,
 			classResolver,
+			mavenResolver,
 		},
 		progress: progress.NewProgressOutput(out),
 		viz:      vizServer,
-		resolver: maven.NewResolver(),
 	}
 }
 
@@ -93,8 +93,6 @@ type scalaLang struct {
 	totalRules     int
 	// progress is the progress interface
 	progress progress.Output
-	// mavenResolver resolves maven artifacts
-	mavenResolver *maven.Resolver
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds

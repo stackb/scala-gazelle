@@ -248,7 +248,8 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	defer r.providersMux.Unlock()
 
 	if _, exists := r.byFilename[file.Filename]; exists {
-		return fmt.Errorf("duplicate filename <%s>", file.Filename)
+		// return fmt.Errorf("duplicate filename <%s>", file.Filename)
+		return nil
 	}
 
 	for _, imp := range file.Classes {
