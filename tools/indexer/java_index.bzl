@@ -146,7 +146,7 @@ java_index = rule(
             doc = "list of java deps to be indexed",
         ),
         "platform_jars": attr.label_list(
-            doc = "list of jar files to be indexed without a JarSpec.Label",
+            doc = "list of jar files to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
         ),
         "predefined": attr.string_list(

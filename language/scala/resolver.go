@@ -165,7 +165,7 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
-	dbg := false
+	dbg := true
 	for imp, origin := range imports {
 		src := g.Node("imp/" + imp)
 

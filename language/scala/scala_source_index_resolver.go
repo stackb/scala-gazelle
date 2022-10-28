@@ -188,13 +188,17 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 	}
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
-		Filename: []string{filename},
+		Filename: []string{abs},
 	})
 
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
-	log.Printf("Parsed <%s>", filename)
+	if response.Error != "" {
+		log.Printf("Parse Error <%s>: %s", filename, response.Error)
+	} else {
+		log.Printf("Parsed <%s>", filename)
+	}
 
 	scalaFile := response.ScalaFiles[0]
 	file = &index.ScalaFileSpec{

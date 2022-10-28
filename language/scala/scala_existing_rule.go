@@ -131,6 +131,8 @@ func (s *scalaExistingRuleRule) Rule() *rule.Rule {
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
+	// binary rules are not deps of anything else, so we don't advertise to
+	// provide any imports
 	if s.isBinaryRule {
 		return nil
 	}
@@ -158,10 +160,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 	specs := make([]resolve.ImportSpec, len(provides))
 	for i, imp := range provides {
-		specs[i] = resolve.ImportSpec{
-			Lang: lang,
-			Imp:  imp,
-		}
+		specs[i] = resolve.ImportSpec{Lang: lang, Imp: imp}
 		// log.Println("scalaExistingRule.Imports()", lang, r.Kind(), r.Name(), i, imp)
 	}
 
@@ -170,7 +169,8 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	dbg := debug
+	// dbg := debug
+	dbg := true
 	if dbg {
 		log.Println(">>> BEGIN RESOLVE", from)
 	}
