@@ -8,15 +8,16 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/stackb/rules_proto/pkg/protoc"
-	"github.com/stackb/scala-gazelle/pkg/progress"
-
+	"github.com/bazel-contrib/rules_jvm/java/gazelle/private/maven"
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/stackb/rules_proto/pkg/protoc"
+
+	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
 const (
@@ -52,6 +53,7 @@ func NewLanguage() language.Language {
 		},
 		progress: progress.NewProgressOutput(out),
 		viz:      vizServer,
+		resolver: maven.NewResolver(),
 	}
 }
 
@@ -91,6 +93,8 @@ type scalaLang struct {
 	totalRules     int
 	// progress is the progress interface
 	progress progress.Output
+	// mavenResolver resolves maven artifacts
+	mavenResolver *maven.Resolver
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds

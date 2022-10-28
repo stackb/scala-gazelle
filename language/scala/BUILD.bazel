@@ -94,6 +94,7 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@build_stack_rules_proto//pkg/protoc",
+        "@com_github_bazel_contrib_rules_jvm//java/gazelle/private/maven:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_bmatcuk_doublestar_v4//:doublestar",
         "@com_github_davecgh_go_spew//spew",

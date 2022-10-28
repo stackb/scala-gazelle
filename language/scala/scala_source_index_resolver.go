@@ -29,7 +29,7 @@ type ScalaFileParser interface {
 	// is expected to be relative to the from.Pkg rel field, and the absolute path
 	// of a file is expected at (dir, from.Pkg, src).  Kind is used to determine
 	// if the rule is a test rule.
-	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error)
+	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error)
 }
 
 // ScalaSourceRuleRegistry keep track of which files are associated under a rule
@@ -115,7 +115,7 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 }
 
 // ParseScalaFiles implements ScalaFileParser
-func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
+func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error) {
 	rule := &index.ScalaRuleSpec{
 		Label: from.String(),
 		Kind:  kind,
@@ -125,12 +125,14 @@ func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label,
 		filename := filepath.Join(from.Pkg, src)
 		file, err := r.parseScalaFileSpec(dir, filename)
 		if err != nil {
-			return index.ScalaRuleSpec{}, err
+			return nil, err
 		}
 		rule.Srcs[i] = file
 	}
-	r.readScalaRuleSpec(rule)
-	return *rule, nil
+	if err := r.readScalaRuleSpec(rule); err != nil {
+		return nil, err
+	}
+	return rule, nil
 }
 
 // GetScalaRule implements part of ScalaSourceRuleRegistry.

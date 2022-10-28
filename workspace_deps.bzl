@@ -7,6 +7,8 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
+    io_grpc_grpc_java()
+    contrib_rules_jvm()
     scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
@@ -211,4 +213,51 @@ filegroup(
         urls = [
             "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
         ],
+    )
+
+def contrib_rules_jvm():
+    # Commit: 06311c6bade29e7d3957d4d34792208acd5ee563
+    # Date: 2022-10-27 11:04:38 +0000 UTC
+    # URL: https://github.com/bazel-contrib/rules_jvm/commit/06311c6bade29e7d3957d4d34792208acd5ee563
+    #
+    # Fix test filter greediness for method names (#93)
+    #
+    # The present change aims at preventing the `MyTest#testSomething` pattern
+    # from matching the `testSomethingElse` method in the following example:
+    # ```java
+    # public class MyTest {
+    #   @Test
+    #   void testSomething() {
+    #   }
+    #
+    #   @Test
+    #   void testSomethingElse() {
+    #   }
+    # ```
+    #
+    # With `asPredicate`, the test filter matches test methods _starting with_
+    # the given method name:
+    # > Creates a predicate that tests if this pattern is found in a given
+    # > input string.
+    #
+    # Unless the pattern doesn't encompass a method name, appending a `$` to
+    # the input pattern makes sure only exact method names are considered.
+    #
+    # Note: think about filter greediness for class names.
+    # Size: 204202 (204 kB)
+    _maybe(
+        http_archive,
+        name = "contrib_rules_jvm",
+        sha256 = "26e5ac73ba7279063798c97b83a9857a97ee480e167b587cd3194be36e1904ad",
+        strip_prefix = "rules_jvm-06311c6bade29e7d3957d4d34792208acd5ee563",
+        urls = ["https://github.com/bazel-contrib/rules_jvm/archive/06311c6bade29e7d3957d4d34792208acd5ee563.tar.gz"],
+    )
+
+def io_grpc_grpc_java():
+    _maybe(
+        http_archive,
+        name = "io_grpc_grpc_java",
+        sha256 = "0f6cf8c1e97757333e08975c8637093b40540a54a201cfd3ce284c8d1d073fae",
+        strip_prefix = "grpc-java-1.47.0",
+        urls = ["https://github.com/grpc/grpc-java/archive/v1.47.0.tar.gz"],
     )
