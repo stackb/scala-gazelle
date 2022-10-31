@@ -3,8 +3,12 @@ package crossresolve
 import (
 	"flag"
 	"os"
+	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/google/go-cmp/cmp"
+	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 const jarJsonSimpleExample = `{
@@ -72,4 +76,47 @@ func ExampleJarIndexCrossResolver_RegisterFlags_printdefaults() {
 	// output:
 	//	-jar_index_file string
 	//     	name of the class index file to read
+}
+
+func TestJarIndexCrossResolverFlags(t *testing.T) {
+	for name, tc := range map[string]struct {
+		args             []string
+		wantJarIndexFile string
+		files            []testtools.FileSpec
+	}{
+		"typical usage": {
+			args: []string{
+				"-jar_index_file=./scala_jar_index.json",
+			},
+			files: []testtools.FileSpec{
+				{
+					Path:    "scala_jar_index.json",
+					Content: "{}",
+				},
+			},
+			wantJarIndexFile: "./scala_jar_index.json",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
+			defer cleanup()
+
+			fakeRecorder := func(src, dst, kind string) {}
+			cr := NewJarIndexCrossResolver(scalaName, fakeRecorder)
+			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			c := &config.Config{
+				WorkDir: tmpDir,
+			}
+			cr.RegisterFlags(fs, cmdGenerate, c)
+			if err := fs.Parse(tc.args); err != nil {
+				t.Fatal(err)
+			}
+			if err := cr.CheckFlags(fs, c); err != nil {
+				t.Fatal(err)
+			}
+			if diff := cmp.Diff(tc.wantJarIndexFile, cr.jarIndexFile); diff != "" {
+				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
+			}
+		})
+	}
 }

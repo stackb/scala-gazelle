@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -75,12 +76,16 @@ func (r *JarIndexCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) e
 	if r.jarIndexFile == "" {
 		return nil
 	}
-	return r.readIndex()
+	filename := r.jarIndexFile
+	if !filepath.IsAbs(filename) {
+		filename = filepath.Join(c.WorkDir, filename)
+	}
+	return r.readIndex(filename)
 }
 
-func (r *JarIndexCrossResolver) readIndex() error {
+func (r *JarIndexCrossResolver) readIndex(filename string) error {
 	// perform indexing here
-	index, err := index.ReadIndexSpec(r.jarIndexFile)
+	index, err := index.ReadIndexSpec(filename)
 	if err != nil {
 		return fmt.Errorf("error while reading index specification file %s: %v", r.jarIndexFile, err)
 	}

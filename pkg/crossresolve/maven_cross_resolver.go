@@ -47,17 +47,18 @@ func (r *MavenCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *conf
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	if r.mavenInstallFile != "" {
-		// assume relative to workspace
-		mavenInstallFile := filepath.Join(c.WorkDir, r.mavenInstallFile)
-		resolver, err := maven.NewResolver(mavenInstallFile, r.mavenWorkspaceName)
-		if err != nil {
-			return fmt.Errorf("initializing maven resolver: %w", err)
-		}
-		r.resolver = resolver
-	} else {
+	if r.mavenInstallFile == "" {
 		return fmt.Errorf("maven cross resolver (-maven_install_file flag not set)")
 	}
+	filename := r.mavenInstallFile
+	if !filepath.IsAbs(filename) {
+		filename = filepath.Join(c.WorkDir, filename)
+	}
+	resolver, err := maven.NewResolver(filename, r.mavenWorkspaceName)
+	if err != nil {
+		return fmt.Errorf("initializing maven resolver: %w", err)
+	}
+	r.resolver = resolver
 	return nil
 }
 

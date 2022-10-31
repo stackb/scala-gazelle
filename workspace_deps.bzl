@@ -1,4 +1,4 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file", "http_jar")
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
@@ -7,6 +7,7 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
+    classgraph_jar()
     scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
@@ -211,4 +212,16 @@ filegroup(
         urls = [
             "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
         ],
+    )
+
+def classgraph_jar():
+    # bzl use jar https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar
+    # Last-Modified: Wed, 06 Jul 2022 04:30:32 GMT
+    # X-Checksum-Md5: 7fca2eb70908395af9ac43858b428c35
+    # X-Checksum-Sha1: 4bc2f188bc9001473d4a26ac488c2ae1a3e906de
+    # Size: 558272 (558 kB)
+    http_jar(
+        name = "classgraph_jar",
+        sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
+        url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
     )

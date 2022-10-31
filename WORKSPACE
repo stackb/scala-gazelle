@@ -71,6 +71,61 @@ node_repositories()
 register_toolchains("//tools/toolchains:nodejs")
 
 # ----------------------------------------------------
+# Maven
+#
+# Note: maven dependencies should only be required for
+# tests.
+# ----------------------------------------------------
+
+# load("@com_google_protobuf//:protobuf_deps.bzl", "PROTOBUF_MAVEN_ARTIFACTS", "protobuf_deps")
+
+# protobuf_deps()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    # artifacts = PROTOBUF_MAVEN_ARTIFACTS, # prefer if available in newer version
+    artifacts = [
+        "com.google.caliper:caliper:1.0-beta-3",
+        "com.google.code.findbugs:jsr305:3.0.2",
+        "com.google.code.gson:gson:2.8.9",
+        "com.google.errorprone:error_prone_annotations:2.5.1",
+        "com.google.j2objc:j2objc-annotations:1.3",
+        "com.google.guava:guava:31.1-jre",
+        "com.google.guava:guava-testlib:31.1-jre",
+        "com.google.truth:truth:1.1.2",
+        "junit:junit:4.13.2",
+        "org.mockito:mockito-core:4.3.1",
+    ],
+    # For updating instructions, see:
+    # https://github.com/bazelbuild/rules_jvm_external#updating-maven_installjson
+    # maven_install_json = "//:maven_install.json",
+    repositories = [
+        "https://repo1.maven.org/maven2",
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
+
+load("@maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
+
+bind(
+    name = "error_prone_annotations",
+    actual = "@maven//:com_google_errorprone_error_prone_annotations",
+)
+
+bind(
+    name = "gson",
+    actual = "@maven//:com_google_code_gson_gson",
+)
+
+bind(
+    name = "guava",
+    actual = "@maven//:com_google_guava_guava",
+)
+
+# ----------------------------------------------------
 # Scala
 # ----------------------------------------------------
 
