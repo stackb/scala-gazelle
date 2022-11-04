@@ -38,7 +38,7 @@ import build.stack.scala.gazelle.api.jarindex.Index;
 import build.stack.scala.gazelle.api.jarindex.JarFile;
 import build.stack.scala.gazelle.api.jarindex.ClassFile;
 
-public class Indexer {
+public class Indexer extends Object {
 
     static Logger logger = Logger.getLogger(Indexer.class.getName());
 
@@ -92,6 +92,15 @@ public class Indexer {
     private static ClassFile handleClassInfo(ClassInfo classInfo) {
         ClassFile.Builder classFile = ClassFile.newBuilder();
         classFile.setName(classInfo.getName());
+        classFile.addAllSymbols(collectSymbols(classInfo));
+
+        for (ClassInfo cls : classInfo.getSuperclasses()) {
+            classFile.addSuperclasses(cls.getName());
+        }
+        for (ClassInfo ifc : classInfo.getInterfaces()) {
+            classFile.addInterfaces(ifc.getName());
+        }
+
         return classFile.build();
     }
 
@@ -114,7 +123,6 @@ public class Indexer {
         // }
 
         return symbols;
-
     }
 
     // Index(String label, String filename, List<File> files) {
