@@ -42,9 +42,11 @@ public class Indexer {
 
     static Logger logger = Logger.getLogger(Indexer.class.getName());
 
-    private Index.Builder index = Index.newBuilder();
+    private final Path baseDir;
+    private final Index.Builder index = Index.newBuilder();
 
-    public Indexer() {
+    public Indexer(final Path baseDir) {
+        this.baseDir = baseDir;
         // logger.setLevel(Level.WARNING);
     }
 
@@ -60,7 +62,7 @@ public class Indexer {
 
     public JarFile makeJarFile(String label, Path path) {
         JarFile.Builder jarFile = JarFile.newBuilder();
-        jarFile.setFilename(path.toString());
+        jarFile.setFilename(this.baseDir.relativize(path).toString());
         jarFile.setLabel(label);
 
         final ScanResult scanResult = new ClassGraph()
@@ -72,14 +74,18 @@ public class Indexer {
                 .enableAllInfo()
                 .scan();
 
+        Set<String> packages = new TreeSet<>();
+
         for (ClassInfo classInfo : scanResult.getAllClasses()) {
             logger.log(Level.INFO, "processing classInfo {0}", classInfo.getName());
-
+            if (!classInfo.getPackageName().isEmpty()) {
+                packages.add(classInfo.getPackageName());
+            }
             jarFile.addClassFile(handleClassInfo(classInfo));
-            jarFile.addPackageName(classInfo.getPackageName());
             jarFile.addClassName(classInfo.getName());
         }
 
+        jarFile.addAllPackageName(packages);
         return jarFile.build();
     }
 
@@ -282,7 +288,7 @@ public class Indexer {
         }
 
         Index.Builder index = Index.newBuilder();
-        Indexer indexer = new Indexer();
+        Indexer indexer = new Indexer(Path.of("."));
 
         for (final String input : inputFiles) {
             indexer.index(label, Path.of(input));

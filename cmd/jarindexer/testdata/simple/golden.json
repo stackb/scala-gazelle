@@ -1,169 +1,149 @@
 {
-    "jarFile": [
+  "jarFiles": [
+    {
+      "filename": "testdata/simple/simple.jar",
+      "label": "//fake:label",
+      "files": [
         {
-            "filename": "/private/var/tmp/_bazel_i868039/29e52434f7040944810818d2085f35f2/execroot/build_stack_scala_gazelle/_tmp/ad6f5a7fb1c9baa1105baf987fa6b947/testdata/simple/simple.jar",
-            "label": "//fake:label",
-            "classFile": [
-                {
-                    "name": "Indexer"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.ClassFile"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.ClassFile$Builder"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.Index"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.Index$Builder"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.JarFile"
-                },
-                {
-                    "name": "build.stack.scala.gazelle.api.jarindex.JarFile$Builder"
-                },
-                {
-                    "name": "io.github.classgraph.ClassGraph"
-                },
-                {
-                    "name": "io.github.classgraph.ClassInfo"
-                },
-                {
-                    "name": "io.github.classgraph.ClassInfoList"
-                },
-                {
-                    "name": "io.github.classgraph.ScanResult"
-                },
-                {
-                    "name": "java.io.FileNotFoundException"
-                },
-                {
-                    "name": "java.io.FileOutputStream"
-                },
-                {
-                    "name": "java.io.IOException"
-                },
-                {
-                    "name": "java.io.OutputStream"
-                },
-                {
-                    "name": "java.io.PrintStream"
-                },
-                {
-                    "name": "java.lang.Class"
-                },
-                {
-                    "name": "java.lang.IllegalArgumentException"
-                },
-                {
-                    "name": "java.lang.Object"
-                },
-                {
-                    "name": "java.lang.String"
-                },
-                {
-                    "name": "java.lang.StringBuilder"
-                },
-                {
-                    "name": "java.lang.System"
-                },
-                {
-                    "name": "java.lang.Throwable"
-                },
-                {
-                    "name": "java.nio.file.Path"
-                },
-                {
-                    "name": "java.util.ArrayList"
-                },
-                {
-                    "name": "java.util.Iterator"
-                },
-                {
-                    "name": "java.util.List"
-                },
-                {
-                    "name": "java.util.Set"
-                },
-                {
-                    "name": "java.util.TreeSet"
-                },
-                {
-                    "name": "java.util.logging.Level"
-                },
-                {
-                    "name": "java.util.logging.Logger"
-                }
-            ],
-            "className": [
-                "Indexer",
-                "build.stack.scala.gazelle.api.jarindex.ClassFile",
-                "build.stack.scala.gazelle.api.jarindex.ClassFile$Builder",
-                "build.stack.scala.gazelle.api.jarindex.Index",
-                "build.stack.scala.gazelle.api.jarindex.Index$Builder",
-                "build.stack.scala.gazelle.api.jarindex.JarFile",
-                "build.stack.scala.gazelle.api.jarindex.JarFile$Builder",
-                "io.github.classgraph.ClassGraph",
-                "io.github.classgraph.ClassInfo",
-                "io.github.classgraph.ClassInfoList",
-                "io.github.classgraph.ScanResult",
-                "java.io.FileNotFoundException",
-                "java.io.FileOutputStream",
-                "java.io.IOException",
-                "java.io.OutputStream",
-                "java.io.PrintStream",
-                "java.lang.Class",
-                "java.lang.IllegalArgumentException",
-                "java.lang.Object",
-                "java.lang.String",
-                "java.lang.StringBuilder",
-                "java.lang.System",
-                "java.lang.Throwable",
-                "java.nio.file.Path",
-                "java.util.ArrayList",
-                "java.util.Iterator",
-                "java.util.List",
-                "java.util.Set",
-                "java.util.TreeSet",
-                "java.util.logging.Level",
-                "java.util.logging.Logger"
-            ],
-            "packageName": [
-                "",
-                "build.stack.scala.gazelle.api.jarindex",
-                "build.stack.scala.gazelle.api.jarindex",
-                "build.stack.scala.gazelle.api.jarindex",
-                "build.stack.scala.gazelle.api.jarindex",
-                "build.stack.scala.gazelle.api.jarindex",
-                "build.stack.scala.gazelle.api.jarindex",
-                "io.github.classgraph",
-                "io.github.classgraph",
-                "io.github.classgraph",
-                "io.github.classgraph",
-                "java.io",
-                "java.io",
-                "java.io",
-                "java.io",
-                "java.io",
-                "java.lang",
-                "java.lang",
-                "java.lang",
-                "java.lang",
-                "java.lang",
-                "java.lang",
-                "java.lang",
-                "java.nio.file",
-                "java.util",
-                "java.util",
-                "java.util",
-                "java.util",
-                "java.util",
-                "java.util.logging",
-                "java.util.logging"
-            ]
+          "name": "Indexer"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.ClassFile"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.ClassFile$Builder"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.Index"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.Index$Builder"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.JarFile"
+        },
+        {
+          "name": "build.stack.scala.gazelle.api.jarindex.JarFile$Builder"
+        },
+        {
+          "name": "io.github.classgraph.ClassGraph"
+        },
+        {
+          "name": "io.github.classgraph.ClassInfo"
+        },
+        {
+          "name": "io.github.classgraph.ClassInfoList"
+        },
+        {
+          "name": "io.github.classgraph.ScanResult"
+        },
+        {
+          "name": "java.io.FileNotFoundException"
+        },
+        {
+          "name": "java.io.FileOutputStream"
+        },
+        {
+          "name": "java.io.IOException"
+        },
+        {
+          "name": "java.io.OutputStream"
+        },
+        {
+          "name": "java.io.PrintStream"
+        },
+        {
+          "name": "java.lang.Class"
+        },
+        {
+          "name": "java.lang.IllegalArgumentException"
+        },
+        {
+          "name": "java.lang.Iterable"
+        },
+        {
+          "name": "java.lang.Object"
+        },
+        {
+          "name": "java.lang.String"
+        },
+        {
+          "name": "java.lang.StringBuilder"
+        },
+        {
+          "name": "java.lang.System"
+        },
+        {
+          "name": "java.lang.Throwable"
+        },
+        {
+          "name": "java.nio.file.Path"
+        },
+        {
+          "name": "java.util.ArrayList"
+        },
+        {
+          "name": "java.util.Iterator"
+        },
+        {
+          "name": "java.util.List"
+        },
+        {
+          "name": "java.util.Set"
+        },
+        {
+          "name": "java.util.TreeSet"
+        },
+        {
+          "name": "java.util.logging.Level"
+        },
+        {
+          "name": "java.util.logging.Logger"
         }
-    ]
+      ],
+      "classes": [
+        "Indexer",
+        "build.stack.scala.gazelle.api.jarindex.ClassFile",
+        "build.stack.scala.gazelle.api.jarindex.ClassFile$Builder",
+        "build.stack.scala.gazelle.api.jarindex.Index",
+        "build.stack.scala.gazelle.api.jarindex.Index$Builder",
+        "build.stack.scala.gazelle.api.jarindex.JarFile",
+        "build.stack.scala.gazelle.api.jarindex.JarFile$Builder",
+        "io.github.classgraph.ClassGraph",
+        "io.github.classgraph.ClassInfo",
+        "io.github.classgraph.ClassInfoList",
+        "io.github.classgraph.ScanResult",
+        "java.io.FileNotFoundException",
+        "java.io.FileOutputStream",
+        "java.io.IOException",
+        "java.io.OutputStream",
+        "java.io.PrintStream",
+        "java.lang.Class",
+        "java.lang.IllegalArgumentException",
+        "java.lang.Iterable",
+        "java.lang.Object",
+        "java.lang.String",
+        "java.lang.StringBuilder",
+        "java.lang.System",
+        "java.lang.Throwable",
+        "java.nio.file.Path",
+        "java.util.ArrayList",
+        "java.util.Iterator",
+        "java.util.List",
+        "java.util.Set",
+        "java.util.TreeSet",
+        "java.util.logging.Level",
+        "java.util.logging.Logger"
+      ],
+      "packages": [
+        "build.stack.scala.gazelle.api.jarindex",
+        "io.github.classgraph",
+        "java.io",
+        "java.lang",
+        "java.nio.file",
+        "java.util",
+        "java.util.logging"
+      ]
+    }
+  ]
 }

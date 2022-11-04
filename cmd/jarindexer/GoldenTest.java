@@ -44,10 +44,12 @@ public class GoldenTest {
     @Test
     public void testGoldens() throws IOException {
         // listEnv();
+
         final Path srcdir = mustGetSelfLocationDir();
-        // listDir(srcdir);
-        final Set<Path> dirs = listTestDataDirectories(srcdir);
         LOGGER.log(Level.INFO, "srcdir: " + srcdir);
+        // listDir(srcdir);
+
+        final Set<Path> dirs = listTestDataDirectories(srcdir);
 
         if (dirs.isEmpty()) {
             throw new IllegalStateException(
@@ -64,7 +66,7 @@ public class GoldenTest {
     }
 
     private void testGoldenDir(final Path srcdir, final Path dir) throws IOException {
-        LOGGER.log(Level.INFO, "testing dir: " + dir);
+        LOGGER.log(Level.INFO, "golden test dir: " + dir);
         listDir(dir);
         final Set<Path> files = listFiles(dir);
         LOGGER.log(Level.INFO, "testing files: " + files.size());
@@ -79,7 +81,7 @@ public class GoldenTest {
         final Index want = mustParseIndexJson(goldenFile.get());
         final Path tmpDir = mustGetTestTmpDir();
 
-        Indexer indexer = new Indexer();
+        Indexer indexer = new Indexer(tmpDir);
         for (Path srcFile : files) {
             LOGGER.log(Level.INFO, "possible file: " + srcFile);
             if (srcFile.toString().endsWith(".jar")) {
