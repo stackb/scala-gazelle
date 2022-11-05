@@ -147,7 +147,6 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
-        # "glob_test.go",
         "glob_test.go",
         "golden_test.go",
         "import_resolver_test.go",

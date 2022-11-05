@@ -2,10 +2,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "mergeindex",
-    srcs = [
-        "config.go",
-        "mergeindex.go",
-    ],
+    srcs = ["mergeindex.go"],
     importpath = "github.com/stackb/scala-gazelle/pkg/mergeindex",
     visibility = ["//visibility:public"],
     deps = [
