@@ -65,7 +65,7 @@ public class Indexer extends Object {
         jarFile.setLabel(label);
 
         final ScanResult scanResult = new ClassGraph()
-                .verbose(true)
+                .verbose(false)
                 .whitelistPackages()
                 .overrideClasspath(path.toString())
                 .enableInterClassDependencies()

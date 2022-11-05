@@ -38,10 +38,10 @@ public class IndexerTest {
 
     @Test
     public void testGoldens() throws IOException {
-        // listEnv();
+        listEnv();
 
         final Path srcdir = mustGetSelfLocationDir();
-        LOGGER.log(Level.FINE, "srcdir: " + srcdir);
+        LOGGER.log(Level.INFO, "srcdir: " + srcdir);
         // listDir(srcdir);
 
         final Set<Path> dirs = listTestDataDirectories(srcdir);
@@ -61,10 +61,10 @@ public class IndexerTest {
     }
 
     private void testGoldenDir(final Path srcdir, final Path dir) throws IOException {
-        LOGGER.log(Level.FINE, "golden test dir: " + dir);
+        LOGGER.log(Level.INFO, "golden test dir: " + dir);
         listDir(dir);
         final Set<Path> files = listFiles(dir);
-        LOGGER.log(Level.FINE, "testing files: " + files.size());
+        LOGGER.log(Level.INFO, "testing files: " + files.size());
 
         final Optional<Path> goldenFile = files.stream()
                 .filter(path -> path.getFileName().endsWith("golden.json"))
@@ -73,21 +73,23 @@ public class IndexerTest {
             throw new IllegalStateException(
                     String.format("testdata subdirectory %s must contain a file named 'golden.json'", dir));
         }
+        LOGGER.log(Level.INFO, "golden file: " + goldenFile);
+
         final Index want = mustParseIndexJson(goldenFile.get());
         final Path tmpDir = mustGetTestTmpDir();
 
         Indexer indexer = new Indexer(tmpDir);
         for (Path srcFile : files) {
-            LOGGER.log(Level.FINE, "possible file: " + srcFile);
+            LOGGER.log(Level.INFO, "possible file: " + srcFile);
             if (srcFile.toString().endsWith(".jar")) {
                 Path rel = srcdir.relativize(srcFile);
-                LOGGER.log(Level.FINE, "indexing jar: " + rel);
+                LOGGER.log(Level.INFO, "indexing jar: " + rel);
                 final Path tmpFile = tmpDir.resolve(rel.toString());
+
+                LOGGER.log(Level.INFO, "copying jar: " + tmpFile);
                 Files.createDirectories(tmpFile.getParent());
                 Files.copy(srcFile, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.log(Level.FINE, "copying jar: " + tmpFile);
 
-                // Path tmpRel = tmpDir.relativize(tmpFile);
                 indexer.index("//fake:label", tmpFile);
             }
         }
@@ -96,7 +98,7 @@ public class IndexerTest {
 
         if (wantUpdate) {
             Path sourceFile = getSourceFile(goldenFile.get());
-            LOGGER.log(Level.FINE, "updating source file: " + sourceFile);
+            LOGGER.log(Level.INFO, "updating source file: " + sourceFile);
             mustWriteIndexJson(sourceFile, got);
         } else {
             assertEquals(want, got);
@@ -128,6 +130,19 @@ public class IndexerTest {
                     "BUILD_WORKING_DIRECTORY not set!  Are you trying up update golden files without using 'bazel run'?");
         }
         return Path.of(dir);
+    }
+
+    private static Path mustGetWorkspaceDirectory() {
+        Path bwd = mustGetBuildWorkingDirectory();
+        Path current = Path.of(bwd.toString());
+        while (current != null) {
+            final Path workspaceFile = current.resolve("WORKSPACE");
+            if (Files.exists(workspaceFile)) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        throw new IllegalStateException("Could not find WORKSPACE dir from: " + bwd);
     }
 
     private static Path mustGetRunfilesDirectory() {
@@ -178,7 +193,8 @@ public class IndexerTest {
         String workspaceName = mustGetWorkspaceName();
         Path parent = runfilesDir.resolve(workspaceName);
         String rel = path.toString().substring(parent.toString().length() + 1);
-        return mustGetBuildWorkingDirectory().resolve(rel);
+        LOGGER.info("source file relative filename: " + rel);
+        return mustGetWorkspaceDirectory().resolve(rel);
     }
 
     private static Index mustParseIndexJson(Path path) throws IOException {
