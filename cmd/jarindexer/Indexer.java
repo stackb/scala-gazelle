@@ -47,7 +47,6 @@ public class Indexer extends Object {
 
     public Indexer(final Path baseDir) {
         this.baseDir = baseDir;
-        // logger.setLevel(Level.WARNING);
     }
 
     public Index build() {
@@ -55,7 +54,7 @@ public class Indexer extends Object {
     }
 
     public void index(String label, Path path) {
-        logger.log(Level.INFO, "indexing file {0}", path);
+        logger.log(Level.FINE, "indexing file {0}", path);
 
         index.addJarFile(this.makeJarFile(label, path));
     }
@@ -77,7 +76,7 @@ public class Indexer extends Object {
         Set<String> packages = new TreeSet<>();
 
         for (ClassInfo classInfo : scanResult.getAllClasses()) {
-            logger.log(Level.INFO, "processing classInfo {0}", classInfo.getName());
+            logger.log(Level.FINE, "processing classInfo {0}", classInfo.getName());
             if (!classInfo.getPackageName().isEmpty()) {
                 packages.add(classInfo.getPackageName());
             }
@@ -113,146 +112,57 @@ public class Indexer extends Object {
         for (ClassInfo ifc : info.getInterfaces()) {
             symbols.add(ifc.getName());
         }
-        // for (MethodInfo m : info.getMethodInfo()) {
-        // visitMethodTypeSignature(m.getTypeDescriptor(), symbols);
+        for (MethodInfo m : info.getMethodInfo()) {
+            visitMethodTypeSignature(m.getTypeDescriptor(), symbols);
 
-        // MethodParameterInfo[] params = m.getParameterInfo();
-        // for (int i = 0; i < params.length; i++) {
-        // addMethodParameterInfo(params[i], symbols);
-        // }
-        // }
+            MethodParameterInfo[] params = m.getParameterInfo();
+            for (int i = 0; i < params.length; i++) {
+                addMethodParameterInfo(params[i], symbols);
+            }
+        }
 
         return symbols;
     }
 
-    // Index(String label, String filename, List<File> files) {
-    // this.label = label;
-    // this.filename = filename;
+    private static void visitMethodTypeSignature(MethodTypeSignature mts,
+            Collection<String> symbols) {
+        visitTypeSignature(mts.getResultType(), symbols);
+        for (TypeSignature t : mts.getThrowsSignatures()) {
+            visitTypeSignature(t, symbols);
+        }
+        for (TypeParameter t : mts.getTypeParameters()) {
+            visitTypeParameter(t, symbols);
+        }
+    }
 
-    // this.files = files;
-    // this.files.sort((File a, File b) -> a.name.compareTo(b.name));
+    private static void visitTypeParameter(TypeParameter tp, Collection<String> symbols) {
+        visitTypeSignature(tp.getClassBound(), symbols);
+        for (TypeSignature rts : tp.getInterfaceBounds()) {
+            visitTypeSignature(rts, symbols);
+        }
+    }
 
-    // this.classes = this.files.stream().map(f ->
-    // f.name).collect(Collectors.toCollection(TreeSet::new));
-    // for (File f : this.files) {
-    // this.packages.add(f.info.getPackageName());
-    // f.filterInternalSymbols(classes);
-    // }
-    // }
+    private static void addMethodParameterInfo(MethodParameterInfo mpi,
+            Collection<String> symbols) {
+        visitTypeSignature(mpi.getTypeDescriptor(), symbols);
+    }
 
-    // @Override
-    // public String toString() {
-    // return new GsonBuilder()
-    // .registerTypeHierarchyAdapter(List.class, new ListAdapter())
-    // .excludeFieldsWithoutExposeAnnotation()
-    // .setPrettyPrinting()
-    // .create()
-    // .toJson(this);
-    // }
-    // }
-
-    // private static class File {
-    // private final ClassInfo info;
-
-    // @Expose
-    // private final String name;
-
-    // @Expose
-    // private final Set<String> symbols;
-
-    // File(ClassInfo info) {
-    // this.info = info;
-
-    // this.name = info.getName();
-    // this.symbols = collectSymbols(info);
-    // }
-
-    // void filterInternalSymbols(Set classes) {
-    // symbols.removeAll(classes);
-    // }
-
-    // private static Set<String> collectSymbols(ClassInfo info) {
-    // Set<String> symbols = new TreeSet<>();
-
-    // for (ClassInfo cls : info.getSuperclasses()) {
-    // symbols.add(cls.getName());
-    // }
-    // for (ClassInfo ifc : info.getInterfaces()) {
-    // symbols.add(ifc.getName());
-    // }
-    // for (MethodInfo m : info.getMethodInfo()) {
-    // visitMethodTypeSignature(m.getTypeDescriptor(), symbols);
-
-    // MethodParameterInfo[] params = m.getParameterInfo();
-    // for (int i = 0; i < params.length; i++) {
-    // addMethodParameterInfo(params[i], symbols);
-    // }
-    // }
-
-    // return symbols;
-
-    // }
-
-    // private static void addMethodParameterInfo(MethodParameterInfo mpi,
-    // Collection<String> symbols) {
-    // visitTypeSignature(mpi.getTypeDescriptor(), symbols);
-    // }
-
-    // private static void visitTypeParameter(TypeParameter tp, Collection<String>
-    // symbols) {
-    // visitTypeSignature(tp.getClassBound(), symbols);
-    // for (TypeSignature rts : tp.getInterfaceBounds()) {
-    // visitTypeSignature(rts, symbols);
-    // }
-    // }
-
-    // private static void visitMethodTypeSignature(MethodTypeSignature mts,
-    // Collection<String> symbols) {
-    // visitTypeSignature(mts.getResultType(), symbols);
-    // for (TypeSignature t : mts.getThrowsSignatures()) {
-    // visitTypeSignature(t, symbols);
-    // }
-    // for (TypeParameter t : mts.getTypeParameters()) {
-    // visitTypeParameter(t, symbols);
-    // }
-    // }
-
-    // private static void visitTypeSignature(TypeSignature ts, Collection<String>
-    // symbols) {
-    // if (ts instanceof ClassRefTypeSignature) {
-    // String fqn = ((ClassRefTypeSignature) ts).getFullyQualifiedClassName();
-    // symbols.add(fqn);
-    // return;
-    // }
-    // if (ts instanceof ArrayTypeSignature) {
-    // ArrayTypeSignature ats = (ArrayTypeSignature) ts;
-    // visitTypeSignature(ats.getElementTypeSignature(), symbols);
-    // return;
-    // }
-    // if (ts instanceof TypeVariableSignature) {
-    // // TODO
-    // return;
-    // }
-    // }
-    // }
-
-    // public static class ListAdapter implements JsonSerializer<List<?>> {
-    // @Override
-    // public JsonElement serialize(List<?> src, Type typeOfSrc,
-    // JsonSerializationContext context) {
-    // if (src == null || src.isEmpty()) // exclusion is made here
-    // return null;
-
-    // JsonArray array = new JsonArray();
-
-    // for (Object child : src) {
-    // JsonElement element = context.serialize(child);
-    // array.add(element);
-    // }
-
-    // return array;
-    // }
-    // }
+    private static void visitTypeSignature(TypeSignature ts, Collection<String> symbols) {
+        if (ts instanceof ClassRefTypeSignature) {
+            String fqn = ((ClassRefTypeSignature) ts).getFullyQualifiedClassName();
+            symbols.add(fqn);
+            return;
+        }
+        if (ts instanceof ArrayTypeSignature) {
+            ArrayTypeSignature ats = (ArrayTypeSignature) ts;
+            visitTypeSignature(ats.getElementTypeSignature(), symbols);
+            return;
+        }
+        if (ts instanceof TypeVariableSignature) {
+            // TODO
+            return;
+        }
+    }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         if (args.length == 0) {

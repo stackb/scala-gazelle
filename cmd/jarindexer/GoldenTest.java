@@ -36,11 +36,6 @@ public class GoldenTest {
     static final Logger LOGGER = Logger.getLogger(GoldenTest.class.getName());
     static final boolean wantUpdate = System.getenv("BUILD_WORKING_DIRECTORY") != null;
 
-    // @Rule
-    // public TemporaryFolder tmp =
-    // TemporaryFolder.builder().parentFolder(mustGetTestTmpDirFile())
-    // .assureDeletion().build();
-
     @Test
     public void testGoldens() throws IOException {
         // listEnv();
@@ -60,7 +55,7 @@ public class GoldenTest {
             this.testGoldenDir(srcdir, dir);
         }
 
-        if (true) {
+        if (false) {
             throw new RuntimeException("WIP");
         }
     }
