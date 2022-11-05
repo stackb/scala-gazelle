@@ -80,7 +80,6 @@ go_library(
         "viz_test.go",
         "maven_resolver.go",
         "golden_test.go",
-        "gazelle",
         "scala.WORKSPACE",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
