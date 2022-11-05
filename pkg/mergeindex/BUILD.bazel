@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "mergeindex",
+    srcs = ["mergeindex.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/mergeindex",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/jarindex",
+        "@org_golang_google_protobuf//proto",
+    ],
+)
+
+go_test(
+    name = "mergeindex_test",
+    srcs = ["mergeindex_test.go"],
+    embed = [":mergeindex"],
+    deps = [
+        "//api/jarindex",
+        "@com_github_google_go_cmp//cmp",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@org_golang_google_protobuf//proto",
+        "@org_golang_google_protobuf//testing/protocmp",
+    ],
+)

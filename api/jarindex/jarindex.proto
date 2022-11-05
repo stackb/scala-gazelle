@@ -6,7 +6,7 @@ option go_package = "github.com/stackb/scala-gazelle/api/jarindex";
 option java_package = "build.stack.scala.gazelle.api.jarindex";
 option java_multiple_files = true;
 
-message Index {
+message JarIndex {
     repeated JarFile jar_file = 2 [json_name = "jarFiles"];
     repeated string predefined = 3;
     repeated string preferred = 4;
