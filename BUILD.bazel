@@ -1,4 +1,3 @@
-load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 # ----------------------------------------------------
@@ -74,11 +73,5 @@ filegroup(
         "workspace_deps.bzl",
         "//language/scala:all_files",
     ],
-    visibility = ["//visibility:public"],
-)
-
-proto_library(
-    name = "out_proto",
-    srcs = ["out.proto"],
     visibility = ["//visibility:public"],
 )
