@@ -30,23 +30,6 @@ type JarSpec struct {
 	Extends map[string]string `json:"extends,omitempty"`
 }
 
-// // JarSpec describes the symbols provided by a bazel label that produces a jar
-// // file.
-// type JarSpecOld struct {
-// 	Symbols []string `json:"symbols,omitempty"`
-// 	Files   []*ClassFileSpec
-// 	// Label is the bazel label that provides the jar
-// 	Label string `json:"label,omitempty"`
-// 	// Filename is the jar filename
-// 	Filename string `json:"filename,omitempty"`
-// 	// Classes is a list of FQNs in the jar
-// 	Classes []string `json:"classes,omitempty"`
-// 	// Packages is a list of packages represented in the jar
-// 	Packages []string `json:"packages,omitempty"`
-// 	// Extends is a mapping from class to symbol that it extends
-// 	Extends map[string]string `json:"extends,omitempty"`
-// }
-
 type ClassFileSpec struct {
 	// Name is the class FQN
 	Name string `json:"name"`

@@ -17,7 +17,7 @@ type RuleInfo interface {
 	ProvideRule(rc *RuleConfig, pkg ScalaPackage) RuleProvider
 }
 
-// RuleResolver implementations is an optional interface for a RuleInfo
+// RuleResolver is an optional interface for a RuleInfo
 // implementation.  This is a mechanism for rule implementations to only modify
 // an existing rule rather than having to create one from scratch.
 type RuleResolver interface {

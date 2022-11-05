@@ -15,7 +15,8 @@ import (
 const (
 	// ruleDirective is the directive for toggling rule generation.
 	ruleDirective = "scala_rule"
-	// overrideDirective is the directive for disambiguation overrides.
+	// overrideDirective is the well-know gazelle:override directive for
+	// disambiguation overrides.
 	overrideDirective = "override"
 	// indirectDependencyDirective is the directive for declaring indirect
 	// dependencies.  For example, if a class explicitly imports
@@ -125,7 +126,7 @@ func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
 	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
 	r, err := c.getOrCreateRuleConfig(c.config, name)
 	if err != nil {
-		return fmt.Errorf("invalid proto_rule directive %+v: %w", d, err)
+		return fmt.Errorf("invalid scala_rule directive %+v: %w", d, err)
 	}
 	return r.parseDirective(c, name, param, value)
 }

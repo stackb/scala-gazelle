@@ -11,7 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	// "github.com/bazelbuild/buildtools/build"
+	"github.com/bazelbuild/buildtools/build"
 	"github.com/emicklei/dot"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
@@ -23,6 +23,7 @@ const ResolverImpLangPrivateKey = "_resolve_imp_lang"
 // debug is a developer setting
 const debug = false
 
+// importOrigin is used to trace import provenance.
 type importOrigin struct {
 	Kind       string
 	SourceFile *index.ScalaFileSpec
@@ -164,7 +165,7 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
-	dbg := false
+	dbg := true
 	for imp, origin := range imports {
 		src := g.Node("imp/" + imp)
 
@@ -184,7 +185,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
 			if dbg {
-				log.Println("unresolved:", imp)
+				log.Println("resolved:", imp)
 			}
 			continue
 		}
@@ -219,7 +220,6 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 	}
 }
 
-// resolveImport should return a different thing than
 func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
 	if debug {
 		log.Println("resolveImport:", imp, origin.String())
@@ -334,7 +334,8 @@ func printRules(rules ...*rule.Rule) {
 }
 
 func getScalaImportsFromRuleAttrComment(attrName, prefix string, r *rule.Rule) (imports []string) {
-	assign := r.AttrAssignment(attrName)
+	// assign := r.AttrAssignment(attrName)
+	var assign *build.AssignExpr
 	if assign == nil {
 		return
 	}

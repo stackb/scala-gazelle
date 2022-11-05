@@ -60,3 +60,59 @@ java_binary(
         ":gson",
     ],
 )
+
+java_library(
+    name = "indexer",
+    srcs = ["Indexer.java"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/jarindex:jarindex_java_library",
+        "@classgraph_jar//jar",
+        "@com_google_protobuf//:protobuf_java",
+    ],
+)
+
+java_binary(
+    name = "jarindexer3",
+    srcs = ["Indexer.java"],
+    main_class = "Indexer",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":indexer",
+        "//api/jarindex:jarindex_java_library",
+        "@classgraph_jar//jar",
+    ],
+)
+
+java_test(
+    name = "indexer_test",
+    srcs = ["IndexerTest.java"],
+    data = glob(["testdata/**/*"]),
+    test_class = "IndexerTest",
+    deps = [
+        ":indexer",
+        "//api/jarindex:jarindex_java_library",
+    ],
+)
+
+java_test(
+    name = "golden_test",
+    srcs = ["GoldenTest.java"],
+    data = [
+        ":indexer_jar",
+    ] + glob(["testdata/**/*"]),
+    test_class = "GoldenTest",
+    deps = [
+        ":indexer",
+        "//api/jarindex:jarindex_java_library",
+        "@com_google_protobuf//:protobuf_java_util",
+    ],
+)
+
+genrule(
+    name = "indexer_jar",
+    srcs = [":indexer"],
+    outs = ["testdata/simple/simple.jar"],
+    cmd = "cp $(location :indexer) $@",
+    executable = False,
+)

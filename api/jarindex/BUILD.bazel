@@ -1,0 +1,34 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
+load("@build_stack_rules_proto//rules/java:proto_java_library.bzl", "proto_java_library")
+
+proto_library(
+    name = "jarindex_proto",
+    srcs = ["jarindex.proto"],
+    visibility = ["//visibility:public"],
+)
+
+proto_compiled_sources(
+    name = "jarindex_go_compiled_sources",
+    srcs = ["jarindex.pb.go"],
+    output_mappings = ["jarindex.pb.go=github.com/stackb/scala-gazelle/api/jarindex/jarindex.pb.go"],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "jarindex_proto",
+)
+
+proto_compile(
+    name = "jarindex_java_compile",
+    outs = {"@build_stack_rules_proto//plugin/builtin:java": "api/jarindex/jarindex.srcjar"},
+    outputs = ["jarindex.srcjar"],
+    plugins = ["@build_stack_rules_proto//plugin/builtin:java"],
+    proto = "jarindex_proto",
+)
+
+proto_java_library(
+    name = "jarindex_java_library",
+    srcs = ["jarindex.srcjar"],
+    visibility = ["//visibility:public"],
+    exports = ["@com_google_protobuf//:protobuf_java"],
+    deps = ["@com_google_protobuf//:protobuf_java"],
+)

@@ -50,7 +50,7 @@ func (p *registry) RuleNames() []string {
 func (p *registry) MustRegisterRule(name string, rule RuleInfo) RuleRegistry {
 	_, ok := p.rules[name]
 	if ok {
-		panic("duplicate proto_rule registration: " + name)
+		panic("duplicate scala_rule registration: " + name)
 	}
 	p.rules[name] = rule
 	return p

@@ -3,11 +3,10 @@ package scala
 import (
 	"flag"
 	"log"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
-
-	"github.com/stackb/rules_proto/pkg/protoc"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -15,6 +14,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/stackb/rules_proto/pkg/protoc"
+
+	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
 const (
@@ -31,9 +33,13 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 	sourceResolver := newScalaSourceIndexResolver(depends)
 	classResolver := newScalaClassIndexResolver(depends)
+	mavenResolver := newMavenResolver()
 	scalaCompiler := newScalaCompiler()
+	// var scalaCompiler *scalaCompiler
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
 	vizServer := newGraphvizServer(packages, importRegistry)
+
+	out := progress.NewOut(os.Stderr)
 
 	return &scalaLang{
 		ruleRegistry:    globalRuleRegistry,
@@ -44,8 +50,10 @@ func NewLanguage() language.Language {
 		resolvers: []ConfigurableCrossResolver{
 			sourceResolver,
 			classResolver,
+			mavenResolver,
 		},
-		viz: vizServer,
+		progress: progress.NewProgressOutput(out),
+		viz:      vizServer,
 	}
 }
 
@@ -82,6 +90,9 @@ type scalaLang struct {
 	lastPackage *scalaPackage
 	// remainingRules is a counter that tracks when all rules have been resolved.
 	remainingRules int
+	totalRules     int
+	// progress is the progress interface
+	progress progress.Output
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -101,7 +112,6 @@ func (sl *scalaLang) OnIndex() {
 
 // OnResolve implements part of the language.Lifecycler interface.
 func (sl *scalaLang) OnResolve() {
-	log.Println("-- RESOLVE PHASE ---")
 
 	for _, r := range sl.resolvers {
 		if l, ok := r.(GazellePhaseTransitionListener); ok {
@@ -131,7 +141,6 @@ func (sl *scalaLang) OnResolve() {
 
 // OnEnd implements part of the language.Lifecycler interface.
 func (sl *scalaLang) OnEnd() {
-	log.Println("-- END ---")
 	sl.scalaCompiler.stop()
 	// sl.recordDeps()
 	sl.viz.OnEnd()
@@ -277,9 +286,15 @@ func (sl *scalaLang) Fix(c *config.Config, f *rule.File) {
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
-	if debug {
-		log.Println("visiting", args.Rel)
-	}
+
+	sl.progress.WriteProgress(progress.Progress{
+		ID:     "walk",
+		Action: "generating rules",
+		// Message: args.Rel,
+		Total:   5451,
+		Current: int64(len(sl.packages)),
+		Units:   "pkgs",
+	})
 
 	cfg := getOrCreateScalaConfig(args.Config)
 
@@ -301,29 +316,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sl.importRegistry.AddDependency("ws/default", "pkg/"+args.Rel, "ws")
 	sl.lastPackage = pkg
 
-	for _, r := range args.OtherGen {
-		if r.Kind() != "proto_library2" {
-			continue
-		}
-		if !hasPackageProto(args.RegularFiles) {
-			continue
-		}
-		srcs := r.AttrStrings("srcs")
-		if len(srcs) > 0 {
-			newSrcs := make([]string, 0)
-			for _, src := range srcs {
-				if src == "package.proto" {
-					continue
-				}
-				newSrcs = append(newSrcs, src)
-			}
-			r.SetAttr("srcs", protoc.DeduplicateAndSort(srcs))
-			// log.Printf("added package.proto to %s //%s:%s", r.Kind(), args.Rel, r.Name())
-			// deps := append(r.AttrStrings("deps"), "//thirdparty/protobuf/scalapb:scalapb_proto")
-			// r.SetAttr("deps", protoc.DeduplicateAndSort(deps))
-		}
-	}
-
 	rules := pkg.Rules()
 	sl.remainingRules += len(rules)
 	// empty := pkg.Empty()
@@ -332,10 +324,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 		sl.importRegistry.AddDependency("pkg/"+args.Rel, "rule/"+label.New("", args.Rel, r.Name()).String(), "rule")
-	}
-
-	if debug && args.File != nil {
-		log.Println("visited", args.Rel)
 	}
 
 	return language.GenerateResult{
@@ -395,6 +383,7 @@ func (sl *scalaLang) Resolve(
 	if !sl.isResolvePhase {
 		sl.isResolvePhase = true
 		sl.OnResolve()
+		sl.totalRules = sl.remainingRules
 	}
 
 	if pkg, ok := sl.packages[from.Pkg]; ok {
@@ -404,12 +393,19 @@ func (sl *scalaLang) Resolve(
 
 		if sl.remainingRules == 0 {
 			sl.OnEnd()
-		} else if sl.remainingRules&8 == 1 {
-			log.Println("Remaining rules:", sl.remainingRules)
 		}
 	} else {
 		log.Printf("no known rule package for %v", from.Pkg)
 	}
+
+	sl.progress.WriteProgress(progress.Progress{
+		ID:      "resolve",
+		Action:  "resolving dependencies",
+		Total:   int64(sl.totalRules),
+		Current: int64(sl.totalRules - sl.remainingRules),
+		Units:   "rules",
+	})
+
 }
 
 // CrossResolve calls all known resolvers and returns the first non-empty result.

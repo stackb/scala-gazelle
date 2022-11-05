@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"flag"
@@ -18,16 +19,17 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
+
+	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
 type ScalaFileParser interface {
 	// ParseScalaFiles is used to parse a list of source files.  The list of srcs
 	// is expected to be relative to the from.Pkg rel field, and the absolute path
-	// of a file is expected at (dir, from.Pkg, src).  If the resolver already has a
-	// cache entry for the given file and the current sha256 matches the cached one,
-	// the cached entry will be returned.  Kind is used to determine if the rule is
-	// a test rule.
-	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error)
+	// of a file is expected at (dir, from.Pkg, src).  Kind is used to determine
+	// if the rule is a test rule.
+	ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error)
 }
 
 // ScalaSourceRuleRegistry keep track of which files are associated under a rule
@@ -48,7 +50,7 @@ func newScalaSourceIndexResolver(depsRecorder DependencyRecorder) *scalaSourceIn
 		packages:     make(map[string][]*provider),
 		byFilename:   make(map[string]*index.ScalaFileSpec),
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
-		parser:       &scalaSourceParser{},
+		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
 		depsRecorder: depsRecorder,
 	}
@@ -86,7 +88,7 @@ type scalaSourceIndexResolver struct {
 	// byRule is a mapping of the scala rule to the spec
 	byRule map[label.Label]*index.ScalaRuleSpec
 	// parser is an instance of the scala source parser
-	parser *scalaSourceParser
+	parser *scalaparse.ScalaParseServer
 }
 
 type provider struct {
@@ -99,7 +101,6 @@ type provider struct {
 func (r *scalaSourceIndexResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&r.indexIn, "scala_source_index_in", "", "name of the scala source index file to read")
 	fs.StringVar(&r.indexOut, "scala_source_index_out", "", "name of the scala source index file to write")
-	fs.StringVar(&r.parser.parserToolPath, "scala_parser_tool_path", "sourceindexer", "filesystem path to the parser tool")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
@@ -110,11 +111,11 @@ func (r *scalaSourceIndexResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 		}
 	}
 	// start the parser backend process
-	return r.parser.start()
+	return r.parser.Start()
 }
 
 // ParseScalaFiles implements ScalaFileParser
-func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (index.ScalaRuleSpec, error) {
+func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error) {
 	rule := &index.ScalaRuleSpec{
 		Label: from.String(),
 		Kind:  kind,
@@ -124,12 +125,14 @@ func (r *scalaSourceIndexResolver) ParseScalaFiles(dir string, from label.Label,
 		filename := filepath.Join(from.Pkg, src)
 		file, err := r.parseScalaFileSpec(dir, filename)
 		if err != nil {
-			return index.ScalaRuleSpec{}, err
+			return nil, err
 		}
 		rule.Srcs[i] = file
 	}
-	r.readScalaRuleSpec(rule)
-	return *rule, nil
+	if err := r.readScalaRuleSpec(rule); err != nil {
+		return nil, err
+	}
+	return rule, nil
 }
 
 // GetScalaRule implements part of ScalaSourceRuleRegistry.
@@ -184,13 +187,31 @@ func (r *scalaSourceIndexResolver) parseScalaFileSpec(dir, filename string) (*in
 		// log.Printf("file cache miss: <%s>", filename)
 	}
 
-	file, err = r.parser.parse(abs)
+	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
+		Filename: []string{abs},
+	})
+
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
-	file.Filename = filename
-	file.Sha256 = sha256
-	log.Printf("Parsed <%s>", filename)
+	if response.Error != "" {
+		log.Printf("Parse Error <%s>: %s", filename, response.Error)
+	} else {
+		log.Printf("Parsed <%s>", filename)
+	}
+
+	scalaFile := response.ScalaFiles[0]
+	file = &index.ScalaFileSpec{
+		Filename: filename,
+		Packages: scalaFile.Packages,
+		Imports:  scalaFile.Imports,
+		Classes:  scalaFile.Classes,
+		Types:    scalaFile.Types,
+		Vals:     scalaFile.Vals,
+		Objects:  scalaFile.Objects,
+		Traits:   scalaFile.Traits,
+		Sha256:   sha256,
+	}
 	return file, nil
 }
 
@@ -231,7 +252,8 @@ func (r *scalaSourceIndexResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	defer r.providersMux.Unlock()
 
 	if _, exists := r.byFilename[file.Filename]; exists {
-		return fmt.Errorf("duplicate filename <%s>", file.Filename)
+		// return fmt.Errorf("duplicate filename <%s>", file.Filename)
+		return nil
 	}
 
 	for _, imp := range file.Classes {
@@ -294,7 +316,7 @@ func (r *scalaSourceIndexResolver) addDependency(src, dst, kind string) {
 // OnResolve implements GazellePhaseTransitionListener.
 func (r *scalaSourceIndexResolver) OnResolve() {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
-	r.parser.stop()
+	r.parser.Stop()
 
 	// record dependency graph
 	for _, rule := range r.byRule {

@@ -48,7 +48,6 @@ func (v *graphvizServer) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.C
 	fs.StringVar(&v.host, "graphviz_host", "localhost", "bind host name for the graphviz server")
 	fs.StringVar(&v.port, "graphviz_port", "", "port number for the graphviz server")
 	fs.BoolVar(&v.blockOnResolve, "graphviz_block_on_resolve", false, "if true, block the process at the beginning of resolve phase (Ctrl-C to continue)")
-	log.Println("all flags registered")
 }
 
 // CheckFlags implements part of the Configurer interface.

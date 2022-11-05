@@ -41,7 +41,7 @@ func init() {
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
 // already in the build file.  It does not create any new rules.  This rule
-// implementation is to parse files named in 'srcs' and update 'deps'.
+// implementation is used to parse files named in 'srcs' and update 'deps'.
 type scalaExistingRule struct {
 	load, name   string
 	isBinaryRule bool
@@ -55,11 +55,6 @@ func (s *scalaExistingRule) Name() string {
 // KindInfo implements part of the RuleInfo interface.
 func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
-		// TODO(pcj): understand better why deps needs to be in MergeableAttrs
-		// here rather than ResolveAttrs.
-		// MergeableAttrs: map[string]bool{
-		// 	"deps": true,
-		// },
 		ResolveAttrs: map[string]bool{
 			"deps":    true,
 			"exports": true,
@@ -94,7 +89,6 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 	}
 
 	if len(srcs) > 0 {
-
 		// log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
 		// return nil
 		files, err = resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaFileParser())
@@ -137,6 +131,8 @@ func (s *scalaExistingRuleRule) Rule() *rule.Rule {
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
+	// binary rules are not deps of anything else, so we don't advertise to
+	// provide any imports
 	if s.isBinaryRule {
 		return nil
 	}
@@ -164,10 +160,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 	specs := make([]resolve.ImportSpec, len(provides))
 	for i, imp := range provides {
-		specs[i] = resolve.ImportSpec{
-			Lang: lang,
-			Imp:  imp,
-		}
+		specs[i] = resolve.ImportSpec{Lang: lang, Imp: imp}
 		// log.Println("scalaExistingRule.Imports()", lang, r.Kind(), r.Name(), i, imp)
 	}
 
@@ -176,7 +169,8 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	dbg := debug
+	// dbg := debug
+	dbg := true
 	if dbg {
 		log.Println(">>> BEGIN RESOLVE", from)
 	}
@@ -240,8 +234,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
-		// panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
-		log.Printf("%v has unresolved dependencies: %v", from, unresolved)
+		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		// log.Printf("%v has unresolved dependencies: %v", from, unresolved)
 	}
 
 	if len(resolved) > 0 {

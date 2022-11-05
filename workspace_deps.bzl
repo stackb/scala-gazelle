@@ -1,4 +1,4 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file", "http_jar")
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
@@ -7,6 +7,8 @@ def _maybe(repo_rule, name, **kwargs):
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 
+    classgraph_jar()
+    scalameta_parsers()
     bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
     build_stack_rules_proto()
@@ -28,6 +30,22 @@ def io_bazel_rules_go():
         sha256 = "cc027f11f98aef8bc52c472ced0714994507a16ccd3a0820b2df2d6db695facd",
         strip_prefix = "rules_go-0.35.0",
         urls = ["https://github.com/bazelbuild/rules_go/archive/v0.35.0.tar.gz"],
+    )
+
+def scalameta_parsers():
+    _maybe(
+        http_archive,
+        name = "scalameta_parsers",
+        sha256 = "661081f106ebdc9592543223887de999d2a2b6229bd1aa22b1376ba6b695675d",
+        strip_prefix = "package",
+        build_file_content = """
+filegroup(
+    name = "module",
+    srcs = ["index.js"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.4.17.tgz"],
     )
 
 def bazel_gazelle():
@@ -176,4 +194,34 @@ def viz_js_lite():
         name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
         sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
         urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
+    )
+
+def bun_darwin():
+    _maybe(
+        http_archive,
+        name = "bun_darwin",
+        sha256 = "8976309239260f8089377980cf9399e99a6e352f22878b59fc9804e7a8b98b7b",
+        strip_prefix = "bun-darwin-x64",
+        build_file_content = """
+filegroup(
+    name = "bin",
+    srcs = ["bun"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        urls = [
+            "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
+        ],
+    )
+
+def classgraph_jar():
+    # bzl use jar https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar
+    # Last-Modified: Wed, 06 Jul 2022 04:30:32 GMT
+    # X-Checksum-Md5: 7fca2eb70908395af9ac43858b428c35
+    # X-Checksum-Sha1: 4bc2f188bc9001473d4a26ac488c2ae1a3e906de
+    # Size: 558272 (558 kB)
+    http_jar(
+        name = "classgraph_jar",
+        sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
+        url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
     )

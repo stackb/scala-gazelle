@@ -1,0 +1,71 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "scalaparse",
+    srcs = [
+        "assets.go",
+        "exec.go",
+        "options.go",
+        "parse.go",
+        "server.go",
+    ],
+    embedsrcs = [
+        "node_modules/scalameta-parsers/index.js",
+        "sourceindexer.mjs",
+        # "bun.exe",
+        "node.exe",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//api/scalaparse",
+        "@com_github_amenzhinsky_go_memexec//:go-memexec",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
+        "@org_golang_google_protobuf//encoding/protojson",
+    ],
+)
+
+go_test(
+    name = "scalaparse_test",
+    srcs = [
+        "assets_test.go",
+        "exec_test.go",
+        "options_test.go",
+        "parse_test.go",
+        # "parse_test.go",
+        "server_test.go",
+    ],
+    embed = [":scalaparse"],
+    deps = [
+        "//api/scalaparse",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
+)
+
+genrule(
+    name = "scalameta-parsers-module",
+    srcs = ["@scalameta_parsers//:module"],
+    outs = ["node_modules/scalameta-parsers/index.js"],
+    cmd = "cp $(locations @scalameta_parsers//:module) $@",
+)
+
+genrule(
+    name = "node_exe",
+    outs = ["node.exe"],
+    cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
+    executable = True,
+    tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
+)
+
+# genrule(
+#     name = "bun_exe",
+#     outs = ["bun.exe"],
+#     cmd = "cp $(location @bun_darwin//:bin) $@",
+#     executable = True,
+#     tools = ["@bun_darwin//:bin"],
+# )

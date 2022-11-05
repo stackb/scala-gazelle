@@ -1,6 +1,9 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle_binary")
+load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
+# gazelle:exclude oldtestdata
 
 go_library(
     name = "scala",
@@ -9,6 +12,7 @@ go_library(
         "glob.go",
         "import_registry.go",
         "intent.go",
+        "maven_resolver.go",
         "package.go",
         "parser.go",
         "resolver.go",
@@ -27,7 +31,6 @@ go_library(
         "viz.go",
     ],
     data = [
-        ":node",
         ":scala_compiler.jar",
         ":sourceindexer",
     ],
@@ -43,13 +46,52 @@ go_library(
         "pkg.gohtml",
         "packages.gohtml",
         "symbols.gohtml",
-        "@cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js//file",
+        "BUILD.bazel",
+        "cross_resolver_registry.go",
+        "glob.go",
+        "glob_test.go",
+        "graphviz.gohtml",
+        "header.tmpl.html",
+        "import_registry.go",
+        "import_resolver_test.go",
+        "intent.go",
+        "package.go",
+        "parser.go",
+        "resolver.go",
+        "resolver_test.go",
+        "rule_config.go",
+        "rule_info.go",
+        "rule_provider.go",
+        "rule_registry.go",
+        "scala.go",
+        "scala_class_index_resolver.go",
+        "scala_compiler.go",
+        "scala_compiler.jar",
+        "scala_compiler_test.go",
+        "scala_config.go",
+        "scala_existing_rule.go",
+        "scala_existing_rule_test.go",
+        "scala_library.go",
+        "scala_source_index_resolver.go",
+        "scala_test.go",
+        "sourceindexer",
+        "symbol_table.go",
+        "viz.go",
+        "viz_test.go",
+        "maven_resolver.go",
+        "golden_test.go",
+        "gazelle",
+        "scala.WORKSPACE",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
+        "//api/scalaparse",
         "//pkg/collections",
         "//pkg/index",
+        "//pkg/maven",
+        "//pkg/progress",
+        "//pkg/scalaparse",
         "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
@@ -71,9 +113,9 @@ go_library(
 genrule(
     name = "sourceindexer_tool",
     outs = ["sourceindexer"],
-    cmd = "cp $(location //cmd/sourceindexer) $@",
+    cmd = "cp $(location //pkg/scalaparse) $@",
     executable = True,
-    tools = ["//cmd/sourceindexer"],
+    tools = ["//pkg/scalaparse"],
 )
 
 genrule(
@@ -84,34 +126,31 @@ genrule(
     tools = ["//cmd/scalacparse:scala_compiler_deploy.jar"],
 )
 
-# genrule(
-#     name = "scala_compiler_jar_old",
-#     outs = ["scala_compiler.jar"],
-#     cmd = "cp $(location //cmd/scalacparse:scalacparse_deploy.jar) $@",
-#     executable = True,
-#     tools = ["//cmd/scalacparse:scalacparse_deploy.jar"],
-# )
-
-genrule(
-    name = "node_bin",
-    outs = ["node"],
-    cmd = "cp $(location @build_bazel_rules_nodejs//toolchains/node:node_bin) $@",
-    executable = True,
-    tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
-)
-
 genrule(
     name = "gazelle_tool",
     outs = ["gazelle"],
-    cmd = "cp $(location //:gazelle-scala) $@",
+    cmd = "cp $(location :gazelle-scala) $@",
     executable = True,
-    tools = ["//:gazelle-scala"],
+    tools = [":gazelle-scala"],
+)
+
+gazelle_binary(
+    name = "gazelle-scala",
+    languages = [
+        "@bazel_gazelle//language/go",
+        "@bazel_gazelle//language/proto",
+        "@build_stack_rules_proto//language/protobuf",
+        ":scala",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 go_test(
     name = "scala_test",
     srcs = [
+        # "glob_test.go",
         "glob_test.go",
+        "golden_test.go",
         "import_resolver_test.go",
         "resolver_test.go",
         "scala_compiler_test.go",
@@ -136,7 +175,26 @@ go_test(
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_davecgh_go_spew//spew",
         "@com_github_google_go_cmp//cmp",
-        "@com_github_google_go_cmp//cmp/cmpopts",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
+)
+
+gazelle_testdata_example(
+    name = "maven_resolver",
+    srcs = glob(["testdata/maven_resolver/*"]),
+    workspace_template = "scala.WORKSPACE",
+)
+
+gazelle_testdata_example(
+    name = "platform_resolver",
+    srcs = glob(["testdata/platform_resolver/*"]),
+    workspace_template = "scala.WORKSPACE",
+)
+
+filegroup(
+    name = "all_files",
+    srcs = [
+        "BUILD.bazel",
+    ] + glob(["*.go"]),
+    visibility = ["//visibility:public"],
 )
