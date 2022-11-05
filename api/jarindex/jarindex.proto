@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package api.jarindex;
+
+option go_package = "github.com/stackb/scala-gazelle/api/jarindex";
+option java_package = "build.stack.scala.gazelle.api.jarindex";
+option java_multiple_files = true;
+
+message Index {
+    repeated JarFile jar_file = 2 [json_name = "jarFiles"];
+    repeated string predefined = 3;
+    repeated string preferred = 4;
+}
+
+message JarFile {
+    string filename = 1;
+    string label = 2;
+    repeated ClassFile class_file = 3  [json_name = "files"];
+    repeated string symbols = 4;
+    repeated string class_name = 5  [json_name = "classes"];
+    repeated string package_name = 6  [json_name = "packages"];
+    map<string,string> extends = 7  [json_name = "extends"];
+}
+
+message ClassFile {
+    string name = 1;
+    repeated int32 classes = 2;
+    repeated string symbols = 3;
+    repeated string superclasses = 4;
+    repeated string interfaces = 5;
+    repeated ClassField fields = 6;
+    repeated ClassMethod methods = 7;   
+}
+
+message ClassField {
+    string name = 1;
+    ClassType type = 2;
+}
+
+message ClassType {
+    string kind = 1;
+    string value = 2;
+}
+
+message ClassMethod {
+    string name = 1;
+    ClassType returns = 2;
+    repeated ClassMethodParam params = 3;
+    repeated ClassType types = 4;
+    repeated ClassType throws = 5;
+}
+
+message ClassMethodParam {
+    ClassType returns = 1;
+}
