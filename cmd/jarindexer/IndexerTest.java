@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-public class GoldenTest {
+public class IndexerTest {
 
-    static final Logger LOGGER = Logger.getLogger(GoldenTest.class.getName());
+    static final Logger LOGGER = Logger.getLogger(IndexerTest.class.getName());
     static final boolean wantUpdate = System.getenv("BUILD_WORKING_DIRECTORY") != null;
 
     @Test
@@ -41,7 +41,7 @@ public class GoldenTest {
         // listEnv();
 
         final Path srcdir = mustGetSelfLocationDir();
-        LOGGER.log(Level.INFO, "srcdir: " + srcdir);
+        LOGGER.log(Level.FINE, "srcdir: " + srcdir);
         // listDir(srcdir);
 
         final Set<Path> dirs = listTestDataDirectories(srcdir);
@@ -61,10 +61,10 @@ public class GoldenTest {
     }
 
     private void testGoldenDir(final Path srcdir, final Path dir) throws IOException {
-        LOGGER.log(Level.INFO, "golden test dir: " + dir);
+        LOGGER.log(Level.FINE, "golden test dir: " + dir);
         listDir(dir);
         final Set<Path> files = listFiles(dir);
-        LOGGER.log(Level.INFO, "testing files: " + files.size());
+        LOGGER.log(Level.FINE, "testing files: " + files.size());
 
         final Optional<Path> goldenFile = files.stream()
                 .filter(path -> path.getFileName().endsWith("golden.json"))
@@ -78,14 +78,14 @@ public class GoldenTest {
 
         Indexer indexer = new Indexer(tmpDir);
         for (Path srcFile : files) {
-            LOGGER.log(Level.INFO, "possible file: " + srcFile);
+            LOGGER.log(Level.FINE, "possible file: " + srcFile);
             if (srcFile.toString().endsWith(".jar")) {
                 Path rel = srcdir.relativize(srcFile);
-                LOGGER.log(Level.INFO, "indexing jar: " + rel);
+                LOGGER.log(Level.FINE, "indexing jar: " + rel);
                 final Path tmpFile = tmpDir.resolve(rel.toString());
                 Files.createDirectories(tmpFile.getParent());
                 Files.copy(srcFile, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.log(Level.INFO, "copying jar: " + tmpFile);
+                LOGGER.log(Level.FINE, "copying jar: " + tmpFile);
 
                 // Path tmpRel = tmpDir.relativize(tmpFile);
                 indexer.index("//fake:label", tmpFile);
@@ -96,7 +96,7 @@ public class GoldenTest {
 
         if (wantUpdate) {
             Path sourceFile = getSourceFile(goldenFile.get());
-            LOGGER.log(Level.INFO, "updating source file: " + sourceFile);
+            LOGGER.log(Level.FINE, "updating source file: " + sourceFile);
             mustWriteIndexJson(sourceFile, got);
         } else {
             assertEquals(want, got);

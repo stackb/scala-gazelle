@@ -21,12 +21,12 @@ java_binary(
 )
 
 java_test(
-    name = "golden_test",
-    srcs = ["GoldenTest.java"],
+    name = "indexer_test",
+    srcs = ["IndexerTest.java"],
     data = [
         ":indexer_jar",
     ] + glob(["testdata/**/*"]),
-    test_class = "GoldenTest",
+    test_class = "IndexerTest",
     deps = [
         ":indexer",
         "//api/jarindex:jarindex_java_library",
