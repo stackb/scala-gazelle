@@ -1,6 +1,6 @@
 {
   "jarFiles": [{
-    "filename": "testdata/simple/simple.jar",
+    "filename": "testdata/indexer/indexer.jar",
     "label": "//fake:label",
     "files": [{
       "name": "Indexer",

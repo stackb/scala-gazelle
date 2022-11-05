@@ -31,14 +31,14 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-public class GoldenTest {
+public class IndexerTest {
 
-    static final Logger LOGGER = Logger.getLogger(GoldenTest.class.getName());
+    static final Logger LOGGER = Logger.getLogger(IndexerTest.class.getName());
     static final boolean wantUpdate = System.getenv("BUILD_WORKING_DIRECTORY") != null;
 
     @Test
     public void testGoldens() throws IOException {
-        // listEnv();
+        listEnv();
 
         final Path srcdir = mustGetSelfLocationDir();
         LOGGER.log(Level.INFO, "srcdir: " + srcdir);
@@ -73,6 +73,8 @@ public class GoldenTest {
             throw new IllegalStateException(
                     String.format("testdata subdirectory %s must contain a file named 'golden.json'", dir));
         }
+        LOGGER.log(Level.INFO, "golden file: " + goldenFile);
+
         final Index want = mustParseIndexJson(goldenFile.get());
         final Path tmpDir = mustGetTestTmpDir();
 
@@ -83,11 +85,11 @@ public class GoldenTest {
                 Path rel = srcdir.relativize(srcFile);
                 LOGGER.log(Level.INFO, "indexing jar: " + rel);
                 final Path tmpFile = tmpDir.resolve(rel.toString());
+
+                LOGGER.log(Level.INFO, "copying jar: " + tmpFile);
                 Files.createDirectories(tmpFile.getParent());
                 Files.copy(srcFile, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-                LOGGER.log(Level.INFO, "copying jar: " + tmpFile);
 
-                // Path tmpRel = tmpDir.relativize(tmpFile);
                 indexer.index("//fake:label", tmpFile);
             }
         }
@@ -128,6 +130,19 @@ public class GoldenTest {
                     "BUILD_WORKING_DIRECTORY not set!  Are you trying up update golden files without using 'bazel run'?");
         }
         return Path.of(dir);
+    }
+
+    private static Path mustGetWorkspaceDirectory() {
+        Path bwd = mustGetBuildWorkingDirectory();
+        Path current = Path.of(bwd.toString());
+        while (current != null) {
+            final Path workspaceFile = current.resolve("WORKSPACE");
+            if (Files.exists(workspaceFile)) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        throw new IllegalStateException("Could not find WORKSPACE dir from: " + bwd);
     }
 
     private static Path mustGetRunfilesDirectory() {
@@ -178,7 +193,8 @@ public class GoldenTest {
         String workspaceName = mustGetWorkspaceName();
         Path parent = runfilesDir.resolve(workspaceName);
         String rel = path.toString().substring(parent.toString().length() + 1);
-        return mustGetBuildWorkingDirectory().resolve(rel);
+        LOGGER.info("source file relative filename: " + rel);
+        return mustGetWorkspaceDirectory().resolve(rel);
     }
 
     private static Index mustParseIndexJson(Path path) throws IOException {
