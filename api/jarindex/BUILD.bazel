@@ -1,3 +1,4 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
 load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
@@ -31,4 +32,15 @@ proto_java_library(
     visibility = ["//visibility:public"],
     exports = ["@com_google_protobuf//:protobuf_java"],
     deps = ["@com_google_protobuf//:protobuf_java"],
+)
+
+go_library(
+    name = "jarindex",
+    srcs = ["jarindex.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/api/jarindex",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
 )

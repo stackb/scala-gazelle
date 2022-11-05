@@ -8,7 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/stackb/scala-gazelle/api/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/mergeindex"
 )
 
 const debug = false
@@ -21,7 +22,7 @@ var (
 
 func main() {
 	if debug {
-		index.ListFiles(".")
+		// index.ListFiles(".")
 		log.Println("args:", os.Args)
 	}
 
@@ -42,7 +43,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := merge(files); err != nil {
+	if err := merge(files...); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -96,79 +97,33 @@ func parseFlags(args []string) (files []string, err error) {
 	return
 }
 
-func merge(filenames []string) error {
-	// spec is the final object to write as output
-	var spec index.IndexSpec
-	spec.Predefined = strings.Split(predefinedLabels, ",")
-	spec.Preferred = strings.Split(preferredLabels, ",")
-
-	// jarLabels is used to prevent duplicate entries for a given jar.
-	labels := make(map[string]bool)
-
-	// labelByClass is used to check if more than one label provides a given
-	// class.
-	labelByClass := make(map[string][]string)
-
-	// predefinedSymbols is the set of symbols we can remove from each class
-	// files' list of symbols; these will never need to be resolved.
-	predefinedLabels := make(map[string]struct{})
-	for _, l := range spec.Predefined {
-		predefinedLabels[l] = struct{}{}
-	}
-	predefinedSymbols := map[string]struct{}{
-		"java.lang.Object": {},
-	}
-
-	for _, filename := range filenames {
-		jar, err := index.ReadJarSpec(filename)
+func merge(filenames ...string) error {
+	jars := make([]*jarindex.JarFile, len(filenames))
+	for i, filename := range filenames {
+		jar, err := mergeindex.ReadJarFileProtoFile(filename)
 		if err != nil {
-			return fmt.Errorf("%s read error: %w", filename, err)
+			return err
 		}
-		if labels[jar.Label] {
-			log.Println("duplicate jar spec:", jar.Label)
-			continue
-		}
-
-		if jar.Filename == "" {
-			log.Panicf("unnamed jar file name? %+v", jar.Label)
-		}
-
-		labels[jar.Label] = true
-		if _, ok := predefinedLabels[jar.Label]; ok {
-			for _, file := range jar.Files {
-				predefinedSymbols[file.Name] = struct{}{}
-			}
-		}
-
-		for _, class := range jar.Classes {
-			labelByClass[class] = append(labelByClass[class], jar.Label)
-		}
-
-		spec.JarSpecs = append(spec.JarSpecs, jar)
+		jars[i] = jar
 	}
 
-	// 2nd pass to remove predefined symbols
-	for _, jarSpec := range spec.JarSpecs {
-		for _, file := range jarSpec.Files {
-			resolvable := make([]string, 0)
-			for _, sym := range file.Symbols {
-				if _, ok := predefinedSymbols[sym]; ok {
-					continue
-				}
-				resolvable = append(resolvable, sym)
-			}
-			file.Symbols = resolvable
-		}
+	// spec is the final object to write as output
+	// var spec index.IndexSpec
+	predefined := strings.Split(predefinedLabels, ",")
+	preferred := strings.Split(preferredLabels, ",")
+
+	index, err := mergeindex.MergeJarFiles(func(format string, args ...interface{}) {
+		log.Printf("warning: "+format, args...)
+	}, predefined, jars)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	for classname, labels := range labelByClass {
-		if len(labels) > 1 {
-			log.Printf("class is provided by more than one label: %s: %v", classname, labels)
-		}
-	}
+	index.Preferred = preferred
 
-	if err := index.WriteJSONFile(outputFile, spec); err != nil {
+	if err := mergeindex.WriteJarIndexProtoFile(outputFile, index); err != nil {
 		return err
 	}
+
 	return nil
 }

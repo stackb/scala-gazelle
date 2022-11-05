@@ -20,7 +20,9 @@ go_test(
     embed = [":mergeindex"],
     deps = [
         "//api/jarindex",
-        "@com_github_golang_protobuf//proto:go_default_library",
+        "@com_github_google_go_cmp//cmp",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@org_golang_google_protobuf//proto",
+        "@org_golang_google_protobuf//testing/protocmp",
     ],
 )

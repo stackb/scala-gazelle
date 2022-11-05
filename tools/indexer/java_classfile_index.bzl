@@ -16,8 +16,6 @@ def build_jarindex(ctx, label, basename, jar):
     """
 
     ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
-
-    # input_file = ctx.actions.declare_file(basename + ".jar.json")
     output_file = ctx.actions.declare_file(basename + ".jarindex.json")
 
     ctx.actions.run(
