@@ -207,7 +207,6 @@ public class Indexer extends Object {
         Indexer indexer = new Indexer(Path.of("."));
 
         for (final String inputFile : inputFiles) {
-            System.out.println("indexing " + inputFile);
             indexer.index(label, Path.of(inputFile));
         }
 
