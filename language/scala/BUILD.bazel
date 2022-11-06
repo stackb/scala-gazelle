@@ -144,6 +144,7 @@ gazelle_binary(
 
 go_test(
     name = "scala_test",
+    size = "large",  # test timeout 900s for bazel tests
     srcs = [
         "glob_test.go",
         "import_resolver_test.go",
