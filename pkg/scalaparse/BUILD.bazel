@@ -33,8 +33,6 @@ go_test(
         "assets_test.go",
         "exec_test.go",
         "options_test.go",
-        "parse_test.go",
-        # "parse_test.go",
         "server_test.go",
     ],
     embed = [":scalaparse"],
@@ -61,11 +59,3 @@ genrule(
     executable = True,
     tools = ["@build_bazel_rules_nodejs//toolchains/node:node_bin"],
 )
-
-# genrule(
-#     name = "bun_exe",
-#     outs = ["bun.exe"],
-#     cmd = "cp $(location @bun_darwin//:bin) $@",
-#     executable = True,
-#     tools = ["@bun_darwin//:bin"],
-# )
