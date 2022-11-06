@@ -6,7 +6,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/cmd/mergeindex",
     visibility = ["//visibility:public"],
     deps = [
-        "//api/jarindex",
+        "//build/stack/gazelle/scala/jarindex",
         "//pkg/mergeindex",
     ],
 )

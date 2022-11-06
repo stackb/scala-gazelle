@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/stackb/scala-gazelle/api/jarindex"
+	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	"github.com/stackb/scala-gazelle/pkg/mergeindex"
 )
 

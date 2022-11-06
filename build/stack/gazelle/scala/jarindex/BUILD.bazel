@@ -13,14 +13,14 @@ proto_library(
 proto_compiled_sources(
     name = "jarindex_go_compiled_sources",
     srcs = ["jarindex.pb.go"],
-    output_mappings = ["jarindex.pb.go=github.com/stackb/scala-gazelle/api/jarindex/jarindex.pb.go"],
+    output_mappings = ["jarindex.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex/jarindex.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "jarindex_proto",
 )
 
 proto_compile(
     name = "jarindex_java_compile",
-    outs = {"@build_stack_rules_proto//plugin/builtin:java": "api/jarindex/jarindex.srcjar"},
+    outs = {"@build_stack_rules_proto//plugin/builtin:java": "build/stack/gazelle/scala/jarindex/jarindex.srcjar"},
     outputs = ["jarindex.srcjar"],
     plugins = ["@build_stack_rules_proto//plugin/builtin:java"],
     proto = "jarindex_proto",
@@ -37,7 +37,7 @@ proto_java_library(
 go_library(
     name = "jarindex",
     srcs = ["jarindex.pb.go"],
-    importpath = "github.com/stackb/scala-gazelle/api/jarindex",
+    importpath = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex",
     visibility = ["//visibility:public"],
     deps = [
         "@org_golang_google_protobuf//reflect/protoreflect",

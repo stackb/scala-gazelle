@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/stackb/scala-gazelle/api/jarindex"
+	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 )
 
 type warnFunc func(format string, args ...interface{})
