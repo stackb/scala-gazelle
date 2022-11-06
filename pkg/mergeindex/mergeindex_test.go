@@ -9,7 +9,7 @@ import (
 
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/api/jarindex"
+	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/testing/protocmp"
 )

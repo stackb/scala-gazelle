@@ -3,7 +3,7 @@ java_library(
     srcs = ["Indexer.java"],
     visibility = ["//visibility:public"],
     deps = [
-        "//api/jarindex:jarindex_java_library",
+        "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@classgraph_jar//jar",
         "@com_google_protobuf//:protobuf_java",
     ],
@@ -15,7 +15,7 @@ java_binary(
     visibility = ["//visibility:public"],
     runtime_deps = [
         ":indexer",
-        "//api/jarindex:jarindex_java_library",
+        "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@classgraph_jar//jar",
     ],
 )
@@ -29,7 +29,7 @@ java_test(
     test_class = "IndexerTest",
     deps = [
         ":indexer",
-        "//api/jarindex:jarindex_java_library",
+        "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@com_google_protobuf//:protobuf_java_util",
     ],
 )

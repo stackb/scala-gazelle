@@ -34,9 +34,9 @@ import io.github.classgraph.TypeParameter;
 import io.github.classgraph.TypeSignature;
 import io.github.classgraph.TypeVariableSignature;
 
-import build.stack.scala.gazelle.api.jarindex.JarIndex;
-import build.stack.scala.gazelle.api.jarindex.JarFile;
-import build.stack.scala.gazelle.api.jarindex.ClassFile;
+import build.stack.gazelle.scala.jarindex.JarIndex;
+import build.stack.gazelle.scala.jarindex.JarFile;
+import build.stack.gazelle.scala.jarindex.ClassFile;
 
 public class Indexer extends Object {
 

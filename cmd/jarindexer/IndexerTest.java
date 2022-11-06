@@ -1,8 +1,8 @@
 
 import static org.junit.Assert.assertEquals;
 
-import build.stack.scala.gazelle.api.jarindex.JarIndex;
-import build.stack.scala.gazelle.api.jarindex.JarFile;
+import build.stack.gazelle.scala.jarindex.JarIndex;
+import build.stack.gazelle.scala.jarindex.JarFile;
 
 import com.google.protobuf.util.JsonFormat;
 
