@@ -59,8 +59,6 @@ def build_mergeindex(ctx, output_file, jarindex_files):
     Returns:
     """
 
-    print("merging index from:", jarindex_files)
-
     args = ctx.actions.args()
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
