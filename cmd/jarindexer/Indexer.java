@@ -34,7 +34,7 @@ import io.github.classgraph.TypeParameter;
 import io.github.classgraph.TypeSignature;
 import io.github.classgraph.TypeVariableSignature;
 
-import build.stack.scala.gazelle.api.jarindex.Index;
+import build.stack.scala.gazelle.api.jarindex.JarIndex;
 import build.stack.scala.gazelle.api.jarindex.JarFile;
 import build.stack.scala.gazelle.api.jarindex.ClassFile;
 
@@ -43,13 +43,13 @@ public class Indexer extends Object {
     static Logger logger = Logger.getLogger(Indexer.class.getName());
 
     private final Path baseDir;
-    private final Index.Builder index = Index.newBuilder();
+    private final JarIndex.Builder index = JarIndex.newBuilder();
 
     public Indexer(final Path baseDir) {
         this.baseDir = baseDir;
     }
 
-    public Index build() {
+    public JarIndex build() {
         return index.build();
     }
 
@@ -176,7 +176,6 @@ public class Indexer extends Object {
         int maxArg = args.length - 1;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            System.out.println("processing arg:" + arg);
             if ("--output_file".equals(arg)) {
                 if (i + 1 > maxArg) {
                     throw new IllegalArgumentException("malformed --output_file: no argument provided");
@@ -205,15 +204,16 @@ public class Indexer extends Object {
             throw new IllegalArgumentException("malformed usage: no input files provided");
         }
 
-        Index.Builder index = Index.newBuilder();
         Indexer indexer = new Indexer(Path.of("."));
 
-        for (final String input : inputFiles) {
-            indexer.index(label, Path.of(input));
+        for (final String inputFile : inputFiles) {
+            System.out.println("indexing " + inputFile);
+            indexer.index(label, Path.of(inputFile));
         }
 
+        final JarIndex index = indexer.build();
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-            index.build().writeTo(fos);
+            index.writeTo(fos);
         }
     }
 
