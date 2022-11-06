@@ -4,6 +4,10 @@ def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
         repo_rule(name = name, **kwargs)
 
+def language_scala_deps():
+    classgraph_jar()
+    scalameta_parsers()
+
 def workspace_deps():
     io_bazel_rules_go()  # via bazel_gazelle
 

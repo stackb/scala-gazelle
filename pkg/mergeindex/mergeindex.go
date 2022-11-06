@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/stackb/scala-gazelle/api/jarindex"
@@ -103,6 +104,17 @@ func WriteJarIndexProtoFile(filename string, index *jarindex.JarIndex) error {
 	}
 	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("write jarindex proto: %w", err)
+	}
+	return nil
+}
+
+func WriteJarIndexJSONFile(filename string, index *jarindex.JarIndex) error {
+	data, err := protojson.Marshal(index)
+	if err != nil {
+		return fmt.Errorf("marshal jarindex json: %w", err)
+	}
+	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+		return fmt.Errorf("write jarindex json: %w", err)
 	}
 	return nil
 }

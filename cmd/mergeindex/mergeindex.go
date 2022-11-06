@@ -22,7 +22,6 @@ var (
 
 func main() {
 	if debug {
-		// index.ListFiles(".")
 		log.Println("args:", os.Args)
 	}
 
@@ -38,12 +37,23 @@ func main() {
 			log.Fatalln("failed to read params file:", paramsFile, err)
 		}
 	}
+
 	files, err := parseFlags(args)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := merge(files...); err != nil {
+	index, err := merge(files...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if strings.HasSuffix(outputFile, ".json") {
+		err = mergeindex.WriteJarIndexJSONFile(outputFile, index)
+	} else {
+		err = mergeindex.WriteJarIndexProtoFile(outputFile, index)
+	}
+	if err != nil {
 		log.Fatal(err)
 	}
 }
@@ -86,7 +96,6 @@ func parseFlags(args []string) (files []string, err error) {
 		log.Fatal("-output_file is required")
 	}
 
-	// files = []string{}
 	files = fs.Args()
 	if len(files) == 0 {
 		err = fmt.Errorf("positional args should be a non-empty list of .jarindex.json files to merge")
@@ -97,18 +106,16 @@ func parseFlags(args []string) (files []string, err error) {
 	return
 }
 
-func merge(filenames ...string) error {
-	jars := make([]*jarindex.JarFile, len(filenames))
-	for i, filename := range filenames {
-		jar, err := mergeindex.ReadJarFileProtoFile(filename)
+func merge(filenames ...string) (*jarindex.JarIndex, error) {
+	jars := make([]*jarindex.JarFile, 0, len(filenames))
+	for _, filename := range filenames {
+		idx, err := mergeindex.ReadJarIndexProtoFile(filename)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		jars[i] = jar
+		jars = append(jars, idx.JarFile...)
 	}
 
-	// spec is the final object to write as output
-	// var spec index.IndexSpec
 	predefined := strings.Split(predefinedLabels, ",")
 	preferred := strings.Split(preferredLabels, ",")
 
@@ -116,14 +123,10 @@ func merge(filenames ...string) error {
 		log.Printf("warning: "+format, args...)
 	}, predefined, jars)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	index.Preferred = preferred
 
-	if err := mergeindex.WriteJarIndexProtoFile(outputFile, index); err != nil {
-		return err
-	}
-
-	return nil
+	return index, nil
 }

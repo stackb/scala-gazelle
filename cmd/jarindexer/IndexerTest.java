@@ -1,7 +1,7 @@
 
 import static org.junit.Assert.assertEquals;
 
-import build.stack.scala.gazelle.api.jarindex.Index;
+import build.stack.scala.gazelle.api.jarindex.JarIndex;
 import build.stack.scala.gazelle.api.jarindex.JarFile;
 
 import com.google.protobuf.util.JsonFormat;
@@ -75,7 +75,7 @@ public class IndexerTest {
         }
         LOGGER.log(Level.INFO, "golden file: " + goldenFile);
 
-        final Index want = mustParseIndexJson(goldenFile.get());
+        final JarIndex want = mustParseIndexJson(goldenFile.get());
         final Path tmpDir = mustGetTestTmpDir();
 
         Indexer indexer = new Indexer(tmpDir);
@@ -94,7 +94,7 @@ public class IndexerTest {
             }
         }
 
-        final Index got = indexer.build();
+        final JarIndex got = indexer.build();
 
         if (wantUpdate) {
             Path sourceFile = getSourceFile(goldenFile.get());
@@ -197,16 +197,16 @@ public class IndexerTest {
         return mustGetWorkspaceDirectory().resolve(rel);
     }
 
-    private static Index mustParseIndexJson(Path path) throws IOException {
+    private static JarIndex mustParseIndexJson(Path path) throws IOException {
         JsonFormat.Parser parser = JsonFormat.parser();
-        Index.Builder index = Index.newBuilder();
+        JarIndex.Builder index = JarIndex.newBuilder();
         String content = String.join("", Files.readAllLines(path));
         LOGGER.info(content);
         parser.merge(content, index);
         return index.build();
     }
 
-    private static void mustWriteIndexJson(Path path, Index index) throws IOException {
+    private static void mustWriteIndexJson(Path path, JarIndex index) throws IOException {
         JsonFormat.Printer printer = JsonFormat.printer();
         Files.write(path, printer.print(index).getBytes());
     }
