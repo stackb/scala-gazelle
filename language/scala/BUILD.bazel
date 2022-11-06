@@ -144,7 +144,6 @@ gazelle_binary(
 
 go_test(
     name = "scala_test",
-    size = "large",  # test timeout 900s for bazel tests
     srcs = [
         "glob_test.go",
         "import_resolver_test.go",
@@ -177,12 +176,14 @@ go_test(
 
 gazelle_testdata_example(
     name = "maven_resolver",
+    size = "large",  # test timeout 900s (15m) for go_bazel_test
     srcs = glob(["testdata/maven_resolver/*"]),
     workspace_template = "scala.WORKSPACE",
 )
 
 gazelle_testdata_example(
     name = "platform_resolver",
+    size = "large",  # test timeout 900s (15m) for go_bazel_test
     srcs = glob(["testdata/platform_resolver/*"]),
     workspace_template = "scala.WORKSPACE",
 )
