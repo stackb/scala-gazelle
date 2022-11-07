@@ -96,6 +96,7 @@ go_library(
         "language.go",
         "loads.go",
         "resolve.go",
+        "gazelle",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
