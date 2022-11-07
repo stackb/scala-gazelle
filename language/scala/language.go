@@ -19,21 +19,23 @@ func NewLanguage() language.Language {
 		importRegistry.AddDependency(src, dst, kind)
 	}
 	packages := make(map[string]*scalaPackage)
-	mavenResolver := crossresolve.NewMavenResolver(ScalaLangName)
-	sourceResolver := newScalaSourceIndexResolver(depends)
-	classResolver := newScalaClassIndexResolver(depends)
-	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
 
 	scalaCompiler := newScalaCompiler()
 	// var scalaCompiler *scalaCompiler
+
+	classResolver := newScalaClassIndexResolver(depends)
+	sourceResolver := newScalaSourceIndexResolver(depends)
+	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
+	mavenResolver := crossresolve.NewMavenResolver(ScalaLangName)
+	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
+
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
 	vizServer := newGraphvizServer(packages, importRegistry)
 
 	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
 	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
 	crossresolve.Resolvers().MustRegisterResolver("proto", protoResolver)
-
-	out := progress.NewOut(os.Stderr)
+	crossresolve.Resolvers().MustRegisterResolver("jar", jarResolver)
 
 	return &scalaLang{
 		ruleRegistry:    globalRuleRegistry,
@@ -42,7 +44,7 @@ func NewLanguage() language.Language {
 		packages:        packages,
 		importRegistry:  importRegistry,
 		resolvers:       make(map[string]crossresolve.ConfigurableCrossResolver),
-		progress:        progress.NewProgressOutput(out),
+		progress:        progress.NewProgressOutput(progress.NewOut(os.Stderr)),
 		viz:             vizServer,
 	}
 }

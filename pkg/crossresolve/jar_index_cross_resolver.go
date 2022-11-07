@@ -15,10 +15,6 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-func init() {
-	Resolvers().MustRegisterResolver("jar", NewJarIndexCrossResolver("scala", func(src, dst, kind string) {}))
-}
-
 // PlatformLabel represents a label that does not need to be included in deps.
 // Example: 'java.lang.Boolean'.
 var PlatformLabel = label.New("platform", "", "do_not_import")
