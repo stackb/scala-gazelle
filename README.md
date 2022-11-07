@@ -57,8 +57,9 @@ gazelle_binary(
 gazelle(
     name = "gazelle",
     args = [
-        "-maven_install_file=./maven_install.json",
+        "-maven_install_file=$(location maven_install.json)",
     ],
+    data = ["//:maven_install.json"],
     gazelle = ":gazelle-scala",
 )
 ```
