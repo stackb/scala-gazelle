@@ -9,7 +9,7 @@ var ErrUnknownResolver = errors.New("unknown cross resolver")
 
 // Registry represents a library of crossresolver implementations.
 type Registry interface {
-	// Implementations returns a map of resolver implementations keyed by their name.
+	// ByName returns a map of resolver implementations keyed by their name.
 	ByName() map[string]ConfigurableCrossResolver
 	// LookupResolver returns the implementation under the given name.  If the resolver
 	// is not found, ErrUnknownResolver is returned.

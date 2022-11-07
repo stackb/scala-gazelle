@@ -18,7 +18,19 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
+// a lazily-computed list of resolvers that implement LabelOwner
 var labelOwners []crossresolve.LabelOwner
+
+func getLabelOwners() []crossresolve.LabelOwner {
+	if labelOwners == nil {
+		for _, resolver := range crossresolve.Resolvers().ByName() {
+			if labelOwner, ok := resolver.(crossresolve.LabelOwner); ok {
+				labelOwners = append(labelOwners, labelOwner)
+			}
+		}
+	}
+	return labelOwners
+}
 
 func init() {
 	mustRegister := func(load, kind string, isBinaryRule bool) {
@@ -384,19 +396,6 @@ func shouldExcludeDep(c *config.Config, from label.Label) bool {
 	return from.Name == "tests"
 }
 
-// func isOwned (expr *build.Expr) bool {
-// 	resolvers := crossresolve.Resolvers().ByName()
-// 	for _, resolver := range resolvers {
-
-// 	}
-// 		resolver, _ := crossresolve.Resolvers().LookupResolver(name)
-// 		if depsResolver, ok := resolver.(crossresolve.RuleDepsResolver); ok {
-// 			depsResolver.OnResolveRuleDeps(nil, r, "deps")
-// 		}
-// 	}
-
-// }
-
 func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(from build.Expr) bool, existingDeps build.Expr, from label.Label, resolved labelImportMap) build.Expr {
 	dbg := debug
 
@@ -586,15 +585,4 @@ func shouldKeep(expr build.Expr) bool {
 
 	// we didn't find an owner so keep it, it's not a managed dependency.
 	return true
-}
-
-func getLabelOwners() []crossresolve.LabelOwner {
-	if labelOwners == nil {
-		for _, resolver := range crossresolve.Resolvers().ByName() {
-			if labelOwner, ok := resolver.(crossresolve.LabelOwner); ok {
-				labelOwners = append(labelOwners, labelOwner)
-			}
-		}
-	}
-	return labelOwners
 }

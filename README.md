@@ -64,6 +64,9 @@ gazelle(
 )
 ```
 
+> NOTE: -pinned_maven_install_json_files can be a comma-separated list of 
+> @{EXTERNAL_MAVEN_WORKSPACE_NAME}_install.json files.
+
 # Configuration
 
 Configure the scala rules you want dependencies to be resolved for.  Often this 
