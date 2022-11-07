@@ -41,7 +41,7 @@ func NewResolver(installFile, mavenWorkspaceName string) (Resolver, error) {
 			}
 			l := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
 			r.data.Add(pkg, l.String())
-			log.Printf("maven: %v -> %v", pkg, l.String())
+			// log.Printf("maven: %v -> %v", pkg, l.String())
 		}
 	}
 

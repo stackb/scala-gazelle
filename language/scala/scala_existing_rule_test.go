@@ -1,14 +1,19 @@
 package scala
 
 import (
+	"flag"
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
@@ -278,4 +283,85 @@ func printRule(rules ...*rule.Rule) string {
 		r.Insert(file)
 	}
 	return string(file.Format())
+}
+
+func TestShouldKeep(t *testing.T) {
+	for name, tc := range map[string]struct {
+		deps  string
+		setup func(t *testing.T)
+		want  bool
+	}{
+		"empty": {},
+		"empty string": {
+			deps: `    "",`,
+			want: false,
+		},
+		"keep empty string": {
+			deps: `    "",  # keep`,
+			want: true,
+		},
+		"unmanaged label": {
+			deps: `    "@maven//:junit_junit",`,
+			want: true,
+		},
+		"managed label": {
+			setup: func(t *testing.T) {
+				fakeResolver := &fakeLabelOwnerResolver{}
+				crossresolve.Resolvers().MustRegisterResolver("fake", fakeResolver)
+			},
+			deps: `    "@maven//:junit_junit",`,
+			want: false,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if tc.setup != nil {
+				tc.setup(t)
+			}
+			content := fmt.Sprintf(`
+scala_library(
+	name = "test",
+	deps = [
+		%s
+	]
+)`, tc.deps)
+			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(content))
+			if err != nil {
+				t.Fatal(err)
+			}
+			r := file.File.Rules("scala_library")[0]
+			exprs := r.Attr("deps")
+			listExpr := exprs.(*build.ListExpr)
+			if len(listExpr.List) == 0 {
+				return
+			}
+
+			expr := listExpr.List[0]
+			got := shouldKeep(expr)
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("shouldKeep (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+type fakeLabelOwnerResolver struct {
+}
+
+// RegisterFlags implements part of the ConfigurableCrossResolver interface.
+func (cr *fakeLabelOwnerResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+}
+
+// CheckFlags implements part of the ConfigurableCrossResolver interface.
+func (cr *fakeLabelOwnerResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	return nil
+}
+
+// IsOwner implements the LabelOwner interface.
+func (cr *fakeLabelOwnerResolver) IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+	return true
+}
+
+// CrossResolve implements the CrossResolver interface.
+func (cr *fakeLabelOwnerResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
+	return nil
 }
