@@ -8,7 +8,7 @@ import (
 
 func TestScala(t *testing.T) {
 	goldentest.FromDir("language/scala",
-		goldentest.WithOnlyTests("maven_resolver"),
+		goldentest.WithOnlyTests("maven_resolver", "proto_resolver"),
 	).Run(t, "gazelle")
 }
 
