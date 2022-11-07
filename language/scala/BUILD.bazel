@@ -3,6 +3,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
+# gazelle:exclude oldtestdata
 
 go_library(
     name = "scala",
