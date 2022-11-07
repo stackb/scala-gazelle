@@ -18,7 +18,19 @@ maven_install(
     # maven_install_json = "//:maven_install.json",
     repositories = [
         "https://repo.maven.apache.org/maven2/",
-        "https://omnistac.jfrog.io/artifactory/libs-release/",
+    ],
+    version_conflict_policy = "pinned",
+)
+
+maven_install(
+    name = "atlassian",
+    artifacts = [
+        "aopalliance:aopalliance:1.0",
+    ],
+    generate_compat_repositories = True,
+    # maven_install_json = "//:atlassian_install.json",
+    repositories = [
+        "https://packages.atlassian.com/maven-external",
     ],
     version_conflict_policy = "pinned",
 )
@@ -26,6 +38,15 @@ maven_install(
 load("@maven//:compat.bzl", "compat_repositories")
 
 compat_repositories()
+
+# @atlassian-public workspace used to differentiate deps with @maven
+maven_install(
+    name = "atlassian-public",
+    artifacts = [
+        "junit:junit:4.9",
+    ],
+    repositories = ["https://packages.atlassian.com/maven-external"],
+)
 
 # ----------------------------------------------------
 # Scala

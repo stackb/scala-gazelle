@@ -1,2 +1,2 @@
 -scala_resolvers=source,maven
--maven_install_file=./maven_install.json
+-pinned_maven_install_json_files=./maven_install.json

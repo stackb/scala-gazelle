@@ -14,8 +14,23 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
+
+// a lazily-computed list of resolvers that implement LabelOwner
+var labelOwners []crossresolve.LabelOwner
+
+func getLabelOwners() []crossresolve.LabelOwner {
+	if labelOwners == nil {
+		for _, resolver := range crossresolve.Resolvers().ByName() {
+			if labelOwner, ok := resolver.(crossresolve.LabelOwner); ok {
+				labelOwners = append(labelOwners, labelOwner)
+			}
+		}
+	}
+	return labelOwners
+}
 
 func init() {
 	mustRegister := func(load, kind string, isBinaryRule bool) {
@@ -37,6 +52,7 @@ func init() {
 	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app", false)
 	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app", false)
 	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test", true)
+
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
@@ -170,7 +186,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
 	// dbg := debug
-	dbg := true
+	dbg := false
 	if dbg {
 		log.Println(">>> BEGIN RESOLVE", from)
 	}
@@ -182,7 +198,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	g := newGraph()
 
-	// Local variables
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(map[string]*importOrigin)
 
@@ -234,18 +249,18 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
-		panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
-		// log.Printf("%v has unresolved dependencies: %v", from, unresolved)
+		// panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
+		log.Printf("%v has unresolved dependencies: %v", from, unresolved)
 	}
 
 	if len(resolved) > 0 {
-		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), r.Attr("deps"), from, resolved))
+		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("deps"), from, resolved))
 		r.SetPrivateAttr("deps_graph", g.String())
 	}
 
 	exports := computeExports(c, r, importRegistry, files, resolved)
 	if len(exports) > 0 {
-		r.SetAttr("exports", makeLabeledListExpr(c, r.Kind(), r.Attr("exports"), from, exports))
+		r.SetAttr("exports", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("exports"), from, exports))
 	}
 
 	if dbg {
@@ -381,7 +396,7 @@ func shouldExcludeDep(c *config.Config, from label.Label) bool {
 	return from.Name == "tests"
 }
 
-func makeLabeledListExpr(c *config.Config, kind string, existingDeps build.Expr, from label.Label, resolved labelImportMap) build.Expr {
+func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(from build.Expr) bool, existingDeps build.Expr, from label.Label, resolved labelImportMap) build.Expr {
 	dbg := debug
 
 	if from.Repo == "" {
@@ -396,7 +411,7 @@ func makeLabeledListExpr(c *config.Config, kind string, existingDeps build.Expr,
 
 	if deps, ok := existingDeps.(*build.ListExpr); ok {
 		for _, expr := range deps.List {
-			if rule.ShouldKeep(expr) {
+			if shouldKeep(expr) {
 				list = append(list, expr)
 				if dbg {
 					log.Printf("XXX %v: kept %T", expr, (expr.(*build.StringExpr)).Value)
@@ -536,4 +551,38 @@ func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, 
 func isUnqualifiedImport(imp string) bool {
 	imp = strings.TrimSuffix(imp, "._")
 	return strings.LastIndex(imp, ".") == -1
+}
+
+func shouldKeep(expr build.Expr) bool {
+	// does it have a '# keep' directive?
+	if rule.ShouldKeep(expr) {
+		return true
+	}
+
+	// is the expression a string?
+	// keep all non-string expressions like globs for now.
+	str, ok := expr.(*build.StringExpr)
+	if !ok {
+		return true
+	}
+
+	// is the string a valid label?  If we can't parse it as a label,
+	// get rid of it.
+	from, err := label.Parse(str.Value)
+	if err != nil {
+		return false
+	}
+
+	// if we can find a resolver than manages/owns this label, remove it;
+	// the resolver should cross-resolve the import again
+	for _, resolver := range getLabelOwners() {
+		if resolver.IsOwner(from, func(from label.Label) (*rule.Rule, bool) {
+			return nil, false
+		}) {
+			return false
+		}
+	}
+
+	// we didn't find an owner so keep it, it's not a managed dependency.
+	return true
 }

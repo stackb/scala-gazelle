@@ -261,7 +261,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			}
 			target := file.Rules[0]
 
-			expr := makeLabeledListExpr(c, target.Kind(), target.Attr("deps"), from, resolved)
+			expr := makeLabeledListExpr(c, target.Kind(), shouldKeep, target.Attr("deps"), from, resolved)
 			target.SetAttr("deps", expr)
 			want := tc.want
 			got := printRule(target)

@@ -84,7 +84,6 @@ register_toolchains("//tools/toolchains:nodejs")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
-    # artifacts = PROTOBUF_MAVEN_ARTIFACTS, # prefer if available in newer version
     artifacts = [
         "com.google.caliper:caliper:1.0-beta-3",
         "com.google.code.findbugs:jsr305:3.0.2",
@@ -97,8 +96,6 @@ maven_install(
         "junit:junit:4.13.2",
         "org.mockito:mockito-core:4.3.1",
     ],
-    # For updating instructions, see:
-    # https://github.com/bazelbuild/rules_jvm_external#updating-maven_installjson
     # maven_install_json = "//:maven_install.json",
     repositories = [
         "https://repo1.maven.org/maven2",

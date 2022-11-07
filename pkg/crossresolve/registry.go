@@ -2,8 +2,6 @@ package crossresolve
 
 import (
 	"errors"
-	"log"
-	"sort"
 )
 
 // ErrUnknownResolver is the error returned when a resolver is not known.
@@ -11,8 +9,8 @@ var ErrUnknownResolver = errors.New("unknown cross resolver")
 
 // Registry represents a library of crossresolver implementations.
 type Registry interface {
-	// ResolverNames returns a sorted list of resolver names.
-	ResolverNames() []string
+	// ByName returns a map of resolver implementations keyed by their name.
+	ByName() map[string]ConfigurableCrossResolver
 	// LookupResolver returns the implementation under the given name.  If the resolver
 	// is not found, ErrUnknownResolver is returned.
 	LookupResolver(name string) (ConfigurableCrossResolver, error)
@@ -37,14 +35,9 @@ type registry struct {
 	resolvers map[string]ConfigurableCrossResolver
 }
 
-// ResolverNames implements part of the Registry interface.
-func (p *registry) ResolverNames() []string {
-	names := make([]string, 0)
-	for name := range p.resolvers {
-		names = append(names, name)
-	}
-	sort.Strings(names)
-	return names
+// ByName implements part of the Registry interface.
+func (p *registry) ByName() map[string]ConfigurableCrossResolver {
+	return p.resolvers
 }
 
 // MustRegisterResolver implements part of the Registry interface.
@@ -54,7 +47,6 @@ func (p *registry) MustRegisterResolver(name string, resolver ConfigurableCrossR
 		panic("duplicate CrossResolver registration: " + name)
 	}
 	p.resolvers[name] = resolver
-	log.Println("registered resolver:", name)
 	return p
 }
 

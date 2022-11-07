@@ -10,29 +10,28 @@ import (
 )
 
 type Resolver interface {
+	Name() string
 	Resolve(pkg string) (label.Label, error)
 }
 
 // resolver finds Maven provided packages by reading the maven_install.json
 // file from rules_jvm_external.
 type resolver struct {
+	name string
 	data *StringMultiSet
 	// logger zerolog.Logger
 }
 
 func NewResolver(installFile, mavenWorkspaceName string) (Resolver, error) {
 	r := resolver{
+		name: mavenWorkspaceName,
 		data: NewStringMultiSet(),
-		// logger: logger.With().Str("_c", "maven-resolver").Logger(),
 	}
 
 	c, err := loadConfiguration(installFile)
 	if err != nil {
 		return nil, fmt.Errorf("loading configuration %s: %w", installFile, err)
 	}
-
-	// r.logger.Debug().Int("count", len(c.DependencyTree.Dependencies)).Msg("Dependency count")
-	// r.logger.Debug().Str("conflicts", fmt.Sprintf("%#v", c.DependencyTree.ConflictResolution)).Msg("Maven install conflict")
 
 	for _, dep := range c.DependencyTree.Dependencies {
 		for _, pkg := range dep.Packages {
@@ -42,11 +41,15 @@ func NewResolver(installFile, mavenWorkspaceName string) (Resolver, error) {
 			}
 			l := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
 			r.data.Add(pkg, l.String())
-			// log.Printf("maven: %v -> %v", pkg, l.String())
+			log.Printf("maven: %v -> %v", pkg, l.String())
 		}
 	}
 
 	return &r, nil
+}
+
+func (r *resolver) Name() string {
+	return r.name
 }
 
 func (r *resolver) Resolve(pkg string) (label.Label, error) {
