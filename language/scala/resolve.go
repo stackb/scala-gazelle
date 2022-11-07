@@ -9,6 +9,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
@@ -79,18 +80,13 @@ func (sl *scalaLang) Resolve(
 func (sl *scalaLang) onResolve() {
 
 	for _, r := range sl.resolvers {
-		if l, ok := r.(GazellePhaseTransitionListener); ok {
+		if l, ok := r.(crossresolve.GazellePhaseTransitionListener); ok {
 			l.OnResolve()
 		}
 	}
 
 	sl.scalaCompiler.OnResolve()
 	sl.viz.OnResolve()
-
-	// gather proto imports
-	for from, imports := range protoc.GlobalResolver().Provided(ScalaLangName, ScalaLangName) {
-		sl.importRegistry.Provides(from, imports)
-	}
 
 	// gather 1p/3p imports
 	for _, rslv := range sl.resolvers {

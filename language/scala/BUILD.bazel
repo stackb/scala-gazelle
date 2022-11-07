@@ -10,7 +10,6 @@ go_library(
     srcs = [
         "configure.go",
         "cross_resolve.go",
-        "cross_resolver_registry.go",
         "fix.go",
         "flags.go",
         "generate.go",
@@ -55,7 +54,6 @@ go_library(
         "packages.gohtml",
         "symbols.gohtml",
         "BUILD.bazel",
-        "cross_resolver_registry.go",
         "glob.go",
         "glob_test.go",
         "graphviz.gohtml",
@@ -102,6 +100,7 @@ go_library(
     deps = [
         "//api/scalaparse",
         "//pkg/collections",
+        "//pkg/crossresolve",
         "//pkg/index",
         "//pkg/maven",
         "//pkg/progress",

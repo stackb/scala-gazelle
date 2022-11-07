@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
@@ -17,15 +19,23 @@ func NewLanguage() language.Language {
 		importRegistry.AddDependency(src, dst, kind)
 	}
 	packages := make(map[string]*scalaPackage)
-	sourceResolver := newScalaSourceIndexResolver(depends)
-	classResolver := newScalaClassIndexResolver(depends)
-	mavenResolver := newMavenResolver()
+
 	scalaCompiler := newScalaCompiler()
 	// var scalaCompiler *scalaCompiler
+
+	classResolver := newScalaClassIndexResolver(depends)
+	sourceResolver := newScalaSourceIndexResolver(depends)
+	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
+	mavenResolver := crossresolve.NewMavenResolver(ScalaLangName)
+	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
+
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
 	vizServer := newGraphvizServer(packages, importRegistry)
 
-	out := progress.NewOut(os.Stderr)
+	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
+	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
+	crossresolve.Resolvers().MustRegisterResolver("proto", protoResolver)
+	crossresolve.Resolvers().MustRegisterResolver("jar", jarResolver)
 
 	return &scalaLang{
 		ruleRegistry:    globalRuleRegistry,
@@ -33,13 +43,9 @@ func NewLanguage() language.Language {
 		scalaCompiler:   scalaCompiler,
 		packages:        packages,
 		importRegistry:  importRegistry,
-		resolvers: []ConfigurableCrossResolver{
-			sourceResolver,
-			classResolver,
-			mavenResolver,
-		},
-		progress: progress.NewProgressOutput(out),
-		viz:      vizServer,
+		resolvers:       make(map[string]crossresolve.ConfigurableCrossResolver),
+		progress:        progress.NewProgressOutput(progress.NewOut(os.Stderr)),
+		viz:             vizServer,
 	}
 }
 
@@ -66,14 +72,14 @@ type scalaLang struct {
 	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
-	// resolvers is a list of cross resolver implementations.  Typically there
-	// are two: one to help with third-party code, one to help with first-party
-	// code.
-	resolvers []ConfigurableCrossResolver
+	// resolvers is a list of cross resolver implementations named by the -scala_resolvers flag
+	resolvers map[string]crossresolve.ConfigurableCrossResolver
 	// viz is the dependency vizualization engine
 	viz *graphvizServer
 	// lastPackage tracks if this is the last generated package
 	lastPackage *scalaPackage
+	// resolverNames is a comma-separated list of resolver to enable
+	resolverNames string
 	// totalPackageCount is used for progress
 	totalPackageCount int
 	// remainingRules is a counter that tracks when all rules have been resolved.
