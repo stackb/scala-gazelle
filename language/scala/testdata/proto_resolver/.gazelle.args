@@ -1,2 +1,2 @@
--scala_resolvers=source,maven
+-scala_resolvers=source,proto
 -maven_install_file=./maven_install.json
