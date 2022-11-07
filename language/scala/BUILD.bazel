@@ -3,7 +3,6 @@ load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
-# gazelle:exclude oldtestdata
 
 go_library(
     name = "scala",
@@ -79,7 +78,6 @@ go_library(
         "viz.go",
         "viz_test.go",
         "maven_resolver.go",
-        "golden_test.go",
         "scala.WORKSPACE",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
@@ -148,7 +146,6 @@ go_test(
     name = "scala_test",
     srcs = [
         "glob_test.go",
-        "golden_test.go",
         "import_resolver_test.go",
         "resolver_test.go",
         "scala_compiler_test.go",
@@ -179,12 +176,14 @@ go_test(
 
 gazelle_testdata_example(
     name = "maven_resolver",
+    size = "large",  # test timeout 900s (15m) for go_bazel_test
     srcs = glob(["testdata/maven_resolver/*"]),
     workspace_template = "scala.WORKSPACE",
 )
 
 gazelle_testdata_example(
     name = "platform_resolver",
+    size = "large",  # test timeout 900s (15m) for go_bazel_test
     srcs = glob(["testdata/platform_resolver/*"]),
     workspace_template = "scala.WORKSPACE",
 )
