@@ -5,4 +5,10 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs = ["Main.scala"],
+    deps = [
+        # junit is required for compilation but we haven't specified
+        # that @atlassian-public deps should be managed by the scala-gazelle
+        # extension (so this is left alone despite no # keep directive)
+        "@atlassian-public//:junit_junit",
+    ],
 )

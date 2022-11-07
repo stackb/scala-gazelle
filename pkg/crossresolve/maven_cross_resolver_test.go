@@ -78,23 +78,20 @@ func ExampleMavenCrossResolver_RegisterFlags_printdefaults() {
 	cr.RegisterFlags(got, cmdGenerate, c)
 	got.PrintDefaults()
 	// output:
-	//	-maven_install_file string
-	//     	pinned maven_install.json deps
-	//   -maven_workspace_name string
-	//     	name of the maven external workspace (default "maven")
+	//	-pinned_maven_install_json_files string
+	//     	comma-separated list of maven_install pinned deps files
 }
 
 func TestMavenCrossResolverFlags(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args                   []string
-		wantMavenInstallFile   string
+		wantMavenInstall       string
 		wantMavenWorkspaceName string
 		files                  []testtools.FileSpec
 	}{
 		"typical usage": {
 			args: []string{
-				"-maven_install_file=./maven_install.json",
-				"-maven_workspace_name=maven",
+				"-pinned_maven_install_json_files=./maven_install.json",
 			},
 			files: []testtools.FileSpec{
 				{
@@ -102,8 +99,7 @@ func TestMavenCrossResolverFlags(t *testing.T) {
 					Content: "{}",
 				},
 			},
-			wantMavenInstallFile:   "./maven_install.json",
-			wantMavenWorkspaceName: "maven",
+			wantMavenInstall: "./maven_install.json",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -122,11 +118,8 @@ func TestMavenCrossResolverFlags(t *testing.T) {
 			if err := cr.CheckFlags(fs, c); err != nil {
 				t.Fatal(err)
 			}
-			if diff := cmp.Diff(tc.wantMavenInstallFile, cr.mavenInstallFile); diff != "" {
+			if diff := cmp.Diff(tc.wantMavenInstall, cr.pinnedMavenInstallFlagValue); diff != "" {
 				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
-			}
-			if diff := cmp.Diff(tc.wantMavenWorkspaceName, cr.mavenWorkspaceName); diff != "" {
-				t.Errorf(".mavenWorkspaceName (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -182,8 +175,7 @@ func TestMavenCrossResolverCrossResolve(t *testing.T) {
 			defer cleanup()
 
 			args := []string{
-				"-maven_install_file=./maven_install.json",
-				"-maven_workspace_name=maven",
+				"-pinned_maven_install_json_files=./maven_install.json",
 			}
 
 			cr := NewMavenResolver(tc.lang)
