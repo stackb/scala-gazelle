@@ -40,7 +40,6 @@ func (r *ProtoCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) erro
 
 // OnResolve implements part of the GazellePhaseTransitionListener interface.
 func (r *ProtoCrossResolver) OnResolve() {
-	// gather proto imports
 	for from, imports := range r.fromImportsProvider(r.lang, r.lang) {
 		for _, imp := range imports {
 			r.importMap[imp] = from
