@@ -7,6 +7,7 @@ go_library(
         "dependency_recorder.go",
         "jar_index_cross_resolver.go",
         "maven_cross_resolver.go",
+        "proto_cross_resolver.go",
         "scala_file_parser.go",
         "scala_source_cross_resolver.go",
         "scala_source_rule_registry.go",
@@ -22,6 +23,7 @@ go_library(
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
+        "@build_stack_rules_proto//pkg/protoc",
         "@com_github_roaringbitmap_roaring//:roaring",
     ],
 )
@@ -31,6 +33,7 @@ go_test(
     srcs = [
         "jar_index_cross_resolver_test.go",
         "maven_cross_resolver_test.go",
+        "proto_cross_resolver_test.go",
     ],
     embed = [":crossresolve"],
     deps = [
