@@ -1,6 +1,6 @@
 # scala-gazelle
 
-https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg
+[github-ci](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)
 
 This is an experimental gazelle extension for scala.  It has the following design characteristics:
 
