@@ -15,6 +15,7 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/stackb/scala-gazelle/api/scalaparse"
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
@@ -34,7 +35,10 @@ func TestServerParse(t *testing.T) {
 				{
 					Path: "A.scala",
 					Content: `package a
-import java.util.Map
+import java.util.HashMap
+
+class Foo extends HashMap {
+}
 `,
 				},
 			},
@@ -43,8 +47,14 @@ import java.util.Map
 					{
 						Filename: "A.scala",
 						Packages: []string{"a"},
-						Imports:  []string{"java.util.Map"},
+						Classes:  []string{"a.Foo"},
+						Imports:  []string{"java.util.HashMap"},
 						Names:    []string{"a", "java", "util"},
+						Extends: map[string]*scalaparse.ClassList{
+							"class a.Foo": {
+								Classes: []string{"HashMap"},
+							},
+						},
 					},
 				},
 			},
@@ -80,7 +90,11 @@ import java.util.Map
 				}
 			}
 
-			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(sppb.ScalaParseResponse{}, sppb.ScalaFile{})); diff != "" {
+			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
+				sppb.ScalaParseResponse{},
+				sppb.ScalaFile{},
+				sppb.ClassList{},
+			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
 		})
