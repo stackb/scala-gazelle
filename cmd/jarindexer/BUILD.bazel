@@ -1,6 +1,6 @@
 java_library(
-    name = "indexer",
-    srcs = ["Indexer.java"],
+    name = "jarindexer",
+    srcs = ["JarIndexer.java"],
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
@@ -10,34 +10,34 @@ java_library(
 )
 
 java_binary(
-    name = "jarindexer",
-    main_class = "Indexer",
+    name = "jarindexer_bin",
+    main_class = "JarIndexer",
     visibility = ["//visibility:public"],
     runtime_deps = [
-        ":indexer",
+        ":jarindexer",
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@classgraph_jar//jar",
     ],
 )
 
 java_test(
-    name = "indexer_test",
-    srcs = ["IndexerTest.java"],
+    name = "jarindexer_test",
+    srcs = ["JarIndexerTest.java"],
     data = [
-        ":indexer_jar",
+        ":jarindexer_jar",
     ] + glob(["testdata/**/*"]),
-    test_class = "IndexerTest",
+    test_class = "JarIndexerTest",
     deps = [
-        ":indexer",
+        ":jarindexer",
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@com_google_protobuf//:protobuf_java_util",
     ],
 )
 
 genrule(
-    name = "indexer_jar",
-    srcs = [":indexer"],
+    name = "jarindexer_jar",
+    srcs = [":jarindexer"],
     outs = ["testdata/indexer/indexer.jar"],
-    cmd = "cp $(location :indexer) $@",
+    cmd = "cp $(location :jarindexer) $@",
     executable = False,
 )
