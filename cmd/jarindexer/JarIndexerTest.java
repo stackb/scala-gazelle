@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-public class IndexerTest {
+public class JarIndexerTest {
 
-    static final Logger LOGGER = Logger.getLogger(IndexerTest.class.getName());
+    static final Logger LOGGER = Logger.getLogger(JarIndexerTest.class.getName());
     static final boolean wantUpdate = System.getenv("BUILD_WORKING_DIRECTORY") != null;
 
     @Test
@@ -78,7 +78,7 @@ public class IndexerTest {
         final JarIndex want = mustParseIndexJson(goldenFile.get());
         final Path tmpDir = mustGetTestTmpDir();
 
-        Indexer indexer = new Indexer(tmpDir);
+        JarIndexer indexer = new JarIndexer(tmpDir);
         for (Path srcFile : files) {
             LOGGER.log(Level.INFO, "possible file: " + srcFile);
             if (srcFile.toString().endsWith(".jar")) {

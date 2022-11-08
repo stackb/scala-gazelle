@@ -38,14 +38,14 @@ import build.stack.gazelle.scala.jarindex.JarIndex;
 import build.stack.gazelle.scala.jarindex.JarFile;
 import build.stack.gazelle.scala.jarindex.ClassFile;
 
-public class Indexer extends Object {
+public class JarIndexer extends Object {
 
-    static Logger logger = Logger.getLogger(Indexer.class.getName());
+    static Logger logger = Logger.getLogger(JarIndexer.class.getName());
 
     private final Path baseDir;
     private final JarIndex.Builder index = JarIndex.newBuilder();
 
-    public Indexer(final Path baseDir) {
+    public JarIndexer(final Path baseDir) {
         this.baseDir = baseDir;
     }
 
@@ -204,7 +204,7 @@ public class Indexer extends Object {
             throw new IllegalArgumentException("malformed usage: no input files provided");
         }
 
-        Indexer indexer = new Indexer(Path.of("."));
+        JarIndexer indexer = new JarIndexer(Path.of("."));
 
         for (final String inputFile : inputFiles) {
             indexer.index(label, Path.of(inputFile));
