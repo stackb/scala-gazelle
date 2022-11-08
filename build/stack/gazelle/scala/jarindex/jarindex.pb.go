@@ -88,13 +88,12 @@ type JarFile struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Filename    string            `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
-	Label       string            `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
-	ClassFile   []*ClassFile      `protobuf:"bytes,3,rep,name=class_file,json=files,proto3" json:"class_file,omitempty"`
-	Symbols     []string          `protobuf:"bytes,4,rep,name=symbols,proto3" json:"symbols,omitempty"`
-	ClassName   []string          `protobuf:"bytes,5,rep,name=class_name,json=classes,proto3" json:"class_name,omitempty"`
-	PackageName []string          `protobuf:"bytes,6,rep,name=package_name,json=packages,proto3" json:"package_name,omitempty"`
-	Extends     map[string]string `protobuf:"bytes,7,rep,name=extends,proto3" json:"extends,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Filename    string       `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
+	Label       string       `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	ClassFile   []*ClassFile `protobuf:"bytes,3,rep,name=class_file,json=files,proto3" json:"class_file,omitempty"`
+	Symbols     []string     `protobuf:"bytes,4,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	ClassName   []string     `protobuf:"bytes,5,rep,name=class_name,json=classes,proto3" json:"class_name,omitempty"`
+	PackageName []string     `protobuf:"bytes,6,rep,name=package_name,json=packages,proto3" json:"package_name,omitempty"`
 }
 
 func (x *JarFile) Reset() {
@@ -167,13 +166,6 @@ func (x *JarFile) GetClassName() []string {
 func (x *JarFile) GetPackageName() []string {
 	if x != nil {
 		return x.PackageName
-	}
-	return nil
-}
-
-func (x *JarFile) GetExtends() map[string]string {
-	if x != nil {
-		return x.Extends
 	}
 	return nil
 }
@@ -526,7 +518,7 @@ var file_build_stack_gazelle_scala_jarindex_jarindex_proto_rawDesc = []byte{
 	0x0a, 0x70, 0x72, 0x65, 0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x64, 0x18, 0x03, 0x20, 0x03, 0x28,
 	0x09, 0x52, 0x0a, 0x70, 0x72, 0x65, 0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x64, 0x12, 0x1c, 0x0a,
 	0x09, 0x70, 0x72, 0x65, 0x66, 0x65, 0x72, 0x72, 0x65, 0x64, 0x18, 0x04, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x09, 0x70, 0x72, 0x65, 0x66, 0x65, 0x72, 0x72, 0x65, 0x64, 0x22, 0xec, 0x02, 0x0a, 0x07,
+	0x52, 0x09, 0x70, 0x72, 0x65, 0x66, 0x65, 0x72, 0x72, 0x65, 0x64, 0x22, 0xdc, 0x01, 0x0a, 0x07,
 	0x4a, 0x61, 0x72, 0x46, 0x69, 0x6c, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x6e,
 	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x6e,
 	0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x18, 0x02, 0x20, 0x01,
@@ -540,16 +532,7 @@ var file_build_stack_gazelle_scala_jarindex_jarindex_proto_rawDesc = []byte{
 	0x0a, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x03, 0x28,
 	0x09, 0x52, 0x07, 0x63, 0x6c, 0x61, 0x73, 0x73, 0x65, 0x73, 0x12, 0x1e, 0x0a, 0x0c, 0x70, 0x61,
 	0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x03, 0x28, 0x09,
-	0x52, 0x08, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x73, 0x12, 0x52, 0x0a, 0x07, 0x65, 0x78,
-	0x74, 0x65, 0x6e, 0x64, 0x73, 0x18, 0x07, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x38, 0x2e, 0x62, 0x75,
-	0x69, 0x6c, 0x64, 0x2e, 0x73, 0x74, 0x61, 0x63, 0x6b, 0x2e, 0x67, 0x61, 0x7a, 0x65, 0x6c, 0x6c,
-	0x65, 0x2e, 0x73, 0x63, 0x61, 0x6c, 0x61, 0x2e, 0x6a, 0x61, 0x72, 0x69, 0x6e, 0x64, 0x65, 0x78,
-	0x2e, 0x4a, 0x61, 0x72, 0x46, 0x69, 0x6c, 0x65, 0x2e, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x73,
-	0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x65, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x73, 0x1a, 0x3a,
-	0x0a, 0x0c, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10,
-	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
-	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0xaa, 0x02, 0x0a, 0x09, 0x43,
+	0x52, 0x08, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x73, 0x22, 0xaa, 0x02, 0x0a, 0x09, 0x43,
 	0x6c, 0x61, 0x73, 0x73, 0x46, 0x69, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07,
 	0x63, 0x6c, 0x61, 0x73, 0x73, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x05, 0x52, 0x07, 0x63,
@@ -628,7 +611,7 @@ func file_build_stack_gazelle_scala_jarindex_jarindex_proto_rawDescGZIP() []byte
 	return file_build_stack_gazelle_scala_jarindex_jarindex_proto_rawDescData
 }
 
-var file_build_stack_gazelle_scala_jarindex_jarindex_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_build_stack_gazelle_scala_jarindex_jarindex_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_build_stack_gazelle_scala_jarindex_jarindex_proto_goTypes = []interface{}{
 	(*JarIndex)(nil),         // 0: build.stack.gazelle.scala.jarindex.JarIndex
 	(*JarFile)(nil),          // 1: build.stack.gazelle.scala.jarindex.JarFile
@@ -637,25 +620,23 @@ var file_build_stack_gazelle_scala_jarindex_jarindex_proto_goTypes = []interface
 	(*ClassType)(nil),        // 4: build.stack.gazelle.scala.jarindex.ClassType
 	(*ClassMethod)(nil),      // 5: build.stack.gazelle.scala.jarindex.ClassMethod
 	(*ClassMethodParam)(nil), // 6: build.stack.gazelle.scala.jarindex.ClassMethodParam
-	nil,                      // 7: build.stack.gazelle.scala.jarindex.JarFile.ExtendsEntry
 }
 var file_build_stack_gazelle_scala_jarindex_jarindex_proto_depIdxs = []int32{
 	1,  // 0: build.stack.gazelle.scala.jarindex.JarIndex.jar_file:type_name -> build.stack.gazelle.scala.jarindex.JarFile
 	2,  // 1: build.stack.gazelle.scala.jarindex.JarFile.class_file:type_name -> build.stack.gazelle.scala.jarindex.ClassFile
-	7,  // 2: build.stack.gazelle.scala.jarindex.JarFile.extends:type_name -> build.stack.gazelle.scala.jarindex.JarFile.ExtendsEntry
-	3,  // 3: build.stack.gazelle.scala.jarindex.ClassFile.fields:type_name -> build.stack.gazelle.scala.jarindex.ClassField
-	5,  // 4: build.stack.gazelle.scala.jarindex.ClassFile.methods:type_name -> build.stack.gazelle.scala.jarindex.ClassMethod
-	4,  // 5: build.stack.gazelle.scala.jarindex.ClassField.type:type_name -> build.stack.gazelle.scala.jarindex.ClassType
-	4,  // 6: build.stack.gazelle.scala.jarindex.ClassMethod.returns:type_name -> build.stack.gazelle.scala.jarindex.ClassType
-	6,  // 7: build.stack.gazelle.scala.jarindex.ClassMethod.params:type_name -> build.stack.gazelle.scala.jarindex.ClassMethodParam
-	4,  // 8: build.stack.gazelle.scala.jarindex.ClassMethod.types:type_name -> build.stack.gazelle.scala.jarindex.ClassType
-	4,  // 9: build.stack.gazelle.scala.jarindex.ClassMethod.throws:type_name -> build.stack.gazelle.scala.jarindex.ClassType
-	4,  // 10: build.stack.gazelle.scala.jarindex.ClassMethodParam.returns:type_name -> build.stack.gazelle.scala.jarindex.ClassType
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	3,  // 2: build.stack.gazelle.scala.jarindex.ClassFile.fields:type_name -> build.stack.gazelle.scala.jarindex.ClassField
+	5,  // 3: build.stack.gazelle.scala.jarindex.ClassFile.methods:type_name -> build.stack.gazelle.scala.jarindex.ClassMethod
+	4,  // 4: build.stack.gazelle.scala.jarindex.ClassField.type:type_name -> build.stack.gazelle.scala.jarindex.ClassType
+	4,  // 5: build.stack.gazelle.scala.jarindex.ClassMethod.returns:type_name -> build.stack.gazelle.scala.jarindex.ClassType
+	6,  // 6: build.stack.gazelle.scala.jarindex.ClassMethod.params:type_name -> build.stack.gazelle.scala.jarindex.ClassMethodParam
+	4,  // 7: build.stack.gazelle.scala.jarindex.ClassMethod.types:type_name -> build.stack.gazelle.scala.jarindex.ClassType
+	4,  // 8: build.stack.gazelle.scala.jarindex.ClassMethod.throws:type_name -> build.stack.gazelle.scala.jarindex.ClassType
+	4,  // 9: build.stack.gazelle.scala.jarindex.ClassMethodParam.returns:type_name -> build.stack.gazelle.scala.jarindex.ClassType
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_build_stack_gazelle_scala_jarindex_jarindex_proto_init() }
@@ -755,7 +736,7 @@ func file_build_stack_gazelle_scala_jarindex_jarindex_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_build_stack_gazelle_scala_jarindex_jarindex_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

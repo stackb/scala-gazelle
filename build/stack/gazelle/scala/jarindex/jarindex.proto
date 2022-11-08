@@ -24,12 +24,12 @@ message JarFile {
 
 message ClassFile {
     string name = 1;
-    repeated int32 classes = 2 [json_name = "classes"];
-    repeated string symbols = 3 [json_name = "symbols"];
-    repeated string superclasses = 4 [json_name = "superclasses"];
-    repeated string interfaces = 5 [json_name = "interfaces"];
-    repeated ClassField fields = 6 [json_name = "fields"];
-    repeated ClassMethod methods = 7 [json_name = "methods"];
+    repeated int32 classes = 2;
+    repeated string symbols = 3;
+    repeated string superclasses = 4;
+    repeated string interfaces = 5;
+    repeated ClassField fields = 6;
+    repeated ClassMethod methods = 7;
 }
 
 message ClassField {
