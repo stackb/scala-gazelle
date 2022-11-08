@@ -12,7 +12,6 @@ go_library(
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
         "sourceindexer.mjs",
-        # "bun.exe",
         "node.exe",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",

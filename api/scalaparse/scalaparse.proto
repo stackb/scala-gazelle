@@ -14,8 +14,13 @@ message ScalaFile {
     repeated string traits = 7;
     repeated string vals = 8;
     repeated string objects = 9;
-    int64 elapsed_millis = 10;
-    string error = 11;
+    map<string,ClassList> extends = 10;
+    int64 elapsed_millis = 11;
+    string error = 12;
+}
+
+message ClassList {
+    repeated string classes = 1;
 }
 
 message ScalaParseRequest {

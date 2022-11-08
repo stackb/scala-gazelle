@@ -20,7 +20,6 @@ message JarFile {
     repeated string symbols = 4;
     repeated string class_name = 5  [json_name = "classes"];
     repeated string package_name = 6  [json_name = "packages"];
-    map<string,string> extends = 7  [json_name = "extends"];
 }
 
 message ClassFile {
@@ -30,7 +29,7 @@ message ClassFile {
     repeated string superclasses = 4;
     repeated string interfaces = 5;
     repeated ClassField fields = 6;
-    repeated ClassMethod methods = 7;   
+    repeated ClassMethod methods = 7;
 }
 
 message ClassField {

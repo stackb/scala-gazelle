@@ -98,8 +98,9 @@ class ScalaSourceFile {
 
         /**
          * If type, trait, or class extends another symbol, record that here.
-         * Key is the package-qualified-name, value is a list of names.
-         * @type {Map<string,Array<string>>}
+         * Key is the package-qualified-name, value is a an object with a list
+         * of names in the form { classes: !Array<string> }
+         * @type {Map<string,{classes:Array<string>}>}
          */
         this.extendsMap = new Map();
     }
@@ -332,12 +333,12 @@ class ScalaSourceFile {
                 if (init.tpe) {
                     const tpe = this.parseName(init.tpe);
                     if (tpe) {
-                        let symbols = this.extendsMap.get(key);
-                        if (!symbols) {
-                            symbols = [];
-                            this.extendsMap.set(key, symbols);
+                        let classList = this.extendsMap.get(key);
+                        if (!classList) {
+                            classList = { classes: [] };
+                            this.extendsMap.set(key, classList);
                         }
-                        symbols.push(tpe);
+                        classList.classes.push(tpe);
                     }
                 }
             }
