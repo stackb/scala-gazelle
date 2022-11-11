@@ -8,11 +8,9 @@ workspace_deps()
 # @rules_proto
 # ----------------------------------------------------
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
 
 rules_proto_dependencies()
-
-rules_proto_toolchains()
 
 # ----------------------------------------------------
 # Go
