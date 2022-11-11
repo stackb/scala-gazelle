@@ -5,22 +5,34 @@ def _maybe(repo_rule, name, **kwargs):
         repo_rule(name = name, **kwargs)
 
 def language_scala_deps():
+    """language_scala_deps loads a subset of dependencies
+
+    when @build_stack_scala_gazelle//language/scala is used from another
+    repository.
+    """
+    protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
 
 def workspace_deps():
-    io_bazel_rules_go()  # via bazel_gazelle
-
-    classgraph_jar()
-    scalameta_parsers()
-    bazel_gazelle()  # via <TOP>
+    """workspace_deps loads all dependencies for the workspace
+    """
     rules_proto()  # via <TOP>
+    io_bazel_rules_go()  # via bazel_gazelle
+    language_scala_deps()
+    bazel_gazelle()  # via <TOP>
     build_stack_rules_proto()
     build_bazel_rules_nodejs()  # via <TOP>
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
     viz_js_lite()
+
+def protobuf_core_deps():
+    bazel_skylib()  # via com_google_protobuf
+    rules_python()  # via com_google_protobuf
+    zlib()  # via com_google_protobuf
+    com_google_protobuf()  # via <TOP>
 
 def io_bazel_rules_go():
     # Release: v0.35.0
@@ -80,14 +92,20 @@ def local_bazel_gazelle():
     )
 
 def rules_proto():
+    # Commit: f7a30f6f80006b591fa7c437fe5a951eb10bcbcf
+    # Date: 2021-02-09 14:25:06 +0000 UTC
+    # URL: https://github.com/bazelbuild/rules_proto/commit/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf
+    #
+    # Merge pull request #77 from Yannic/proto_descriptor_set_rule
+    #
+    # Create proto_descriptor_set
+    # Size: 14397 (14 kB)
     _maybe(
         http_archive,
         name = "rules_proto",
         sha256 = "9fc210a34f0f9e7cc31598d109b5d069ef44911a82f507d5a88716db171615a8",
         strip_prefix = "rules_proto-f7a30f6f80006b591fa7c437fe5a951eb10bcbcf",
-        urls = [
-            "https://github.com/bazelbuild/rules_proto/archive/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf.tar.gz",
-        ],
+        urls = ["https://github.com/bazelbuild/rules_proto/archive/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf.tar.gz"],
     )
 
 def build_stack_rules_proto():
@@ -135,11 +153,60 @@ def io_bazel_rules_scala():
         ],
     )
 
-def protobuf_core_deps():
-    bazel_skylib()  # via com_google_protobuf
-    rules_python()  # via com_google_protobuf
-    zlib()  # via com_google_protobuf
-    com_google_protobuf()  # via <TOP>
+def viz_js_lite():
+    # HTTP/2.0 200 OK
+    # Content-Type: application/javascript; charset=utf-8
+    # Date: Sat, 26 Mar 2022 00:35:46 GMT
+    # Last-Modified: Mon, 04 May 2020 16:17:44 GMT
+    # Size: 1439383 (1.4 MB)
+    _maybe(
+        http_file,
+        name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
+        sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
+        urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
+    )
+
+def bun_darwin():
+    _maybe(
+        http_archive,
+        name = "bun_darwin",
+        sha256 = "8976309239260f8089377980cf9399e99a6e352f22878b59fc9804e7a8b98b7b",
+        strip_prefix = "bun-darwin-x64",
+        build_file_content = """
+filegroup(
+    name = "bin",
+    srcs = ["bun"],
+    visibility = ["//visibility:public"],
+)
+        """,
+        urls = [
+            "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
+        ],
+    )
+
+def classgraph_jar():
+    # bzl use jar https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar
+    # Last-Modified: Wed, 06 Jul 2022 04:30:32 GMT
+    # X-Checksum-Md5: 7fca2eb70908395af9ac43858b428c35
+    # X-Checksum-Sha1: 4bc2f188bc9001473d4a26ac488c2ae1a3e906de
+    # Size: 558272 (558 kB)
+    http_jar(
+        name = "classgraph_jar",
+        sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
+        url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
+    )
+
+def protobuf_java_jar():
+    # bzl use jar https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar
+    # Last-Modified: Tue, 18 Oct 2022 19:48:19 GMT
+    # X-Checksum-Md5: 39d238b47a0278795884e92e1c966796
+    # X-Checksum-Sha1: 2a1eebb74b844d9ccdf1d22eb2f57cec709698a9
+    # Size: 1671407 (1.7 MB)
+    http_jar(
+        name = "protobuf_java_jar",
+        sha256 = "0b8581ad810d2dfaefd0dcfbf1569b1450448650238d7e2fd6b176c932d08c95",
+        url = "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar",
+    )
 
 def bazel_skylib():
     _maybe(
@@ -185,47 +252,4 @@ def com_google_protobuf():
         urls = [
             "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
         ],
-    )
-
-def viz_js_lite():
-    # HTTP/2.0 200 OK
-    # Content-Type: application/javascript; charset=utf-8
-    # Date: Sat, 26 Mar 2022 00:35:46 GMT
-    # Last-Modified: Mon, 04 May 2020 16:17:44 GMT
-    # Size: 1439383 (1.4 MB)
-    _maybe(
-        http_file,
-        name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
-        sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
-        urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
-    )
-
-def bun_darwin():
-    _maybe(
-        http_archive,
-        name = "bun_darwin",
-        sha256 = "8976309239260f8089377980cf9399e99a6e352f22878b59fc9804e7a8b98b7b",
-        strip_prefix = "bun-darwin-x64",
-        build_file_content = """
-filegroup(
-    name = "bin",
-    srcs = ["bun"],
-    visibility = ["//visibility:public"],
-)
-        """,
-        urls = [
-            "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
-        ],
-    )
-
-def classgraph_jar():
-    # bzl use jar https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar
-    # Last-Modified: Wed, 06 Jul 2022 04:30:32 GMT
-    # X-Checksum-Md5: 7fca2eb70908395af9ac43858b428c35
-    # X-Checksum-Sha1: 4bc2f188bc9001473d4a26ac488c2ae1a3e906de
-    # Size: 558272 (558 kB)
-    http_jar(
-        name = "classgraph_jar",
-        sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
-        url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
     )

@@ -5,7 +5,15 @@ load(":workspace_deps.bzl", "workspace_deps")
 workspace_deps()
 
 # ----------------------------------------------------
-# Go
+# @rules_proto
+# ----------------------------------------------------
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
+
+rules_proto_dependencies()
+
+# ----------------------------------------------------
+# @io_bazel_rules_go
 # ----------------------------------------------------
 
 load(
@@ -19,7 +27,7 @@ go_rules_dependencies()
 go_register_toolchains(version = "1.18.2")
 
 # ----------------------------------------------------
-# Gazelle
+# @bazel_gazelle
 # ----------------------------------------------------
 # gazelle:repository_macro go_repos.bzl%go_repositories
 
@@ -27,9 +35,17 @@ load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
 
 gazelle_dependencies()
 
-# defining this in the WORKSPACE despite 'bazel query //external:org_golang_google_grpc --output build' saying it's
-# still coming from go_repos.bzl.  I don't understand this one...  Without it org_golang_google_grpc
-# is falling back to 1.27.0.
+# ----------------------------------------------------
+# @build_stack_rules_proto
+# ----------------------------------------------------
+
+register_toolchains("@build_stack_rules_proto//toolchain:standard")
+
+# defining go_repository for @org_golang_google_grpc this in the WORKSPACE
+# It must occur before gazelle_protobuf_extension_go_deps() macro call.
+# I don't understand this one...  Despite 'bazel query //external:org_golang_google_grpc --output build'
+# saying it's still coming from go_repos.bzl, that does not appear to be the case.
+# Without this override org_golang_google_grpc is falling back to 1.27.0.
 go_repository(
     name = "org_golang_google_grpc",
     build_file_proto_mode = "disable_global",
@@ -38,19 +54,9 @@ go_repository(
     version = "v1.42.0",
 )
 
-# ----------------------------------------------------
-# build_stack_rules_proto
-# ----------------------------------------------------
-
-register_toolchains("@build_stack_rules_proto//toolchain:standard")
-
 load("@build_stack_rules_proto//:go_deps.bzl", "gazelle_protobuf_extension_go_deps")
 
 gazelle_protobuf_extension_go_deps()
-
-# ----------------------------------------------------
-# Go
-# ----------------------------------------------------
 
 load("@build_stack_rules_proto//deps:go_core_deps.bzl", "go_core_deps")
 
@@ -61,7 +67,7 @@ load("//:go_repos.bzl", "go_repositories")
 go_repositories()
 
 # ----------------------------------------------------
-# NodeJS
+# @build_bazel_rules_nodejs
 # ----------------------------------------------------
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories")
@@ -71,15 +77,11 @@ node_repositories()
 register_toolchains("//tools/toolchains:nodejs")
 
 # ----------------------------------------------------
-# Maven
+# @maven
 #
 # Note: maven dependencies should only be required for
 # tests.
 # ----------------------------------------------------
-
-# load("@com_google_protobuf//:protobuf_deps.bzl", "PROTOBUF_MAVEN_ARTIFACTS", "protobuf_deps")
-
-# protobuf_deps()
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
@@ -123,7 +125,7 @@ bind(
 )
 
 # ----------------------------------------------------
-# Scala
+# @io_bazel_rules_scala
 # ----------------------------------------------------
 
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
