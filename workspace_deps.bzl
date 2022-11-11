@@ -25,8 +25,14 @@ def workspace_deps():
     build_bazel_rules_nodejs()  # via <TOP>
     rules_jvm_external()
     io_bazel_rules_scala()
+    protobuf_core_deps()
     viz_js_lite()
-    com_google_protobuf()
+
+def protobuf_core_deps():
+    bazel_skylib()  # via com_google_protobuf
+    rules_python()  # via com_google_protobuf
+    zlib()  # via com_google_protobuf
+    com_google_protobuf()  # via <TOP>
 
 def io_bazel_rules_go():
     # Release: v0.35.0
@@ -200,6 +206,41 @@ def protobuf_java_jar():
         name = "protobuf_java_jar",
         sha256 = "0b8581ad810d2dfaefd0dcfbf1569b1450448650238d7e2fd6b176c932d08c95",
         url = "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar",
+    )
+
+def bazel_skylib():
+    _maybe(
+        http_archive,
+        name = "bazel_skylib",
+        sha256 = "ebdf850bfef28d923a2cc67ddca86355a449b5e4f38b0a70e584dc24e5984aa6",
+        strip_prefix = "bazel-skylib-f80bc733d4b9f83d427ce3442be2e07427b2cc8d",
+        urls = [
+            "https://github.com/bazelbuild/bazel-skylib/archive/f80bc733d4b9f83d427ce3442be2e07427b2cc8d.tar.gz",
+        ],
+    )
+
+def rules_python():
+    _maybe(
+        http_archive,
+        name = "rules_python",
+        sha256 = "8cc0ad31c8fc699a49ad31628273529ef8929ded0a0859a3d841ce711a9a90d5",
+        strip_prefix = "rules_python-c7e068d38e2fec1d899e1c150e372f205c220e27",
+        urls = [
+            "https://github.com/bazelbuild/rules_python/archive/c7e068d38e2fec1d899e1c150e372f205c220e27.tar.gz",
+        ],
+    )
+
+def zlib():
+    _maybe(
+        http_archive,
+        name = "zlib",
+        sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+        strip_prefix = "zlib-1.2.11",
+        urls = [
+            "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
+            "https://zlib.net/zlib-1.2.11.tar.gz",
+        ],
+        build_file = "@build_stack_rules_proto//third_party:zlib.BUILD",
     )
 
 def com_google_protobuf():
