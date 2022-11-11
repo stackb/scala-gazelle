@@ -5,11 +5,18 @@ def _maybe(repo_rule, name, **kwargs):
         repo_rule(name = name, **kwargs)
 
 def language_scala_deps():
+    """language_scala_deps loads a subset of dependencies
+
+    when @build_stack_scala_gazelle//language/scala is used from another
+    repository.
+    """
     protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
 
 def workspace_deps():
+    """workspace_deps loads all dependencies for the workspace
+    """
     rules_proto()  # via <TOP>
     io_bazel_rules_go()  # via bazel_gazelle
     language_scala_deps()
@@ -19,6 +26,7 @@ def workspace_deps():
     rules_jvm_external()
     io_bazel_rules_scala()
     viz_js_lite()
+    com_google_protobuf()
 
 def io_bazel_rules_go():
     # Release: v0.35.0
@@ -192,4 +200,15 @@ def protobuf_java_jar():
         name = "protobuf_java_jar",
         sha256 = "0b8581ad810d2dfaefd0dcfbf1569b1450448650238d7e2fd6b176c932d08c95",
         url = "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar",
+    )
+
+def com_google_protobuf():
+    _maybe(
+        http_archive,
+        name = "com_google_protobuf",
+        sha256 = "d0f5f605d0d656007ce6c8b5a82df3037e1d8fe8b121ed42e536f569dec16113",
+        strip_prefix = "protobuf-3.14.0",
+        urls = [
+            "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
+        ],
     )

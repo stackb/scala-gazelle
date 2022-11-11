@@ -30,7 +30,8 @@ java_test(
     deps = [
         ":jarindexer",
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
-        "@protobuf_java_jar//jar_util",
+        "@com_google_protobuf//:protobuf_java",
+        "@com_google_protobuf//:protobuf_java_util",
     ],
 )
 
