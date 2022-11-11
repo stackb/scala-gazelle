@@ -298,27 +298,11 @@ def _get_compile_flags(dep):
 def build_jar_index(ctx, target, jar):
     """Builds the java package manifest for the given source files."""
 
-    ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
-
-    # input_file = ctx.actions.declare_file(target.label.name + ".jar.json")
     output_file = ctx.actions.declare_file(target.label.name + ".jarindex.json")
 
     ctx.actions.run(
-        executable = ctx.executable._ijar,
-        inputs = [jar],
-        outputs = [ijar],
-        arguments = [
-            "--target_label",
-            str(ctx.label),
-            jar.path,
-            ijar.path,
-        ],
-        mnemonic = "Ijar",
-    )
-
-    ctx.actions.run(
         mnemonic = "JarIndexer",
-        progress_message = "Indexing " + ijar.basename,
+        progress_message = "Indexing " + jar.basename,
         executable = ctx.executable._jarindexer,
         arguments = [
             "--label",
@@ -327,7 +311,7 @@ def build_jar_index(ctx, target, jar):
             output_file.path,
             jar.path,
         ],
-        inputs = [ijar, jar],
+        inputs = [jar],
         outputs = [output_file],
     )
 
@@ -654,12 +638,6 @@ java_indexer_aspect = aspect(
             default = Label("//cmd/jarindexer"),
             cfg = "exec",
             executable = True,
-        ),
-        "_ijar": attr.label(
-            default = Label("@bazel_tools//tools/jdk:ijar"),
-            executable = True,
-            cfg = "exec",
-            allow_files = True,
         ),
     },
     fragments = ["cpp", "java"],
