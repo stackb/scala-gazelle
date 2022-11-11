@@ -39,10 +39,13 @@ gazelle_dependencies()
 # @build_stack_rules_proto
 # ----------------------------------------------------
 
-# defining this in the WORKSPACE despite 'bazel query //external:org_golang_google_grpc --output build' saying it's
-# still coming from go_repos.bzl.  I don't understand this one...  Without it org_golang_google_grpc
-# is falling back to 1.27.0.
-# Must occur before gazelle_protobuf_extension_go_deps() macro call.
+register_toolchains("@build_stack_rules_proto//toolchain:standard")
+
+# defining go_repository for @org_golang_google_grpc this in the WORKSPACE
+# It must occur before gazelle_protobuf_extension_go_deps() macro call.
+# I don't understand this one...  Despite 'bazel query //external:org_golang_google_grpc --output build'
+# saying it's still coming from go_repos.bzl, that does not appear to be the case.
+# Without this override org_golang_google_grpc is falling back to 1.27.0.
 go_repository(
     name = "org_golang_google_grpc",
     build_file_proto_mode = "disable_global",
@@ -50,8 +53,6 @@ go_repository(
     sum = "h1:XT2/MFpuPFsEX2fWh3YQtHkZ+WYZFQRfaUgLZYj/p6A=",
     version = "v1.42.0",
 )
-
-register_toolchains("@build_stack_rules_proto//toolchain:standard")
 
 load("@build_stack_rules_proto//:go_deps.bzl", "gazelle_protobuf_extension_go_deps")
 
