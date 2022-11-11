@@ -5,21 +5,21 @@ def _maybe(repo_rule, name, **kwargs):
         repo_rule(name = name, **kwargs)
 
 def language_scala_deps():
+    protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
 
 def workspace_deps():
-    io_bazel_rules_go()  # via bazel_gazelle
-
-    classgraph_jar()
-    scalameta_parsers()
-    bazel_gazelle()  # via <TOP>
     rules_proto()  # via <TOP>
+    io_bazel_rules_go()  # via bazel_gazelle
+    language_scala_deps()
+    bazel_gazelle()  # via <TOP>
     build_stack_rules_proto()
     build_bazel_rules_nodejs()  # via <TOP>
     rules_jvm_external()
     io_bazel_rules_scala()
-    protobuf_core_deps()
+
+    # protobuf_core_deps()
     viz_js_lite()
 
 def io_bazel_rules_go():
@@ -80,14 +80,20 @@ def local_bazel_gazelle():
     )
 
 def rules_proto():
+    # Commit: f7a30f6f80006b591fa7c437fe5a951eb10bcbcf
+    # Date: 2021-02-09 14:25:06 +0000 UTC
+    # URL: https://github.com/bazelbuild/rules_proto/commit/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf
+    #
+    # Merge pull request #77 from Yannic/proto_descriptor_set_rule
+    #
+    # Create proto_descriptor_set
+    # Size: 14397 (14 kB)
     _maybe(
         http_archive,
         name = "rules_proto",
         sha256 = "9fc210a34f0f9e7cc31598d109b5d069ef44911a82f507d5a88716db171615a8",
         strip_prefix = "rules_proto-f7a30f6f80006b591fa7c437fe5a951eb10bcbcf",
-        urls = [
-            "https://github.com/bazelbuild/rules_proto/archive/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf.tar.gz",
-        ],
+        urls = ["https://github.com/bazelbuild/rules_proto/archive/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf.tar.gz"],
     )
 
 def build_stack_rules_proto():
@@ -135,57 +141,57 @@ def io_bazel_rules_scala():
         ],
     )
 
-def protobuf_core_deps():
-    bazel_skylib()  # via com_google_protobuf
-    rules_python()  # via com_google_protobuf
-    zlib()  # via com_google_protobuf
-    com_google_protobuf()  # via <TOP>
+# def protobuf_core_deps():
+#     bazel_skylib()  # via com_google_protobuf
+#     rules_python()  # via com_google_protobuf
+#     zlib()  # via com_google_protobuf
+#     com_google_protobuf()  # via <TOP>
 
-def bazel_skylib():
-    _maybe(
-        http_archive,
-        name = "bazel_skylib",
-        sha256 = "ebdf850bfef28d923a2cc67ddca86355a449b5e4f38b0a70e584dc24e5984aa6",
-        strip_prefix = "bazel-skylib-f80bc733d4b9f83d427ce3442be2e07427b2cc8d",
-        urls = [
-            "https://github.com/bazelbuild/bazel-skylib/archive/f80bc733d4b9f83d427ce3442be2e07427b2cc8d.tar.gz",
-        ],
-    )
+# def bazel_skylib():
+#     _maybe(
+#         http_archive,
+#         name = "bazel_skylib",
+#         sha256 = "ebdf850bfef28d923a2cc67ddca86355a449b5e4f38b0a70e584dc24e5984aa6",
+#         strip_prefix = "bazel-skylib-f80bc733d4b9f83d427ce3442be2e07427b2cc8d",
+#         urls = [
+#             "https://github.com/bazelbuild/bazel-skylib/archive/f80bc733d4b9f83d427ce3442be2e07427b2cc8d.tar.gz",
+#         ],
+#     )
 
-def rules_python():
-    _maybe(
-        http_archive,
-        name = "rules_python",
-        sha256 = "8cc0ad31c8fc699a49ad31628273529ef8929ded0a0859a3d841ce711a9a90d5",
-        strip_prefix = "rules_python-c7e068d38e2fec1d899e1c150e372f205c220e27",
-        urls = [
-            "https://github.com/bazelbuild/rules_python/archive/c7e068d38e2fec1d899e1c150e372f205c220e27.tar.gz",
-        ],
-    )
+# def rules_python():
+#     _maybe(
+#         http_archive,
+#         name = "rules_python",
+#         sha256 = "8cc0ad31c8fc699a49ad31628273529ef8929ded0a0859a3d841ce711a9a90d5",
+#         strip_prefix = "rules_python-c7e068d38e2fec1d899e1c150e372f205c220e27",
+#         urls = [
+#             "https://github.com/bazelbuild/rules_python/archive/c7e068d38e2fec1d899e1c150e372f205c220e27.tar.gz",
+#         ],
+#     )
 
-def zlib():
-    _maybe(
-        http_archive,
-        name = "zlib",
-        sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
-        strip_prefix = "zlib-1.2.11",
-        urls = [
-            "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
-            "https://zlib.net/zlib-1.2.11.tar.gz",
-        ],
-        build_file = "@build_stack_rules_proto//third_party:zlib.BUILD",
-    )
+# def zlib():
+#     _maybe(
+#         http_archive,
+#         name = "zlib",
+#         sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+#         strip_prefix = "zlib-1.2.11",
+#         urls = [
+#             "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
+#             "https://zlib.net/zlib-1.2.11.tar.gz",
+#         ],
+#         build_file = "@build_stack_rules_proto//third_party:zlib.BUILD",
+#     )
 
-def com_google_protobuf():
-    _maybe(
-        http_archive,
-        name = "com_google_protobuf",
-        sha256 = "d0f5f605d0d656007ce6c8b5a82df3037e1d8fe8b121ed42e536f569dec16113",
-        strip_prefix = "protobuf-3.14.0",
-        urls = [
-            "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
-        ],
-    )
+# def com_google_protobuf():
+#     _maybe(
+#         http_archive,
+#         name = "com_google_protobuf",
+#         sha256 = "d0f5f605d0d656007ce6c8b5a82df3037e1d8fe8b121ed42e536f569dec16113",
+#         strip_prefix = "protobuf-3.14.0",
+#         urls = [
+#             "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
+#         ],
+#     )
 
 def viz_js_lite():
     # HTTP/2.0 200 OK
@@ -228,4 +234,16 @@ def classgraph_jar():
         name = "classgraph_jar",
         sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
         url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
+    )
+
+def protobuf_java_jar():
+    # bzl use jar https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar
+    # Last-Modified: Tue, 18 Oct 2022 19:48:19 GMT
+    # X-Checksum-Md5: 39d238b47a0278795884e92e1c966796
+    # X-Checksum-Sha1: 2a1eebb74b844d9ccdf1d22eb2f57cec709698a9
+    # Size: 1671407 (1.7 MB)
+    http_jar(
+        name = "protobuf_java_jar",
+        sha256 = "0b8581ad810d2dfaefd0dcfbf1569b1450448650238d7e2fd6b176c932d08c95",
+        url = "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.21.8/protobuf-java-3.21.8.jar",
     )

@@ -5,6 +5,16 @@ load(":workspace_deps.bzl", "workspace_deps")
 workspace_deps()
 
 # ----------------------------------------------------
+# @rules_proto
+# ----------------------------------------------------
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+
+# ----------------------------------------------------
 # Go
 # ----------------------------------------------------
 
@@ -39,7 +49,7 @@ go_repository(
 )
 
 # ----------------------------------------------------
-# build_stack_rules_proto
+# @build_stack_rules_proto
 # ----------------------------------------------------
 
 register_toolchains("@build_stack_rules_proto//toolchain:standard")

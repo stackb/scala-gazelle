@@ -140,7 +140,7 @@ E.g. ["@maven//:io_grpc_grpc_api"] means, "in the case where io.grpc.CallCredent
             executable = True,
         ),
         "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer"),
+            default = Label("//cmd/jarindexer:jarindexer_bin"),
             cfg = "exec",
             executable = True,
         ),

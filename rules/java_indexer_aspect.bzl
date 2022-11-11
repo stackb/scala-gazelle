@@ -316,42 +316,18 @@ def build_jar_index(ctx, target, jar):
         mnemonic = "Ijar",
     )
 
-    # ctx.actions.write(
-    #     content = json.encode(struct(
-    #         label = str(target.label),
-    #         filename = ijar_file.path,
-    #     )),
-    #     output = input_file,
-    # )
-
-    # args = [
-    #     "--input_file",
-    #     input_file.path,
-    #     "--output_file",
-    #     output_file.path,
-    # ]
-
-    # ctx.actions.run(
-    #     mnemonic = "IJarIndexer",
-    #     progress_message = "Extracting symbols from: " + jar.basename,
-    #     executable = ctx.executable._jarindexer,
-    #     arguments = args,
-    #     inputs = [input_file, ijar_file],
-    #     outputs = [output_file],
-    # )
-
     ctx.actions.run(
-        mnemonic = "JarIndexer2",
+        mnemonic = "JarIndexer",
         progress_message = "Indexing " + ijar.basename,
-        executable = ctx.executable._jarindexer2,
+        executable = ctx.executable._jarindexer,
         arguments = [
             "--label",
             str(ctx.label),
             "--output_file",
             output_file.path,
-            ijar.path,
+            jar.path,
         ],
-        inputs = [ijar],
+        inputs = [ijar, jar],
         outputs = [output_file],
     )
 
@@ -674,13 +650,8 @@ java_indexer_aspect = aspect(
         "_cc_toolchain": attr.label(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
         ),
-        # "_jarindexer": attr.label(
-        #     default = Label("//cmd/jarindexer"),
-        #     cfg = "exec",
-        #     executable = True,
-        # ),
-        "_jarindexer2": attr.label(
-            default = Label("//cmd/jarindexer:jarindexer2"),
+        "_jarindexer": attr.label(
+            default = Label("//cmd/jarindexer"),
             cfg = "exec",
             executable = True,
         ),

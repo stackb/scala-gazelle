@@ -30,8 +30,8 @@ proto_java_library(
     name = "jarindex_java_library",
     srcs = ["jarindex.srcjar"],
     visibility = ["//visibility:public"],
-    exports = ["@com_google_protobuf//:protobuf_java"],
-    deps = ["@com_google_protobuf//:protobuf_java"],
+    exports = ["@protobuf_java_jar//jar"],
+    deps = ["@protobuf_java_jar//jar"],
 )
 
 go_library(

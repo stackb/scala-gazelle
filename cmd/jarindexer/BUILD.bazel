@@ -5,7 +5,7 @@ java_library(
     deps = [
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@classgraph_jar//jar",
-        "@com_google_protobuf//:protobuf_java",
+        "@protobuf_java_jar//jar",
     ],
 )
 
@@ -30,7 +30,7 @@ java_test(
     deps = [
         ":jarindexer",
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
-        "@com_google_protobuf//:protobuf_java_util",
+        "@protobuf_java_jar//jar_util",
     ],
 )
 
