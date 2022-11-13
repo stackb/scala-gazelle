@@ -8,9 +8,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/pcj/moprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
-	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
 // Imports implements part of the language.Language interface
@@ -66,7 +66,7 @@ func (sl *scalaLang) Resolve(
 	}
 
 	if sl.totalRules > 0 {
-		sl.progress.WriteProgress(progress.Progress{
+		sl.progress.WriteProgress(moprogress.Progress{
 			ID:      "resolve",
 			Action:  "resolving dependencies",
 			Total:   int64(sl.totalRules),

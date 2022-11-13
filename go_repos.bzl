@@ -29,6 +29,13 @@ def gazelle_extension_deps():
         sum = "h1:BAoex/mFSJiPJQkJinBmT2vgkpUZBvJngjbhEhFrRa4=",
         version = "v0.7.0",
     )
+    go_repository(
+        name = "com_github_pcj_moprogress",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/pcj/moprogress",
+        sum = "h1:Actbx13P6TzPlnfk/A2keka2oW6k9RNWlEdO7XVaDRg=",
+        version = "v0.0.0-20221113194423-15f77826bd76",
+    )
 
 def go_repositories():
     gazelle_extension_deps()
@@ -284,8 +291,8 @@ def go_repositories():
         name = "com_github_moby_term",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/moby/term",
-        sum = "h1:O4SWKdcHVCvYqyDV+9CJA1fcDN2L11Bule0iFy3YlAI=",
-        version = "v0.0.0-20220808134915-39b0c02b01ae",
+        sum = "h1:RC8WMpjonrBfyAh6VN/POIPtYD5tRAq0qMqCRjQNK+g=",
+        version = "v0.0.0-20221105221325-4eb28fa6025c",
     )
     go_repository(
         name = "com_github_morikuni_aec",
@@ -346,13 +353,6 @@ def go_repositories():
         importpath = "github.com/rogpeppe/fastuuid",
         sum = "h1:Ppwyp6VYCF1nvBTXL3trRso7mXMlRrw9ooo375wvi2s=",
         version = "v1.2.0",
-    )
-    go_repository(
-        name = "com_github_spf13_pflag",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/spf13/pflag",
-        sum = "h1:zPAT6CGy6wXeQ7NtTnaTerfKOsV6V6F8agHXFiazDkg=",
-        version = "v1.0.3",
     )
 
     go_repository(
@@ -528,8 +528,8 @@ def go_repositories():
         name = "org_golang_x_time",
         build_file_proto_mode = "disable_global",
         importpath = "golang.org/x/time",
-        sum = "h1:xYY+Bajn2a7VBmTM5GikTmnK8ZuX8YgnQCqZpbBNtmA=",
-        version = "v0.1.0",
+        sum = "h1:52I/1L54xyEQAYdtcSuxtiT84KGYTBGXwayxmIpNJhE=",
+        version = "v0.2.0",
     )
 
     go_repository(

@@ -6,14 +6,14 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
-	"github.com/stackb/scala-gazelle/pkg/progress"
+	"github.com/pcj/moprogress"
 )
 
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
 
 	if sl.totalPackageCount > 0 {
-		sl.progress.WriteProgress(progress.Progress{
+		sl.progress.WriteProgress(moprogress.Progress{
 			ID:      "walk",
 			Action:  "generating rules",
 			Total:   int64(sl.totalPackageCount),
