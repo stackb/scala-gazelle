@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/pcj/moprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
-	"github.com/stackb/scala-gazelle/pkg/progress"
 )
 
 const ScalaLangName = "scala"
@@ -44,7 +44,7 @@ func NewLanguage() language.Language {
 		packages:        packages,
 		importRegistry:  importRegistry,
 		resolvers:       make(map[string]crossresolve.ConfigurableCrossResolver),
-		progress:        progress.NewProgressOutput(progress.NewOut(os.Stderr)),
+		progress:        moprogress.NewProgressOutput(moprogress.NewOut(os.Stderr)),
 		viz:             vizServer,
 	}
 }
@@ -87,7 +87,7 @@ type scalaLang struct {
 	// totalRules is used for progress
 	totalRules int
 	// progress is the progress interface
-	progress progress.Output
+	progress moprogress.Output
 }
 
 // Name implements part of the language.Language interface
