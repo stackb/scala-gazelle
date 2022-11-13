@@ -115,7 +115,6 @@ go_library(
         "@com_github_emicklei_dot//:dot",
         "@com_github_pcj_moprogress//:moprogress",
         "@com_github_roaringbitmap_roaring//:roaring",
-        "@com_github_stackb_scala_gazelle//pkg/progress:go_default_library",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
         "@net_starlark_go//starlark",
     ],
