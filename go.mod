@@ -13,8 +13,8 @@ require (
 	github.com/emicklei/dot v0.16.0
 	github.com/google/go-cmp v0.5.9
 	github.com/pcj/mobyprogress v0.0.0-20221114203314-669a7801d484
-	github.com/stackb/rules_proto v0.0.0-20220203161403-4f9e9a917a16
-	go.starlark.net v0.0.0-20210223155950-e043a3d3c984
+	github.com/stackb/rules_proto v0.0.0-20221020023827-830238a0c071
+	go.starlark.net v0.0.0-20220328144851-d1966c6b9fcd
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.28.1
 )
