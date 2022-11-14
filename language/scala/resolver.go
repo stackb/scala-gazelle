@@ -12,7 +12,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/emicklei/dot"
 
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
@@ -99,7 +98,7 @@ func (m labelImportMap) String() string {
 	return sb.String()
 }
 
-func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin, g *dot.Graph) {
+func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin) {
 	sc := getScalaConfig(c)
 
 	stack := make(importStack, 0, len(imports))
@@ -114,15 +113,12 @@ func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrig
 			stack = stack.push(dep)
 			if _, ok := imports[dep]; !ok {
 				imports[dep] = &importOrigin{Kind: "indirect", Parent: imp}
-				src := g.Node("imp/" + imp)
-				dst := g.Node("imp/" + dep)
-				g.Edge(src, dst, "indirect")
 			}
 		}
 	}
 }
 
-func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
+func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
 	// at this point we expect 'resolved' to hold a set of 'actual' imports that
 	// represent concrete types. build a second set of imports to be resolved
 	// from that set.
@@ -136,7 +132,6 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 			if origin.Actual == "" {
 				log.Panicln("unknown actual import!", lbl, origin.String())
 			}
-			src := g.Node("imp/" + origin.Actual)
 			transitive, unresolved := importRegistry.TransitiveImports([]string{"imp/" + origin.Actual}, -1)
 			if debug {
 				if len(unresolved) > 0 {
@@ -146,8 +141,6 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 			for _, tImp := range transitive {
 				if _, ok := imports[tImp]; !ok {
 					transitiveImports[tImp] = &importOrigin{Kind: "transitive", Parent: origin.Actual}
-					dst := g.Node("imp/" + tImp)
-					g.Edge(src, dst, "transitive")
 				}
 			}
 			// log.Println(from, "transitive imports:", origin.Actual, transitive)
@@ -156,18 +149,17 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 	}
 
 	// another round of indirects
-	gatherIndirectDependencies(c, transitiveImports, g)
+	gatherIndirectDependencies(c, transitiveImports)
 
 	// finally, resolve the transitive set
-	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved, g)
+	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved)
 }
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap) {
 	sc := getScalaConfig(c)
 
 	dbg := true
 	for imp, origin := range imports {
-		src := g.Node("imp/" + imp)
 
 		if dbg {
 			log.Println("---", from, imp, "---")
@@ -175,12 +167,6 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 		}
 
 		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
-
-		if imp != origin.Actual {
-			dst := g.Node("imp/" + origin.Actual)
-			g.Edge(src, dst, "actual")
-			src = dst
-		}
 
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
@@ -213,8 +199,6 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 					continue
 				}
 				resolved.Set(dep, imp, origin)
-				dst := g.Node("rule/" + dep.String())
-				g.Edge(src, dst, "label")
 			}
 		}
 	}

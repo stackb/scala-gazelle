@@ -15,22 +15,18 @@ const ScalaLangName = "scala"
 // binary.
 func NewLanguage() language.Language {
 	var importRegistry *importRegistry
-	depends := func(src, dst, kind string) {
-		importRegistry.AddDependency(src, dst, kind)
-	}
 	packages := make(map[string]*scalaPackage)
 
 	scalaCompiler := newScalaCompiler()
 	// var scalaCompiler *scalaCompiler
 
-	classResolver := newScalaClassIndexResolver(depends)
-	sourceResolver := newScalaSourceIndexResolver(depends)
+	classResolver := newScalaClassIndexResolver()
+	sourceResolver := newScalaSourceIndexResolver()
 	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
 	mavenResolver := crossresolve.NewMavenResolver(ScalaLangName)
-	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
+	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName)
 
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)
-	vizServer := newGraphvizServer(packages, importRegistry)
 
 	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
 	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
@@ -45,7 +41,6 @@ func NewLanguage() language.Language {
 		importRegistry:  importRegistry,
 		resolvers:       make(map[string]crossresolve.ConfigurableCrossResolver),
 		progress:        moprogress.NewProgressOutput(moprogress.NewOut(os.Stderr)),
-		viz:             vizServer,
 	}
 }
 
@@ -74,8 +69,6 @@ type scalaLang struct {
 	isResolvePhase bool
 	// resolvers is a list of cross resolver implementations named by the -scala_resolvers flag
 	resolvers map[string]crossresolve.ConfigurableCrossResolver
-	// viz is the dependency vizualization engine
-	viz *graphvizServer
 	// lastPackage tracks if this is the last generated package
 	lastPackage *scalaPackage
 	// resolverNames is a comma-separated list of resolver to enable

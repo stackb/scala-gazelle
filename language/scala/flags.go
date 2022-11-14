@@ -30,7 +30,6 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 	}
 
 	sl.scalaCompiler.RegisterFlags(fs, cmd, c)
-	sl.viz.RegisterFlags(fs, cmd, c)
 }
 
 // CheckFlags implements part of the language.Language interface
@@ -49,8 +48,6 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if err := sl.scalaCompiler.CheckFlags(fs, c); err != nil {
 		return err
 	}
-	if err := sl.viz.CheckFlags(fs, c); err != nil {
-		return err
-	}
+
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -25,14 +24,13 @@ type ScalaJarResolver interface {
 	LookupJar(from label.Label) (*index.JarSpec, bool)
 }
 
-func NewJarIndexCrossResolver(lang string, depsRecorder DependencyRecorder) *JarIndexCrossResolver {
+func NewJarIndexCrossResolver(lang string) *JarIndexCrossResolver {
 	return &JarIndexCrossResolver{
-		lang:         lang,
-		jars:         make(map[label.Label]*index.JarSpec),
-		byLabel:      make(map[string][]label.Label),
-		preferred:    make(map[label.Label]bool),
-		symbols:      NewSymbolTable(),
-		depsRecorder: depsRecorder,
+		lang:      lang,
+		jars:      make(map[label.Label]*index.JarSpec),
+		byLabel:   make(map[string][]label.Label),
+		preferred: make(map[label.Label]bool),
+		symbols:   NewSymbolTable(),
 	}
 }
 
@@ -135,8 +133,6 @@ func (r *JarIndexCrossResolver) readIndex(filename string) error {
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
 		}
 
-		ruleNodeID := "rule/" + jarSpec.Label
-
 		for _, file := range jarSpec.Files {
 			r.byLabel[file.Name] = append(r.byLabel[file.Name], jarLabel)
 			// transform "org.json4s.package$MappingException" ->
@@ -147,30 +143,10 @@ func (r *JarIndexCrossResolver) readIndex(filename string) error {
 				name := file.Name[0:pkgIndex] + "." + file.Name[pkgIndex+len(".package$"):]
 				r.byLabel[name] = append(r.byLabel[name], jarLabel)
 			}
-
-			fileNodeID := path.Join("imp", file.Name)
-			r.addDependency(fileNodeID, ruleNodeID, "rule")
-
-			// for _, idx := range file.Classes {
-			// 	dst := path.Join("imp", jarSpec.Symbols[idx])
-			// 	r.addDependency(src, dst, "requires-class")
-			// }
-			for _, symbol := range file.Symbols {
-				impNodeID := path.Join("imp", symbol)
-				r.addDependency(fileNodeID, impNodeID, "import")
-			}
 		}
 	}
 
 	return nil
-}
-
-func (r *JarIndexCrossResolver) addDependency(src, dst, kind string) {
-	r.depsRecorder(src, dst, kind)
-	// record a dependency like akka.grpc.GrpcClientSettings$ -> io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder as well.
-	if strings.HasSuffix(src, "$") {
-		r.depsRecorder(src[:len(src)-1], dst, kind)
-	}
 }
 
 // Provided implements the protoc.ImportProvider interface.

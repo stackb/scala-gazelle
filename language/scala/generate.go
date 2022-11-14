@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/pcj/moprogress"
 )
@@ -36,25 +35,22 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 			continue
 		}
 		child.parent = pkg
-		sl.importRegistry.AddDependency("pkg/"+args.Rel, "pkg/"+rel, "pkg")
 	}
 	sl.packages[args.Rel] = pkg
-	sl.importRegistry.AddDependency("ws/default", "pkg/"+args.Rel, "ws")
 	sl.lastPackage = pkg
 
 	rules := pkg.Rules()
 	sl.remainingRules += len(rules)
-	// empty := pkg.Empty()
+	empty := pkg.Empty()
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
-		sl.importRegistry.AddDependency("pkg/"+args.Rel, "rule/"+label.New("", args.Rel, r.Name()).String(), "rule")
 	}
 
 	return language.GenerateResult{
-		Gen: rules,
-		// Empty:   empty,
+		Gen:     rules,
+		Empty:   empty,
 		Imports: imports,
 	}
 }

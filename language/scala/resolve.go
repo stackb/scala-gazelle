@@ -86,7 +86,6 @@ func (sl *scalaLang) onResolve() {
 	}
 
 	sl.scalaCompiler.OnResolve()
-	sl.viz.OnResolve()
 
 	// gather 1p/3p imports
 	for _, rslv := range sl.resolvers {
@@ -103,22 +102,4 @@ func (sl *scalaLang) onResolve() {
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
 	sl.scalaCompiler.stop()
-	// sl.recordDeps()
-	sl.viz.OnEnd()
-}
-
-// recordDeps writes deps info to the graph once all rules resolved.
-func (sl *scalaLang) recordDeps() {
-	for _, pkg := range sl.packages {
-		for _, r := range pkg.rules {
-			from := label.New("", pkg.rel, r.Name())
-			for _, dep := range r.AttrStrings("deps") {
-				to, err := label.Parse(dep)
-				if err != nil {
-					continue
-				}
-				sl.importRegistry.AddDependency("rule/"+from.String(), "rule/"+to.String(), "depends")
-			}
-		}
-	}
 }

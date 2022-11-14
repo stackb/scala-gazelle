@@ -196,8 +196,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		return
 	}
 
-	g := newGraph()
-
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(map[string]*importOrigin)
 
@@ -211,14 +209,11 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	resolved[label.NoLabel] = make(map[string]*importOrigin)
 
 	// --- Gather imports ---
-	src := g.Node("rule/" + from.String())
 
 	// 1: direct
 	for _, file := range files {
 		for _, imp := range file.Imports {
 			imports[imp] = &importOrigin{Kind: "direct", SourceFile: file}
-			dst := g.Node("imp/" + imp)
-			g.Edge(src, dst, "direct")
 		}
 	}
 
@@ -228,24 +223,20 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			continue
 		}
 		imports[imp] = &importOrigin{Kind: "scala-import-comment"}
-		dst := g.Node("imp/" + imp)
-		g.Edge(src, dst, "scala-import-comment")
 	}
 
 	// 3: if this rule has a main_class
 	if mainClass := r.AttrString("main_class"); mainClass != "" {
 		imports[mainClass] = &importOrigin{Kind: "main_class"}
-		dst := g.Node("imp/" + mainClass)
-		g.Edge(src, dst, "main-class")
 	}
 
 	// 3: transitive of 1+2.
-	gatherIndirectDependencies(c, imports, g)
+	gatherIndirectDependencies(c, imports)
 
 	// resolve this (mostly direct) initial set
-	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
+	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
 	// resolve transitive set
-	resolveTransitive(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
+	resolveTransitive(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
@@ -255,7 +246,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	if len(resolved) > 0 {
 		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("deps"), from, resolved))
-		r.SetPrivateAttr("deps_graph", g.String())
 	}
 
 	exports := computeExports(c, r, importRegistry, files, resolved)

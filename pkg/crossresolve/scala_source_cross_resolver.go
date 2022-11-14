@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -24,7 +23,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
-func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *ScalaSourceCrossResolver {
+func NewScalaSourceCrossResolver(lang string) *ScalaSourceCrossResolver {
 	return &ScalaSourceCrossResolver{
 		lang:         lang,
 		providers:    make(map[string][]*provider),
@@ -33,7 +32,6 @@ func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *
 		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
 		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
-		depsRecorder: depsRecorder,
 	}
 }
 
@@ -292,66 +290,10 @@ func (r *ScalaSourceCrossResolver) providePackage(rule *index.ScalaRuleSpec, rul
 	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *ScalaSourceCrossResolver) addDependency(src, dst, kind string) {
-	r.depsRecorder(src, dst, kind)
-}
-
 // OnResolve implements GazellePhaseTransitionListener.
 func (r *ScalaSourceCrossResolver) OnResolve() {
 	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
 	r.parser.Stop()
-
-	// record dependency graph
-	for _, rule := range r.byRule {
-		ruleNodeID := "rule/" + rule.Label
-
-		for _, file := range rule.Srcs {
-			fileNodeID := path.Join("file", file.Filename)
-
-			r.addDependency(fileNodeID, ruleNodeID, "rule")
-
-			var symbols []string
-			symbols = append(symbols, file.Objects...)
-			symbols = append(symbols, file.Classes...)
-			symbols = append(symbols, file.Traits...)
-			symbols = append(symbols, file.Types...)
-
-			for _, sym := range symbols {
-				impNodeID := path.Join("imp", sym)
-				r.addDependency(impNodeID, fileNodeID, "file")
-			}
-
-			if false {
-				for _, imp := range file.Imports {
-					impNodeID := path.Join("imp", imp)
-					r.addDependency(fileNodeID, impNodeID, "import")
-				}
-			}
-
-			for token, symbols := range file.Extends {
-				for _, sym := range symbols {
-					suffix := "." + sym
-					var matched bool
-					for _, imp := range file.Imports {
-						if strings.HasSuffix(imp, suffix) {
-							fields := strings.Fields(token)
-							src := path.Join("imp", fields[1])
-							dst := path.Join("imp", imp)
-							r.addDependency(src, dst, "extends")
-							matched = true
-							break
-						}
-					}
-					// TODO: prepend predefined symbols here as a match
-					// heuristic.  Examples: scala.AnyVal or
-					// java.lang.Exception.
-					if !matched {
-						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
-					}
-				}
-			}
-		}
-	}
 
 	// dump the index
 	if err := r.writeIndex(); err != nil {

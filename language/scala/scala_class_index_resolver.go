@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"path"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -24,13 +23,12 @@ type ScalaJarResolver interface {
 	LookupJar(from label.Label) (*index.JarSpec, bool)
 }
 
-func newScalaClassIndexResolver(depsRecorder DependencyRecorder) *scalaClassIndexResolver {
+func newScalaClassIndexResolver() *scalaClassIndexResolver {
 	return &scalaClassIndexResolver{
-		jars:         make(map[label.Label]*index.JarSpec),
-		byLabel:      make(map[string][]label.Label),
-		preferred:    make(map[label.Label]bool),
-		symbols:      NewSymbolTable(),
-		depsRecorder: depsRecorder,
+		jars:      make(map[label.Label]*index.JarSpec),
+		byLabel:   make(map[string][]label.Label),
+		preferred: make(map[label.Label]bool),
+		symbols:   NewSymbolTable(),
 	}
 }
 
@@ -47,9 +45,6 @@ func newScalaClassIndexResolver(depsRecorder DependencyRecorder) *scalaClassInde
 // value should be added to deps.  If a query for 'java.lang.Boolean' yields the
 // PlatformLabel, it can be skipped.
 type scalaClassIndexResolver struct {
-	// depsRecorder is used to write dependencies that are discovered when the
-	// JarSpecIndex is read.
-	depsRecorder DependencyRecorder
 	// indexIn is the filesystem path to the index.
 	indexIn string
 	// byLabel is a mapping from an import string to the label that provides it.
@@ -128,8 +123,6 @@ func (r *scalaClassIndexResolver) readIndex() error {
 			r.byLabel[class] = append(r.byLabel[class], jarLabel)
 		}
 
-		ruleNodeID := "rule/" + jarSpec.Label
-
 		for _, file := range jarSpec.Files {
 			r.byLabel[file.Name] = append(r.byLabel[file.Name], jarLabel)
 			// transform "org.json4s.package$MappingException" ->
@@ -141,29 +134,10 @@ func (r *scalaClassIndexResolver) readIndex() error {
 				r.byLabel[name] = append(r.byLabel[name], jarLabel)
 			}
 
-			fileNodeID := path.Join("imp", file.Name)
-			r.addDependency(fileNodeID, ruleNodeID, "rule")
-
-			// for _, idx := range file.Classes {
-			// 	dst := path.Join("imp", jarSpec.Symbols[idx])
-			// 	r.addDependency(src, dst, "requires-class")
-			// }
-			for _, symbol := range file.Symbols {
-				impNodeID := path.Join("imp", symbol)
-				r.addDependency(fileNodeID, impNodeID, "import")
-			}
 		}
 	}
 
 	return nil
-}
-
-func (r *scalaClassIndexResolver) addDependency(src, dst, kind string) {
-	r.depsRecorder(src, dst, kind)
-	// record a dependency like akka.grpc.GrpcClientSettings$ -> io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder as well.
-	if strings.HasSuffix(src, "$") {
-		r.depsRecorder(src[:len(src)-1], dst, kind)
-	}
 }
 
 // OnResolve implements GazellePhaseTransitionListener.
