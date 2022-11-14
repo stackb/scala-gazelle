@@ -13,6 +13,10 @@ def language_scala_deps():
     protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
+    node_bin_darwin_x64()
+    node_bin_darwin_arm64()
+    node_bin_linux_arm64()
+    node_bin_windows_x64()
 
 def workspace_deps():
     """workspace_deps loads all dependencies for the workspace
@@ -250,4 +254,68 @@ def com_google_protobuf():
         urls = [
             "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
         ],
+    )
+
+def node_bin_darwin_x64():
+    _maybe(
+        http_archive,
+        name = "node_bin_darwin_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-x64.tar.gz"],
+        sha256 = "63f4284fa1474b779f0e4fa93985ddc2efa227484476f33d923ae44922637080",
+        strip_prefix = "node-v19.1.0-darwin-x64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_darwin_arm64():
+    _maybe(
+        http_archive,
+        name = "node_bin_darwin_arm64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-arm64.tar.gz"],
+        sha256 = "d05a4a3c9f081c7fbab131f447714fa708328c5c1634c278716adfbdbae0ff26",
+        strip_prefix = "node-v19.1.0-darwin-arm64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_linux_arm64():
+    _maybe(
+        http_archive,
+        name = "node_bin_linux_arm64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-linux-arm64.tar.gz"],
+        sha256 = "476399363945b3cf441d2e0677c50ad3a257db36c2a06a8c51c46b0bc42b4d3d",
+        strip_prefix = "node-v19.1.0-linux-arm64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_windows_x64():
+    _maybe(
+        http_archive,
+        name = "node_bin_windows_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-win-x64.zip"],
+        sha256 = "9ca998da2063fd5b374dc889ee1937ada5a1e1f4fb50b5f989412dda7c6bb357",
+        strip_prefix = "node-v19.1.0-win-x64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["node.exe"],
+    visibility = ["//visibility:public"],
+)
+        """,
     )
