@@ -66,22 +66,20 @@ filegroup(
 
 def bazel_gazelle():
     # Branch: master
-    # Commit: c4ec7765fad672d87548bdc43e740fb5843f0839
-    # Date: 2022-10-18 17:28:02 +0000 UTC
-    # URL: https://github.com/bazelbuild/bazel-gazelle/commit/c4ec7765fad672d87548bdc43e740fb5843f0839
+    # Commit: 2d1002926dd160e4c787c1b7ecc60fb7d39b97dc
+    # Date: 2022-11-14 04:43:02 +0000 UTC
+    # URL: https://github.com/bazelbuild/bazel-gazelle/commit/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc
     #
-    # Add size argument to `gazelle_generation_test` (#1351)
-    #
-    # * Add size argument to gazelle integration test macro
-    # Size: 1573804 (1.6 MB)
+    # fix updateStmt makeslice panic (#1371)
+    # Size: 1859745 (1.9 MB)
     _maybe(
         http_archive,
         name = "bazel_gazelle",
         patch_args = ["-p1"],
         patches = ["//third_party/bazelbuild/bazel-gazelle:rule-attrassignment-api.patch"],
-        sha256 = "33ad1ec6020e6660e921cab57ea8d49009af1b26b2434c986930ddab620feeb7",
-        strip_prefix = "bazel-gazelle-c4ec7765fad672d87548bdc43e740fb5843f0839",
-        urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/c4ec7765fad672d87548bdc43e740fb5843f0839.tar.gz"],
+        sha256 = "5ebc984c7be67a317175a9527ea1fb027c67f0b57bb0c990bac348186195f1ba",
+        strip_prefix = "bazel-gazelle-2d1002926dd160e4c787c1b7ecc60fb7d39b97dc",
+        urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc.tar.gz"],
     )
 
 def local_bazel_gazelle():
