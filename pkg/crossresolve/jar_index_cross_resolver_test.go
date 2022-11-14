@@ -67,8 +67,7 @@ const jarJsonSimpleExample = `{
 
 func ExampleJarIndexCrossResolver_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	fakeRecorder := func(src, dst, kind string) {}
-	cr := NewJarIndexCrossResolver(scalaName, fakeRecorder)
+	cr := NewJarIndexCrossResolver(scalaName)
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, cmdGenerate, c)
@@ -101,8 +100,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			fakeRecorder := func(src, dst, kind string) {}
-			cr := NewJarIndexCrossResolver(scalaName, fakeRecorder)
+			cr := NewJarIndexCrossResolver(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
