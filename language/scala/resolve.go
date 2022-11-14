@@ -1,13 +1,16 @@
 package scala
 
 import (
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emicklei/dot"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
@@ -80,7 +83,6 @@ func (sl *scalaLang) onResolve() {
 	}
 
 	sl.scalaCompiler.OnResolve()
-	sl.viz.OnResolve()
 
 	// gather 1p/3p imports
 	for _, rslv := range sl.resolvers {
@@ -98,7 +100,6 @@ func (sl *scalaLang) onResolve() {
 func (sl *scalaLang) onEnd() {
 	sl.scalaCompiler.stop()
 	// sl.recordDeps()
-	sl.viz.OnEnd()
 }
 
 // recordDeps writes deps info to the graph once all rules resolved.
@@ -115,4 +116,42 @@ func (sl *scalaLang) recordDeps() {
 			}
 		}
 	}
+}
+
+func newGraph() *dot.Graph {
+	g := dot.NewGraph(dot.Directed)
+	g.Attr("rankdir", "LR")
+	g.EdgeInitializer(func(e dot.Edge) {
+		e.Attr("color", "gray85")
+		e.Attr("arrowsize", "0.7")
+	})
+	g.NodeInitializer(func(n dot.Node) {
+		id := n.Value("label").(string)
+		fields := strings.SplitN(id, "/", 2)
+		kind := fields[0]
+		label := fields[1]
+		n.Label(label)
+		n.Attr("URL", fmt.Sprintf("/ui/%v", id))
+		n.Attr("shape", "record")
+		n.Attr("style", "filled")
+
+		switch kind {
+		case "imp":
+			n.Attr("fillcolor", "gray95")
+		case "file":
+			n.Attr("fontcolor", "white")
+			n.Attr("color", "darkred")
+			n.Attr("fillcolor", "red")
+		case "jar":
+			n.Attr("fontcolor", "white")
+			n.Attr("fillcolor", "red")
+		case "rule":
+			n.Attr("fontcolor", "white")
+			n.Attr("fillcolor", "green")
+		case "pkg":
+			n.Attr("fontcolor", "white")
+			n.Attr("fillcolor", "blue")
+		}
+	})
+	return g
 }
