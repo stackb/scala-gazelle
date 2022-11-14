@@ -12,9 +12,11 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/emicklei/dot v0.16.0
 	github.com/google/go-cmp v0.5.6
+	github.com/pcj/mobyprogress v0.0.0-20221114203314-669a7801d484
 	github.com/stackb/rules_proto v0.0.0-20220203161403-4f9e9a917a16
 	go.starlark.net v0.0.0-20210223155950-e043a3d3c984
 	google.golang.org/grpc v1.42.0
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -26,13 +28,12 @@ require (
 	github.com/moby/term v0.0.0-20221105221325-4eb28fa6025c // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
-	github.com/pcj/moprogress v0.0.0-20221113194423-15f77826bd76 // indirect
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/time v0.2.0 // indirect
 	golang.org/x/tools v0.1.7 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
