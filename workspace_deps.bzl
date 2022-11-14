@@ -13,6 +13,8 @@ def language_scala_deps():
     protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
+
+    # see https://nodejs.org/dist/latest/ to update
     node_bin_darwin_x64()
     node_bin_darwin_arm64()
     node_bin_linux_x64()
