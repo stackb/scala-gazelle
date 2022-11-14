@@ -8,7 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/pcj/moprogress"
+	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
@@ -66,7 +66,7 @@ func (sl *scalaLang) Resolve(
 	}
 
 	if sl.totalRules > 0 {
-		sl.progress.WriteProgress(moprogress.Progress{
+		sl.progress.WriteProgress(mobyprogress.Progress{
 			ID:      "resolve",
 			Action:  "resolving dependencies",
 			Total:   int64(sl.totalRules),
