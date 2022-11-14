@@ -83,6 +83,13 @@ def go_repositories():
         sum = "h1:xK2lYat7ZLaVVcIuj82J8kIro4V6kDe0AUDFboUCwcg=",
         version = "v1.0.0",
     )
+    go_repository(
+        name = "com_github_azure_go_ansiterm",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/Azure/go-ansiterm",
+        sum = "h1:UQHMgLO+TxOElx5B5HZ4hJQsoJ/PvUvKRhJHDQXO8P8=",
+        version = "v0.0.0-20210617225240-d185dfc1b5a1",
+    )
 
     go_repository(
         name = "com_github_bazelbuild_bazel_gazelle",
@@ -290,12 +297,35 @@ def go_repositories():
         version = "v1.16.0",
     )
     go_repository(
+        name = "com_github_moby_term",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/moby/term",
+        sum = "h1:RC8WMpjonrBfyAh6VN/POIPtYD5tRAq0qMqCRjQNK+g=",
+        version = "v0.0.0-20221105221325-4eb28fa6025c",
+    )
+    go_repository(
+        name = "com_github_morikuni_aec",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/morikuni/aec",
+        sum = "h1:nP9CBfwrvYnBRgY6qfDQkygYDmYwOilePFkwzv4dU8A=",
+        version = "v1.0.0",
+    )
+
+    go_repository(
         name = "com_github_mschoch_smat",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/mschoch/smat",
         sum = "h1:8imxQsjDm8yFEAVBe7azKmKSgzSkZXDuKkSq9374khM=",
         version = "v0.2.0",
     )
+    go_repository(
+        name = "com_github_pcj_moprogress",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/pcj/moprogress",
+        sum = "h1:Actbx13P6TzPlnfk/A2keka2oW6k9RNWlEdO7XVaDRg=",
+        version = "v0.0.0-20221113194423-15f77826bd76",
+    )
+
     go_repository(
         name = "com_github_pelletier_go_toml",
         build_file_proto_mode = "disable_global",

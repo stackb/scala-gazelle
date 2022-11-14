@@ -228,9 +228,6 @@ func (b *importRegistryBuilder) provides(from string, imports ...string) *import
 }
 
 func (b *importRegistryBuilder) depends(deps map[string]string) *importRegistryBuilder {
-	for src, dst := range deps {
-		b.registry.AddDependency(src, dst, "<kind>")
-	}
 	return b
 }
 
