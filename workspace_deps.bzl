@@ -15,7 +15,7 @@ def language_scala_deps():
     scalameta_parsers()
     node_bin_darwin_x64()
     node_bin_darwin_arm64()
-    node_bin_linux_arm64()
+    node_bin_linux_x64()
     node_bin_windows_x64()
 
 def workspace_deps():
@@ -277,13 +277,13 @@ filegroup(
         """,
     )
 
-def node_bin_linux_arm64():
+def node_bin_linux_x64():
     _maybe(
         http_archive,
-        name = "node_bin_linux_arm64",
-        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-linux-arm64.tar.gz"],
-        sha256 = "476399363945b3cf441d2e0677c50ad3a257db36c2a06a8c51c46b0bc42b4d3d",
-        strip_prefix = "node-v19.1.0-linux-arm64",
+        name = "node_bin_linux_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-linux-x64.tar.gz"],
+        sha256 = "1a42a67beb3e07289da2ad22a58717801c6ab80d09668e2da6b1c537b2a80a5e",
+        strip_prefix = "node-v19.1.0-linux-x64",
         build_file_content = """
 filegroup(
     name = "node",
