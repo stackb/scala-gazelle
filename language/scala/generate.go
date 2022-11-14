@@ -44,7 +44,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	rules := pkg.Rules()
 	sl.remainingRules += len(rules)
-	// empty := pkg.Empty()
+	empty := pkg.Empty()
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
@@ -53,8 +53,8 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	return language.GenerateResult{
-		Gen: rules,
-		// Empty:   empty,
+		Gen:     rules,
+		Empty:   empty,
 		Imports: imports,
 	}
 }

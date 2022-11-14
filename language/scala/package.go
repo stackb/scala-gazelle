@@ -61,7 +61,7 @@ func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser,
 		rules:               make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
-	// s.empty = s.generateRules(false)
+	s.empty = s.generateRules(false)
 
 	return s
 }
@@ -116,7 +116,6 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	}
 
 	for _, rc := range s.cfg.configuredRules() {
-		// if enabled != rc.Enabled {
 		if !rc.Enabled {
 			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
 			continue
