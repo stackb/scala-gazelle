@@ -18,5 +18,11 @@ func (sl *scalaLang) Kinds() map[string]rule.KindInfo {
 		kinds[rule.Name()] = rule.KindInfo()
 	}
 
+	if true {
+		kinds[packageMarkerRuleKind] = rule.KindInfo{
+			ResolveAttrs: map[string]bool{"deps": true},
+		}
+	}
+
 	return kinds
 }

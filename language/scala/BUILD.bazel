@@ -21,6 +21,7 @@ go_library(
         "loads.go",
         "package.go",
         "parser.go",
+        "progress.go",
         "resolve.go",
         "resolver.go",
         "rule_config.go",

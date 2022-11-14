@@ -61,7 +61,7 @@ func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser,
 		rules:               make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
-	// s.empty = s.generateRules(false)
+	s.empty = s.generateRules(false)
 
 	return s
 }
