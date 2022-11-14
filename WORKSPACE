@@ -67,16 +67,6 @@ load("//:go_repos.bzl", "go_repositories")
 go_repositories()
 
 # ----------------------------------------------------
-# @build_bazel_rules_nodejs
-# ----------------------------------------------------
-
-load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories")
-
-node_repositories()
-
-register_toolchains("//tools/toolchains:nodejs")
-
-# ----------------------------------------------------
 # @maven
 #
 # Note: maven dependencies should only be required for

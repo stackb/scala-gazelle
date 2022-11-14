@@ -22,7 +22,7 @@ func TestExecJS(t *testing.T) {
 			dir:          ".",
 			args:         []string{"--version"},
 			wantStderr:   "",
-			wantStdout:   "v14.17.5\n",
+			wantStdout:   "v19.1.0\n",
 			wantExitCode: 0,
 		},
 	} {

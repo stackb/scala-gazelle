@@ -13,6 +13,10 @@ def language_scala_deps():
     protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
+    node_bin_darwin_x64()
+    node_bin_darwin_arm64()
+    node_bin_linux_x64()
+    node_bin_windows_x64()
 
 def workspace_deps():
     """workspace_deps loads all dependencies for the workspace
@@ -22,7 +26,6 @@ def workspace_deps():
     language_scala_deps()
     bazel_gazelle()  # via <TOP>
     build_stack_rules_proto()
-    build_bazel_rules_nodejs()  # via <TOP>
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
@@ -117,16 +120,6 @@ def build_stack_rules_proto():
         sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
         strip_prefix = "rules_proto-2.0.1",
         urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
-    )
-
-def build_bazel_rules_nodejs():
-    _maybe(
-        http_archive,
-        name = "build_bazel_rules_nodejs",
-        sha256 = "4501158976b9da216295ac65d872b1be51e3eeb805273e68c516d2eb36ae1fbb",
-        urls = [
-            "https://github.com/bazelbuild/rules_nodejs/releases/download/4.4.1/rules_nodejs-4.4.1.tar.gz",
-        ],
     )
 
 def rules_jvm_external():
@@ -250,4 +243,68 @@ def com_google_protobuf():
         urls = [
             "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
         ],
+    )
+
+def node_bin_darwin_x64():
+    _maybe(
+        http_archive,
+        name = "node_bin_darwin_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-x64.tar.gz"],
+        sha256 = "63f4284fa1474b779f0e4fa93985ddc2efa227484476f33d923ae44922637080",
+        strip_prefix = "node-v19.1.0-darwin-x64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_darwin_arm64():
+    _maybe(
+        http_archive,
+        name = "node_bin_darwin_arm64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-arm64.tar.gz"],
+        sha256 = "d05a4a3c9f081c7fbab131f447714fa708328c5c1634c278716adfbdbae0ff26",
+        strip_prefix = "node-v19.1.0-darwin-arm64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_linux_x64():
+    _maybe(
+        http_archive,
+        name = "node_bin_linux_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-linux-x64.tar.gz"],
+        sha256 = "1a42a67beb3e07289da2ad22a58717801c6ab80d09668e2da6b1c537b2a80a5e",
+        strip_prefix = "node-v19.1.0-linux-x64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["bin/node"],
+    visibility = ["//visibility:public"],
+)
+        """,
+    )
+
+def node_bin_windows_x64():
+    _maybe(
+        http_archive,
+        name = "node_bin_windows_x64",
+        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-win-x64.zip"],
+        sha256 = "9ca998da2063fd5b374dc889ee1937ada5a1e1f4fb50b5f989412dda7c6bb357",
+        strip_prefix = "node-v19.1.0-win-x64",
+        build_file_content = """
+filegroup(
+    name = "node",
+    srcs = ["node.exe"],
+    visibility = ["//visibility:public"],
+)
+        """,
     )
