@@ -26,7 +26,6 @@ def workspace_deps():
     language_scala_deps()
     bazel_gazelle()  # via <TOP>
     build_stack_rules_proto()
-    build_bazel_rules_nodejs()  # via <TOP>
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
@@ -121,16 +120,6 @@ def build_stack_rules_proto():
         sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
         strip_prefix = "rules_proto-2.0.1",
         urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
-    )
-
-def build_bazel_rules_nodejs():
-    _maybe(
-        http_archive,
-        name = "build_bazel_rules_nodejs",
-        sha256 = "4501158976b9da216295ac65d872b1be51e3eeb805273e68c516d2eb36ae1fbb",
-        urls = [
-            "https://github.com/bazelbuild/rules_nodejs/releases/download/4.4.1/rules_nodejs-4.4.1.tar.gz",
-        ],
     )
 
 def rules_jvm_external():

@@ -70,5 +70,4 @@ genrule(
     outs = ["node.exe"],
     cmd = "cp $< $@",
     executable = True,
-    visibility = ["//visibility:public"],
 )
