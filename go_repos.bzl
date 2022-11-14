@@ -309,6 +309,13 @@ def go_repositories():
         sum = "h1:8imxQsjDm8yFEAVBe7azKmKSgzSkZXDuKkSq9374khM=",
         version = "v0.2.0",
     )
+    go_repository(
+        name = "com_github_pcj_mobyprogress",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/pcj/mobyprogress",
+        sum = "h1:PK2mcOPKwsrU5xqxhZIrG2nihf2OSOqW2KqMPxxpBPQ=",
+        version = "v0.0.0-20221114203314-669a7801d484",
+    )
 
     go_repository(
         name = "com_github_pelletier_go_toml",
