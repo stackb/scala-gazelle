@@ -80,7 +80,6 @@ func (sl *scalaLang) onResolve() {
 	}
 
 	sl.scalaCompiler.OnResolve()
-	sl.viz.OnResolve()
 
 	// gather 1p/3p imports
 	for _, rslv := range sl.resolvers {
@@ -98,7 +97,6 @@ func (sl *scalaLang) onResolve() {
 func (sl *scalaLang) onEnd() {
 	sl.scalaCompiler.stop()
 	// sl.recordDeps()
-	sl.viz.OnEnd()
 }
 
 // recordDeps writes deps info to the graph once all rules resolved.
