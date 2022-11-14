@@ -5,13 +5,13 @@ go 1.17
 require (
 	github.com/RoaringBitmap/roaring v0.9.4
 	github.com/amenzhinsky/go-memexec v0.7.0
-	github.com/bazelbuild/bazel-gazelle v0.24.0
-	github.com/bazelbuild/buildtools v0.0.0-20220211113555-f1ead6bc540d
-	github.com/bazelbuild/rules_go v0.29.0
-	github.com/bmatcuk/doublestar/v4 v4.0.2
+	github.com/bazelbuild/bazel-gazelle v0.28.1-0.20221114044302-2d1002926dd1
+	github.com/bazelbuild/buildtools v0.0.0-20221004120235-7186f635531b
+	github.com/bazelbuild/rules_go v0.35.0
+	github.com/bmatcuk/doublestar/v4 v4.2.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/emicklei/dot v0.16.0
-	github.com/google/go-cmp v0.5.6
+	github.com/google/go-cmp v0.5.9
 	github.com/pcj/mobyprogress v0.0.0-20221114203314-669a7801d484
 	github.com/stackb/rules_proto v0.0.0-20220203161403-4f9e9a917a16
 	go.starlark.net v0.0.0-20210223155950-e043a3d3c984
@@ -24,16 +24,15 @@ require (
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
-	github.com/golang/protobuf v1.5.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/moby/term v0.0.0-20221105221325-4eb28fa6025c // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
-	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.2.0 // indirect
-	golang.org/x/tools v0.1.7 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	golang.org/x/tools v0.2.0 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
