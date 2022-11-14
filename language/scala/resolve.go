@@ -8,7 +8,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+<<<<<<< HEAD
 	"github.com/pcj/mobyprogress"
+=======
+>>>>>>> 1452d77 (refactor progress to dedicated file)
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
@@ -54,7 +57,11 @@ func (sl *scalaLang) Resolve(
 	}
 
 	if pkg, ok := sl.packages[from.Pkg]; ok {
-		pkg.Resolve(c, ix, rc, r, importsRaw, from)
+		if r.Kind() == packageMarkerRuleKind {
+			resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
+		} else {
+			pkg.Resolve(c, ix, rc, r, importsRaw, from)
+		}
 
 		sl.remainingRules--
 
@@ -65,15 +72,6 @@ func (sl *scalaLang) Resolve(
 		log.Printf("no known rule package for %v", from.Pkg)
 	}
 
-	if sl.totalRules > 0 {
-		sl.progress.WriteProgress(mobyprogress.Progress{
-			ID:      "resolve",
-			Action:  "resolving dependencies",
-			Total:   int64(sl.totalRules),
-			Current: int64(sl.totalRules - sl.remainingRules),
-			Units:   "rules",
-		})
-	}
 }
 
 // onResolve is called when gazelle transitions from the generate phase to the resolve phase

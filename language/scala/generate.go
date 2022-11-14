@@ -6,20 +6,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
-	"github.com/pcj/mobyprogress"
 )
 
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
 
 	if sl.totalPackageCount > 0 {
-		sl.progress.WriteProgress(mobyprogress.Progress{
-			ID:      "walk",
-			Action:  "generating rules",
-			Total:   int64(sl.totalPackageCount),
-			Current: int64(len(sl.packages)),
-			Units:   "packages",
-		})
+		writeGenerateProgress(sl.progress, len(sl.packages), sl.totalPackageCount)
 	}
 
 	cfg := getOrCreateScalaConfig(args.Config)
@@ -43,6 +36,8 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sl.lastPackage = pkg
 
 	rules := pkg.Rules()
+	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
+
 	sl.remainingRules += len(rules)
 	// empty := pkg.Empty()
 
