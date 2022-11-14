@@ -9,6 +9,9 @@ import (
 // Kinds implements part of the language.Language interface
 func (sl *scalaLang) Kinds() map[string]rule.KindInfo {
 	kinds := make(map[string]rule.KindInfo)
+	kinds[packageMarkerRuleKind] = rule.KindInfo{
+		ResolveAttrs: map[string]bool{"deps": true},
+	}
 
 	for _, name := range sl.ruleRegistry.RuleNames() {
 		rule, err := sl.ruleRegistry.LookupRule(name)
