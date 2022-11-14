@@ -103,8 +103,8 @@ def go_repositories():
         name = "com_github_bmatcuk_doublestar",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/bmatcuk/doublestar",
-        sum = "h1:gPypJ5xD31uhX6Tf54sDPUOBXTqKH4c9aPY66CyQrS0=",
-        version = "v1.3.4",
+        sum = "h1:oC24CykoSAB8zd7XgruHo33E0cHJf/WhQA/7BeXj+x0=",
+        version = "v1.2.2",
     )
     go_repository(
         name = "com_github_bmatcuk_doublestar_v4",
@@ -366,8 +366,8 @@ def go_repositories():
         name = "com_github_stackb_rules_proto",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/stackb/rules_proto",
-        sum = "h1:GT4LUsCmuDDA4Pv/tb/rQKBXhUUO3zCqzBpqKArkKGk=",
-        version = "v0.0.0-20220203161403-4f9e9a917a16",
+        sum = "h1:HNdmOFBURt+vidIHCxVBmjpVRZu6ez+efUe6ZARj8bc=",
+        version = "v0.0.0-20221020023827-830238a0c071",
     )
     go_repository(
         name = "com_github_stretchr_objx",
@@ -430,8 +430,8 @@ def go_repositories():
         name = "net_starlark_go",
         build_file_proto_mode = "disable_global",
         importpath = "go.starlark.net",
-        sum = "h1:xwwDQW5We85NaTk2APgoN9202w/l0DVGp+GZMfsrh7s=",
-        version = "v0.0.0-20210223155950-e043a3d3c984",
+        sum = "h1:Uo/x0Ir5vQJ+683GXB9Ug+4fcjsbp7z7Ul8UaZbhsRM=",
+        version = "v0.0.0-20220328144851-d1966c6b9fcd",
     )
     go_repository(
         name = "org_golang_google_appengine",
@@ -465,8 +465,8 @@ def go_repositories():
         name = "org_golang_x_crypto",
         build_file_proto_mode = "disable_global",
         importpath = "golang.org/x/crypto",
-        sum = "h1:psW17arqaxU48Z5kZ0CQnkZWQJsqcURM6tKiBApRjXI=",
-        version = "v0.0.0-20200622213623-75b288015ac9",
+        sum = "h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=",
+        version = "v0.0.0-20210921155107-089bfa567519",
     )
     go_repository(
         name = "org_golang_x_exp",
