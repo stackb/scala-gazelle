@@ -95,7 +95,7 @@ func (s *scalaPackage) Resolve(
 ) {
 	provider := s.ruleProvider(r)
 	if provider == nil {
-		log.Printf("no known rule provider for %v", from)
+		log.Printf("scalaPackage.Resolve: no known rule provider for %v: %v%%%v", from, r.Kind(), r.Name())
 		return
 	}
 	provider.Resolve(c, ix, r, importsRaw, from)

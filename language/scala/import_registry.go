@@ -149,6 +149,34 @@ func (ir *importRegistry) Provides(l label.Label, imports []string) {
 	ir.provides[l] = append(ir.provides[l], imports...)
 }
 
+// AddDependency records a compile-time dependency of src on dst.  The kind
+// argument can be any string prefix, typically, 'import', 'file', etc.
+func (ir *importRegistry) AddDependency(src, dst, kind string) {
+	if src == "" {
+		return
+	}
+	i := ir.symbols.Add(src)
+	// if the caller has used an empty dst, this is a means to just add the
+	// symbol to the symbol-table.
+	if dst == "" {
+		return
+	}
+
+	deps, ok := ir.dependencies[i]
+	if !ok {
+		deps = roaring.New()
+		ir.dependencies[i] = deps
+	}
+
+	j := ir.symbols.Add(dst)
+	deps.Add(j)
+
+	edgeKey := fmt.Sprintf("%d.%d", i, j)
+	ir.depEdges[edgeKey] = kind
+
+	// log.Printf("importRegistry.depends: %s --[%s]--> %s", src, kind, dst)
+}
+
 func (ir *importRegistry) Previous(dst string) *roaring.Bitmap {
 	prev := roaring.New()
 
