@@ -66,46 +66,6 @@ func gatherImplicitDependencies(c *config.Config, imports ImportOriginMap, g *do
 	}
 }
 
-func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
-	// at this point we expect 'resolved' to hold a set of 'actual' imports that
-	// represent concrete types. build a second set of imports to be resolved
-	// from that set.
-	transitiveImports := make(ImportOriginMap)
-
-	for lbl, imps := range resolved {
-		if lbl == label.NoLabel {
-			continue
-		}
-		for _, origin := range imps {
-			if origin.Actual == "" {
-				log.Panicln("origin.Actual must not be empty", lbl, origin.String())
-			}
-			src := g.Node("imp/" + origin.Actual)
-			transitive, unresolved := importRegistry.TransitiveImports([]string{"imp/" + origin.Actual}, -1)
-			if debug {
-				if len(unresolved) > 0 {
-					log.Println(from, "| warning: unresolved transitive import:", unresolved, origin.Actual)
-				}
-			}
-			for _, tImp := range transitive {
-				if _, ok := imports[tImp]; !ok {
-					transitiveImports[tImp] = &ImportOrigin{Kind: ImportKindTransitive, Parent: origin.Actual}
-					dst := g.Node("imp/" + tImp)
-					g.Edge(src, dst, "transitive")
-				}
-			}
-			// log.Println(from, "transitive imports:", origin.Actual, transitive)
-			origin.Children = transitive
-		}
-	}
-
-	// another round of indirects
-	gatherIndirectDependencies(c, transitiveImports, g)
-
-	// finally, resolve the transitive set
-	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved, g)
-}
-
 func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
