@@ -41,8 +41,7 @@ func (s *scalaLibrary) Name() string {
 func (s *scalaLibrary) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
 		MergeableAttrs: map[string]bool{
-			"srcs":    true,
-			"exports": true,
+			"srcs": true,
 		},
 		ResolveAttrs: map[string]bool{"deps": true},
 	}

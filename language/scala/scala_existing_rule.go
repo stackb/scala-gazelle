@@ -72,8 +72,7 @@ func (s *scalaExistingRule) Name() string {
 func (s *scalaExistingRule) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
 		ResolveAttrs: map[string]bool{
-			"deps":    true,
-			"exports": true,
+			"deps": true,
 		},
 	}
 }
@@ -253,94 +252,10 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		r.SetPrivateAttr("deps_graph", g.String())
 	}
 
-	exports := computeExports(c, r, importRegistry, files, resolved)
-	if len(exports) > 0 {
-		r.SetAttr("exports", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("exports"), from, exports))
-	}
-
 	if dbg {
 		log.Println(from, "| END RESOLVE", impLang)
 		// printRules(r)
 	}
-}
-
-// computeExports: given the full set of resolved imports, export those that
-// contain symbols that were extended by objects, classes, etc in this rule.
-func computeExports(c *config.Config, r *rule.Rule, registry ScalaImportRegistry, files []*index.ScalaFileSpec, resolved LabelImportMap) LabelImportMap {
-	// TODO(pcj): make this configurable
-	if !strings.Contains(r.Kind(), "library") {
-		return nil
-	}
-
-	exported := make(map[string]*ImportOrigin)
-	for _, imp := range getScalaImportsFromRuleAttrComment("exports", "scala-export:", r) {
-		if _, ok := exported[imp]; ok {
-			continue
-		}
-		exported[imp] = &ImportOrigin{Kind: ImportKindComment}
-	}
-
-	resolveAny := registry.ResolveName
-	resolveFromImports := resolveNameInLabelImportMap(resolved)
-
-	for _, file := range files {
-		resolve1p := resolveNameInFile(file)
-		fileExports, unresolved := scalaExportSymbols(file, []NameResolver{resolveFromImports, resolve1p, resolveAny})
-		if len(unresolved) > 0 {
-			log.Printf("failed to resolve export symbols in file <%s>: %v", file.Filename, unresolved)
-		}
-		for _, export := range fileExports {
-			exported[export] = &ImportOrigin{Kind: ImportKindExport, SourceFile: file}
-		}
-	}
-
-	if len(exported) == 0 {
-		return nil
-	}
-
-	resolvedImports := make(map[string]label.Label)
-	for from, imports := range resolved {
-		for imp := range imports {
-			resolvedImports[imp] = from
-		}
-	}
-
-	exports := make(LabelImportMap)
-	for exp, origin := range exported {
-		from := resolvedImports[exp]
-		if has, ok := exports[from]; ok {
-			has[exp] = origin
-		} else {
-			exports[from] = map[string]*ImportOrigin{exp: origin}
-		}
-	}
-
-	// export all 3p deps from the resolved list
-	for from, imports := range resolved {
-		if from.Repo != "" && from.Repo != c.RepoName {
-			exports[from] = imports
-		}
-	}
-
-	return exports
-}
-
-func scalaExportSymbols(file *index.ScalaFileSpec, resolvers []NameResolver) (exports, unresolved []string) {
-	for _, names := range file.Extends {
-	loop:
-		for _, name := range names {
-			// log.Println("resolving name %q in file %s", name, file.Filename)
-			for _, resolver := range resolvers {
-				if fqn, ok := resolver(name); ok {
-					exports = append(exports, fqn)
-					continue loop
-				}
-			}
-			unresolved = append(unresolved, name)
-		}
-	}
-
-	return
 }
 
 func resolveNameInLabelImportMap(resolved LabelImportMap) NameResolver {

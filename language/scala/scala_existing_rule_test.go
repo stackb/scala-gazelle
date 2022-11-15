@@ -19,57 +19,6 @@ import (
 
 // This looks important: https://github.com/sbt/zinc/blob/7c796ce65217096ce71be986149b2e769f8b33af/internal/zinc-core/src/main/scala/sbt/internal/inc/Relations.scala
 
-func TestScalaExportSymbols(t *testing.T) {
-	for name, tc := range map[string]struct {
-		resolved       index.ScalaFileSpec
-		file           index.ScalaFileSpec
-		want           []string
-		wantUnresolved []string
-	}{
-		"degenerate": {},
-		"miss": {
-			resolved: index.ScalaFileSpec{},
-			file: index.ScalaFileSpec{
-				Filename: "foo.scala",
-				Extends: map[string][]string{
-					"class trumid.common.akka.grpc.AbstractGrpcService": {
-						"LazyLogging",
-						"ReadinessReporter",
-					},
-				},
-			},
-			wantUnresolved: []string{"LazyLogging", "ReadinessReporter"},
-		},
-		"hit": {
-			resolved: index.ScalaFileSpec{
-				// contrived these would live in the same file
-				Objects: []string{"com.typesafe.scalalogging.LazyLogging"},
-				Traits:  []string{"com.foo.ReadinessReporter"},
-			},
-			file: index.ScalaFileSpec{
-				Extends: map[string][]string{
-					"class trumid.common.akka.grpc.AbstractGrpcService": {
-						"LazyLogging",
-						"ReadinessReporter",
-					},
-				},
-			},
-			want: []string{"com.typesafe.scalalogging.LazyLogging", "com.foo.ReadinessReporter"},
-		},
-	} {
-		t.Run(name, func(t *testing.T) {
-			resolvers := []NameResolver{resolveNameInFile(&tc.resolved)}
-			got, unresolved := scalaExportSymbols(&tc.file, resolvers)
-			if diff := cmp.Diff(tc.wantUnresolved, unresolved); diff != "" {
-				t.Errorf("unresolved (-want +got):\n%s", diff)
-			}
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("resolved (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
 func TestResolveNameInFile(t *testing.T) {
 	for name, tc := range map[string]struct {
 		file index.ScalaFileSpec
