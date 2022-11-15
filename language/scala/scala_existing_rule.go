@@ -193,8 +193,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		return
 	}
 
-	g := newGraph()
-
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(ImportOriginMap)
 
@@ -208,14 +206,11 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 
 	// --- Gather imports ---
-	src := g.Node("rule/" + from.String())
 
 	// 1: direct
 	for _, file := range files {
 		for _, imp := range file.Imports {
 			imports[imp] = &ImportOrigin{Kind: ImportKindDirect, SourceFile: file}
-			dst := g.Node("imp/" + imp)
-			g.Edge(src, dst, "direct")
 		}
 	}
 
@@ -225,21 +220,17 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			continue
 		}
 		imports[imp] = &ImportOrigin{Kind: ImportKindComment}
-		dst := g.Node("imp/" + imp)
-		g.Edge(src, dst, "scala-import-comment")
 	}
 
 	// 3: if this rule has a main_class
 	if mainClass := r.AttrString("main_class"); mainClass != "" {
 		imports[mainClass] = &ImportOrigin{Kind: ImportKindMainClass}
-		dst := g.Node("imp/" + mainClass)
-		g.Edge(src, dst, "main-class")
 	}
 
 	resolved := NewLabelImportMap()
 
 	// resolve this (mostly direct) initial set
-	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
+	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {
@@ -249,7 +240,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	if len(resolved) > 0 {
 		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("deps"), from, resolved))
-		r.SetPrivateAttr("deps_graph", g.String())
 	}
 
 	if dbg {

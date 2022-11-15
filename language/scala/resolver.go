@@ -9,7 +9,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/emicklei/dot"
 )
 
 // resolverImpLangPrivateKey stores the implementation language override.
@@ -21,12 +20,11 @@ const debug = true
 // shouldDisambiguate is a developer flag
 const shouldDisambiguate = false
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
 	sc := getScalaConfig(c)
 
 	dbg := false
 	for imp, origin := range imports {
-		src := g.Node("imp/" + imp)
 
 		if dbg {
 			log.Println("---", from, imp, "---")
@@ -34,12 +32,6 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 		}
 
 		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
-
-		if imp != origin.Actual {
-			dst := g.Node("imp/" + origin.Actual)
-			g.Edge(src, dst, "actual")
-			src = dst
-		}
 
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
@@ -72,8 +64,6 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 					continue
 				}
 				resolved.Set(dep, imp, origin)
-				dst := g.Node("rule/" + dep.String())
-				g.Edge(src, dst, "label")
 			}
 		}
 	}
