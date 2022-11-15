@@ -52,7 +52,6 @@ func init() {
 	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app", false)
 	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app", false)
 	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test", true)
-
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
@@ -212,14 +211,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		for _, imp := range file.Imports {
 			imports[imp] = &ImportOrigin{Kind: ImportKindDirect, SourceFile: file}
 		}
-	}
-
-	// 2: explicity named in the rule comment.
-	for _, imp := range getScalaImportsFromRuleAttrComment("deps", "scala-import:", r) {
-		if _, ok := imports[imp]; ok {
-			continue
-		}
-		imports[imp] = &ImportOrigin{Kind: ImportKindComment}
 	}
 
 	// 3: if this rule has a main_class

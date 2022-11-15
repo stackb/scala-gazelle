@@ -7,8 +7,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
-	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/bazelbuild/buildtools/build"
 )
 
 // resolverImpLangPrivateKey stores the implementation language override.
@@ -177,29 +175,6 @@ func StripRel(rel string, filename string) string {
 	}
 	filename = filename[len(rel):]
 	return strings.TrimPrefix(filename, "/")
-}
-
-func getScalaImportsFromRuleAttrComment(attrName, prefix string, r *rule.Rule) (imports []string) {
-	// assign := r.AttrAssignment(attrName)
-	var assign *build.AssignExpr
-	if assign == nil {
-		return
-	}
-
-	for _, comment := range assign.Before {
-		line := comment.Token
-		line = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(line), "#"))
-		if !strings.HasPrefix(line, prefix) {
-			continue
-		}
-		line = strings.TrimSpace(strings.TrimPrefix(line, prefix))
-		dblslash := strings.Index(line, "//")
-		if dblslash != -1 {
-			line = strings.TrimSpace(line[:dblslash])
-		}
-		imports = append(imports, line)
-	}
-	return
 }
 
 // dedupLabels deduplicates labels but keeps existing ordering.
