@@ -216,7 +216,7 @@ func getFreePort() (int, error) {
 
 func newHttpScalaParseRequest(url string, in *sppb.ScalaParseRequest) (*http.Request, error) {
 	if url == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "request URL is required")
+		return nil, status.Error(codes.InvalidArgument, "request URL is required")
 	}
 	if in == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "ScalaParseRequest is required")

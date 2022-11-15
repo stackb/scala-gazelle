@@ -9,8 +9,9 @@ import (
 func TestScala(t *testing.T) {
 	goldentest.FromDir("language/scala",
 		goldentest.WithOnlyTests(
-			"maven_resolver",
-			"proto_resolver",
+			// "maven_resolver",
+			"maven_direct_deps",
+			// "proto_resolver",
 		),
 	).Run(t, "gazelle")
 }

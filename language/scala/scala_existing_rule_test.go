@@ -142,10 +142,10 @@ func TestResolveNameInLabelImportMap(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			resolved := make(labelImportMap)
+			resolved := make(LabelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp, &importOrigin{Kind: "test"})
+				resolved.Set(l, imp, &ImportOrigin{Kind: ImportKindIndirect})
 			}
 			got, ok := resolveNameInLabelImportMap(resolved)(tc.name)
 			if tc.want == "" && !ok {
@@ -193,14 +193,14 @@ func TestMakeLabeledListExpr(t *testing.T) {
 		},
 		"simple+reason": {
 			in:         `scala_library(name="test")`,
-			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
 			want: `scala_library(
     name = "test",
     deps = [
-        # com.typesafe.scalalogging.LazyLogging (test)
+        # com.typesafe.scalalogging.LazyLogging (comment)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )
@@ -214,7 +214,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
 			want: `scala_library(
     name = "test",
     deps = [
@@ -231,7 +231,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{"scala_explain_dependencies", "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -239,7 +239,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     name = "test",
     deps = [
         ":foo",  # keep
-        # com.typesafe.scalalogging.LazyLogging (test)
+        # com.typesafe.scalalogging.LazyLogging (comment)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )
@@ -251,10 +251,10 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			sc := getOrCreateScalaConfig(c)
 			sc.parseDirectives("", tc.directives)
 			from := label.New("", "pkg", "rule")
-			resolved := make(labelImportMap)
+			resolved := make(LabelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp, &importOrigin{Kind: "test"})
+				resolved.Set(l, imp, &ImportOrigin{Kind: ImportKindComment})
 			}
 
 			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(tc.in))
@@ -262,7 +262,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 				t.Fatal(err)
 			}
 			if len(file.Rules) != 1 {
-				t.Fatal("expected single in rule, got %d", len(file.Rules))
+				t.Fatalf("expected single in rule, got %d", len(file.Rules))
 			}
 			target := file.Rules[0]
 
@@ -314,6 +314,7 @@ func TestShouldKeep(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			getLabelOwners() // trigger lazy-build side-effect early
 			if tc.setup != nil {
 				tc.setup(t)
 			}

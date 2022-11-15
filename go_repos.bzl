@@ -1,6 +1,11 @@
+"""go_repos.bzl loads all go_repository dependencies
+"""
+
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
 def gazelle_extension_deps():
+    """gazelle_extension_deps loads dependencies for the gazelle extension
+    """
     go_repository(
         name = "com_github_emicklei_dot",
         build_file_proto_mode = "disable_global",
@@ -38,6 +43,10 @@ def gazelle_extension_deps():
     )
 
 def go_repositories():
+    """go_repositories loads all go_repository dependencies
+
+    This macro is managed by 'bazel run //:update_go_dependencies'
+    """
     gazelle_extension_deps()
 
     go_repository(

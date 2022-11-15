@@ -27,7 +27,7 @@ func parseGlob(file *rule.File, call *build.CallExpr) (glob rule.GlobValue) {
 					case *build.Ident:
 						values, err := globalStringList(file, rhs)
 						if err != nil {
-							log.Print("skipping list expression elem: %v", err)
+							log.Printf("skipping list expression elem: %v", err)
 							break
 						}
 						glob.Excludes = append(glob.Excludes, values...)
@@ -43,15 +43,15 @@ func parseGlob(file *rule.File, call *build.CallExpr) (glob rule.GlobValue) {
 		case *build.Ident:
 			values, err := globalStringList(file, e)
 			if err != nil {
-				log.Print("skipping list expression elem: %v", err)
+				log.Printf("skipping list expression elem: %v", err)
 				break
 			}
 			glob.Patterns = append(glob.Patterns, values...)
 		default:
 			if false {
 				spew.Dump(call)
+				log.Printf("skipping glob list expression %d: %T in %+v", i, e, call)
 			}
-			log.Printf("skipping glob list expression %d: %T in %+v", i, e, call)
 		}
 	}
 
@@ -106,11 +106,11 @@ func stringList(list *build.ListExpr) (values []string) {
 func globalStringList(file *rule.File, ident *build.Ident) ([]string, error) {
 	value, err := resolveGlobalAssignment(file, ident.Name)
 	if err != nil {
-		return nil, fmt.Errorf("must resolve to a starlark List[String]: %v", ident.Name, err)
+		return nil, fmt.Errorf("%s must resolve to a starlark List[String]: %v", ident.Name, err)
 	}
 	list, ok := value.(*build.ListExpr)
 	if !ok {
-		return nil, fmt.Errorf("must resolve to a starlark List[String]", ident.Name)
+		return nil, fmt.Errorf("%s must resolve to a starlark List[String]", ident.Name)
 	}
 	return stringList(list), nil
 }

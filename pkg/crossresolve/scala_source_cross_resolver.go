@@ -93,7 +93,6 @@ func (r *ScalaSourceCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config
 			log.Println("warning:", err)
 		}
 	}
-	// start the parser backend process
 	return r.parser.Start()
 }
 
@@ -173,7 +172,6 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
 		Filename: []string{abs},
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}

@@ -1,10 +1,7 @@
 package scala
 
 import (
-	"fmt"
 	"log"
-	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -13,93 +10,18 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/emicklei/dot"
-
-	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
-// ResolverImpLangPrivateKey stores the implementation language override.
-const ResolverImpLangPrivateKey = "_resolve_imp_lang"
+// resolverImpLangPrivateKey stores the implementation language override.
+const resolverImpLangPrivateKey = "_resolve_imp_lang"
 
 // debug is a developer setting
-const debug = false
+const debug = true
 
-// importOrigin is used to trace import provenance.
-type importOrigin struct {
-	Kind       string
-	SourceFile *index.ScalaFileSpec
-	Parent     string
-	Children   []string // transitive imports triggered for an import
-	Actual     string   // the effective string for the import.
-}
+// shouldDisambiguate is a developer flag
+const shouldDisambiguate = false
 
-func importMapKeys(in map[string]*importOrigin) []string {
-	keys := make([]string, len(in))
-	i := 0
-	for k := range in {
-		keys[i] = k
-		i++
-	}
-	sort.Strings(keys)
-	return keys
-}
-
-func (io *importOrigin) String() string {
-	var s string
-	switch io.Kind {
-	case "direct":
-		s = io.Kind + " from " + filepath.Base(io.SourceFile.Filename)
-		if io.Parent != "" {
-			s += " (materialized from " + io.Parent + ")"
-		}
-	case "export":
-		s = io.Kind + " by " + filepath.Base(io.SourceFile.Filename)
-	case "indirect":
-		s = io.Kind + " from " + io.Parent
-	case "superclass":
-		s = io.Kind + " of " + io.Parent
-	case "transitive":
-		s = io.Kind + " via " + io.Parent
-	default:
-		return io.Kind
-	}
-	if len(io.Children) > 0 {
-		s += fmt.Sprintf(" (requires %v)", io.Children)
-	}
-	return s
-}
-
-// labelImportMap describes the imports provided be a label, and where each of
-// those imports was derived from.
-type labelImportMap map[label.Label]map[string]*importOrigin
-
-func (m labelImportMap) Set(from label.Label, imp string, origin *importOrigin) {
-	if all, ok := m[from]; ok {
-		all[imp] = origin
-	} else {
-		m[from] = map[string]*importOrigin{imp: origin}
-	}
-	if debug {
-		log.Printf(" --> resolved %q (%s) to %v", imp, origin.String(), from)
-	}
-}
-
-func (m labelImportMap) String() string {
-	var sb strings.Builder
-	for from, imports := range m {
-		sb.WriteString(from.String())
-		sb.WriteString(":\n")
-		for imp, origin := range imports {
-			sb.WriteString(" -- ")
-			sb.WriteString(imp)
-			sb.WriteString(" -> ")
-			sb.WriteString(origin.String())
-			sb.WriteString("\n")
-		}
-	}
-	return sb.String()
-}
-
-func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrigin, g *dot.Graph) {
+func gatherIndirectDependencies(c *config.Config, imports ImportOriginMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
 	stack := make(importStack, 0, len(imports))
@@ -110,10 +32,10 @@ func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrig
 	for !stack.empty() {
 		stack, imp = stack.pop()
 		for _, dep := range sc.GetIndirectDependencies(ScalaLangName, imp) {
-			// make this is feature tooggle? for transitive indirects?
+			// make this a feature tooggle? (gather transitive indirects)
 			stack = stack.push(dep)
 			if _, ok := imports[dep]; !ok {
-				imports[dep] = &importOrigin{Kind: "indirect", Parent: imp}
+				imports[dep] = &ImportOrigin{Kind: ImportKindIndirect, Parent: imp}
 				src := g.Node("imp/" + imp)
 				dst := g.Node("imp/" + dep)
 				g.Edge(src, dst, "indirect")
@@ -122,11 +44,33 @@ func gatherIndirectDependencies(c *config.Config, imports map[string]*importOrig
 	}
 }
 
-func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
+func gatherImplicitDependencies(c *config.Config, imports ImportOriginMap, g *dot.Graph) {
+	sc := getScalaConfig(c)
+
+	stack := make(importStack, 0, len(imports))
+	for imp := range imports {
+		stack = stack.push(imp)
+	}
+	var imp string
+	for !stack.empty() {
+		stack, imp = stack.pop()
+		for _, dep := range sc.GetImplicitDependencies(ScalaLangName, imp) {
+			stack = stack.push(dep)
+			if _, ok := imports[dep]; !ok {
+				imports[dep] = &ImportOrigin{Kind: ImportKindIndirect, Parent: imp}
+				src := g.Node("imp/" + imp)
+				dst := g.Node("imp/" + dep)
+				g.Edge(src, dst, "implicit")
+			}
+		}
+	}
+}
+
+func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
 	// at this point we expect 'resolved' to hold a set of 'actual' imports that
 	// represent concrete types. build a second set of imports to be resolved
 	// from that set.
-	transitiveImports := make(map[string]*importOrigin)
+	transitiveImports := make(ImportOriginMap)
 
 	for lbl, imps := range resolved {
 		if lbl == label.NoLabel {
@@ -134,18 +78,18 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 		}
 		for _, origin := range imps {
 			if origin.Actual == "" {
-				log.Panicln("unknown actual import!", lbl, origin.String())
+				log.Panicln("origin.Actual must not be empty", lbl, origin.String())
 			}
 			src := g.Node("imp/" + origin.Actual)
 			transitive, unresolved := importRegistry.TransitiveImports([]string{"imp/" + origin.Actual}, -1)
 			if debug {
 				if len(unresolved) > 0 {
-					log.Println("unresolved transitive import:", unresolved, origin.Actual)
+					log.Println(from, "| warning: unresolved transitive import:", unresolved, origin.Actual)
 				}
 			}
 			for _, tImp := range transitive {
 				if _, ok := imports[tImp]; !ok {
-					transitiveImports[tImp] = &importOrigin{Kind: "transitive", Parent: origin.Actual}
+					transitiveImports[tImp] = &ImportOrigin{Kind: ImportKindTransitive, Parent: origin.Actual}
 					dst := g.Node("imp/" + tImp)
 					g.Edge(src, dst, "transitive")
 				}
@@ -162,10 +106,10 @@ func resolveTransitive(c *config.Config, ix *resolve.RuleIndex, importRegistry S
 	resolveImports(c, ix, importRegistry, impLang, kind, from, transitiveImports, resolved, g)
 }
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports map[string]*importOrigin, resolved labelImportMap, g *dot.Graph) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
-	dbg := true
+	dbg := false
 	for imp, origin := range imports {
 		src := g.Node("imp/" + imp)
 
@@ -190,7 +134,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			continue
 		}
 
-		if len(labels) > 1 {
+		if shouldDisambiguate && len(labels) > 1 {
 			original := labels
 			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
 			if err != nil {
@@ -220,23 +164,23 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *importOrigin, lang string, imp string, from label.Label, resolved labelImportMap) []label.Label {
-	if debug {
-		log.Println("resolveImport:", imp, origin.String())
-	}
-
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *ImportOrigin, lang string, imp string, from label.Label, resolved LabelImportMap) []label.Label {
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
 		return nil
 	}
 
-	labels := resolveAnyKind(c, ix, lang, imp, from)
 	if debug {
-		log.Println("resolveAnyKind:", imp, labels)
+		log.Println(from, "| resolveImport want:", imp, origin.String())
 	}
+
+	labels := resolveAnyKind(c, ix, lang, imp, from)
 
 	if len(labels) > 0 {
 		origin.Actual = imp
+		if debug {
+			log.Println(from, "| resolveImport got:", imp, "(provided-by)", labels)
+		}
 		return dedupLabels(labels)
 	}
 
@@ -279,7 +223,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 // generation phase.
 func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) []label.Label {
 	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
-		// log.Println(from, "override hit:", l)
+		log.Println(from, "| resolveAnyKind: found rule with override:", l)
 		return []label.Label{l}
 	}
 	return resolveWithIndex(c, ix, lang, imp, from)
@@ -288,16 +232,21 @@ func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp st
 func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) []label.Label {
 	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, ScalaLangName)
 	if len(matches) == 0 {
+		log.Println(from, "| resolveWithIndex: no rules found for:", imp)
 		return nil
 	}
-	labels := make([]label.Label, len(matches))
-	for i, match := range matches {
+	labels := make([]label.Label, 0, len(matches))
+	for _, match := range matches {
 		if match.IsSelfImport(from) {
-			labels[i] = PlatformLabel
+			labels = append(labels, PlatformLabel)
 		} else {
-			labels[i] = match.Label
+			labels = append(labels, match.Label)
+		}
+		for _, directDep := range match.Embeds {
+			labels = append(labels, directDep)
 		}
 	}
+	log.Println(from, "| resolveWithIndex: found rules by import with config:", labels)
 	return labels
 }
 
@@ -323,14 +272,6 @@ func StripRel(rel string, filename string) string {
 	}
 	filename = filename[len(rel):]
 	return strings.TrimPrefix(filename, "/")
-}
-
-func printRules(rules ...*rule.Rule) {
-	file := rule.EmptyFile("", "")
-	for _, r := range rules {
-		r.Insert(file)
-	}
-	fmt.Println(string(file.Format()))
 }
 
 func getScalaImportsFromRuleAttrComment(attrName, prefix string, r *rule.Rule) (imports []string) {

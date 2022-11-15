@@ -120,7 +120,7 @@ func (s *scalaLibraryRule) Rule() *rule.Rule {
 		newRule.SetAttr("deps", deps)
 	}
 
-	newRule.SetPrivateAttr(ResolverImpLangPrivateKey, ScalaLangName)
+	newRule.SetPrivateAttr(resolverImpLangPrivateKey, ScalaLangName)
 	newRule.SetPrivateAttr(config.GazelleImportsKey, s.imports())
 	newRule.SetPrivateAttr(scalaImportsPrivateKey, s.imports())
 
