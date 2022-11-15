@@ -237,16 +237,10 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		g.Edge(src, dst, "main-class")
 	}
 
-	// 3: transitive of 1+2.
-	// gatherImplicitDependencies(c, imports, g)
-	gatherIndirectDependencies(c, imports, g)
-
 	resolved := NewLabelImportMap()
 
 	// resolve this (mostly direct) initial set
 	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
-	// resolve transitive set
-	//resolveTransitive(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved, g)
 
 	unresolved := resolved[label.NoLabel]
 	if len(unresolved) > 0 {

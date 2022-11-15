@@ -21,51 +21,6 @@ const debug = true
 // shouldDisambiguate is a developer flag
 const shouldDisambiguate = false
 
-func gatherIndirectDependencies(c *config.Config, imports ImportOriginMap, g *dot.Graph) {
-	sc := getScalaConfig(c)
-
-	stack := make(importStack, 0, len(imports))
-	for imp := range imports {
-		stack = stack.push(imp)
-	}
-	var imp string
-	for !stack.empty() {
-		stack, imp = stack.pop()
-		for _, dep := range sc.GetIndirectDependencies(ScalaLangName, imp) {
-			// make this a feature tooggle? (gather transitive indirects)
-			stack = stack.push(dep)
-			if _, ok := imports[dep]; !ok {
-				imports[dep] = &ImportOrigin{Kind: ImportKindIndirect, Parent: imp}
-				src := g.Node("imp/" + imp)
-				dst := g.Node("imp/" + dep)
-				g.Edge(src, dst, "indirect")
-			}
-		}
-	}
-}
-
-func gatherImplicitDependencies(c *config.Config, imports ImportOriginMap, g *dot.Graph) {
-	sc := getScalaConfig(c)
-
-	stack := make(importStack, 0, len(imports))
-	for imp := range imports {
-		stack = stack.push(imp)
-	}
-	var imp string
-	for !stack.empty() {
-		stack, imp = stack.pop()
-		for _, dep := range sc.GetImplicitDependencies(ScalaLangName, imp) {
-			stack = stack.push(dep)
-			if _, ok := imports[dep]; !ok {
-				imports[dep] = &ImportOrigin{Kind: ImportKindIndirect, Parent: imp}
-				src := g.Node("imp/" + imp)
-				dst := g.Node("imp/" + dep)
-				g.Edge(src, dst, "implicit")
-			}
-		}
-	}
-}
-
 func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap, g *dot.Graph) {
 	sc := getScalaConfig(c)
 
