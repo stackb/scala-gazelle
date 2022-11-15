@@ -511,8 +511,6 @@ func (r *importRegistry) writeImports() error {
 
 	w.Flush()
 
-	log.Println("Wrote", r.importsOut)
-
 	return nil
 }
 

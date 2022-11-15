@@ -33,8 +33,8 @@ def gazelle_extension_deps():
         name = "com_github_pcj_mobyprogress",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/pcj/mobyprogress",
-        sum = "h1:Actbx13P6TzPlnfk/A2keka2oW6k9RNWlEdO7XVaDRg=",
-        version = "v0.0.0-20221113194423-15f77826bd76",
+        sum = "h1:PK2mcOPKwsrU5xqxhZIrG2nihf2OSOqW2KqMPxxpBPQ=",
+        version = "v0.0.0-20221114203314-669a7801d484",
     )
 
 def go_repositories():
