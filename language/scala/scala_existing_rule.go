@@ -185,7 +185,6 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
 	// dbg := debug
-	dbg := true
 
 	files, ok := importsRaw.([]*index.ScalaFileSpec)
 	if !ok {
@@ -200,7 +199,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		impLang = overrideImpLang
 	}
 
-	if dbg {
+	if debug {
 		log.Println(from, "| BEGIN RESOLVE", impLang)
 	}
 
@@ -230,10 +229,15 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 
 	if len(resolved) > 0 {
-		r.SetAttr("deps", makeLabeledListExpr(c, r.Kind(), shouldKeep, r.Attr("deps"), from, resolved))
+		labelOwners := getLabelOwners()
+		keep := func(expr build.Expr) bool {
+			return shouldKeep(expr, labelOwners...)
+		}
+		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
+		r.SetAttr("deps", depsExpr)
 	}
 
-	if dbg {
+	if debug {
 		log.Println(from, "| END RESOLVE", impLang)
 		// printRules(r)
 	}
@@ -287,7 +291,7 @@ func shouldExcludeDep(c *config.Config, from label.Label) bool {
 	return from.Name == "tests"
 }
 
-func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(from build.Expr) bool, existingDeps build.Expr, from label.Label, resolved LabelImportMap) build.Expr {
+func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Expr) bool, existingDeps build.Expr, from label.Label, resolved LabelImportMap) build.Expr {
 	dbg := false
 
 	if from.Repo == "" {
@@ -358,14 +362,16 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(from bui
 	}
 	sort.Strings(keys)
 
-	for _, dep := range keys {
+	for id, dep := range keys {
 		imports := keeps[dep]
 		str := &build.StringExpr{Value: dep}
 		if sc.explainDependencies {
 			explainDependencies(str, imports)
+			if debug {
+				str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
+			}
 		}
 		list = append(list, str)
-		// str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
 	}
 
 	return &build.ListExpr{List: list}
@@ -379,7 +385,8 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	if len(reasons) == 0 {
 		reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", imports.Keys()))
 	}
-	for _, reason := range protoc.DeduplicateAndSort(reasons) {
+	reasons = protoc.DeduplicateAndSort(reasons)
+	for _, reason := range reasons {
 		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
 	}
 }
@@ -440,29 +447,22 @@ func isUnqualifiedImport(imp string) bool {
 	return strings.LastIndex(imp, ".") == -1
 }
 
-func shouldKeep(expr build.Expr) bool {
+func shouldKeep(expr build.Expr, labelOwners ...crossresolve.LabelOwner) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
 	}
 
-	// is the expression a string?
-	// keep all non-string expressions like globs for now.
-	str, ok := expr.(*build.StringExpr)
-	if !ok {
+	// is the expression something we can parse as a label?
+	// If not, just leave it be.
+	from := scalaDepLabel(expr)
+	if from == label.NoLabel {
 		return true
-	}
-
-	// is the string a valid label?  If we can't parse it as a label,
-	// get rid of it.
-	from, err := label.Parse(str.Value)
-	if err != nil {
-		return false
 	}
 
 	// if we can find a resolver than manages/owns this label, remove it;
 	// the resolver should cross-resolve the import again
-	for _, resolver := range getLabelOwners() {
+	for _, resolver := range labelOwners {
 		if resolver.IsOwner(from, func(from label.Label) (*rule.Rule, bool) {
 			return nil, false
 		}) {
@@ -480,4 +480,33 @@ func printRules(rules ...*rule.Rule) {
 		r.Insert(file)
 	}
 	fmt.Println(string(file.Format()))
+}
+
+// scalaDepLabel returns the label from an expression like
+// "@maven//:guava" or scala_dep("@maven//:guava")
+func scalaDepLabel(expr build.Expr) label.Label {
+	switch t := expr.(type) {
+	case *build.StringExpr:
+		if from, err := label.Parse(t.Value); err != nil {
+			return label.NoLabel
+		} else {
+			return from
+		}
+	case *build.CallExpr:
+		if ident, ok := t.X.(*build.Ident); ok && ident.Name == "scala_dep" {
+			if len(t.List) == 0 {
+				return label.NoLabel
+			}
+			first := t.List[0]
+			if str, ok := first.(*build.StringExpr); ok {
+				if from, err := label.Parse(str.Value); err != nil {
+					return label.NoLabel
+				} else {
+					return from
+				}
+			}
+		}
+	}
+
+	return label.NoLabel
 }

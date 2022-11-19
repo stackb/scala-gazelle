@@ -3,6 +3,7 @@ package scala
 import (
 	"log"
 	"strings"
+	"unicode"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -13,7 +14,7 @@ import (
 const resolverImpLangPrivateKey = "_resolve_imp_lang"
 
 // debug is a developer setting
-const debug = true
+const debug = false
 
 // shouldDisambiguate is a developer flag
 const shouldDisambiguate = false
@@ -34,7 +35,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
 			if dbg {
-				log.Println("resolved:", imp)
+				log.Println(from, "| resolve miss:", imp, "to", labels)
 			}
 			continue
 		}
@@ -60,6 +61,9 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			for _, dep := range labels {
 				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
 					continue
+				}
+				if dbg {
+					log.Println(from, "| resolve hit:", imp, "to", dep, "via", origin)
 				}
 				resolved.Set(dep, imp, origin)
 			}
@@ -97,11 +101,14 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 		return resolveImport(c, ix, registry, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
 	}
 
-	// if this has a parent, try parent
+	// if this is a fqcn, try the package
 	lastDot := strings.LastIndex(imp, ".")
 	if lastDot > 0 {
+		// child := imp[:lastDot+1]
+		// if isCapitalized(child) {
 		parent := imp[0:lastDot]
 		return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
+		// }
 	}
 
 	// we are down to a single symbol now.  Probe the importRegistry for a
@@ -204,4 +211,14 @@ func (s importStack) empty() bool {
 func (s importStack) pop() (importStack, string) {
 	l := len(s)
 	return s[:l-1], s[l-1]
+}
+
+func isCapitalized(s string) bool {
+	for _, r := range s {
+		if !unicode.IsUpper(r) && unicode.IsLetter(r) {
+			return false
+		}
+		break
+	}
+	return true
 }

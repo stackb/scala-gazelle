@@ -1,7 +1,6 @@
 package scala
 
 import (
-	"flag"
 	"fmt"
 	"testing"
 
@@ -9,7 +8,6 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
-	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
@@ -155,6 +153,21 @@ func TestMakeLabeledListExpr(t *testing.T) {
 )
 `,
 		},
+		"simple+reason+deduplicate": {
+			in:         `scala_library(name="test")`,
+			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			resolved: map[string]string{
+				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+			},
+			want: `scala_library(
+    name = "test",
+    deps = [
+        # com.typesafe.scalalogging.LazyLogging (comment)
+        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
+    ],
+)
+`,
+		},
 		"keep": {
 			in: `scala_library(
     name="test",
@@ -215,7 +228,10 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			}
 			target := file.Rules[0]
 
-			expr := makeLabeledListExpr(c, target.Kind(), shouldKeep, target.Attr("deps"), from, resolved)
+			keep := func(expr build.Expr) bool {
+				return shouldKeep(expr)
+			}
+			expr := makeLabeledListExpr(c, target.Kind(), keep, target.Attr("deps"), from, resolved)
 			target.SetAttr("deps", expr)
 			want := tc.want
 			got := printRule(target)
@@ -237,13 +253,12 @@ func printRule(rules ...*rule.Rule) string {
 func TestShouldKeep(t *testing.T) {
 	for name, tc := range map[string]struct {
 		deps  string
-		setup func(t *testing.T)
+		owner crossresolve.LabelOwner
 		want  bool
 	}{
-		"empty": {},
 		"empty string": {
 			deps: `    "",`,
-			want: false,
+			want: true,
 		},
 		"keep empty string": {
 			deps: `    "",  # keep`,
@@ -254,19 +269,18 @@ func TestShouldKeep(t *testing.T) {
 			want: true,
 		},
 		"managed label": {
-			setup: func(t *testing.T) {
-				fakeResolver := &fakeLabelOwnerResolver{}
-				crossresolve.Resolvers().MustRegisterResolver("fake", fakeResolver)
-			},
-			deps: `    "@maven//:junit_junit",`,
-			want: false,
+			owner: &repoLabelOwner{repo: "maven"},
+			deps:  `    "@maven//:junit_junit_2_12",`,
+			want:  false,
+		},
+		"managed scala_dep": {
+			owner: &repoLabelOwner{repo: "maven"},
+			deps:  `    scala_dep("@maven//:junit_junit"),`,
+			want:  false,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			getLabelOwners() // trigger lazy-build side-effect early
-			if tc.setup != nil {
-				tc.setup(t)
-			}
 			content := fmt.Sprintf(`
 scala_library(
 	name = "test",
@@ -285,8 +299,11 @@ scala_library(
 				return
 			}
 
+			if tc.owner == nil {
+				tc.owner = &repoLabelOwner{}
+			}
 			expr := listExpr.List[0]
-			got := shouldKeep(expr)
+			got := shouldKeep(expr, tc.owner)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("shouldKeep (-want +got):\n%s", diff)
 			}
@@ -294,24 +311,76 @@ scala_library(
 	}
 }
 
-type fakeLabelOwnerResolver struct {
-}
-
-// RegisterFlags implements part of the ConfigurableCrossResolver interface.
-func (cr *fakeLabelOwnerResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-}
-
-// CheckFlags implements part of the ConfigurableCrossResolver interface.
-func (cr *fakeLabelOwnerResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	return nil
+type repoLabelOwner struct {
+	repo string
 }
 
 // IsOwner implements the LabelOwner interface.
-func (cr *fakeLabelOwnerResolver) IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
-	return true
+func (cr *repoLabelOwner) IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+	return from.Repo == cr.repo
 }
 
-// CrossResolve implements the CrossResolver interface.
-func (cr *fakeLabelOwnerResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) []resolve.FindResult {
-	return nil
+func TestScalaDepLabel(t *testing.T) {
+	for name, tc := range map[string]struct {
+		in   string
+		want label.Label
+	}{
+		"degenerate": {
+			in: `
+test(
+	expr = "",
+)
+			`,
+			want: label.NoLabel,
+		},
+		"invalid label": {
+			in: `
+test(
+	expr = "@@@",
+)
+			`,
+			want: label.NoLabel,
+		},
+		"valid label": {
+			in: `
+test(
+	expr = "@foo//bar:baz",
+)
+			`,
+			want: label.New("foo", "bar", "baz"),
+		},
+		"invalid callexpr": {
+			in: `
+test(
+	expr = fn("@foo//bar:baz"),
+)
+			`,
+			want: label.NoLabel,
+		},
+		"valid callexpr": {
+			in: `
+test(
+	expr = scala_dep("@foo//bar:baz"),
+)
+			`,
+			want: label.New("foo", "bar", "baz"),
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(tc.in))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(file.Rules) != 1 {
+				t.Fatalf("expected single in rule, got %d", len(file.Rules))
+			}
+			target := file.Rules[0]
+			expr := target.Attr("expr")
+			got := scalaDepLabel(expr)
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("label (-want +got):\n%s", diff)
+			}
+		})
+	}
 }
