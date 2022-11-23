@@ -75,6 +75,14 @@ def build_mergeindex(ctx, output_file, jarindex_files):
         outputs = [output_file],
     )
 
+def jarindex_basename(ctx, label):
+    return "-".join([
+        ctx.label.name,
+        label.workspace_name if label.workspace_name else "default",
+        label.package if label.package else "_",
+        label.name,
+    ])
+
 def _jar_class_index_impl(ctx):
     """Implementation that collects symbols from jars."""
 
@@ -92,9 +100,14 @@ def _jar_class_index_impl(ctx):
         jarindex_files.extend(info.jar_index_files.to_list())
         transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
+    for i, jar in enumerate(ctx.files.jars):
+        label = ctx.attr.jars[i].label
+        basename = jarindex_basename(ctx, label)
+        jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+
     for i, jar in enumerate(ctx.files.platform_jars):
         label = ctx.attr.platform_jars[i].label
-        basename = ctx.label.name + "." + str(i)
+        basename = jarindex_basename(ctx, label)
         jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
 
     output_proto = ctx.actions.declare_file(ctx.label.name + ".jarindex.bin")
@@ -122,6 +135,10 @@ jar_class_index = rule(
             aspects = [java_indexer_aspect],
             doc = "list of java deps to be indexed",
         ),
+        "jars": attr.label_list(
+            aspects = [java_indexer_aspect],
+            doc = "list of jars to be indexed",
+        ),
         "platform_jars": attr.label_list(
             doc = "list of jar files to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
@@ -135,12 +152,12 @@ E.g. ["@maven//:io_grpc_grpc_api"] means, "in the case where io.grpc.CallCredent
 """,
         ),
         "_mergeindex": attr.label(
-            default = Label("//cmd/mergeindex"),
+            default = Label("@build_stack_scala_gazelle//cmd/mergeindex"),
             cfg = "exec",
             executable = True,
         ),
         "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer:jarindexer_bin"),
+            default = Label("@build_stack_scala_gazelle//cmd/jarindexer:jarindexer_bin"),
             cfg = "exec",
             executable = True,
         ),

@@ -635,7 +635,7 @@ java_indexer_aspect = aspect(
             default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
         ),
         "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer"),
+            default = Label("@build_stack_scala_gazelle//cmd/jarindexer:jarindexer_bin"),
             cfg = "exec",
             executable = True,
         ),
