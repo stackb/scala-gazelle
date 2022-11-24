@@ -53,8 +53,8 @@ type JarIndexCrossResolver struct {
 	// depsRecorder is used to write dependencies that are discovered when the
 	// JarSpecIndex is read.
 	depsRecorder DependencyRecorder
-	// jarIndexFile is the filesystem path to the index.
-	jarIndexFile string
+	// jarIndexProtoFiles is a comma-separated list of filesystem paths.
+	jarIndexProtoFiles string
 	// byLabel is a mapping from an import string to the label that provides it.
 	// It is possible more than one label provides a class.
 	byLabel map[string][]label.Label
@@ -68,26 +68,30 @@ type JarIndexCrossResolver struct {
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
 func (r *JarIndexCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&r.jarIndexFile, "jar_index_file", "", "name of the class index file to read")
+	fs.StringVar(&r.jarIndexProtoFiles, "jarindex_proto_files", "", "comma-separated list of jarindex proto files")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *JarIndexCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	if r.jarIndexFile == "" {
+	if r.jarIndexProtoFiles == "" {
 		return nil
 	}
-	filename := r.jarIndexFile
-	if !filepath.IsAbs(filename) {
-		filename = filepath.Join(c.WorkDir, filename)
+	for _, filename := range strings.Split(r.jarIndexProtoFiles, ",") {
+		if !filepath.IsAbs(filename) {
+			filename = filepath.Join(c.WorkDir, filename)
+		}
+		if err := r.readIndex(filename); err != nil {
+			return err
+		}
 	}
-	return r.readIndex(filename)
+	return nil
 }
 
 func (r *JarIndexCrossResolver) readIndex(filename string) error {
 	// perform indexing here
 	index, err := index.ReadIndexSpec(filename)
 	if err != nil {
-		return fmt.Errorf("error while reading index specification file %s: %v", r.jarIndexFile, err)
+		return fmt.Errorf("error while reading index specification file %s: %v", r.jarIndexProtoFiles, err)
 	}
 
 	isPredefined := make(map[label.Label]bool)

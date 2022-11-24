@@ -264,37 +264,6 @@ def collect_targets_from_attrs(rule_attrs, attrs):
         _collect_target_from_attr(rule_attrs, attr_name, result)
     return [target for target in result if is_valid_aspect_target(target)]
 
-# Function copied from https://gist.github.com/oquenchil/7e2c2bd761aa1341b458cc25608da50c
-# TODO: Directly use create_compile_variables and get_memory_inefficient_command_line.
-def _get_compile_flags(dep):
-    options = []
-    compilation_context = dep[CcInfo].compilation_context
-    for define in compilation_context.defines.to_list():
-        options.append("-D\"{}\"".format(define))
-
-    for define in compilation_context.local_defines.to_list():
-        options.append("-D\"{}\"".format(define))
-
-    for system_include in compilation_context.system_includes.to_list():
-        if len(system_include) == 0:
-            system_include = "."
-        options.append("-isystem {}".format(system_include))
-
-    for include in compilation_context.includes.to_list():
-        if len(include) == 0:
-            include = "."
-        options.append("-I {}".format(include))
-
-    for quote_include in compilation_context.quote_includes.to_list():
-        if len(quote_include) == 0:
-            quote_include = "."
-        options.append("-iquote {}".format(quote_include))
-
-    for framework_include in compilation_context.framework_includes.to_list():
-        options.append("-F\"{}\"".format(framework_include))
-
-    return options
-
 def build_jar_index(ctx, target, jar):
     """Builds the java package manifest for the given source files."""
 

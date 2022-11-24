@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/index"
 )
@@ -191,6 +192,8 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		return
 	}
 
+	sc := getScalaConfig(c)
+
 	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(ImportOriginMap)
 
@@ -205,16 +208,33 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	// --- Gather imports ---
 
-	// 1: direct
+	// direct
 	for _, file := range files {
 		for _, imp := range file.Imports {
-			imports[imp] = &ImportOrigin{Kind: ImportKindDirect, SourceFile: file}
+			imports.Add(imp, &ImportOrigin{Kind: ImportKindDirect, SourceFile: file})
 		}
 	}
 
-	// 3: if this rule has a main_class
+	// if this rule has a main_class
 	if mainClass := r.AttrString("main_class"); mainClass != "" {
-		imports[mainClass] = &ImportOrigin{Kind: ImportKindMainClass}
+		imports.Add(mainClass, &ImportOrigin{Kind: ImportKindMainClass})
+	}
+
+	// gather implicit imports
+	implicits := make(collections.StringStack, 0)
+	for src := range imports {
+		for _, dst := range sc.GetImplicitImports(impLang, src) {
+			implicits.Push(dst)
+			imports.Add(dst, &ImportOrigin{Kind: ImportKindImplicit, Parent: src})
+		}
+	}
+	// gather transitive implicits
+	for !implicits.IsEmpty() {
+		src, _ := implicits.Pop()
+		for _, dst := range sc.GetImplicitImports(impLang, src) {
+			implicits.Push(dst)
+			imports.Add(dst, &ImportOrigin{Kind: ImportKindImplicit, Parent: src})
+		}
 	}
 
 	resolved := NewLabelImportMap()
@@ -380,7 +400,12 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Ex
 func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	reasons := make([]string, 0, len(imports))
 	for imp, origin := range imports {
-		reasons = append(reasons, imp+" ("+origin.String()+")")
+		reason := imp + " (" + origin.String() + ")"
+		// if imp != origin.Import {
+		// 	reason += fmt.Sprintf("[as %s]", origin.Import)
+		// }
+		reasons = append(reasons, reason)
+
 	}
 	if len(reasons) == 0 {
 		reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", imports.Keys()))

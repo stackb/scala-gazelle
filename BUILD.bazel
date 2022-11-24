@@ -78,7 +78,24 @@ filegroup(
 )
 
 # Use "bazel build //:jar_class_index --output_groups=index_json" to produce a JSON file
+# Use "jq '.providers' < bazel-bin/jar_class_index.jarindex.json" to show only the providers mappings.
+# Use "CLASS='com.foo.Bar' jq ".providers[] | select(.class==\"$CLASS\") | ." < bazel-bin/jar_class_index.jarindex.json" for a single class
 jar_class_index(
     name = "jar_class_index",
+    jars = [
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_lightbend_akka_grpc_akka_grpc_runtime_2_12_2_1_4",
+        "@maven//:com_thesamet_scalapb_lenses_2_12",
+        "@maven//:com_thesamet_scalapb_scalapb_runtime_2_12",
+        "@maven//:com_thesamet_scalapb_scalapb_runtime_grpc_2_12",
+        "@maven//:com_typesafe_akka_akka_actor_2_12",
+        "@maven//:com_typesafe_akka_akka_http_core_2_12",
+        "@maven//:com_typesafe_akka_akka_stream_2_12",
+        "@maven//:io_grpc_grpc_api",
+        "@maven//:io_grpc_grpc_protobuf",
+        "@maven//:io_grpc_grpc_stub",
+    ],
+    out_json = "jar_class_index.proto.bin",
+    out_proto = "jar_class_index.proto.json",
     platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
 )

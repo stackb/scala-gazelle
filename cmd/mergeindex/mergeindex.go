@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
@@ -21,10 +22,6 @@ var (
 )
 
 func main() {
-	if debug {
-		log.Println("args:", os.Args)
-	}
-
 	log.SetPrefix("mergeindex: ")
 	log.SetFlags(0) // don't print timestamps
 
@@ -101,8 +98,6 @@ func parseFlags(args []string) (files []string, err error) {
 		err = fmt.Errorf("positional args should be a non-empty list of .jarindex.json files to merge")
 	}
 
-	log.Println("flags predefinedLabels:", predefinedLabels)
-
 	return
 }
 
@@ -114,6 +109,15 @@ func merge(filenames ...string) (*jarindex.JarIndex, error) {
 			return nil, err
 		}
 		jars = append(jars, idx.JarFile...)
+		if debug {
+			for _, file := range idx.JarFile {
+				jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
+				if err := mergeindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
+					return nil, err
+				}
+				log.Println("Wrote:", jarFilename)
+			}
+		}
 	}
 
 	predefined := strings.Split(predefinedLabels, ",")

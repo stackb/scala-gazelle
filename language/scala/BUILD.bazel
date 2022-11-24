@@ -109,6 +109,7 @@ go_test(
     name = "scala_test",
     srcs = [
         "glob_test.go",
+        "import_origin_test.go",
         "import_resolver_test.go",
         "resolver_test.go",
         "scala_compiler_test.go",

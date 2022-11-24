@@ -31,7 +31,6 @@ def build_jarfile_index(ctx, label, basename, jar):
     )
 
     output_file = ctx.actions.declare_file(basename + ".jarindex.bin")
-    print("indexing jar %s -> %s" % (label, output_file.path))
     ctx.actions.run(
         mnemonic = "JarIndexer",
         progress_message = "Indexing jar " + ijar.basename,
@@ -110,8 +109,8 @@ def _jar_class_index_impl(ctx):
         basename = jarindex_basename(ctx, label)
         jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
 
-    output_proto = ctx.actions.declare_file(ctx.label.name + ".jarindex.bin")
-    output_json = ctx.actions.declare_file(ctx.label.name + ".jarindex.json")
+    output_proto = ctx.outputs.out_proto
+    output_json = ctx.outputs.out_json
 
     build_mergeindex(ctx, output_proto, jarindex_files)
     build_mergeindex(ctx, output_json, jarindex_files)
@@ -121,8 +120,8 @@ def _jar_class_index_impl(ctx):
     return [DefaultInfo(
         files = depset(direct_files),
     ), OutputGroupInfo(
-        index_proto = [output_proto],
-        index_json = [output_json],
+        proto = [output_proto],
+        json = [output_json],
         jarindex_files = depset(transitive = transitive_jarindex_files),
     )]
 
@@ -155,17 +154,28 @@ E.g. ["@maven//:io_grpc_grpc_api"] means, "in the case where io.grpc.CallCredent
             default = Label("@build_stack_scala_gazelle//cmd/mergeindex"),
             cfg = "exec",
             executable = True,
+            doc = "the mergeindex tool",
         ),
         "_jarindexer": attr.label(
             default = Label("@build_stack_scala_gazelle//cmd/jarindexer:jarindexer_bin"),
             cfg = "exec",
             executable = True,
+            doc = "the jarindexer tool",
         ),
         "_ijar": attr.label(
             default = Label("@bazel_tools//tools/jdk:ijar"),
             executable = True,
             cfg = "exec",
             allow_files = True,
+            doc = "the ijar tool",
+        ),
+        "out_proto": attr.output(
+            mandatory = True,
+            doc = "the name of the proto output file",
+        ),
+        "out_json": attr.output(
+            mandatory = True,
+            doc = "the name of the json output file",
         ),
     },
 )

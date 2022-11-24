@@ -92,7 +92,7 @@ func TestResolveNameInLabelImportMap(t *testing.T) {
 			resolved := make(LabelImportMap)
 			for imp, origin := range tc.resolved {
 				l, _ := label.Parse(origin)
-				resolved.Set(l, imp, &ImportOrigin{Kind: ImportKindIndirect})
+				resolved.Set(l, imp, &ImportOrigin{Kind: ImportKindImplicit})
 			}
 			got, ok := resolveNameInLabelImportMap(resolved)(tc.name)
 			if tc.want == "" && !ok {

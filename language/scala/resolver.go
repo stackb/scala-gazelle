@@ -104,11 +104,13 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	// if this is a fqcn, try the package
 	lastDot := strings.LastIndex(imp, ".")
 	if lastDot > 0 {
-		// child := imp[:lastDot+1]
-		// if isCapitalized(child) {
-		parent := imp[0:lastDot]
-		return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
-		// }
+		child := imp[lastDot+1:]
+		log.Println(from, "| resolveImport parent:", imp, "child:", child)
+
+		if isCapitalized(child) {
+			parent := imp[0:lastDot]
+			return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
+		}
 	}
 
 	// we are down to a single symbol now.  Probe the importRegistry for a
@@ -156,7 +158,7 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 			labels = append(labels, directDep)
 		}
 	}
-	log.Println(from, "| resolveWithIndex: found rules by import with config:", labels)
+	log.Println(from, "| resolveWithIndex: found rules by import with config:", imp, "->", labels)
 	return labels
 }
 

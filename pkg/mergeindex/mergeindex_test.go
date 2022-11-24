@@ -97,24 +97,24 @@ func TestMergeJarFiles(t *testing.T) {
 		},
 		"warns about missing label": {
 			jars: []*jarindex.JarFile{
-				{
-					Filename: "foo.jar",
-				},
+				{Filename: "foo.jar"},
 			},
 			wantWarn: "missing jar label: foo.jar",
 			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{},
+				JarFile: []*jarindex.JarFile{
+					{Filename: "foo.jar"},
+				},
 			},
 		},
 		"warns about missing filename": {
 			jars: []*jarindex.JarFile{
-				{
-					Label: "//:foo",
-				},
+				{Label: "//:foo"},
 			},
 			wantWarn: "missing jar filename: //:foo",
 			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{},
+				JarFile: []*jarindex.JarFile{
+					{Label: "//:foo"},
+				},
 			},
 		},
 		"warns about duplicate labels": {

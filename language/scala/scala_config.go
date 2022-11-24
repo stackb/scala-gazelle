@@ -41,8 +41,8 @@ type scalaConfig struct {
 	overrides []*overrideSpec
 	// indirects are parsed from 'gazelle:indirect-dependency scala foo bar'
 	indirects []*indirectDependencySpec
-	// implicits are parsed from 'gazelle:implicit-import scala foo bar'
-	implicits []*implicitImportSpec
+	// implicitImports are parsed from 'gazelle:implicit_import scala foo bar [baz]...'
+	implicitImports []*implicitImportSpec
 	// map kinds are parsed from 'gazelle:map_kind_import_name
 	mapKindImportNames map[string]mapKindImportNameSpec
 	// explainDependencies is a flag to print additional comments on deps & exports
@@ -56,7 +56,7 @@ func newScalaConfig(config *config.Config) *scalaConfig {
 		rules:              make(map[string]*RuleConfig),
 		overrides:          make([]*overrideSpec, 0),
 		indirects:          make([]*indirectDependencySpec, 0),
-		implicits:          make([]*implicitImportSpec, 0),
+		implicitImports:    make([]*implicitImportSpec, 0),
 		mapKindImportNames: make(map[string]mapKindImportNameSpec),
 	}
 }
@@ -95,7 +95,7 @@ func (c *scalaConfig) Clone() *scalaConfig {
 	}
 	clone.overrides = c.overrides[:]
 	clone.indirects = c.indirects[:]
-	clone.implicits = c.implicits[:]
+	clone.implicitImports = c.implicitImports[:]
 	return clone
 }
 
@@ -187,7 +187,7 @@ func (c *scalaConfig) parseImplicitImportDirective(d rule.Directive) {
 		log.Printf("invalid gazelle:%s directive: expected 3+ parts, got %d (%v)", implicitImportDirective, len(parts), parts)
 		return
 	}
-	c.indirects = append(c.indirects, &indirectDependencySpec{
+	c.implicitImports = append(c.implicitImports, &implicitImportSpec{
 		lang: parts[0],
 		imp:  parts[1],
 		deps: parts[2:],
@@ -246,12 +246,8 @@ func (c *scalaConfig) GetIndirectDependencies(lang, imp string) (deps []string) 
 	return
 }
 
-func (c *scalaConfig) GetImplicitDependencies(lang, imp string) (deps []string) {
-	dbg := false
-	if dbg {
-		log.Println("checking implicit deps", imp, len(c.implicits))
-	}
-	for _, d := range c.implicits {
+func (c *scalaConfig) GetImplicitImports(lang, imp string) (deps []string) {
+	for _, d := range c.implicitImports {
 		if d.lang != lang {
 			continue
 		}
@@ -259,9 +255,6 @@ func (c *scalaConfig) GetImplicitDependencies(lang, imp string) (deps []string) 
 			continue
 		}
 		deps = append(deps, d.deps...)
-	}
-	if dbg {
-		log.Println("implicit:", imp, deps)
 	}
 	return
 }

@@ -68,8 +68,6 @@ public class JarIndexer extends Object {
                 .verbose(false)
                 .whitelistPackages()
                 .overrideClasspath(path.toString())
-                .enableInterClassDependencies()
-                .enableExternalClasses()
                 .enableAllInfo()
                 .scan();
 
@@ -81,7 +79,6 @@ public class JarIndexer extends Object {
                 packages.add(classInfo.getPackageName());
             }
             jarFile.addClassFile(handleClassInfo(classInfo));
-            jarFile.addClassName(classInfo.getName());
         }
 
         jarFile.addAllPackageName(packages);

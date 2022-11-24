@@ -20,11 +20,17 @@ message JarIndex {
 }
 
 message JarFile {
+    // filename is the relative pathname of the jar file
     string filename = 1;
+    // label is the fully-qualified bazel label 
     string label = 2;
+    // class_file is a list of classes that are provided by the jar 
     repeated ClassFile class_file = 3  [json_name = "files"];
+    // symbols is a summary set of all symbols named by all files in the jar
     repeated string symbols = 4;
+    // class_name is a summary set of classes used by all files in the jar
     repeated string class_name = 5  [json_name = "classes"];
+    // package_name is a summary set of packages provided by the jar
     repeated string package_name = 6  [json_name = "packages"];
 }
 

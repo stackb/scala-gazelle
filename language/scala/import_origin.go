@@ -11,7 +11,7 @@ import (
 const ImportKindDirect = ImportKind("direct")
 const ImportKindTransitive = ImportKind("transitive")
 const ImportKindSuperclass = ImportKind("superclass")
-const ImportKindIndirect = ImportKind("indirect")
+const ImportKindImplicit = ImportKind("implicit")
 const ImportKindMainClass = ImportKind("main_class")
 const ImportKindExport = ImportKind("export")
 const ImportKindComment = ImportKind("comment")
@@ -24,7 +24,10 @@ type ImportOrigin struct {
 	SourceFile *index.ScalaFileSpec
 	Parent     string
 	Children   []string // transitive imports triggered for an import
-	Actual     string   // the effective string for the import.
+	// Import holds the symbol that resolved.  For example, the string "com.foo" when .Actual is "com.foo._"
+	Import string
+	// Actual holds the original symbol.  For example "com.foo._".
+	Actual string // the effective string for the import.
 }
 
 func (io *ImportOrigin) String() string {
@@ -37,7 +40,7 @@ func (io *ImportOrigin) String() string {
 		}
 	case ImportKindExport:
 		s = fmt.Sprintf("%s by %s", io.Kind, filepath.Base(io.SourceFile.Filename))
-	case ImportKindIndirect:
+	case ImportKindImplicit:
 		s = fmt.Sprintf("%s from %s", io.Kind, io.Parent)
 	case ImportKindSuperclass:
 		s = fmt.Sprintf("%s of %s", io.Kind, io.Parent)
@@ -65,4 +68,9 @@ func (m ImportOriginMap) Keys() []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+func (m ImportOriginMap) Add(imp string, origin *ImportOrigin) {
+	origin.Import = imp
+	m[imp] = origin
 }
