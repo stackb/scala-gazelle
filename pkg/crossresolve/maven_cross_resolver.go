@@ -99,7 +99,8 @@ func (cr *MavenCrossResolver) CrossResolve(c *config.Config, ix *resolve.RuleInd
 		return
 	}
 	for _, resolver := range cr.resolvers {
-		if from, err := resolver.Resolve(imp.Imp); err == nil {
+		if from, _, err := resolver.ResolveWithDirectDependencies(imp.Imp); err == nil {
+			// return []resolve.FindResult{{Label: from, Embeds: embeds}}
 			return []resolve.FindResult{{Label: from}}
 		}
 	}

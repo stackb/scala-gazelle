@@ -18,9 +18,9 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jarindex.JarF
 	// jarLabels is used to prevent duplicate entries for a given jar.
 	labels := make(map[string]bool)
 
-	// labelByClass is used to check if more than one label provides a given
+	// providersByClass is used to check if more than one label provides a given
 	// class.
-	labelByClass := make(map[string][]string)
+	providersByClass := make(map[string]*jarindex.ClassFileProvider)
 
 	// predefinedLabels do not need to be resolved
 	predefinedLabels := make(map[string]struct{})
@@ -35,34 +35,16 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jarindex.JarF
 	}
 
 	for _, jar := range jarFiles {
-		if jar.Label == "" {
-			warn("missing jar label: %s", jar.Filename)
-			continue
-		}
-		if jar.Filename == "" {
-			warn("missing jar filename: %s", jar.Label)
-			continue
-		}
 		if labels[jar.Label] {
 			warn("duplicate jar label: %s", jar.Label)
 			continue
 		}
-
 		labels[jar.Label] = true
-		if _, ok := predefinedLabels[jar.Label]; ok {
-			for _, file := range jar.ClassFile {
-				predefinedSymbols[file.Name] = struct{}{}
-			}
-		}
-
-		for _, class := range jar.ClassName {
-			labelByClass[class] = append(labelByClass[class], jar.Label)
-		}
-
+		visitJarFile(warn, jar, predefinedLabels, predefinedSymbols, providersByClass)
 		index.JarFile = append(index.JarFile, jar)
 	}
 
-	// 2nd pass to remove predefined symbols
+	// remove predefined symbols
 	for _, jar := range index.JarFile {
 		for _, file := range jar.ClassFile {
 			var resolvable []string
@@ -76,13 +58,50 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jarindex.JarF
 		}
 	}
 
-	for classname, labels := range labelByClass {
-		if len(labels) > 1 {
-			warn("class is provided by more than one label: %s: %v", classname, labels)
+	for classname, providers := range providersByClass {
+		if len(providers.Label) > 1 {
+			warn("class is provided by more than one label: %s: %v", classname, providers.Label)
 		}
 	}
 
 	return &index, nil
+}
+
+func visitJarFile(
+	warn warnFunc,
+	jar *jarindex.JarFile,
+	predefinedLabels, predefinedSymbols map[string]struct{},
+	providersByClass map[string]*jarindex.ClassFileProvider,
+) {
+
+	if jar.Label == "" {
+		warn("missing jar label: %s", jar.Filename)
+		return
+	}
+	if jar.Filename == "" {
+		warn("missing jar filename: %s", jar.Label)
+		return
+	}
+
+	// log.Println("---", jar.Label, "---")
+
+	if _, ok := predefinedLabels[jar.Label]; ok {
+		// TODO: consider only recording packages, not classes
+		for _, file := range jar.ClassFile {
+			predefinedSymbols[file.Name] = struct{}{}
+		}
+	}
+
+	for _, classFile := range jar.ClassFile {
+		providers, found := providersByClass[classFile.Name]
+		if !found {
+			providers = &jarindex.ClassFileProvider{Class: classFile.Name}
+			providersByClass[classFile.Name] = providers
+			// log.Println(classFile.Name, "is provided by:", jar.Label)
+		}
+		providers.Label = append(providers.Label, jar.Label)
+	}
+
 }
 
 func ReadJarIndexProtoFile(filename string) (*jarindex.JarIndex, error) {
@@ -138,6 +157,17 @@ func WriteJarFileProtoFile(filename string, index *jarindex.JarFile) error {
 	}
 	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("write jarfile proto: %w", err)
+	}
+	return nil
+}
+
+func WriteJarFileJSONFile(filename string, index *jarindex.JarFile) error {
+	data, err := protojson.Marshal(index)
+	if err != nil {
+		return fmt.Errorf("marshal jarfile json: %w", err)
+	}
+	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+		return fmt.Errorf("write jarfile json: %w", err)
 	}
 	return nil
 }

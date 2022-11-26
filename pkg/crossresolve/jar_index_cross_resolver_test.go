@@ -74,8 +74,8 @@ func ExampleJarIndexCrossResolver_RegisterFlags_printdefaults() {
 	cr.RegisterFlags(got, cmdGenerate, c)
 	got.PrintDefaults()
 	// output:
-	//	-jar_index_file string
-	//     	name of the class index file to read
+	//	-jarindex_proto_files string
+	//     	comma-separated list of jarindex proto files
 }
 
 func TestJarIndexCrossResolverFlags(t *testing.T) {
@@ -86,7 +86,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 	}{
 		"typical usage": {
 			args: []string{
-				"-jar_index_file=./scala_jar_index.json",
+				"-jarindex_proto_files=./scala_jar_index.json",
 			},
 			files: []testtools.FileSpec{
 				{
@@ -114,7 +114,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 			if err := cr.CheckFlags(fs, c); err != nil {
 				t.Fatal(err)
 			}
-			if diff := cmp.Diff(tc.wantJarIndexFile, cr.jarIndexFile); diff != "" {
+			if diff := cmp.Diff(tc.wantJarIndexFile, cr.jarIndexProtoFiles); diff != "" {
 				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
 			}
 		})

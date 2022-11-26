@@ -529,7 +529,9 @@ if (true) {
         if (err) {
             return console.log('something bad happened', err)
         }
-        console.log(`server is listening on ${port} (${__filename})`);
+        if (debug) {
+            console.log(`server is listening on ${port} (${__filename})`);
+        }
     });
 } else {
     const filename = workerData;

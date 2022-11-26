@@ -372,7 +372,7 @@ func (r *scalaSourceIndexResolver) OnResolve() {
 
 	// dump the index
 	if err := r.writeIndex(); err != nil {
-		log.Fatal("failed to write index: %v", err)
+		log.Fatalf("failed to write index: %v", err)
 	}
 }
 

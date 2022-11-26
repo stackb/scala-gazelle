@@ -54,8 +54,8 @@ type ScalaSourceCrossResolver struct {
 	// depsRecorder is used to write dependencies of classes based on extends
 	// clauses.
 	depsRecorder DependencyRecorder
-	// filesystem path to the indexes to read/write.
-	indexIn, indexOut string
+	// filesystem path to the index cache to read/write.
+	cacheFile string
 	// providers and packages is a mapping from an import symbol to the things
 	// that provide it. It is legal for more than one label to provide a symbol
 	// (e.g., a test class can exist in multiple rule srcs attribute), but it is
@@ -82,18 +82,16 @@ type provider struct {
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&r.indexIn, "scala_source_index_in", "", "name of the scala source index file to read")
-	fs.StringVar(&r.indexOut, "scala_source_index_out", "", "name of the scala source index file to write")
+	fs.StringVar(&r.cacheFile, "scala_source_cache_file", "", "file path for optional source cache")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	if r.indexIn != "" {
-		if err := r.readScalaRuleIndexSpec(r.indexIn); err != nil {
-			log.Println("warning:", err)
+	if r.cacheFile != "" {
+		if err := r.readScalaRuleIndexSpec(r.cacheFile); err != nil {
+			log.Printf("warning (%T): %v", err, err)
 		}
 	}
-	// start the parser backend process
 	return r.parser.Start()
 }
 
@@ -173,7 +171,6 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
 		Filename: []string{abs},
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
@@ -364,8 +361,8 @@ func (r *ScalaSourceCrossResolver) OnEnd() {
 }
 
 func (r *ScalaSourceCrossResolver) writeIndex() error {
-	// index is not written if the _out file is not configured
-	if r.indexOut == "" {
+	// index is not written if the file name is not configured
+	if r.cacheFile == "" {
 		return nil
 	}
 
@@ -374,11 +371,9 @@ func (r *ScalaSourceCrossResolver) writeIndex() error {
 		idx.Rules = append(idx.Rules, rule)
 	}
 
-	if err := index.WriteJSONFile(r.indexOut, &idx); err != nil {
+	if err := index.WriteJSONFile(r.cacheFile, &idx); err != nil {
 		return err
 	}
-
-	log.Println("Wrote", r.indexOut)
 
 	return nil
 }
@@ -390,6 +385,10 @@ func (r *ScalaSourceCrossResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 	// }()
 
 	if !(lang == r.lang || imp.Lang == r.lang) {
+		return
+	}
+
+	if true {
 		return
 	}
 

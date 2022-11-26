@@ -13,6 +13,7 @@ func (*scalaLang) KnownDirectives() []string {
 		ruleDirective,
 		overrideDirective,
 		indirectDependencyDirective,
+		implicitImportDirective,
 		scalaExplainDependencies,
 		mapKindImportNameDirective,
 	}

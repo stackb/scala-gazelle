@@ -19,8 +19,6 @@ import (
 	"strings"
 	"time"
 
-	// "github.com/stackb/rules_proto/pkg/protoc"
-
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/stackb/scala-gazelle/pkg/index"
@@ -104,7 +102,6 @@ func (p *scalaCompiler) initHTTPClient() error {
 	uri, err := url.Parse(p.backendRawURL)
 	if err != nil {
 		return fmt.Errorf("bad -scala_compiler_url: %w", err)
-		return err
 	}
 	p.backendURL = uri
 

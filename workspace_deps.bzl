@@ -1,3 +1,6 @@
+"""workspace_deps.bzl declares dependencies for the workspace
+"""
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file", "http_jar")
 
 def _maybe(repo_rule, name, **kwargs):

@@ -31,7 +31,6 @@ def build_jarfile_index(ctx, label, basename, jar):
     )
 
     output_file = ctx.actions.declare_file(basename + ".jarindex.bin")
-    print("indexing jar %s -> %s" % (label, output_file.path))
     ctx.actions.run(
         mnemonic = "JarIndexer",
         progress_message = "Indexing jar " + ijar.basename,
@@ -75,6 +74,14 @@ def build_mergeindex(ctx, output_file, jarindex_files):
         outputs = [output_file],
     )
 
+def jarindex_basename(ctx, label):
+    return "-".join([
+        ctx.label.name,
+        label.workspace_name if label.workspace_name else "default",
+        label.package if label.package else "_",
+        label.name,
+    ])
+
 def _jar_class_index_impl(ctx):
     """Implementation that collects symbols from jars."""
 
@@ -92,13 +99,18 @@ def _jar_class_index_impl(ctx):
         jarindex_files.extend(info.jar_index_files.to_list())
         transitive_jarindex_files += [info.info_file, info.jar_index_files]
 
-    for i, jar in enumerate(ctx.files.platform_jars):
-        label = ctx.attr.platform_jars[i].label
-        basename = ctx.label.name + "." + str(i)
+    for i, jar in enumerate(ctx.files.jars):
+        label = ctx.attr.jars[i].label
+        basename = jarindex_basename(ctx, label)
         jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
 
-    output_proto = ctx.actions.declare_file(ctx.label.name + ".jarindex.bin")
-    output_json = ctx.actions.declare_file(ctx.label.name + ".jarindex.json")
+    for i, jar in enumerate(ctx.files.platform_jars):
+        label = ctx.attr.platform_jars[i].label
+        basename = jarindex_basename(ctx, label)
+        jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+
+    output_proto = ctx.outputs.out_proto
+    output_json = ctx.outputs.out_json
 
     build_mergeindex(ctx, output_proto, jarindex_files)
     build_mergeindex(ctx, output_json, jarindex_files)
@@ -108,8 +120,8 @@ def _jar_class_index_impl(ctx):
     return [DefaultInfo(
         files = depset(direct_files),
     ), OutputGroupInfo(
-        index_proto = [output_proto],
-        index_json = [output_json],
+        proto = [output_proto],
+        json = [output_json],
         jarindex_files = depset(transitive = transitive_jarindex_files),
     )]
 
@@ -121,6 +133,10 @@ jar_class_index = rule(
             # providers = [JavaInfo],
             aspects = [java_indexer_aspect],
             doc = "list of java deps to be indexed",
+        ),
+        "jars": attr.label_list(
+            aspects = [java_indexer_aspect],
+            doc = "list of jars to be indexed",
         ),
         "platform_jars": attr.label_list(
             doc = "list of jar files to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
@@ -135,20 +151,31 @@ E.g. ["@maven//:io_grpc_grpc_api"] means, "in the case where io.grpc.CallCredent
 """,
         ),
         "_mergeindex": attr.label(
-            default = Label("//cmd/mergeindex"),
+            default = Label("@build_stack_scala_gazelle//cmd/mergeindex"),
             cfg = "exec",
             executable = True,
+            doc = "the mergeindex tool",
         ),
         "_jarindexer": attr.label(
-            default = Label("//cmd/jarindexer:jarindexer_bin"),
+            default = Label("@build_stack_scala_gazelle//cmd/jarindexer:jarindexer_bin"),
             cfg = "exec",
             executable = True,
+            doc = "the jarindexer tool",
         ),
         "_ijar": attr.label(
             default = Label("@bazel_tools//tools/jdk:ijar"),
             executable = True,
             cfg = "exec",
             allow_files = True,
+            doc = "the ijar tool",
+        ),
+        "out_proto": attr.output(
+            mandatory = True,
+            doc = "the name of the proto output file",
+        ),
+        "out_json": attr.output(
+            mandatory = True,
+            doc = "the name of the json output file",
         ),
     },
 )

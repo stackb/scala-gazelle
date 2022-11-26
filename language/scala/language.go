@@ -24,9 +24,9 @@ func NewLanguage() language.Language {
 	// var scalaCompiler *scalaCompiler
 
 	classResolver := newScalaClassIndexResolver(depends)
-	sourceResolver := newScalaSourceIndexResolver(depends)
+	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName, depends)
 	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
-	mavenResolver := crossresolve.NewMavenResolver(ScalaLangName)
+	mavenResolver := crossresolve.NewMavenResolver("java")
 	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
 
 	importRegistry = newImportRegistry(sourceResolver, classResolver, scalaCompiler)

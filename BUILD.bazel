@@ -1,5 +1,4 @@
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
-load("@build_stack_scala_gazelle//rules:jar_class_index.bzl", "jar_class_index")
 
 # ----------------------------------------------------
 # Gazelle
@@ -75,10 +74,4 @@ filegroup(
         "//language/scala:all_files",
     ],
     visibility = ["//visibility:public"],
-)
-
-# Use "bazel build //:jar_class_index --output_groups=index_json" to produce a JSON file
-jar_class_index(
-    name = "jar_class_index",
-    platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
 )

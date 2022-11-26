@@ -1,0 +1,14 @@
+load("@build_stack_scala_gazelle//rules:jar_class_index.bzl", "jar_class_index")
+
+# Use "bazel build //example/jar_class_index --output_groups=index_json" to produce a JSON file
+# Use "jq '.providers' < bazel-bin/jar_class_index.jarindex.json" to show only the providers mappings.
+# Use "CLASS='com.foo.Bar' jq ".providers[] | select(.class==\"$CLASS\") | ." < bazel-bin/jar_class_index.jarindex.json" for a single class
+jar_class_index(
+    name = "jar_class_index",
+    jars = [
+        "@maven//:com_google_code_gson_gson",
+    ],
+    out_json = "jar_class_index.proto.bin",
+    out_proto = "jar_class_index.proto.json",
+    platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
+)

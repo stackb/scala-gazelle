@@ -15,18 +15,18 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+
 	"github.com/stackb/scala-gazelle/api/scalaparse"
-	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
 func TestServerParse(t *testing.T) {
-	for name, tc := range map[string]struct {
+	for name, tc := range map[string]*struct {
 		files []testtools.FileSpec
-		in    sppb.ScalaParseRequest
-		want  sppb.ScalaParseResponse
+		in    scalaparse.ScalaParseRequest
+		want  scalaparse.ScalaParseResponse
 	}{
 		"degenerate": {
-			want: sppb.ScalaParseResponse{
+			want: scalaparse.ScalaParseResponse{
 				Error: `bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`,
 			},
 		},
@@ -42,8 +42,8 @@ class Foo extends HashMap {
 `,
 				},
 			},
-			want: sppb.ScalaParseResponse{
-				ScalaFiles: []*sppb.ScalaFile{
+			want: scalaparse.ScalaParseResponse{
+				ScalaFiles: []*scalaparse.ScalaFile{
 					{
 						Filename: "A.scala",
 						Packages: []string{"a"},
@@ -91,9 +91,9 @@ class Foo extends HashMap {
 			}
 
 			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
-				sppb.ScalaParseResponse{},
-				sppb.ScalaFile{},
-				sppb.ClassList{},
+				scalaparse.ScalaParseResponse{},
+				scalaparse.ScalaFile{},
+				scalaparse.ClassList{},
 			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
@@ -114,13 +114,13 @@ func TestGetFreePort(t *testing.T) {
 func TestNewHttpScalaParseRequest(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url      string
-		in       *sppb.ScalaParseRequest
+		in       *scalaparse.ScalaParseRequest
 		want     *http.Request
 		wantBody string
 	}{
 		"prototypical": {
 			url: "http://localhost:3000",
-			in: &sppb.ScalaParseRequest{
+			in: &scalaparse.ScalaParseRequest{
 				Label:    "//app:scala",
 				Filename: []string{"A.scala", "B.scala"},
 			},
@@ -163,7 +163,7 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 func TestNewHttpScalaParseRequestError(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url  string
-		in   *sppb.ScalaParseRequest
+		in   *scalaparse.ScalaParseRequest
 		want error
 	}{
 		"missing-url": {
@@ -177,7 +177,7 @@ func TestNewHttpScalaParseRequestError(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			_, got := newHttpScalaParseRequest(tc.url, tc.in)
 			if got == nil {
-				t.Fatal("error was expected: %v", tc.want)
+				t.Fatalf("error was expected: %v", tc.want)
 			}
 			if diff := cmp.Diff(tc.want.Error(), got.Error()); diff != "" {
 				t.Errorf("newHttpScalaParseRequest error (-want +got):\n%s", diff)
@@ -189,7 +189,7 @@ func TestNewHttpScalaParseRequestError(t *testing.T) {
 func mustParseURL(t *testing.T, raw string) *url.URL {
 	u, err := url.Parse(raw)
 	if err != nil {
-		t.Fatal("url parse error: %v", err)
+		t.Fatalf("url parse error: %v", err)
 	}
 	return u
 }

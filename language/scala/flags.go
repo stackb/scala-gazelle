@@ -15,7 +15,7 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 	getOrCreateScalaConfig(c) // ignoring return value, only want side-effect
 
 	fs.IntVar(&sl.totalPackageCount, "total_package_count", 0, "number of total packages for the workspace (used for progress estimation)")
-	fs.StringVar(&sl.resolverNames, "scala_resolvers", "maven,proto", "comma-separated list of scala cross-resolver implementations to enable")
+	fs.StringVar(&sl.resolverNames, "scala_resolvers", "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
 
 	// all known cross-resolvers can register flags, but do it in repeatable order
 	resolvers := crossresolve.Resolvers().ByName()
@@ -37,7 +37,7 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	for _, name := range strings.Split(sl.resolverNames, ",") {
 		resolver, err := crossresolve.Resolvers().LookupResolver(name)
 		if err != nil {
-			return fmt.Errorf("-scala_resolver %s error: %v", name, err)
+			return fmt.Errorf("-scala_resolvers %q error: %v", name, err)
 		}
 		if err := resolver.CheckFlags(fs, c); err != nil {
 			return fmt.Errorf("check flags %s: %w", name, err)

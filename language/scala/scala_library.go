@@ -41,8 +41,7 @@ func (s *scalaLibrary) Name() string {
 func (s *scalaLibrary) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
 		MergeableAttrs: map[string]bool{
-			"srcs":    true,
-			"exports": true,
+			"srcs": true,
 		},
 		ResolveAttrs: map[string]bool{"deps": true},
 	}
@@ -120,7 +119,7 @@ func (s *scalaLibraryRule) Rule() *rule.Rule {
 		newRule.SetAttr("deps", deps)
 	}
 
-	newRule.SetPrivateAttr(ResolverImpLangPrivateKey, ScalaLangName)
+	newRule.SetPrivateAttr(resolverImpLangPrivateKey, ScalaLangName)
 	newRule.SetPrivateAttr(config.GazelleImportsKey, s.imports())
 	newRule.SetPrivateAttr(scalaImportsPrivateKey, s.imports())
 

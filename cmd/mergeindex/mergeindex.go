@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
@@ -21,10 +22,6 @@ var (
 )
 
 func main() {
-	if debug {
-		log.Println("args:", os.Args)
-	}
-
 	log.SetPrefix("mergeindex: ")
 	log.SetFlags(0) // don't print timestamps
 
@@ -101,8 +98,6 @@ func parseFlags(args []string) (files []string, err error) {
 		err = fmt.Errorf("positional args should be a non-empty list of .jarindex.json files to merge")
 	}
 
-	log.Println("flags predefinedLabels:", predefinedLabels)
-
 	return
 }
 
@@ -114,6 +109,11 @@ func merge(filenames ...string) (*jarindex.JarIndex, error) {
 			return nil, err
 		}
 		jars = append(jars, idx.JarFile...)
+		if debug {
+			if err := writeJarIndexJarFileJSONFiles(idx); err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	predefined := strings.Split(predefinedLabels, ",")
@@ -129,4 +129,22 @@ func merge(filenames ...string) (*jarindex.JarIndex, error) {
 	index.Preferred = preferred
 
 	return index, nil
+}
+
+func writeJarIndexJarFileJSONFiles(idx *jarindex.JarIndex) error {
+	for _, file := range idx.JarFile {
+		if err := writeJarFileJSONFile(file); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func writeJarFileJSONFile(file *jarindex.JarFile) error {
+	jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
+	if err := mergeindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
+		return err
+	}
+	log.Println("Wrote:", jarFilename)
+	return nil
 }
