@@ -110,12 +110,8 @@ func merge(filenames ...string) (*jarindex.JarIndex, error) {
 		}
 		jars = append(jars, idx.JarFile...)
 		if debug {
-			for _, file := range idx.JarFile {
-				jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
-				if err := mergeindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
-					return nil, err
-				}
-				log.Println("Wrote:", jarFilename)
+			if err := writeJarIndexJarFileJSONFiles(idx); err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -133,4 +129,22 @@ func merge(filenames ...string) (*jarindex.JarIndex, error) {
 	index.Preferred = preferred
 
 	return index, nil
+}
+
+func writeJarIndexJarFileJSONFiles(idx *jarindex.JarIndex) error {
+	for _, file := range idx.JarFile {
+		if err := writeJarFileJSONFile(file); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func writeJarFileJSONFile(file *jarindex.JarFile) error {
+	jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
+	if err := mergeindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
+		return err
+	}
+	log.Println("Wrote:", jarFilename)
+	return nil
 }
