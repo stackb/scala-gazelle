@@ -83,17 +83,7 @@ filegroup(
 jar_class_index(
     name = "jar_class_index",
     jars = [
-        "@maven//:com_google_protobuf_protobuf_java",
-        "@maven//:com_lightbend_akka_grpc_akka_grpc_runtime_2_12_2_1_4",
-        "@maven//:com_thesamet_scalapb_lenses_2_12",
-        "@maven//:com_thesamet_scalapb_scalapb_runtime_2_12",
-        "@maven//:com_thesamet_scalapb_scalapb_runtime_grpc_2_12",
-        "@maven//:com_typesafe_akka_akka_actor_2_12",
-        "@maven//:com_typesafe_akka_akka_http_core_2_12",
-        "@maven//:com_typesafe_akka_akka_stream_2_12",
-        "@maven//:io_grpc_grpc_api",
-        "@maven//:io_grpc_grpc_protobuf",
-        "@maven//:io_grpc_grpc_stub",
+        "@maven//:com_google_code_gson_gson",
     ],
     out_json = "jar_class_index.proto.bin",
     out_proto = "jar_class_index.proto.json",
