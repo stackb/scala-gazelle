@@ -9,11 +9,8 @@ import (
 )
 
 const ImportKindDirect = ImportKind("direct")
-const ImportKindTransitive = ImportKind("transitive")
-const ImportKindSuperclass = ImportKind("superclass")
 const ImportKindImplicit = ImportKind("implicit")
 const ImportKindMainClass = ImportKind("main_class")
-const ImportKindExport = ImportKind("export")
 const ImportKindComment = ImportKind("comment")
 
 type ImportKind string
@@ -30,22 +27,35 @@ type ImportOrigin struct {
 	Actual string // the effective string for the import.
 }
 
+func NewDirectImportOrigin(src *index.ScalaFileSpec) *ImportOrigin {
+	return &ImportOrigin{
+		Kind:       ImportKindDirect,
+		SourceFile: src,
+	}
+}
+
+func NewImplicitImportOrigin(parent string) *ImportOrigin {
+	return &ImportOrigin{
+		Kind:   ImportKindImplicit,
+		Parent: parent,
+	}
+}
+
 func (io *ImportOrigin) String() string {
 	var s string
 	switch io.Kind {
 	case ImportKindDirect:
+		if io.SourceFile == nil {
+			panic("source file should always be set for direct import: this is a bug")
+		}
 		s = fmt.Sprintf("%s from %s", io.Kind, filepath.Base(io.SourceFile.Filename))
 		if io.Parent != "" {
 			s += " (materialized from " + io.Parent + ")"
 		}
-	case ImportKindExport:
-		s = fmt.Sprintf("%s by %s", io.Kind, filepath.Base(io.SourceFile.Filename))
 	case ImportKindImplicit:
 		s = fmt.Sprintf("%s from %s", io.Kind, io.Parent)
-	case ImportKindSuperclass:
-		s = fmt.Sprintf("%s of %s", io.Kind, io.Parent)
-	case ImportKindTransitive:
-		s = fmt.Sprintf("%s via %s", io.Kind, io.Parent)
+	case ImportKindMainClass:
+		s = fmt.Sprintf("%s", io.Kind)
 	case ImportKindComment:
 		s = fmt.Sprintf("%s", io.Kind)
 	default:

@@ -19,15 +19,11 @@ func NewLabelImportMap() LabelImportMap {
 }
 
 func (m LabelImportMap) Set(from label.Label, imp string, origin *ImportOrigin) {
-
 	if all, ok := m[from]; ok {
 		all[imp] = origin
 	} else {
 		m[from] = map[string]*ImportOrigin{imp: origin}
 	}
-	// if debug {
-	// 	log.Printf(" --> resolved %q (%s) to %v", imp, origin.String(), from)
-	// }
 }
 
 func (m LabelImportMap) String() string {

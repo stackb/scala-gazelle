@@ -211,7 +211,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	// direct
 	for _, file := range files {
 		for _, imp := range file.Imports {
-			imports.Add(imp, &ImportOrigin{Kind: ImportKindDirect, SourceFile: file})
+			imports.Add(imp, NewDirectImportOrigin(file))
 		}
 	}
 
@@ -225,7 +225,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	for src := range imports {
 		for _, dst := range sc.GetImplicitImports(impLang, src) {
 			implicits.Push(dst)
-			imports.Add(dst, &ImportOrigin{Kind: ImportKindImplicit, Parent: src})
+			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
 	}
 	// gather transitive implicits
@@ -233,7 +233,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		src, _ := implicits.Pop()
 		for _, dst := range sc.GetImplicitImports(impLang, src) {
 			implicits.Push(dst)
-			imports.Add(dst, &ImportOrigin{Kind: ImportKindImplicit, Parent: src})
+			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
 	}
 

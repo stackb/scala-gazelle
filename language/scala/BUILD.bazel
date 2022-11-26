@@ -111,6 +111,7 @@ go_test(
         "glob_test.go",
         "import_origin_test.go",
         "import_resolver_test.go",
+        "label_import_map_test.go",
         "resolver_test.go",
         "scala_compiler_test.go",
         "scala_existing_rule_test.go",
