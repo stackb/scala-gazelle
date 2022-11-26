@@ -7,61 +7,94 @@ option java_package = "build.stack.gazelle.scala.jarindex";
 option java_multiple_files = true;
 option java_outer_classname = "JarIndexSpec";
 
-message ClassFileProvider {
-    string class = 1;
-    repeated string label = 2;
-}
-
+// JarIndex contains indexed metadata about a set of jar files.
 message JarIndex {
+    // jar_file is a list of jars in the index
     repeated JarFile jar_file = 2 [json_name = "jarFiles"];
+    // predefined is a user 
     repeated string predefined = 3;
     repeated string preferred = 4;
+    // providers is a summary set of the classes in the index and the labels
+    // that provide it.
     repeated ClassFileProvider providers = 5;
 }
 
+// ClassFileProvider records the relationship between a jvm class and 
+// the bazel labels that provide it.
+message ClassFileProvider {
+    // classi is the fqcn of the class.
+    string class = 1;
+    // label is a list of bazel labels.
+    repeated string label = 2;
+}
+
+// JarFile is a set of metadata about a jar file.
 message JarFile {
-    // filename is the relative pathname of the jar file
+    // filename is the relative pathname of the jar file.
     string filename = 1;
-    // label is the fully-qualified bazel label 
+    // label is the fully-qualified bazel label.
     string label = 2;
-    // class_file is a list of classes that are provided by the jar 
+    // class_file is a list of classes that are provided by the jar.
     repeated ClassFile class_file = 3  [json_name = "files"];
-    // symbols is a summary set of all symbols named by all files in the jar
+    // symbols is a summary set of all symbols named by all files in the jar.
     repeated string symbols = 4;
-    // class_name is a summary set of classes used by all files in the jar
+    // class_name is a summary set of classes used by all files in the jar.
     repeated string class_name = 5  [json_name = "classes"];
-    // package_name is a summary set of packages provided by the jar
+    // package_name is a summary set of packages provided by the jar.
     repeated string package_name = 6  [json_name = "packages"];
 }
 
+// ClassFile is a set of metadata about a jvm class.
 message ClassFile {
+    // the fqcn of the class.
     string name = 1;
+    // classes is a list of class IDs whose indices shoudl match the 
+    // JarFile symbol index.
     repeated int32 classes = 2;
+    // symbols is a list of symbols required by the class.
     repeated string symbols = 3;
+    // superclasses is a list of superclasses of this class.
     repeated string superclasses = 4;
+    // interfaces is a list of interfaces implemented by this class.
     repeated string interfaces = 5;
+    // fields is a list of fields in this class.
     repeated ClassField fields = 6;
+    // methods is a list of methods in this class.
     repeated ClassMethod methods = 7;
 }
 
+// ClassField is a set of metadata about a field in jvm class.
 message ClassField {
+    // name is the name of the field.
     string name = 1;
+    // type is the type of the field.
     ClassType type = 2;
 }
 
+// ClassType is a set of metadata about a JVM type.
 message ClassType {
+    // TODO: what is this?
     string kind = 1;
+    // TODO: what is this?
     string value = 2;
 }
 
+// ClassMethod
 message ClassMethod {
+    // name is the name of the method.
     string name = 1;
+    // returns is the type returned by this method.
     ClassType returns = 2;
+    // params are the list of parameters this method takes.
     repeated ClassMethodParam params = 3;
+    // types are the list of parameter types
     repeated ClassType types = 4;
+    // throws is a list of types this method is know ot throw.
     repeated ClassType throws = 5;
 }
 
+// ClassMethodParam describes a parameter to a method.
 message ClassMethodParam {
+    // returns is the type of the parameter.
     ClassType returns = 1;
 }
