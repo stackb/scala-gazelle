@@ -401,11 +401,7 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	reasons := make([]string, 0, len(imports))
 	for imp, origin := range imports {
 		reason := imp + " (" + origin.String() + ")"
-		// if imp != origin.Import {
-		// 	reason += fmt.Sprintf("[as %s]", origin.Import)
-		// }
 		reasons = append(reasons, reason)
-
 	}
 	if len(reasons) == 0 {
 		reasons = append(reasons, fmt.Sprintf("<unknown origin of %v>", imports.Keys()))
