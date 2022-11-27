@@ -84,6 +84,8 @@ type scalaLang struct {
 	totalRules int
 	// progress is the progress interface
 	progress mobyprogress.Output
+	// scalaExistingRules is the value of the scala_existing_rule repeatable flag
+	scalaExistingRules stringSliceFlags
 }
 
 // Name implements part of the language.Language interface
