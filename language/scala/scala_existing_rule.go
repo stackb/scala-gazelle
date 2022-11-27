@@ -43,16 +43,6 @@ func init() {
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", false)
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library", false)
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test", true)
-
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "_scala_library", false)
-	mustRegister("//bazel_tools:scala.bzl", "scala_app", false)
-	mustRegister("//bazel_tools:scala.bzl", "scala_app_test", true)
-	mustRegister("//bazel_tools:scala.bzl", "scala_app_library", false)
-	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_library", false)
-	mustRegister("//bazel_tools:scala.bzl", "trumid_scala_test", true)
-	mustRegister("//bazel_tools:scala.bzl", "classic_scala_app", false)
-	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_app", false)
-	mustRegister("//bazel_tools:scala.bzl", "scala_e2e_test", true)
 }
 
 // scalaExistingRule implements RuleResolver for scala-kind rules that are
