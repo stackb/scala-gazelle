@@ -254,8 +254,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 					})
 				}
 			}
-
-			// log.Fatalln("unresolved:", unresolved)
 		}
 		r.SetAttr("deps", depsExpr)
 	}
@@ -397,9 +395,7 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Ex
 		list = append(list, str)
 	}
 
-	listExpr := &build.ListExpr{List: list}
-
-	return listExpr
+	return &build.ListExpr{List: list}
 }
 
 func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
