@@ -244,23 +244,38 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			return shouldKeep(expr, labelOwners...)
 		}
 		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
-		if len(unresolved) > 0 && sc.explainDependencies {
-			srcs := r.Attr("srcs")
-			if srcs != nil {
-				srcs.Comment().Before = nil
-				for imp, origin := range unresolved {
-					srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
-						Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
-					})
-				}
-			}
-		}
 		r.SetAttr("deps", depsExpr)
+
+		if len(unresolved) > 0 && sc.explainDependencies {
+			commentUnresolvedImports(unresolved, r, "srcs")
+		}
 	}
 
 	if debug {
 		log.Println(from, "| END RESOLVE", impLang)
 		// printRules(r)
+	}
+}
+
+func commentUnresolvedImports(unresolved ImportOriginMap, r *rule.Rule, attrName string) {
+	srcs := r.Attr(attrName)
+	if srcs == nil {
+		return
+	}
+	srcs.Comment().Before = nil
+
+	imports := make([]string, 0, len(unresolved))
+	for imp := range unresolved {
+		imports = append(imports, imp)
+	}
+	sort.Strings(imports)
+
+	for _, imp := range imports {
+		origin := unresolved[imp]
+		log.Println(imp, origin)
+		srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
+			Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
+		})
 	}
 }
 

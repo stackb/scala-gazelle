@@ -2,6 +2,7 @@ package scala
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -383,4 +384,82 @@ test(
 			}
 		})
 	}
+}
+
+func TestCommentUnresolvedImports(t *testing.T) {
+	type testCase struct {
+		// src is the rule source code
+		src string
+		// unresolved is the import map under test
+		unresolved ImportOriginMap
+		// want is the formatted output
+		want string
+	}
+	for name, tc := range map[string]*testCase{
+		"no srcs attribute": {
+			unresolved: map[string]*ImportOrigin{
+				"com.foo.Bar": NewDirectImportOrigin(&index.ScalaFileSpec{
+					Filename: "Main.scala",
+				}),
+			},
+			src: `
+scala_library(
+    name = "test",
+    deps = [],
+)`,
+			want: `
+scala_library(
+    name = "test",
+    deps = [],
+)`,
+		},
+		"with srcs attribute": {
+			unresolved: map[string]*ImportOrigin{
+				"com.foo.Bar": NewDirectImportOrigin(&index.ScalaFileSpec{
+					Filename: "Main.scala",
+				}),
+			},
+			src: `
+scala_library(
+    name = "test",
+    srcs = ["Main.scala"],
+    deps = [],
+)`,
+			want: `
+scala_library(
+    name = "test",
+    srcs =
+    # unresolved: com.foo.Bar (direct from Main.scala)
+    ["Main.scala"],
+    deps = [],
+)`,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			r := mustLoadRule(t, tc.src)
+			commentUnresolvedImports(tc.unresolved, r, "srcs")
+			want := strings.TrimSpace(tc.want)
+			got := ruleString(r)
+			if diff := cmp.Diff(want, got); diff != "" {
+				t.Errorf("CommentUnresolvedImports() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func mustLoadRule(t *testing.T, content string) *rule.Rule {
+	f, err := rule.LoadData("<in-memory>", "", []byte(content))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(f.Rules) != 1 {
+		t.Fatal("want 1 rule, got:", len(f.Rules))
+	}
+	return f.Rules[0]
+}
+
+func ruleString(r *rule.Rule) string {
+	file := rule.EmptyFile("", "")
+	r.Insert(file)
+	return strings.TrimSpace(string(file.Format()))
 }
