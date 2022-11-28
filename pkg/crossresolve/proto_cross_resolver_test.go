@@ -73,3 +73,55 @@ func TestProtoCrossResolverCrossResolve(t *testing.T) {
 		})
 	}
 }
+
+func TestProtoCrossResolverIsLabelOwner(t *testing.T) {
+	for name, tc := range map[string]struct {
+		lang      string
+		imports   map[label.Label][]string
+		from      label.Label
+		indexFunc func(from label.Label) (*rule.Rule, bool)
+		want      bool
+	}{
+		"degenerate case": {},
+		"managed proto label": {
+			lang: scalaName,
+			from: label.New("", "example", "foo_proto_scala_library"),
+			want: true,
+		},
+		"managed grpc label": {
+			lang: scalaName,
+			from: label.New("", "example", "foo_grpc_scala_library"),
+			want: true,
+		},
+		"unmanaged non-proto/non-grpc label": {
+			lang: scalaName,
+			from: label.New("", "example", "foo_scala_library"),
+			want: false,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			args := []string{}
+
+			cr := NewProtoResolver(tc.lang, func(lang, impLang string) map[label.Label][]string {
+				return tc.imports
+			})
+			fs := flag.NewFlagSet(tc.lang, flag.ExitOnError)
+			c := &config.Config{}
+			cr.RegisterFlags(fs, cmdGenerate, c)
+			if err := fs.Parse(args); err != nil {
+				t.Fatal(err)
+			}
+			if err := cr.CheckFlags(fs, c); err != nil {
+				t.Fatal(err)
+			}
+
+			cr.OnResolve()
+
+			got := cr.IsLabelOwner(tc.from, tc.indexFunc)
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf(".IsLabelOwner (-want +got):\n%s", diff)
+			}
+		})
+	}
+}

@@ -105,7 +105,9 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 	lastDot := strings.LastIndex(imp, ".")
 	if lastDot > 0 {
 		child := imp[lastDot+1:]
-		log.Println(from, "| resolveImport parent:", imp, "child:", child)
+		if debug {
+			log.Println(from, "| resolveImport parent:", imp, "child:", child)
+		}
 
 		if isCapitalized(child) {
 			parent := imp[0:lastDot]
@@ -135,7 +137,9 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 // generation phase.
 func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) []label.Label {
 	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
-		log.Println(from, "| resolveAnyKind: found rule with override:", l)
+		if debug {
+			log.Println(from, "| resolveAnyKind: found rule with override:", l)
+		}
 		return []label.Label{l}
 	}
 	return resolveWithIndex(c, ix, lang, imp, from)
@@ -143,7 +147,7 @@ func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp st
 
 func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) []label.Label {
 	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, ScalaLangName)
-	if len(matches) == 0 {
+	if debug && len(matches) == 0 {
 		log.Println(from, "| resolveWithIndex: no rules found for:", imp)
 		return nil
 	}
@@ -158,7 +162,9 @@ func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string,
 			labels = append(labels, directDep)
 		}
 	}
-	log.Println(from, "| resolveWithIndex: found rules by import with config:", imp, "->", labels)
+	if debug {
+		log.Println(from, "| resolveWithIndex: found rules by import with config:", imp, "->", labels)
+	}
 	return labels
 }
 
