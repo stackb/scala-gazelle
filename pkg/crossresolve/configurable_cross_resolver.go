@@ -36,7 +36,7 @@ type GazellePhaseTransitionListener interface {
 // on the rule characteristics.  If no rule corresponding to the given
 // label is found, ruleIndex returns nil, false.
 type LabelOwner interface {
-	IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool
+	IsLabelOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool
 }
 
 func crossResolverNameMatches(resolverLang, lang string, imp resolve.ImportSpec) bool {

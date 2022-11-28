@@ -201,3 +201,67 @@ func TestMavenCrossResolverCrossResolve(t *testing.T) {
 		})
 	}
 }
+
+func TestMavenCrossResolverIsLabelOwner(t *testing.T) {
+	for name, tc := range map[string]struct {
+		mavenInstallJsonContent string
+		lang                    string
+		from                    label.Label
+		indexFunc               func(from label.Label) (*rule.Rule, bool)
+		want                    bool
+	}{
+		"degenerate case": {
+			mavenInstallJsonContent: mavenInstallJsonSimpleExample,
+			lang:                    scalaName,
+			from:                    label.NoLabel,
+			want:                    false,
+		},
+		"managed maven dependency": {
+			mavenInstallJsonContent: mavenInstallJsonSimpleExample,
+			lang:                    scalaName,
+			from:                    label.New("maven", "", "com_guava_guava"),
+			want:                    true,
+		},
+		"unmanaged non-maven dependency": {
+			mavenInstallJsonContent: mavenInstallJsonSimpleExample,
+			lang:                    scalaName,
+			from:                    label.New("not-maven", "", "com_guava_guava"),
+			want:                    false,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			files := []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: tc.mavenInstallJsonContent,
+				},
+			}
+
+			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, files)
+			defer cleanup()
+
+			args := []string{
+				"-pinned_maven_install_json_files=./maven_install.json",
+			}
+
+			cr := NewMavenResolver(tc.lang)
+			fs := flag.NewFlagSet(tc.lang, flag.ExitOnError)
+			c := &config.Config{
+				WorkDir: tmpDir,
+			}
+			cr.RegisterFlags(fs, cmdGenerate, c)
+			if err := fs.Parse(args); err != nil {
+				t.Fatal(err)
+			}
+			if err := cr.CheckFlags(fs, c); err != nil {
+				t.Fatal(err)
+			}
+
+			got := cr.IsLabelOwner(tc.from, tc.indexFunc)
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf(".IsLabelOwner (-want +got):\n%s", diff)
+			}
+		})
+	}
+}

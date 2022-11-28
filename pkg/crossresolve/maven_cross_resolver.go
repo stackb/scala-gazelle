@@ -72,8 +72,8 @@ func (cr *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) err
 	return nil
 }
 
-// IsOwner implements the LabelOwner interface.
-func (cr *MavenCrossResolver) IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+// IsLabelOwner implements the LabelOwner interface.
+func (cr *MavenCrossResolver) IsLabelOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
 	if len(cr.resolvers) == 0 {

@@ -315,8 +315,8 @@ type repoLabelOwner struct {
 	repo string
 }
 
-// IsOwner implements the LabelOwner interface.
-func (cr *repoLabelOwner) IsOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+// IsLabelOwner implements the LabelOwner interface.
+func (cr *repoLabelOwner) IsLabelOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
 	return from.Repo == cr.repo
 }
 

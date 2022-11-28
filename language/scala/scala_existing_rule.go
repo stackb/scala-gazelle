@@ -233,7 +233,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
 
 	unresolved := resolved[label.NoLabel]
-	if len(unresolved) > 0 {
+	if debug && len(unresolved) > 0 {
 		// panic(fmt.Sprintf("%v has unresolved dependencies: %v", from, unresolved))
 		log.Printf("%v has unresolved dependencies: %v", from, unresolved)
 	}
@@ -244,6 +244,17 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 			return shouldKeep(expr, labelOwners...)
 		}
 		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
+		if len(unresolved) > 0 && sc.explainDependencies {
+			srcs := r.Attr("srcs")
+			if srcs != nil {
+				srcs.Comment().Before = nil
+				for imp, origin := range unresolved {
+					srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
+						Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
+					})
+				}
+			}
+		}
 		r.SetAttr("deps", depsExpr)
 	}
 
@@ -474,7 +485,7 @@ func shouldKeep(expr build.Expr, labelOwners ...crossresolve.LabelOwner) bool {
 	// if we can find a resolver than manages/owns this label, remove it;
 	// the resolver should cross-resolve the import again
 	for _, resolver := range labelOwners {
-		if resolver.IsOwner(from, func(from label.Label) (*rule.Rule, bool) {
+		if resolver.IsLabelOwner(from, func(from label.Label) (*rule.Rule, bool) {
 			return nil, false
 		}) {
 			return false

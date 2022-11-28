@@ -2,10 +2,12 @@ package crossresolve
 
 import (
 	"flag"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
 type fromImportsProvider func(lang, impLang string) map[label.Label][]string
@@ -49,6 +51,12 @@ func (r *ProtoCrossResolver) OnResolve() {
 
 // OnEnd implements part of the GazellePhaseTransitionListener interface.
 func (r *ProtoCrossResolver) OnEnd() {
+}
+
+// IsLabelOwner implements the LabelOwner interface.
+func (cr *ProtoCrossResolver) IsLabelOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+	return strings.HasSuffix(from.Name, "proto_scala_library") ||
+		strings.HasSuffix(from.Name, "grpc_scala_library")
 }
 
 // CrossResolve implements the CrossResolver interface.
