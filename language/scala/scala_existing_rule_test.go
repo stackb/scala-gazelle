@@ -211,7 +211,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
-			index := &mockLabeledRuleIndex{}
+			index := &mockRuleIndex{}
 			sc := getOrCreateScalaConfig(index, c, "")
 			sc.parseDirectives(tc.directives)
 			from := label.New("", "pkg", "rule")
@@ -282,7 +282,7 @@ func TestShouldKeep(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			index := &mockLabeledRuleIndex{}
+			index := &mockRuleIndex{}
 			getLabelOwners() // trigger lazy-build side-effect early
 			content := fmt.Sprintf(`
 scala_library(

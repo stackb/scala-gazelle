@@ -51,7 +51,7 @@ func TestIsSameImport(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			index := &mockLabeledRuleIndex{}
+			index := &mockRuleIndex{}
 			sc := newScalaConfig(index, c, "")
 			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {

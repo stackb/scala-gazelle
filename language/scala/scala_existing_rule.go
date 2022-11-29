@@ -483,7 +483,7 @@ func isUnqualifiedImport(imp string) bool {
 	return strings.LastIndex(imp, ".") == -1
 }
 
-func shouldKeep(expr build.Expr, ruleIndex lookupRule, labelOwners ...crossresolve.LabelOwner) bool {
+func shouldKeep(expr build.Expr, lookupRule func(from label.Label) (*rule.Rule, bool), labelOwners ...crossresolve.LabelOwner) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
@@ -499,7 +499,7 @@ func shouldKeep(expr build.Expr, ruleIndex lookupRule, labelOwners ...crossresol
 	// if we can find a resolver than manages/owns this label, remove it;
 	// the resolver should cross-resolve the import again
 	for _, resolver := range labelOwners {
-		if resolver.IsLabelOwner(from, ruleIndex) {
+		if resolver.IsLabelOwner(from, lookupRule) {
 			return false
 		}
 	}

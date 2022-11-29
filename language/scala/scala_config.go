@@ -111,14 +111,14 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 // LookupRule implements the crossresolve.RuleIndex interface.  It also
 // translates relative labels into their absolute form.
 func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
-	if c.ruleIndex == nil {
+	if c.ruleIndex == nil || from.Name == "" {
 		return nil, false
-	}
-	if from.Pkg == "" {
-		from = label.New(from.Repo, c.rel, from.Name)
 	}
 	if from.Repo == "" {
 		from = label.New(c.config.RepoName, from.Pkg, from.Name)
+	}
+	if from.Pkg == "" && from.Repo == c.config.RepoName {
+		from = label.New(from.Repo, c.rel, from.Name)
 	}
 	return c.ruleIndex.LookupRule(from)
 }
