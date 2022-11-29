@@ -211,8 +211,9 @@ func TestMakeLabeledListExpr(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
-			sc := getOrCreateScalaConfig(c)
-			sc.parseDirectives("", tc.directives)
+			globalState := &mockGlobalState{}
+			sc := getOrCreateScalaConfig(globalState, c, "")
+			sc.parseDirectives(tc.directives)
 			from := label.New("", "pkg", "rule")
 			resolved := make(LabelImportMap)
 			for imp, origin := range tc.resolved {
@@ -230,7 +231,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			target := file.Rules[0]
 
 			keep := func(expr build.Expr) bool {
-				return shouldKeep(expr)
+				return shouldKeep(expr, globalState.LookupRule)
 			}
 			expr := makeLabeledListExpr(c, target.Kind(), keep, target.Attr("deps"), from, resolved)
 			target.SetAttr("deps", expr)
@@ -281,6 +282,8 @@ func TestShouldKeep(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			globalState := &mockGlobalState{}
+
 			getLabelOwners() // trigger lazy-build side-effect early
 			content := fmt.Sprintf(`
 scala_library(
@@ -304,7 +307,7 @@ scala_library(
 				tc.owner = &repoLabelOwner{}
 			}
 			expr := listExpr.List[0]
-			got := shouldKeep(expr, tc.owner)
+			got := shouldKeep(expr, globalState.LookupRule, tc.owner)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("shouldKeep (-want +got):\n%s", diff)
 			}

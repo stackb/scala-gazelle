@@ -5,6 +5,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -51,7 +52,8 @@ func TestIsSameImport(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			sc := newScalaConfig(c)
+			globalState := &mockGlobalState{}
+			sc := newScalaConfig(globalState, c, "")
 			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -100,4 +102,12 @@ func TestDedupLabels(t *testing.T) {
 			}
 		})
 	}
+}
+
+type mockGlobalState struct {
+}
+
+// LookupRule implements part of the globalState interface
+func (g *mockGlobalState) LookupRule(from label.Label) (*rule.Rule, bool) {
+	return nil, false
 }
