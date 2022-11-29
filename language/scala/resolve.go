@@ -16,6 +16,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
+type ruleIndex func(from label.Label) (*rule.Rule, bool)
+
 // Imports implements part of the language.Language interface
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	from := label.New("", f.Pkg, r.Name())

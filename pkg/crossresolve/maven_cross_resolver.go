@@ -3,6 +3,7 @@ package crossresolve
 import (
 	"flag"
 	"fmt"
+	"log"
 	"path/filepath"
 	"strings"
 
@@ -62,7 +63,9 @@ func (cr *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) err
 		if !filepath.IsAbs(filename) {
 			filename = filepath.Join(c.WorkDir, filename)
 		}
-		resolver, err := maven.NewResolver(filename, name)
+		resolver, err := maven.NewResolver(filename, name, cr.lang, func(format string, args ...interface{}) {
+			log.Printf(format, args...)
+		})
 		if err != nil {
 			return fmt.Errorf("initializing maven resolver: %w", err)
 		}

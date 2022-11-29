@@ -33,8 +33,12 @@ const (
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
+	// global is the globalState interface
+	global globalState
 	// config is the parent gazelle config.
 	config *config.Config
+	// rel is the relative directory
+	rel string
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
 	// overrides patterns are parsed from 'gazelle:override scala glob IMPORT LABEL'
@@ -50,9 +54,11 @@ type scalaConfig struct {
 }
 
 // newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(config *config.Config) *scalaConfig {
+func newScalaConfig(global globalState, config *config.Config, rel string) *scalaConfig {
 	return &scalaConfig{
+		global:             global,
 		config:             config,
+		rel:                rel,
 		rules:              make(map[string]*RuleConfig),
 		overrides:          make([]*overrideSpec, 0),
 		indirects:          make([]*indirectDependencySpec, 0),
@@ -72,20 +78,21 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(config *config.Config) *scalaConfig {
+func getOrCreateScalaConfig(global globalState, config *config.Config, rel string) *scalaConfig {
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[ScalaLangName]; ok {
-		cfg = existingExt.(*scalaConfig).Clone()
+		cfg = existingExt.(*scalaConfig).clone(config, rel)
+		cfg.rel = rel
 	} else {
-		cfg = newScalaConfig(config)
+		cfg = newScalaConfig(global, config, rel)
 	}
 	config.Exts[ScalaLangName] = cfg
 	return cfg
 }
 
-// Clone copies this config to a new one.
-func (c *scalaConfig) Clone() *scalaConfig {
-	clone := newScalaConfig(c.config)
+// clone copies this config to a new one.
+func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
+	clone := newScalaConfig(c.global, config, rel)
 	clone.explainDependencies = c.explainDependencies
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
@@ -99,10 +106,28 @@ func (c *scalaConfig) Clone() *scalaConfig {
 	return clone
 }
 
+func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
+	if c.global == nil {
+		return nil, false
+	}
+	if from.Pkg == "" {
+		from = label.New(from.Repo, c.rel, from.Name)
+		log.Printf("scalaConfig.LookupRlue from.Pkg assigned to %s", c.rel)
+	}
+	if from.Repo == "" {
+		from = label.New(c.config.RepoName, from.Pkg, from.Name)
+		log.Printf("scalaConfig.LookupRlue from.repo assigned to %s", c.config.RepoName)
+	}
+	if from.Name == "blending" {
+		log.Printf("scalaConfig.LookupRlue from %s", from)
+	}
+	return c.global.LookupRule(from)
+}
+
 // parseDirectives is called in each directory visited by gazelle.  The relative
 // directory name is given by 'rel' and the list of directives in the BUILD file
 // are specified by 'directives'.
-func (c *scalaConfig) parseDirectives(rel string, directives []rule.Directive) (err error) {
+func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	for _, d := range directives {
 		// log.Printf("parsing directive rel=%q, key=%q, value=%q", rel, d.Key, d.Value)
 		switch d.Key {

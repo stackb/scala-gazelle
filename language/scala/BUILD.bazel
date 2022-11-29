@@ -14,6 +14,7 @@ go_library(
         "flags.go",
         "generate.go",
         "glob.go",
+        "global_state.go",
         "import_origin.go",
         "import_registry.go",
         "import_resolver.go",
