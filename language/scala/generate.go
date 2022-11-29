@@ -50,7 +50,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		sl.importRegistry.AddDependency("pkg/"+args.Rel, "rule/"+label.New("", args.Rel, r.Name()).String(), "rule")
 		if r.Kind() != packageMarkerRuleKind {
 			from := label.New(args.Config.RepoName, args.Rel, r.Name())
-			sl.setGlobalRule(from, r)
+			sl.recordRule(from, r)
 		}
 	}
 

@@ -89,7 +89,7 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// scalaExistingRules is the value of the scala_existing_rule repeatable flag
 	scalaExistingRules stringSliceFlags
-	// ruleIndex is a map of all known generated rules; it helps implement the globalState interface
+	// ruleIndex is a map of all known generated rules
 	allRules map[label.Label]*rule.Rule
 }
 

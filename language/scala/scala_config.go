@@ -10,6 +10,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
 const (
@@ -33,11 +35,11 @@ const (
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
-	// global is the globalState interface
-	global globalState
+	// ruleIndex is the global rule map.
+	ruleIndex crossresolve.RuleIndex
 	// config is the parent gazelle config.
 	config *config.Config
-	// rel is the relative directory
+	// rel is the relative directory.
 	rel string
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
@@ -54,9 +56,9 @@ type scalaConfig struct {
 }
 
 // newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(global globalState, config *config.Config, rel string) *scalaConfig {
+func newScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel string) *scalaConfig {
 	return &scalaConfig{
-		global:             global,
+		ruleIndex:          ruleIndex,
 		config:             config,
 		rel:                rel,
 		rules:              make(map[string]*RuleConfig),
@@ -78,13 +80,13 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(global globalState, config *config.Config, rel string) *scalaConfig {
+func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel string) *scalaConfig {
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[ScalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)
 		cfg.rel = rel
 	} else {
-		cfg = newScalaConfig(global, config, rel)
+		cfg = newScalaConfig(ruleIndex, config, rel)
 	}
 	config.Exts[ScalaLangName] = cfg
 	return cfg
@@ -92,7 +94,7 @@ func getOrCreateScalaConfig(global globalState, config *config.Config, rel strin
 
 // clone copies this config to a new one.
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
-	clone := newScalaConfig(c.global, config, rel)
+	clone := newScalaConfig(c.ruleIndex, config, rel)
 	clone.explainDependencies = c.explainDependencies
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
@@ -106,22 +108,19 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	return clone
 }
 
+// LookupRule implements the crossresolve.RuleIndex interface.  It also
+// translates relative labels into their absolute form.
 func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
-	if c.global == nil {
+	if c.ruleIndex == nil {
 		return nil, false
 	}
 	if from.Pkg == "" {
 		from = label.New(from.Repo, c.rel, from.Name)
-		log.Printf("scalaConfig.LookupRlue from.Pkg assigned to %s", c.rel)
 	}
 	if from.Repo == "" {
 		from = label.New(c.config.RepoName, from.Pkg, from.Name)
-		log.Printf("scalaConfig.LookupRlue from.repo assigned to %s", c.config.RepoName)
 	}
-	if from.Name == "blending" {
-		log.Printf("scalaConfig.LookupRlue from %s", from)
-	}
-	return c.global.LookupRule(from)
+	return c.ruleIndex.LookupRule(from)
 }
 
 // parseDirectives is called in each directory visited by gazelle.  The relative

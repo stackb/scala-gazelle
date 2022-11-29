@@ -483,7 +483,7 @@ func isUnqualifiedImport(imp string) bool {
 	return strings.LastIndex(imp, ".") == -1
 }
 
-func shouldKeep(expr build.Expr, ruleIndex ruleIndex, labelOwners ...crossresolve.LabelOwner) bool {
+func shouldKeep(expr build.Expr, ruleIndex lookupRule, labelOwners ...crossresolve.LabelOwner) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
