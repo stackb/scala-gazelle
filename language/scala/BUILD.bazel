@@ -114,6 +114,8 @@ go_test(
         "import_origin_test.go",
         "import_resolver_test.go",
         "label_import_map_test.go",
+        "language_test.go",
+        "loads_test.go",
         "resolver_test.go",
         "rule_index_test.go",
         "scala_compiler_test.go",

@@ -128,12 +128,11 @@ func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
 // are specified by 'directives'.
 func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	for _, d := range directives {
-		// log.Printf("parsing directive rel=%q, key=%q, value=%q", rel, d.Key, d.Value)
 		switch d.Key {
 		case ruleDirective:
 			err = c.parseRuleDirective(d)
 			if err != nil {
-				return fmt.Errorf("parse %v: %w", d, err)
+				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
 		case overrideDirective:
 			c.parseOverrideDirective(d)
@@ -153,12 +152,12 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
 	fields := strings.Fields(d.Value)
 	if len(fields) < 3 {
-		return fmt.Errorf("invalid directive %v: expected three or more fields, got %d", d, len(fields))
+		return fmt.Errorf("expected three or more fields, got %d", len(fields))
 	}
 	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
 	r, err := c.getOrCreateRuleConfig(c.config, name)
 	if err != nil {
-		return fmt.Errorf("invalid scala_rule directive %+v: %w", d, err)
+		return err
 	}
 	return r.parseDirective(c, name, param, value)
 }
