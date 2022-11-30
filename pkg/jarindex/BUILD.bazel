@@ -10,8 +10,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/jarindex",
-        "@org_golang_google_protobuf//encoding/protojson",
-        "@org_golang_google_protobuf//proto",
+        "//pkg/protobuf",
     ],
 )
 

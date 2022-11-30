@@ -3,12 +3,14 @@ package crossresolve
 import (
 	"flag"
 	"fmt"
+	"log"
 	"path/filepath"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
+	"github.com/stackb/scala-gazelle/pkg/jarindex"
 )
 
 // PlatformLabel represents a label that does not need to be included in deps.
@@ -19,13 +21,12 @@ type ScalaJarResolver interface {
 	resolve.CrossResolver
 }
 
-func NewJarIndexCrossResolver(lang string, depsRecorder DependencyRecorder) *JarIndexCrossResolver {
+func NewJarIndexCrossResolver(lang string) *JarIndexCrossResolver {
 	return &JarIndexCrossResolver{
-		lang:         lang,
-		byLabel:      make(map[string][]label.Label),
-		preferred:    make(map[label.Label]bool),
-		symbols:      NewSymbolTable(),
-		depsRecorder: depsRecorder,
+		lang:      lang,
+		byLabel:   make(map[string][]label.Label),
+		preferred: make(map[label.Label]bool),
+		symbols:   NewSymbolTable(),
 	}
 }
 
@@ -43,9 +44,6 @@ func NewJarIndexCrossResolver(lang string, depsRecorder DependencyRecorder) *Jar
 // PlatformLabel, it can be skipped.
 type JarIndexCrossResolver struct {
 	lang string
-	// depsRecorder is used to write dependencies that are discovered when the
-	// JarSpecIndex is read.
-	depsRecorder DependencyRecorder
 	// jarIndexFiles is a comma-separated list of filesystem paths.
 	jarIndexFiles string
 	// byLabel is a mapping from an import string to the label that provides it.
@@ -79,91 +77,68 @@ func (r *JarIndexCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) e
 }
 
 func (r *JarIndexCrossResolver) readIndex(filename string) error {
-	return fmt.Errorf("no longer implemented")
-	// // perform indexing here
-	// index, err := index.ReadIndexSpec(filename)
-	// if err != nil {
-	// 	return fmt.Errorf("error while reading index specification file %s: %v", r.jarIndexProtoFiles, err)
-	// }
-
-	// isPredefined := make(map[label.Label]bool)
-	// for _, v := range index.Predefined {
-	// 	lbl, err := label.Parse(v)
-	// 	if err != nil {
-	// 		return fmt.Errorf("bad predefined label %q: %v", v, err)
-	// 	}
-	// 	isPredefined[lbl] = true
-	// }
-
-	// for _, v := range index.Preferred {
-	// 	lbl, err := label.Parse(v)
-	// 	if err != nil {
-	// 		return fmt.Errorf("bad preferred label %q: %v", v, err)
-	// 	}
-	// 	r.preferred[lbl] = true
-	// }
-
-	// for _, jarSpec := range index.JarSpecs {
-	// 	jarLabel, err := label.Parse(jarSpec.Label)
-	// 	if err != nil {
-	// 		if jarSpec.Label == "" {
-	// 			jarLabel = PlatformLabel
-	// 		} else {
-	// 			log.Fatalf("bad label while loading jar spec %s: %v", jarSpec.Filename, err)
-	// 			continue
-	// 		}
-	// 	}
-
-	// 	if jarSpec.Filename == "" {
-	// 		log.Panicf("unnamed jar? %+v", jarSpec)
-	// 	}
-
-	// 	if isPredefined[jarLabel] {
-	// 		jarLabel = PlatformLabel
-	// 	}
-	// 	for _, pkg := range jarSpec.Packages {
-	// 		r.byLabel[pkg] = append(r.byLabel[pkg], jarLabel)
-	// 	}
-
-	// 	for _, class := range jarSpec.Classes {
-	// 		r.byLabel[class] = append(r.byLabel[class], jarLabel)
-	// 	}
-
-	// 	ruleNodeID := "rule/" + jarSpec.Label
-
-	// 	for _, file := range jarSpec.Files {
-	// 		r.byLabel[file.Name] = append(r.byLabel[file.Name], jarLabel)
-	// 		// transform "org.json4s.package$MappingException" ->
-	// 		// "org.json4s.MappingException" so that
-	// 		// "org.json4s.MappingException" is resolveable.
-	// 		pkgIndex := strings.LastIndex(file.Name, ".package$")
-	// 		if pkgIndex != -1 && !strings.HasSuffix(file.Name, ".package$") {
-	// 			name := file.Name[0:pkgIndex] + "." + file.Name[pkgIndex+len(".package$"):]
-	// 			r.byLabel[name] = append(r.byLabel[name], jarLabel)
-	// 		}
-
-	// 		fileNodeID := path.Join("imp", file.Name)
-	// 		r.addDependency(fileNodeID, ruleNodeID, "rule")
-
-	// 		// for _, idx := range file.Classes {
-	// 		// 	dst := path.Join("imp", jarSpec.Symbols[idx])
-	// 		// 	r.addDependency(src, dst, "requires-class")
-	// 		// }
-	// 		for _, symbol := range file.Symbols {
-	// 			impNodeID := path.Join("imp", symbol)
-	// 			r.addDependency(fileNodeID, impNodeID, "import")
-	// 		}
-	// 	}
-	// }
-	// return nil
-}
-
-func (r *JarIndexCrossResolver) addDependency(src, dst, kind string) {
-	r.depsRecorder(src, dst, kind)
-	// record a dependency like akka.grpc.GrpcClientSettings$ -> io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder as well.
-	if strings.HasSuffix(src, "$") {
-		r.depsRecorder(src[:len(src)-1], dst, kind)
+	// perform indexing here
+	index, err := jarindex.ReadJarIndexFile(filename)
+	if err != nil {
+		return fmt.Errorf("error while reading index specification file %s: %v", r.jarIndexFiles, err)
 	}
+
+	isPredefined := make(map[label.Label]bool)
+	for _, v := range index.Predefined {
+		lbl, err := label.Parse(v)
+		if err != nil {
+			return fmt.Errorf("bad predefined label %q: %v", v, err)
+		}
+		isPredefined[lbl] = true
+	}
+
+	for _, v := range index.Preferred {
+		lbl, err := label.Parse(v)
+		if err != nil {
+			return fmt.Errorf("bad preferred label %q: %v", v, err)
+		}
+		r.preferred[lbl] = true
+	}
+
+	for _, jarFile := range index.JarFile {
+		jarLabel, err := label.Parse(jarFile.Label)
+		if err != nil {
+			if jarFile.Label == "" {
+				jarLabel = PlatformLabel
+			} else {
+				log.Fatalf("bad label while loading jar spec %s: %v", jarFile.Filename, err)
+				continue
+			}
+		}
+
+		if jarFile.Filename == "" {
+			log.Panicf("unnamed jar? %+v", jarFile)
+		}
+
+		if isPredefined[jarLabel] {
+			jarLabel = PlatformLabel
+		}
+		for _, pkg := range jarFile.PackageName {
+			r.byLabel[pkg] = append(r.byLabel[pkg], jarLabel)
+		}
+
+		for _, class := range jarFile.ClassName {
+			r.byLabel[class] = append(r.byLabel[class], jarLabel)
+		}
+
+		for _, classFile := range jarFile.ClassFile {
+			r.byLabel[classFile.Name] = append(r.byLabel[classFile.Name], jarLabel)
+			// transform "org.json4s.package$MappingException" ->
+			// "org.json4s.MappingException" so that
+			// "org.json4s.MappingException" is resolveable.
+			pkgIndex := strings.LastIndex(classFile.Name, ".package$")
+			if pkgIndex != -1 && !strings.HasSuffix(classFile.Name, ".package$") {
+				name := classFile.Name[0:pkgIndex] + "." + classFile.Name[pkgIndex+len(".package$"):]
+				r.byLabel[name] = append(r.byLabel[name], jarLabel)
+			}
+		}
+	}
+	return nil
 }
 
 // Provided implements the protoc.ImportProvider interface.

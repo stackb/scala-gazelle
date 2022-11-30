@@ -11,51 +11,41 @@ import (
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 )
 
-func TestReadWriteJarIndexProtoFile(t *testing.T) {
-	tmpDir, err := bazel.NewTmpDir("")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
-
-	filename := filepath.Join(tmpDir, "test.proto.jarindex")
-	want := &jipb.JarIndex{
-		JarFile: []*jipb.JarFile{
-			{Filename: "foo.jar"},
-			{Filename: "bar.jar"},
+func TestReadWriteJarIndexFile(t *testing.T) {
+	for name, tc := range map[string]struct {
+		filename string
+	}{
+		"proto": {
+			filename: "test.jarindex.pb",
 		},
-	}
-	if err := WriteJarIndexProtoFile(filename, want); err != nil {
-		t.Fatal(err)
-	}
-	if got, err := ReadJarIndexProtoFile(filename); err != nil {
-		t.Fatal(err)
-	} else {
-		if !proto.Equal(want, got) {
-			t.Fatalf("jarindex read/write symmetry error (want=%+v, got=%+v)", want, got)
-		}
-	}
-}
+		"json": {
+			filename: "test.jarindex.json",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tmpDir, err := bazel.NewTmpDir("")
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer os.RemoveAll(tmpDir)
 
-func TestReadWriteJarFileProtoFile(t *testing.T) {
-	tmpDir, err := bazel.NewTmpDir("")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
-
-	filename := filepath.Join(tmpDir, "test.proto.jarfile")
-	want := &jipb.JarFile{
-		Filename: "foo.jar",
-	}
-	if err := WriteJarFileProtoFile(filename, want); err != nil {
-		t.Fatal(err)
-	}
-	if got, err := ReadJarFileProtoFile(filename); err != nil {
-		t.Fatal(err)
-	} else {
-		if !proto.Equal(want, got) {
-			t.Fatalf("jarfile read/write symmetry error (want=%+v, got=%+v)", want, got)
-		}
+			filename := filepath.Join(tmpDir, tc.filename)
+			want := &jipb.JarIndex{
+				JarFile: []*jipb.JarFile{
+					{Filename: "foo.jar"},
+					{Filename: "bar.jar"},
+				},
+			}
+			if err := WriteJarIndexFile(filename, want); err != nil {
+				t.Fatal(err)
+			}
+			if got, err := ReadJarIndexFile(filename); err != nil {
+				t.Fatal(err)
+			} else {
+				if !proto.Equal(want, got) {
+					t.Fatalf("jarindex read/write symmetry error (want=%+v, got=%+v)", want, got)
+				}
+			}
+		})
 	}
 }

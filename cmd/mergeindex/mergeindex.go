@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
-	"github.com/stackb/scala-gazelle/pkg/mergeindex"
+	"github.com/stackb/scala-gazelle/pkg/jarindex"
 )
 
 const debug = false
@@ -46,9 +46,9 @@ func main() {
 	}
 
 	if strings.HasSuffix(outputFile, ".json") {
-		err = mergeindex.WriteJarIndexJSONFile(outputFile, index)
+		err = jarindex.WriteJarIndexJSONFile(outputFile, index)
 	} else {
-		err = mergeindex.WriteJarIndexProtoFile(outputFile, index)
+		err = jarindex.WriteJarIndexProtoFile(outputFile, index)
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -104,7 +104,7 @@ func parseFlags(args []string) (files []string, err error) {
 func merge(filenames ...string) (*jipb.JarIndex, error) {
 	jars := make([]*jipb.JarFile, 0, len(filenames))
 	for _, filename := range filenames {
-		idx, err := mergeindex.ReadJarIndexProtoFile(filename)
+		idx, err := jarindex.ReadJarIndexProtoFile(filename)
 		if err != nil {
 			return nil, err
 		}
@@ -119,7 +119,7 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 	predefined := strings.Split(predefinedLabels, ",")
 	preferred := strings.Split(preferredLabels, ",")
 
-	index, err := mergeindex.MergeJarFiles(func(format string, args ...interface{}) {
+	index, err := jarindex.MergeJarFiles(func(format string, args ...interface{}) {
 		log.Printf("warning: "+format, args...)
 	}, predefined, jars)
 	if err != nil {
@@ -142,7 +142,7 @@ func writeJarIndexJarFileJSONFiles(idx *jipb.JarIndex) error {
 
 func writeJarFileJSONFile(file *jipb.JarFile) error {
 	jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
-	if err := mergeindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
+	if err := jarindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
 		return err
 	}
 	log.Println("Wrote:", jarFilename)

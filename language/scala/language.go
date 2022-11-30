@@ -16,14 +16,13 @@ const ScalaLangName = "scala"
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	depends := func(src, dst, kind string) {}
 	packages := make(map[string]*scalaPackage)
 	scalaCompiler := newScalaCompiler()
 
-	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName, depends)
+	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName)
 	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
 	mavenResolver := crossresolve.NewMavenResolver("java")
-	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
+	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName)
 
 	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
 	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)

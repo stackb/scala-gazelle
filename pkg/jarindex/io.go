@@ -1,79 +1,30 @@
 package jarindex
 
 import (
-	"fmt"
-	"io/ioutil"
-
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
-
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
-func ReadJarIndexProtoFile(filename string) (*jipb.JarIndex, error) {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, fmt.Errorf("read jarindex file %q: %w", filename, err)
+func ReadJarIndexFile(filename string) (*jipb.JarIndex, error) {
+	message := jipb.JarIndex{}
+	if err := protobuf.ReadFile(filename, &message); err != nil {
+		return nil, err
 	}
-	index := jipb.JarIndex{}
-	if err := proto.Unmarshal(data, &index); err != nil {
-		return nil, fmt.Errorf("unmarshal jarindex proto: %w", err)
-	}
-	return &index, nil
+	return &message, nil
 }
 
-func WriteJarIndexProtoFile(filename string, index *jipb.JarIndex) error {
-	data, err := proto.Marshal(index)
-	if err != nil {
-		return fmt.Errorf("marshal jarindex proto: %w", err)
-	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("write jarindex proto: %w", err)
-	}
-	return nil
+func WriteJarIndexFile(filename string, message *jipb.JarIndex) error {
+	return protobuf.WriteFile(filename, message)
 }
 
-func WriteJarIndexJSONFile(filename string, index *jipb.JarIndex) error {
-	data, err := protojson.Marshal(index)
-	if err != nil {
-		return fmt.Errorf("marshal jarindex json: %w", err)
+func ReadJarFileFile(filename string) (*jipb.JarFile, error) {
+	message := jipb.JarFile{}
+	if err := protobuf.ReadFile(filename, &message); err != nil {
+		return nil, err
 	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("write jarindex json: %w", err)
-	}
-	return nil
+	return &message, nil
 }
 
-func ReadJarFileProtoFile(filename string) (*jipb.JarFile, error) {
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, fmt.Errorf("read jarfile file %q: %w", filename, err)
-	}
-	index := jipb.JarFile{}
-	if err := proto.Unmarshal(data, &index); err != nil {
-		return nil, fmt.Errorf("unmarshal jarfile proto: %w", err)
-	}
-	return &index, nil
-}
-
-func WriteJarFileProtoFile(filename string, index *jipb.JarFile) error {
-	data, err := proto.Marshal(index)
-	if err != nil {
-		return fmt.Errorf("marshal jarfile proto: %w", err)
-	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("write jarfile proto: %w", err)
-	}
-	return nil
-}
-
-func WriteJarFileJSONFile(filename string, index *jipb.JarFile) error {
-	data, err := protojson.Marshal(index)
-	if err != nil {
-		return fmt.Errorf("marshal jarfile json: %w", err)
-	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("write jarfile json: %w", err)
-	}
-	return nil
+func WriteJarFileFile(filename string, message *jipb.JarFile) error {
+	return protobuf.WriteFile(filename, message)
 }

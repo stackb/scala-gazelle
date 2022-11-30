@@ -20,7 +20,7 @@ func TestScalaSourceCrossResolverConfigureCacheFile(t *testing.T) {
 		"degenerate case": {},
 	} {
 		t.Run(name, func(t *testing.T) {
-			cr := NewScalaSourceCrossResolver(scalaName, func(src, dst, kind string) {})
+			cr := NewScalaSourceCrossResolver(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{}
 			cr.RegisterFlags(fs, cmdGenerate, c)
@@ -75,7 +75,7 @@ func TestScalaSourceCrossResolverIsLabelOwner(t *testing.T) {
 			}
 			args := []string{}
 
-			cr := NewScalaSourceCrossResolver(tc.lang, func(src, dst, kind string) {})
+			cr := NewScalaSourceCrossResolver(tc.lang)
 			fs := flag.NewFlagSet(tc.lang, flag.ExitOnError)
 			c := &config.Config{}
 			cr.RegisterFlags(fs, cmdGenerate, c)

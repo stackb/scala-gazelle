@@ -4,7 +4,6 @@ go_library(
     name = "crossresolve",
     srcs = [
         "configurable_cross_resolver.go",
-        "dependency_recorder.go",
         "gazelle_phase_transition_listener.go",
         "jar_index_cross_resolver.go",
         "label_owner.go",
@@ -20,6 +19,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/jarindex",
         "//pkg/maven",
         "//pkg/scalaparse",
         "@bazel_gazelle//config:go_default_library",
