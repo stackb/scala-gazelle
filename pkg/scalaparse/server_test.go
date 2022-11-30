@@ -130,10 +130,10 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 				ProtoMajor:    1,
 				ProtoMinor:    1,
 				Header:        http.Header{"Content-Type": {"application/json"}},
-				ContentLength: 53,
+				ContentLength: 31,
 				Host:          "localhost:3000",
 			},
-			wantBody: `{"files":["A.scala","B.scala"],"label":"//app:scala"}`,
+			wantBody: `{"files":["A.scala","B.scala"]}`,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -150,16 +150,16 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 				cmpopts.IgnoreUnexported(http.Request{}),
 				cmpopts.IgnoreFields(http.Request{}, "GetBody", "Body"),
 			); diff != "" {
-				t.Errorf("newHttpScalaParseRequest (-want +got):\n%s", diff)
+				t.Errorf("(-want +got):\n%s", diff)
 			}
 			if diff := cmp.Diff(tc.wantBody, gotBody); diff != "" {
-				t.Errorf("newHttpScalaParseRequest body (-want +got):\n%s", diff)
+				t.Errorf("body (-want +got):\n%s", diff)
 			}
 		})
 	}
 }
 
-func TestNewHttpScalaParseRequestError(t *testing.T) {
+func TestNewHttpParseRequestError(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url  string
 		in   *sppb.ParseRequest
@@ -170,7 +170,7 @@ func TestNewHttpScalaParseRequestError(t *testing.T) {
 		},
 		"missing-request": {
 			url:  "http://localhost:3000",
-			want: fmt.Errorf("rpc error: code = InvalidArgument desc = ScalaParseRequest is required"),
+			want: fmt.Errorf("rpc error: code = InvalidArgument desc = ParseRequest is required"),
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
