@@ -55,16 +55,16 @@ genrule(
     name = "node_exe",
     srcs = select({
         "@bazel_tools//src/conditions:darwin_arm64": [
-            "@node_bin_darwin_arm64//:node",
+            "@node_bin_darwin-arm64//:node",
         ],
         "@bazel_tools//src/conditions:linux": [
-            "@node_bin_linux_x64//:node",
+            "@node_bin_linux-x64//:node",
         ],
         "@bazel_tools//src/conditions:windows_x64": [
-            "@node_bin_windows_x64//:node",
+            "@node_bin_win-x64//:node",
         ],
         "//conditions:default": [
-            "@node_bin_darwin_x64//:node",
+            "@node_bin_darwin-x64//:node",
         ],
     }),
     outs = ["node.exe"],
