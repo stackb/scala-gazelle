@@ -16,17 +16,18 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/stackb/scala-gazelle/api/scalaparse"
+	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
+	sipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex"
 )
 
 func TestServerParse(t *testing.T) {
 	for name, tc := range map[string]*struct {
 		files []testtools.FileSpec
-		in    scalaparse.ScalaParseRequest
-		want  scalaparse.ScalaParseResponse
+		in    sppb.ScalaParseRequest
+		want  sppb.ScalaParseResponse
 	}{
 		"degenerate": {
-			want: scalaparse.ScalaParseResponse{
+			want: sppb.ScalaParseResponse{
 				Error: `bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`,
 			},
 		},
@@ -42,15 +43,15 @@ class Foo extends HashMap {
 `,
 				},
 			},
-			want: scalaparse.ScalaParseResponse{
-				ScalaFiles: []*scalaparse.ScalaFile{
+			want: sppb.ScalaParseResponse{
+				ScalaFiles: []*sipb.ScalaFile{
 					{
 						Filename: "A.scala",
 						Packages: []string{"a"},
 						Classes:  []string{"a.Foo"},
 						Imports:  []string{"java.util.HashMap"},
 						Names:    []string{"a", "java", "util"},
-						Extends: map[string]*scalaparse.ClassList{
+						Extends: map[string]*sipb.ClassList{
 							"class a.Foo": {
 								Classes: []string{"HashMap"},
 							},
@@ -91,9 +92,9 @@ class Foo extends HashMap {
 			}
 
 			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
-				scalaparse.ScalaParseResponse{},
-				scalaparse.ScalaFile{},
-				scalaparse.ClassList{},
+				sppb.ScalaParseResponse{},
+				sipb.ScalaFile{},
+				sipb.ClassList{},
 			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
@@ -114,13 +115,13 @@ func TestGetFreePort(t *testing.T) {
 func TestNewHttpScalaParseRequest(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url      string
-		in       *scalaparse.ScalaParseRequest
+		in       *sppb.ScalaParseRequest
 		want     *http.Request
 		wantBody string
 	}{
 		"prototypical": {
 			url: "http://localhost:3000",
-			in: &scalaparse.ScalaParseRequest{
+			in: &sppb.ScalaParseRequest{
 				Label:    "//app:scala",
 				Filename: []string{"A.scala", "B.scala"},
 			},
@@ -163,7 +164,7 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 func TestNewHttpScalaParseRequestError(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url  string
-		in   *scalaparse.ScalaParseRequest
+		in   *sppb.ScalaParseRequest
 		want error
 	}{
 		"missing-url": {

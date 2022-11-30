@@ -326,9 +326,8 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 				}
 			}
 
-			for _, extends := range file.Extends {
-				token := extends.Base
-				for _, sym := range symbols {
+			for token, classList := range file.Extends {
+				for _, sym := range classList.Classes {
 					suffix := "." + sym
 					var matched bool
 					for _, imp := range file.Imports {
