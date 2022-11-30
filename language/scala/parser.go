@@ -13,7 +13,8 @@ import (
 	"time"
 
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
-	"github.com/stackb/scala-gazelle/pkg/index"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 // ref: https://raw.githubusercontent.com/bazelbuild/rules_python/main/gazelle/parser.go
@@ -31,7 +32,7 @@ type scalaSourceParser struct {
 func (p *scalaSourceParser) start() error {
 	parseTool, err := bazel.Runfile(p.parserToolPath)
 	if err != nil {
-		index.ListFiles(".")
+		scalaparse.ListFiles(".")
 		log.Fatalf("failed to initialize parser: %v\n", err)
 		return err
 	}
@@ -72,8 +73,8 @@ func (p *scalaSourceParser) stop() {
 }
 
 // parseAll parses all provided Scala files by consecutively calling p.parse.
-func (p *scalaSourceParser) parseAll(filenames []string) ([]*index.ScalaFileSpec, error) {
-	files := make([]*index.ScalaFileSpec, len(filenames))
+func (p *scalaSourceParser) parseAll(filenames []string) ([]*sppb.File, error) {
+	files := make([]*sppb.File, len(filenames))
 	for i, filename := range filenames {
 		file, err := p.parse(filename)
 		if err != nil {
@@ -86,7 +87,7 @@ func (p *scalaSourceParser) parseAll(filenames []string) ([]*index.ScalaFileSpec
 
 // parse parses a Scala file and returns the index. An error is raised if
 // communicating with the long-lived Scala parser over stdin and stdout fails.
-func (p *scalaSourceParser) parse(filename string) (*index.ScalaFileSpec, error) {
+func (p *scalaSourceParser) parse(filename string) (*sppb.File, error) {
 	p.parserMutex.Lock()
 	defer p.parserMutex.Unlock()
 
@@ -97,7 +98,7 @@ func (p *scalaSourceParser) parse(filename string) (*index.ScalaFileSpec, error)
 		return nil, fmt.Errorf("failed to parse %s: %w", filename, err)
 	}
 	data = data[:len(data)-1]
-	var spec index.ScalaFileSpec
+	var spec sppb.File
 	if err := json.Unmarshal(data, &spec); err != nil {
 		return nil, fmt.Errorf("failed to parse %s: %w", filename, err)
 	}

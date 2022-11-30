@@ -5,7 +5,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -108,14 +110,13 @@ type importRegistryBuilder struct {
 func newImportRegistryBuilder(t *testing.T) *importRegistryBuilder {
 	rr := &fakeRuleRegistry{
 		t:     t,
-		rules: make(map[label.Label]*index.ScalaRuleSpec),
+		rules: make(map[label.Label]*sppb.Rule),
 	}
 	cr := &fakeClassRegistry{
 		t: t,
 	}
 	c := &fakeCompiler{
-		t:       t,
-		results: make(map[string]*index.ScalaCompileSpec),
+		t: t,
 	}
 
 	return &importRegistryBuilder{
@@ -133,12 +134,12 @@ func (b *importRegistryBuilder) sourceImports(from, filename string, imports ...
 	}
 	rule := b.ruleRegistry.rules[fromLabel]
 	if rule == nil {
-		rule = &index.ScalaRuleSpec{
-			Srcs: make([]*index.ScalaFileSpec, 0),
+		rule = &sppb.Rule{
+			Files: make([]*sppb.File, 0),
 		}
 		b.ruleRegistry.rules[fromLabel] = rule
 	}
-	rule.Srcs = append(rule.Srcs, &index.ScalaFileSpec{
+	rule.Files = append(rule.Files, &sppb.File{
 		Filename: filename,
 		Imports:  imports,
 	})
@@ -146,11 +147,11 @@ func (b *importRegistryBuilder) sourceImports(from, filename string, imports ...
 }
 
 func (b *importRegistryBuilder) notFoundTypes(filename string, notFoundTypes ...string) *importRegistryBuilder {
-	nf := make([]*index.NotFoundSymbol, len(notFoundTypes))
+	nf := make([]*scalacompile.NotFoundSymbol, len(notFoundTypes))
 	for i, t := range notFoundTypes {
-		nf[i] = &index.NotFoundSymbol{Name: t, Kind: "type"}
+		nf[i] = &scalacompile.NotFoundSymbol{Name: t, Kind: "type"}
 	}
-	b.compiler.results[filename] = &index.ScalaCompileSpec{
+	b.compiler.results[filename] = &scalacompile.ScalaCompileSpec{
 		NotFound: nf,
 	}
 	return b
@@ -179,7 +180,7 @@ func (b *importRegistryBuilder) build() *importRegistry {
 
 type fakeRuleRegistry struct {
 	t     *testing.T
-	rules map[label.Label]*index.ScalaRuleSpec
+	rules map[label.Label]*sppb.Rule
 }
 
 type fakeClassRegistry struct {
@@ -196,10 +197,10 @@ func (r *fakeClassRegistry) LookupJar(from label.Label) (*index.JarSpec, bool) {
 
 type fakeCompiler struct {
 	t       *testing.T
-	results map[string]*index.ScalaCompileSpec
+	results map[string]*scalacompile.ScalaCompileSpec
 }
 
-func (fc *fakeCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, error) {
+func (fc *fakeCompiler) Compile(dir, filename string) (*scalacompile.ScalaCompileSpec, error) {
 	fc.t.Log("compiler", filename, fc.results)
 	spec, ok := fc.results[filename]
 	if !ok {

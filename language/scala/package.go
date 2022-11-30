@@ -32,8 +32,6 @@ type ScalaPackage interface {
 type scalaPackage struct {
 	// parser is the file parser
 	parser crossresolve.ScalaRuleParser
-	// shared import registry
-	scalaImportRegistry ScalaImportRegistry
 	// rel is the package (args.Rel)
 	rel string
 	// the registry to use
@@ -51,15 +49,14 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, parser crossresolve.ScalaRuleParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, parser crossresolve.ScalaRuleParser, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
-		parser:              parser,
-		scalaImportRegistry: scalaImportRegistry,
-		rel:                 rel,
-		ruleRegistry:        ruleRegistry,
-		file:                file,
-		cfg:                 cfg,
-		rules:               make(map[string]*rule.Rule),
+		parser:       parser,
+		rel:          rel,
+		ruleRegistry: ruleRegistry,
+		file:         file,
+		cfg:          cfg,
+		rules:        make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -173,11 +170,6 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	}
 
 	return nil
-}
-
-// ScalaImportRegistry implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaImportRegistry() ScalaImportRegistry {
-	return s.scalaImportRegistry
 }
 
 // ScalaRuleParser implements part of the ScalaPackage interface.

@@ -3,6 +3,8 @@ package scalaparse
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
+	"os"
 	"path/filepath"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -71,4 +73,25 @@ func WriteScalaParseRuleListJSONFile(filename string, index *sppb.RuleList) erro
 		return fmt.Errorf("write ScalaSourceIndex json: %w", err)
 	}
 	return nil
+}
+
+func ListFiles(dir string) error {
+	// ListFiles - convenience debugging function to log the files under a given dir
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("%v\n", err)
+			return err
+		}
+		if info.Mode()&os.ModeSymlink > 0 {
+			link, err := os.Readlink(path)
+			if err != nil {
+				return err
+			}
+			log.Printf("%s -> %s", path, link)
+			return nil
+		}
+
+		log.Println(path)
+		return nil
+	})
 }

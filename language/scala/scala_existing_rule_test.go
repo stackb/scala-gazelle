@@ -12,15 +12,15 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
-	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
 // This looks important: https://github.com/sbt/zinc/blob/7c796ce65217096ce71be986149b2e769f8b33af/internal/zinc-core/src/main/scala/sbt/internal/inc/Relations.scala
 
 func TestResolveNameInFile(t *testing.T) {
 	for name, tc := range map[string]struct {
-		file index.ScalaFileSpec
+		file sppb.File
 		name string
 		want string
 	}{
@@ -28,27 +28,27 @@ func TestResolveNameInFile(t *testing.T) {
 			want: ``,
 		},
 		"miss": {
-			file: index.ScalaFileSpec{},
+			file: sppb.File{},
 			name: "Bar",
 			want: "",
 		},
 		"hit trait": {
-			file: index.ScalaFileSpec{Traits: []string{"com.foo.Bar"}},
+			file: sppb.File{Traits: []string{"com.foo.Bar"}},
 			name: "Bar",
 			want: "com.foo.Bar",
 		},
 		"hit class": {
-			file: index.ScalaFileSpec{Classes: []string{"com.foo.Bar"}},
+			file: sppb.File{Classes: []string{"com.foo.Bar"}},
 			name: "Bar",
 			want: "com.foo.Bar",
 		},
 		"hit object": {
-			file: index.ScalaFileSpec{Objects: []string{"com.foo.Bar"}},
+			file: sppb.File{Objects: []string{"com.foo.Bar"}},
 			name: "Bar",
 			want: "com.foo.Bar",
 		},
 		"hit type": {
-			file: index.ScalaFileSpec{Types: []string{"com.foo.Bar"}},
+			file: sppb.File{Types: []string{"com.foo.Bar"}},
 			name: "Bar",
 			want: "com.foo.Bar",
 		},
@@ -400,7 +400,7 @@ func TestCommentUnresolvedImports(t *testing.T) {
 	for name, tc := range map[string]*testCase{
 		"no srcs attribute": {
 			unresolved: map[string]*ImportOrigin{
-				"com.foo.Bar": NewDirectImportOrigin(&index.ScalaFileSpec{
+				"com.foo.Bar": NewDirectImportOrigin(&sppb.File{
 					Filename: "Main.scala",
 				}),
 			},
@@ -417,7 +417,7 @@ scala_library(
 		},
 		"with srcs attribute": {
 			unresolved: map[string]*ImportOrigin{
-				"com.foo.Bar": NewDirectImportOrigin(&index.ScalaFileSpec{
+				"com.foo.Bar": NewDirectImportOrigin(&sppb.File{
 					Filename: "Main.scala",
 				}),
 			},

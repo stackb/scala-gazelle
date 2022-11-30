@@ -16,22 +16,16 @@ const ScalaLangName = "scala"
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	var importRegistry *importRegistry
-	depends := func(src, dst, kind string) {
-		importRegistry.AddDependency(src, dst, kind)
-	}
+	depends := func(src, dst, kind string) {}
 	packages := make(map[string]*scalaPackage)
 
 	scalaCompiler := newScalaCompiler()
 	// var scalaCompiler *scalaCompiler
 
-	classResolver := newScalaClassIndexResolver(depends)
 	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName, depends)
 	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
 	mavenResolver := crossresolve.NewMavenResolver("java")
 	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName, depends)
-
-	importRegistry = newImportRegistry(classResolver, scalaCompiler)
 
 	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
 	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
@@ -39,14 +33,13 @@ func NewLanguage() language.Language {
 	crossresolve.Resolvers().MustRegisterResolver("jar", jarResolver)
 
 	return &scalaLang{
-		ruleRegistry:   globalRuleRegistry,
-		scalaParser:    sourceResolver,
-		scalaCompiler:  scalaCompiler,
-		packages:       packages,
-		importRegistry: importRegistry,
-		resolvers:      make(map[string]crossresolve.ConfigurableCrossResolver),
-		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		allRules:       make(map[label.Label]*rule.Rule),
+		ruleRegistry:  globalRuleRegistry,
+		scalaParser:   sourceResolver,
+		scalaCompiler: scalaCompiler,
+		packages:      packages,
+		resolvers:     make(map[string]crossresolve.ConfigurableCrossResolver),
+		progress:      mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		allRules:      make(map[label.Label]*rule.Rule),
 	}
 }
 
@@ -55,9 +48,6 @@ type scalaLang struct {
 	// ruleRegistry is the rule registry implementation.  This holds the rules
 	// configured via gazelle directives by the user.
 	ruleRegistry RuleRegistry
-	// importRegistry instance tracks all known info about imports and rules and
-	// is used during import disambiguation.
-	importRegistry *importRegistry
 	// scalaParser is the parser implementation.  This is given to each
 	// ScalaPackage during GenerateRules such that rule implementations can use
 	// it.

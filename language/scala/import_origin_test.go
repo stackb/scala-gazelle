@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/stackb/scala-gazelle/pkg/index"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 func TestImportOriginString(t *testing.T) {
@@ -15,13 +15,13 @@ func TestImportOriginString(t *testing.T) {
 		want    string
 	}{
 		"direct": {
-			origin: NewDirectImportOrigin(&index.ScalaFileSpec{
+			origin: NewDirectImportOrigin(&sppb.File{
 				Filename: "Main.scala",
 			}),
 			want: "direct from Main.scala",
 		},
 		"direct with parent": {
-			origin: NewDirectImportOrigin(&index.ScalaFileSpec{
+			origin: NewDirectImportOrigin(&sppb.File{
 				Filename: "Main.scala",
 			}),
 			options: []importOriginOption{

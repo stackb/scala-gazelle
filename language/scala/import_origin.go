@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/stackb/scala-gazelle/pkg/index"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const ImportKindDirect = ImportKind("direct")
@@ -18,7 +18,7 @@ type ImportKind string
 // ImportOrigin is used to trace import provenance.
 type ImportOrigin struct {
 	Kind       ImportKind
-	SourceFile *index.ScalaFileSpec
+	SourceFile *sppb.File
 	Parent     string
 	Children   []string // transitive imports triggered for an import
 	// Import holds the symbol that resolved.  For example, the string "com.foo" when .Actual is "com.foo._"
@@ -27,7 +27,7 @@ type ImportOrigin struct {
 	Actual string // the effective string for the import.
 }
 
-func NewDirectImportOrigin(src *index.ScalaFileSpec) *ImportOrigin {
+func NewDirectImportOrigin(src *sppb.File) *ImportOrigin {
 	return &ImportOrigin{
 		Kind:       ImportKindDirect,
 		SourceFile: src,

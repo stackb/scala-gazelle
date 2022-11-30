@@ -16,7 +16,6 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
-	"github.com/stackb/scala-gazelle/pkg/index"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -179,7 +178,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
 	// dbg := debug
 
-	files, ok := importsRaw.([]*index.ScalaFileSpec)
+	files, ok := importsRaw.([]*sppb.File)
 	if !ok {
 		return
 	}
@@ -297,7 +296,7 @@ func resolveNameInLabelImportMap(resolved LabelImportMap) NameResolver {
 	}
 }
 
-func resolveNameInFile(file *index.ScalaFileSpec) NameResolver {
+func resolveNameInFile(file *sppb.File) NameResolver {
 	return func(name string) (string, bool) {
 		suffix := "." + name
 		for _, sym := range file.Traits {
