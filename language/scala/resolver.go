@@ -19,7 +19,7 @@ const debug = false
 // shouldDisambiguate is a developer flag
 const shouldDisambiguate = false
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
 	sc := getScalaConfig(c)
 
 	dbg := false
@@ -30,7 +30,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			// log.Println("resolved:\n", resolved.String())
 		}
 
-		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
+		labels := resolveImport(c, ix, origin, impLang, imp, from, resolved)
 
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
@@ -52,7 +52,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *ImportOrigin, lang string, imp string, from label.Label, resolved LabelImportMap) []label.Label {
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, origin *ImportOrigin, lang string, imp string, from label.Label, resolved LabelImportMap) []label.Label {
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
 		return nil
@@ -74,12 +74,12 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 
 	// if this is a _root_ import, try without
 	if strings.HasPrefix(imp, "_root_.") {
-		return resolveImport(c, ix, registry, origin, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
+		return resolveImport(c, ix, origin, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
 	}
 
 	// if this is a wildcard import, try without
 	if strings.HasSuffix(imp, "._") {
-		return resolveImport(c, ix, registry, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
+		return resolveImport(c, ix, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
 	}
 
 	// if this is a fqcn, try the package
@@ -92,18 +92,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 
 		if isCapitalized(child) {
 			parent := imp[0:lastDot]
-			return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
-		}
-	}
-
-	// we are down to a single symbol now.  Probe the importRegistry for a
-	// type in our package.
-	if origin.SourceFile != nil {
-		got, provider := findPackageSymbolCompletion(registry, origin.SourceFile.Packages, imp)
-		if got != "" {
-			origin.Actual = imp
-			resolved.Set(provider, imp, origin)
-			return []label.Label{provider}
+			return resolveImport(c, ix, origin, lang, parent, from, resolved)
 		}
 	}
 

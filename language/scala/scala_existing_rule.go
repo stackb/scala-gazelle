@@ -185,7 +185,6 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 
 	sc := getScalaConfig(c)
 
-	importRegistry := s.pkg.ScalaImportRegistry()
 	imports := make(ImportOriginMap)
 
 	impLang := r.Kind()
@@ -231,7 +230,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	resolved := NewLabelImportMap()
 
 	// resolve this (mostly direct) initial set
-	resolveImports(c, ix, importRegistry, impLang, r.Kind(), from, imports, resolved)
+	resolveImports(c, ix, impLang, r.Kind(), from, imports, resolved)
 
 	unresolved := resolved[label.NoLabel]
 	if debug && len(unresolved) > 0 {
