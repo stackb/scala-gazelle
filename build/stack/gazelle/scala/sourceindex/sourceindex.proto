@@ -7,21 +7,20 @@ option java_package = "build.stack.gazelle.scala.sourceindex";
 option java_multiple_files = true;
 option java_outer_classname = "SourceIndexSpec";
 
-message ScalaSourceIndex {
-	// Rules []*ScalaRuleSpec `json:"rules,omitempty"`
-    repeated ScalaRuleIndex rules = 1;
+message ScalaIndex {
+    repeated ScalaRule rules = 1;
 }
 
-message ScalaRuleIndex {
+message ScalaRule {
 	// Label is the bazel label that names the source file in its srcs list.
     string label = 1;
 	// Kind is the kind of rule named by Label.
     string kind = 2;
 	// Files is the list of files in the rule
-    repeated ScalaFileIndex files = 3;
+    repeated ScalaFile files = 3;
 }
 
-message ScalaFileIndex {
+message ScalaFile {
 	// Filename is the source filename
     string filename = 1;
 	// Sha256 is the sha256 hash of the file contents

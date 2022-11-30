@@ -87,7 +87,7 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
 	from := label.New("", pkg.Rel(), r.Name())
-	files := make([]*sipb.ScalaFileIndex, 0)
+	files := make([]*sipb.ScalaFile, 0)
 
 	srcs, err := getAttrFiles(pkg, r, "srcs")
 	if err != nil {
@@ -118,7 +118,7 @@ type scalaExistingRuleRule struct {
 	cfg          *RuleConfig
 	pkg          ScalaPackage
 	rule         *rule.Rule
-	files        []*sipb.ScalaFileIndex
+	files        []*sipb.ScalaFile
 	isBinaryRule bool
 }
 
@@ -471,7 +471,7 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser crossresolve.ScalaRuleParser) ([]*sipb.ScalaFileIndex, error) {
+func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser crossresolve.ScalaRuleParser) ([]*sipb.ScalaFile, error) {
 	if index, err := parser.ParseScalaRule(dir, from, kind, srcs...); err != nil {
 		return nil, err
 	} else {

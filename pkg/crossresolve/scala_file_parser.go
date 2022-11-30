@@ -12,5 +12,5 @@ type ScalaRuleParser interface {
 	// is expected to be relative to the from.Pkg rel field, and the absolute path
 	// of a file is expected at (dir, from.Pkg, src).  Kind is used to determine
 	// if the rule is a test rule.
-	ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sipb.ScalaRuleIndex, error)
+	ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sipb.ScalaRule, error)
 }

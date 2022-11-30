@@ -38,8 +38,8 @@ func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *
 		providersMux: &sync.Mutex{},
 		providers:    make(map[string][]*provider),
 		packages:     make(map[string][]*provider),
-		byFilename:   make(map[string]*sipb.ScalaFileIndex),
-		byRule:       make(map[label.Label]*sipb.ScalaRuleIndex),
+		byFilename:   make(map[string]*sipb.ScalaFile),
+		byRule:       make(map[label.Label]*sipb.ScalaRule),
 	}
 }
 
@@ -73,16 +73,16 @@ type ScalaSourceCrossResolver struct {
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
-	byFilename map[string]*sipb.ScalaFileIndex
+	byFilename map[string]*sipb.ScalaFile
 	// byRule is a mapping of the scala rule to the spec
-	byRule map[label.Label]*sipb.ScalaRuleIndex
+	byRule map[label.Label]*sipb.ScalaRule
 	// parser is an instance of the scala source parser
 	parser *scalaparse.ScalaParseServer
 }
 
 type provider struct {
-	rule  *sipb.ScalaRuleIndex
-	file  *sipb.ScalaFileIndex
+	rule  *sipb.ScalaRule
+	file  *sipb.ScalaFile
 	label label.Label
 }
 
@@ -106,11 +106,11 @@ func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Con
 }
 
 // ParseScalaRule implements ScalaRuleParser
-func (r *ScalaSourceCrossResolver) ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sipb.ScalaRuleIndex, error) {
-	rule := &sipb.ScalaRuleIndex{
+func (r *ScalaSourceCrossResolver) ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sipb.ScalaRule, error) {
+	rule := &sipb.ScalaRule{
 		Label: from.String(),
 		Kind:  kind,
-		Files: make([]*sipb.ScalaFileIndex, len(srcs)),
+		Files: make([]*sipb.ScalaFile, len(srcs)),
 	}
 	for i, src := range srcs {
 		filename := filepath.Join(from.Pkg, src)
@@ -142,7 +142,7 @@ func (r *ScalaSourceCrossResolver) Provided(lang, impLang string) map[label.Labe
 	return result
 }
 
-func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*sipb.ScalaFileIndex, error) {
+func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*sipb.ScalaFile, error) {
 	abs := filepath.Join(dir, filename)
 	sha256, err := fileSha256(abs)
 	if err != nil {
@@ -174,7 +174,7 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	}
 
 	scalaFile := response.ScalaFiles[0]
-	file = &sipb.ScalaFileIndex{
+	file = &sipb.ScalaFile{
 		Filename: filename,
 		Packages: scalaFile.Packages,
 		Imports:  scalaFile.Imports,
@@ -203,7 +203,7 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRuleIndex) error {
+func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRule) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
@@ -220,7 +220,7 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRuleIndex)
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaFileIndex(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex) error {
+func (r *ScalaSourceCrossResolver) readScalaFileIndex(rule *sipb.ScalaRule, ruleLabel label.Label, file *sipb.ScalaFile) error {
 	r.providersMux.Lock()
 	defer r.providersMux.Unlock()
 
@@ -254,7 +254,7 @@ func (r *ScalaSourceCrossResolver) readScalaFileIndex(rule *sipb.ScalaRuleIndex,
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) provide(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex, imp string) {
+func (r *ScalaSourceCrossResolver) provide(rule *sipb.ScalaRule, ruleLabel label.Label, file *sipb.ScalaFile, imp string) {
 	if pp, ok := r.providers[imp]; ok {
 		p := pp[0]
 		if p.label == ruleLabel {
@@ -265,7 +265,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sipb.ScalaRuleIndex, ruleLabel 
 	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *ScalaSourceCrossResolver) providePackage(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex, imp string) {
+func (r *ScalaSourceCrossResolver) providePackage(rule *sipb.ScalaRule, ruleLabel label.Label, file *sipb.ScalaFile, imp string) {
 	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.
@@ -360,7 +360,7 @@ func (r *ScalaSourceCrossResolver) OnEnd() {
 }
 
 func (r *ScalaSourceCrossResolver) writeIndex() error {
-	var idx sipb.ScalaSourceIndex
+	var idx sipb.ScalaIndex
 	for _, rule := range r.byRule {
 		idx.Rules = append(idx.Rules, rule)
 	}
