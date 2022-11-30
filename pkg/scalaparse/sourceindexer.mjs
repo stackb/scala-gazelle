@@ -219,8 +219,10 @@ class ScalaSourceFile {
                 this.visitTemplate(node);
                 break;
             default:
-                this.console.log('unhandled node type', node.type, this.filename);
-                this.printNode(node);
+                if (debug) {
+                    this.console.log('unhandled node type', node.type, this.filename);
+                    this.printNode(node);
+                }
                 this.visitStats(node.stats);
         }
     }
@@ -416,8 +418,10 @@ class ScalaSourceFile {
                 }
                 return names.join('.');
             default:
-                this.console.warn('unhandled ref type:', ref.type);
-                this.printNode(ref);
+                if (debug) {
+                    this.console.warn('unhandled ref type:', ref.type);
+                    this.printNode(ref);
+                }
         }
     }
 

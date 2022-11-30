@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -22,7 +23,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
 	// "github.com/stackb/scala-gazelle/pkg/index"
-	"github.com/stackb/scala-gazelle/pkg/index"
+
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/sourceindex"
 
@@ -95,7 +96,7 @@ func (r *ScalaSourceCrossResolver) RegisterFlags(flags *flag.FlagSet, cmd string
 func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if r.cacheFile != "" {
 		r.cacheFile = os.ExpandEnv(r.cacheFile)
-		if err := r.readScalaRuleIndexSpec(r.cacheFile); err != nil {
+		if err := r.readIndex(r.cacheFile); err != nil {
 			// don't report error if the file does not exist yet
 			if !errors.Is(err, fs.ErrNotExist) {
 				return fmt.Errorf("reading cacheFile: %v (%T)", err, err)
@@ -120,7 +121,7 @@ func (r *ScalaSourceCrossResolver) ParseScalaRule(dir string, from label.Label, 
 		}
 		rule.Files[i] = file
 	}
-	if err := r.readScalaRuleIndex(rule); err != nil {
+	if err := r.readScalaRule(rule); err != nil {
 		return nil, err
 	}
 	return rule, nil
@@ -143,6 +144,8 @@ func (r *ScalaSourceCrossResolver) Provided(lang, impLang string) map[label.Labe
 }
 
 func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*sipb.ScalaFile, error) {
+	t1 := time.Now()
+
 	abs := filepath.Join(dir, filename)
 	sha256, err := fileSha256(abs)
 	if err != nil {
@@ -167,10 +170,13 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
+
+	t2 := time.Now().Sub(t1).Round(1 * time.Millisecond)
+
 	if response.Error != "" {
 		log.Printf("Parse Error <%s>: %s", filename, response.Error)
 	} else {
-		log.Printf("Parsed <%s>", filename)
+		log.Printf("Parsed <%s> (%v)", filename, t2)
 	}
 
 	scalaFile := response.ScalaFiles[0]
@@ -188,14 +194,14 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	return file, nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error {
+func (r *ScalaSourceCrossResolver) readIndex(filename string) error {
 	index, err := sourceindex.ReadScalaSourceIndexFile(filename)
 	if err != nil {
 		return fmt.Errorf("error while reading index specification file %s: %w", filename, err)
 	}
 
 	for _, rule := range index.Rules {
-		if err := r.readScalaRuleIndex(rule); err != nil {
+		if err := r.readScalaRule(rule); err != nil {
 			return err
 		}
 	}
@@ -203,14 +209,14 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRule) error {
+func (r *ScalaSourceCrossResolver) readScalaRule(rule *sipb.ScalaRule) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
 	}
 
 	for _, file := range rule.Files {
-		if err := r.readScalaFileIndex(rule, ruleLabel, file); err != nil {
+		if err := r.readScalaFile(rule, ruleLabel, file); err != nil {
 			return err
 		}
 	}
@@ -220,7 +226,7 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRule) erro
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaFileIndex(rule *sipb.ScalaRule, ruleLabel label.Label, file *sipb.ScalaFile) error {
+func (r *ScalaSourceCrossResolver) readScalaFile(rule *sipb.ScalaRule, ruleLabel label.Label, file *sipb.ScalaFile) error {
 	r.providersMux.Lock()
 	defer r.providersMux.Unlock()
 
@@ -365,7 +371,7 @@ func (r *ScalaSourceCrossResolver) writeIndex() error {
 		idx.Rules = append(idx.Rules, rule)
 	}
 
-	if err := index.WriteJSONFile(r.cacheFile, &idx); err != nil {
+	if err := sourceindex.WriteScalaSourceIndexFile(r.cacheFile, &idx); err != nil {
 		return err
 	}
 
