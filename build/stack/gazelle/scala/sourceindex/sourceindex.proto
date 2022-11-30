@@ -12,7 +12,6 @@ message ScalaIndex {
     repeated ScalaRule rules = 1;
 }
 
-
 // ScalaRule represents a set of files with a label and rule kind.
 message ScalaRule {
 	// label is the bazel label.
@@ -47,11 +46,13 @@ message ScalaFile {
 	// constructor invocations.
     repeated string names = 10;
 	// Extends is a mapping from the base type to a list of symbol names.
-    repeated ScalaExtends extends = 11;
+    map<string,ClassList> extends = 11;
+    // elapsed_millis is the time taken to parse the file
+    int64 elapsed_millis = 12;
+    // error is a string assigned when a parse error occurs
+    string error = 13;
 }
 
-// ScalaExtends represents a scala extends clause.
-message ScalaExtends {
-    string base = 1;
-    repeated string symbols = 2;
+message ClassList {
+    repeated string classes = 1;
 }

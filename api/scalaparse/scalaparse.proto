@@ -2,26 +2,9 @@ syntax = "proto3";
 
 package api.scalaparse;
 
+import "build/stack/gazelle/scala/sourceindex/sourceindex.proto";
+
 option go_package = "github.com/stackb/scala-gazelle/api/scalaparse";
-
-message ScalaFile {
-    string filename = 1;
-    repeated string packages = 2;
-    repeated string imports = 3;
-    repeated string names = 4;
-    repeated string classes = 5;
-    repeated string types = 6;
-    repeated string traits = 7;
-    repeated string vals = 8;
-    repeated string objects = 9;
-    map<string,ClassList> extends = 10;
-    int64 elapsed_millis = 11;
-    string error = 12;
-}
-
-message ClassList {
-    repeated string classes = 1;
-}
 
 message ScalaParseRequest {
     string label = 1;
@@ -30,7 +13,7 @@ message ScalaParseRequest {
 
 message ScalaParseResponse {
     string label = 1;
-    repeated ScalaFile scala_files = 2;
+    repeated build.stack.gazelle.scala.sourceindex.ScalaFile scala_files = 2;
     string error = 3;
     int64 elapsed_millis = 4;
 }
