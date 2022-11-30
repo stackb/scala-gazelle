@@ -1,15 +1,10 @@
-.PHONY: scalaparse
-scalaparse:
-	bazel run //api/scalaparse:scalaparse_go_compiled_sources.update
-	mv api/scalaparse/api/scalaparse/scalaparse*.go api/scalaparse
-	rm -rf api/scalaparse/api/
 
-.PHONY: sourceindex
-sourceindex:
-	bazel run //build/stack/gazelle/scala/sourceindex:sourceindex_go_compiled_sources.update
-	mv build/stack/gazelle/scala/sourceindex/build/stack/gazelle/scala/sourceindex/sourceindex.pb.go build/stack/gazelle/scala/sourceindex/
-	rm -rf build/stack/gazelle/scala/sourceindex/build
+.PHONY: parse
+parse:
+	bazel run //build/stack/gazelle/scala/parse:parse_go_compiled_sources.update
+	mv build/stack/gazelle/scala/parse/build/stack/gazelle/scala/parse/*.go build/stack/gazelle/scala/parse/
+	rm -rf build/stack/gazelle/scala/parse/build
 
 .PHONY: protos
-protos: scalaparse sourceindex
+protos: scalaparse parse
 	echo "done"

@@ -19,12 +19,10 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/crossresolve",
     visibility = ["//visibility:public"],
     deps = [
-        "//api/scalaparse",
-        "//build/stack/gazelle/scala/sourceindex",
+        "//build/stack/gazelle/scala/parse",
         "//pkg/index",
         "//pkg/maven",
         "//pkg/scalaparse",
-        "//pkg/sourceindex",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",

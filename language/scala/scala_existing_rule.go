@@ -18,7 +18,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/index"
 
-	sipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 // a lazily-computed list of resolvers that implement LabelOwner
@@ -87,7 +87,7 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
 	from := label.New("", pkg.Rel(), r.Name())
-	files := make([]*sipb.ScalaFile, 0)
+	files := make([]*sppb.File, 0)
 
 	srcs, err := getAttrFiles(pkg, r, "srcs")
 	if err != nil {
@@ -118,7 +118,7 @@ type scalaExistingRuleRule struct {
 	cfg          *RuleConfig
 	pkg          ScalaPackage
 	rule         *rule.Rule
-	files        []*sipb.ScalaFile
+	files        []*sppb.File
 	isBinaryRule bool
 }
 
@@ -471,7 +471,7 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser crossresolve.ScalaRuleParser) ([]*sipb.ScalaFile, error) {
+func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser crossresolve.ScalaRuleParser) ([]*sppb.File, error) {
 	if index, err := parser.ParseScalaRule(dir, from, kind, srcs...); err != nil {
 		return nil, err
 	} else {

@@ -1,0 +1,53 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "parse_proto",
+    srcs = [
+        "file.proto",
+        "parser.proto",
+        "rule.proto",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+proto_compiled_sources(
+    name = "parse_go_compiled_sources",
+    srcs = [
+        "file.pb.go",
+        "parser.pb.go",
+        "parser_grpc.pb.go",
+        "rule.pb.go",
+    ],
+    output_mappings = [
+        "file.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/file.pb.go",
+        "rule.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/rule.pb.go",
+        "parser.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/parser.pb.go",
+        "parser_grpc.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/parser_grpc.pb.go",
+    ],
+    plugins = [
+        "@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go",
+        "@build_stack_rules_proto//plugin/grpc/grpc-go:protoc-gen-go-grpc",
+    ],
+    proto = "parse_proto",
+)
+
+go_library(
+    name = "parse",
+    srcs = [
+        "file.pb.go",
+        "parser.pb.go",
+        "parser_grpc.pb.go",
+        "rule.pb.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//codes",
+        "@org_golang_google_grpc//status",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

@@ -23,7 +23,7 @@ import (
 	"github.com/amenzhinsky/go-memexec"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 
-	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const contentTypeJSON = "application/json"
@@ -36,7 +36,7 @@ func NewScalaParseServer() *ScalaParseServer {
 }
 
 type ScalaParseServer struct {
-	sppb.UnimplementedScalaParserServer
+	sppb.UnimplementedParserServer
 
 	process    *memexec.Exec
 	processDir string
@@ -164,8 +164,8 @@ func (s *ScalaParseServer) Start() error {
 	return nil
 }
 
-func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest) (*sppb.ScalaParseResponse, error) {
-	req, err := newHttpScalaParseRequest(s.httpUrl, in)
+func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +195,7 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest
 	if debugParse {
 		log.Printf("response body: %s", string(data))
 	}
-	var response sppb.ScalaParseResponse
+	var response sppb.ParseResponse
 
 	if err := protojson.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
@@ -219,14 +219,14 @@ func getFreePort() (int, error) {
 	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
-func newHttpScalaParseRequest(url string, in *sppb.ScalaParseRequest) (*http.Request, error) {
+func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, error) {
 	if url == "" {
 		return nil, status.Error(codes.InvalidArgument, "request URL is required")
 	}
 	if in == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "ScalaParseRequest is required")
+		return nil, status.Errorf(codes.InvalidArgument, "ParseRequest is required")
 	}
-	values := map[string]interface{}{"label": in.Label, "files": in.Filename}
+	values := map[string]interface{}{"files": in.Filename}
 	jsonValue, err := json.Marshal(values)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "marshaling request: %v", err)

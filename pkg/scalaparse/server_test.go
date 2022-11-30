@@ -17,7 +17,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
-	sipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 func TestServerParse(t *testing.T) {
@@ -44,14 +44,14 @@ class Foo extends HashMap {
 				},
 			},
 			want: sppb.ScalaParseResponse{
-				ScalaFiles: []*sipb.ScalaFile{
+				ScalaFiles: []*sppb.ScalaFile{
 					{
 						Filename: "A.scala",
 						Packages: []string{"a"},
 						Classes:  []string{"a.Foo"},
 						Imports:  []string{"java.util.HashMap"},
 						Names:    []string{"a", "java", "util"},
-						Extends: map[string]*sipb.ClassList{
+						Extends: map[string]*sppb.ClassList{
 							"class a.Foo": {
 								Classes: []string{"HashMap"},
 							},
@@ -93,8 +93,8 @@ class Foo extends HashMap {
 
 			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
 				sppb.ScalaParseResponse{},
-				sipb.ScalaFile{},
-				sipb.ClassList{},
+				sppb.ScalaFile{},
+				sppb.ClassList{},
 			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}

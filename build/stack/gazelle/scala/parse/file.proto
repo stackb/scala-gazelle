@@ -1,29 +1,13 @@
 syntax = "proto3";
 
-package build.stack.gazelle.scala.sourceindex;
+package build.stack.gazelle.scala.parse;
 
-option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex;sourceindex";
-option java_package = "build.stack.gazelle.scala.sourceindex";
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
+option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
-option java_outer_classname = "SourceIndexSpec";
 
-// ScalaIndex represents a set of rules.
-message ScalaIndex {
-    repeated ScalaRule rules = 1;
-}
-
-// ScalaRule represents a set of files with a label and rule kind.
-message ScalaRule {
-	// label is the bazel label.
-    string label = 1;
-	// Kind is the kind of rule named by label.
-    string kind = 2;
-	// Files is the list of files in the rule
-    repeated ScalaFile files = 3;
-}
-
-// ScalaFile represents a file named in a scala rule.srcs list.
-message ScalaFile {
+// File represents a parsed file named in a scala rule.srcs list.
+message File {
 	// Filename is the (relative) source filename
     string filename = 1;
 	// Sha256 is the sha256 hash of the file contents

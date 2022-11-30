@@ -46,7 +46,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
-        "//build/stack/gazelle/scala/sourceindex",
+        "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/crossresolve",
         "//pkg/index",

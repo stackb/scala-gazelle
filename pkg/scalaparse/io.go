@@ -1,4 +1,4 @@
-package sourceindex
+package scalaparse
 
 import (
 	"fmt"
@@ -8,50 +8,50 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	sipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-func ReadScalaSourceIndexFile(filename string) (*sipb.ScalaIndex, error) {
+func ReadScalaParseRuleListFile(filename string) (*sppb.RuleList, error) {
 	if filepath.Ext(filename) == ".json" {
-		return ReadScalaSourceIndexJSONFile(filename)
+		return ReadScalaParseRuleListJSONFile(filename)
 	} else {
-		return ReadScalaSourceIndexProtoFile(filename)
+		return ReadScalaParseRuleListProtoFile(filename)
 	}
 }
 
-func ReadScalaSourceIndexProtoFile(filename string) (*sipb.ScalaIndex, error) {
+func ReadScalaParseRuleListProtoFile(filename string) (*sppb.RuleList, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("read ScalaSourceIndex file %q: %w", filename, err)
 	}
-	index := sipb.ScalaIndex{}
+	index := sppb.RuleList{}
 	if err := proto.Unmarshal(data, &index); err != nil {
 		return nil, fmt.Errorf("unmarshal ScalaSourceIndex proto: %w", err)
 	}
 	return &index, nil
 }
 
-func ReadScalaSourceIndexJSONFile(filename string) (*sipb.ScalaIndex, error) {
+func ReadScalaParseRuleListJSONFile(filename string) (*sppb.RuleList, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("read ScalaSourceIndex file %q: %w", filename, err)
 	}
-	index := sipb.ScalaIndex{}
+	index := sppb.RuleList{}
 	if err := protojson.Unmarshal(data, &index); err != nil {
 		return nil, fmt.Errorf("unmarshal ScalaSourceIndex json: %w", err)
 	}
 	return &index, nil
 }
 
-func WriteScalaSourceIndexFile(filename string, index *sipb.ScalaIndex) error {
+func WriteScalaParseRuleListFile(filename string, index *sppb.RuleList) error {
 	if filepath.Ext(filename) == ".json" {
-		return WriteScalaSourceIndexJSONFile(filename, index)
+		return WriteScalaParseRuleListJSONFile(filename, index)
 	} else {
-		return WriteScalaSourceIndexProtoFile(filename, index)
+		return WriteScalaParseRuleListProtoFile(filename, index)
 	}
 }
 
-func WriteScalaSourceIndexProtoFile(filename string, index *sipb.ScalaIndex) error {
+func WriteScalaParseRuleListProtoFile(filename string, index *sppb.RuleList) error {
 	data, err := proto.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal ScalaSourceIndex proto: %w", err)
@@ -62,7 +62,7 @@ func WriteScalaSourceIndexProtoFile(filename string, index *sipb.ScalaIndex) err
 	return nil
 }
 
-func WriteScalaSourceIndexJSONFile(filename string, index *sipb.ScalaIndex) error {
+func WriteScalaParseRuleListJSONFile(filename string, index *sppb.RuleList) error {
 	data, err := protojson.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal ScalaSourceIndex json: %w", err)

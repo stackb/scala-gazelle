@@ -487,15 +487,15 @@ async function processJSONRequest(request) {
     }
 
     const start = new Date().getTime();
-    let scalaFiles = [];
+    let files = [];
     if (process.env.PARALLEL_MODE) {
-        scalaFiles = await parseFilesParallel(request.files);
+        files = await parseFilesParallel(request.files);
     } else {
-        scalaFiles = await parseFiles(request.files);
+        files = await parseFiles(request.files);
     }
     const elapsedMillis = new Date().getTime() - start;
 
-    return { scalaFiles, elapsedMillis };
+    return { files, elapsedMillis };
 }
 
 function processApplicationJSON(data) {

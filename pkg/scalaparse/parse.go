@@ -49,8 +49,6 @@ type ParseRequest struct {
 	Done  bool
 }
 
-// re-implement this as a client-streaming type thing?
-
 // Parse runs the embedded parser in batch mode.
 func Parse(label string, files []string) (*ExecResult, error) {
 	tmpDir, err := bazel.NewTmpDir("")

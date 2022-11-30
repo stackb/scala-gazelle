@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "assets.go",
         "exec.go",
+        "io.go",
         "options.go",
         "parse.go",
         "server.go",
@@ -17,12 +18,13 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
     visibility = ["//visibility:public"],
     deps = [
-        "//api/scalaparse",
+        "//build/stack/gazelle/scala/parse",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",
         "@org_golang_google_protobuf//encoding/protojson",
+        "@org_golang_google_protobuf//proto",
     ],
 )
 
@@ -37,7 +39,7 @@ go_test(
     embed = [":scalaparse"],
     deps = [
         "//api/scalaparse",
-        "//build/stack/gazelle/scala/sourceindex",
+        "//build/stack/gazelle/scala/parse",
         "@bazel_gazelle//testtools:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
