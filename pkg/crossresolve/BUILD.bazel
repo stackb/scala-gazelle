@@ -27,7 +27,6 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_roaringbitmap_roaring//:roaring",
-        "@com_github_stackb_scala_gazelle//pkg/index:go_default_library",
     ],
 )
 
