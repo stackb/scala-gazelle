@@ -8,6 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
 const (
@@ -21,8 +22,8 @@ type ScalaPackage interface {
 	Dir() string
 	// File returns the BUILD file for the package
 	File() *rule.File
-	// ScalaFileParser returns the parser instance to use.
-	ScalaFileParser() ScalaFileParser
+	// ScalaRuleParser returns the parser instance to use.
+	ScalaRuleParser() crossresolve.ScalaRuleParser
 	// ScalaImportRegistry returns the registry instance.
 	ScalaImportRegistry() ScalaImportRegistry
 }
@@ -30,7 +31,7 @@ type ScalaPackage interface {
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// parser is the file parser
-	scalaFileParser ScalaFileParser
+	parser crossresolve.ScalaRuleParser
 	// shared import registry
 	scalaImportRegistry ScalaImportRegistry
 	// rel is the package (args.Rel)
@@ -50,9 +51,9 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, parser crossresolve.ScalaRuleParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
-		scalaFileParser:     scalaFileParser,
+		parser:              parser,
 		scalaImportRegistry: scalaImportRegistry,
 		rel:                 rel,
 		ruleRegistry:        ruleRegistry,
@@ -179,9 +180,9 @@ func (s *scalaPackage) ScalaImportRegistry() ScalaImportRegistry {
 	return s.scalaImportRegistry
 }
 
-// ScalaFileParser implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaFileParser() ScalaFileParser {
-	return s.scalaFileParser
+// ScalaRuleParser implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaRuleParser() crossresolve.ScalaRuleParser {
+	return s.parser
 }
 
 // File implements part of the ScalaPackage interface.

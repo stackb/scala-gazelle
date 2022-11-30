@@ -28,9 +28,9 @@ func TestScalaSourceCrossResolverConfigureCacheFile(t *testing.T) {
 			if testutil.ExpectError(t, tc.wantErr, fs.Parse(tc.args)) {
 				return
 			}
-			if testutil.ExpectError(t, tc.wantErr, cr.CheckFlags(fs, c)) {
-				return
-			}
+			// if testutil.ExpectError(t, tc.wantErr, cr.CheckFlags(fs, c)) {
+			// 	return
+			// }
 
 			// if diff := cmp.Diff(tc.wantCacheFile, cr.cacheFile); diff != "" {
 			// 	t.Errorf(".cacheFile (-want +got):\n%s", diff)

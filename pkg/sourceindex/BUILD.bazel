@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "sourceindex",
+    srcs = ["sourceindex.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/sourceindex",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/sourceindex",
+        "@org_golang_google_protobuf//encoding/protojson",
+        "@org_golang_google_protobuf//proto",
+    ],
+)

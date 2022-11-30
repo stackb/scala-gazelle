@@ -21,10 +21,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
+	// "github.com/stackb/scala-gazelle/pkg/index"
 	"github.com/stackb/scala-gazelle/pkg/index"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
+	"github.com/stackb/scala-gazelle/pkg/sourceindex"
 
 	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
+	sipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex"
 )
 
 func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *ScalaSourceCrossResolver {
@@ -35,8 +38,8 @@ func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *
 		providersMux: &sync.Mutex{},
 		providers:    make(map[string][]*provider),
 		packages:     make(map[string][]*provider),
-		byFilename:   make(map[string]*index.ScalaFileSpec),
-		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
+		byFilename:   make(map[string]*sipb.ScalaFileIndex),
+		byRule:       make(map[label.Label]*sipb.ScalaRuleIndex),
 	}
 }
 
@@ -70,16 +73,16 @@ type ScalaSourceCrossResolver struct {
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
-	byFilename map[string]*index.ScalaFileSpec
+	byFilename map[string]*sipb.ScalaFileIndex
 	// byRule is a mapping of the scala rule to the spec
-	byRule map[label.Label]*index.ScalaRuleSpec
+	byRule map[label.Label]*sipb.ScalaRuleIndex
 	// parser is an instance of the scala source parser
 	parser *scalaparse.ScalaParseServer
 }
 
 type provider struct {
-	rule  *index.ScalaRuleSpec
-	file  *index.ScalaFileSpec
+	rule  *sipb.ScalaRuleIndex
+	file  *sipb.ScalaFileIndex
 	label label.Label
 }
 
@@ -102,42 +105,25 @@ func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Con
 	return r.parser.Start()
 }
 
-// ParseScalaFiles implements ScalaFileParser
-func (r *ScalaSourceCrossResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error) {
-	rule := &index.ScalaRuleSpec{
+// ParseScalaRule implements ScalaRuleParser
+func (r *ScalaSourceCrossResolver) ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sipb.ScalaRuleIndex, error) {
+	rule := &sipb.ScalaRuleIndex{
 		Label: from.String(),
 		Kind:  kind,
-		Srcs:  make([]*index.ScalaFileSpec, len(srcs)),
+		Files: make([]*sipb.ScalaFileIndex, len(srcs)),
 	}
 	for i, src := range srcs {
 		filename := filepath.Join(from.Pkg, src)
-		file, err := r.parseScalaFileSpec(dir, filename)
+		file, err := r.parseScalaFileIndex(dir, filename)
 		if err != nil {
 			return nil, err
 		}
-		rule.Srcs[i] = file
+		rule.Files[i] = file
 	}
-	if err := r.readScalaRuleSpec(rule); err != nil {
+	if err := r.readScalaRuleIndex(rule); err != nil {
 		return nil, err
 	}
 	return rule, nil
-}
-
-// GetScalaRule implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
-	from.Repo = "" // TODO(pcj): this is correct?  We always want sources in the main repo.
-	rule, ok := r.byRule[from]
-	return rule, ok
-}
-
-// GetScalaRules implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaRules() map[label.Label]*index.ScalaRuleSpec {
-	return r.byRule
-}
-
-// GetScalaFile implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaFile(filename string) *index.ScalaFileSpec {
-	return r.byFilename[filename]
 }
 
 // Provided implements the protoc.ImportProvider interface.
@@ -156,7 +142,7 @@ func (r *ScalaSourceCrossResolver) Provided(lang, impLang string) map[label.Labe
 	return result
 }
 
-func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
+func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*sipb.ScalaFileIndex, error) {
 	abs := filepath.Join(dir, filename)
 	sha256, err := fileSha256(abs)
 	if err != nil {
@@ -188,7 +174,7 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 	}
 
 	scalaFile := response.ScalaFiles[0]
-	file = &index.ScalaFileSpec{
+	file = &sipb.ScalaFileIndex{
 		Filename: filename,
 		Packages: scalaFile.Packages,
 		Imports:  scalaFile.Imports,
@@ -203,20 +189,13 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 }
 
 func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error {
-	// if !filepath.IsAbs(filename) {
-	// 	cwd, err := os.Getwd()
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	filename = filepath.Join(cwd, filename)
-	// }
-	index, err := index.ReadScalaRuleIndexSpec(filename)
+	index, err := sourceindex.ReadScalaSourceIndexFile(filename)
 	if err != nil {
 		return fmt.Errorf("error while reading index specification file %s: %w", filename, err)
 	}
 
 	for _, rule := range index.Rules {
-		if err := r.readScalaRuleSpec(rule); err != nil {
+		if err := r.readScalaRuleIndex(rule); err != nil {
 			return err
 		}
 	}
@@ -224,14 +203,14 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) error {
+func (r *ScalaSourceCrossResolver) readScalaRuleIndex(rule *sipb.ScalaRuleIndex) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
 	}
 
-	for _, file := range rule.Srcs {
-		if err := r.readScalaFileSpec(rule, ruleLabel, file); err != nil {
+	for _, file := range rule.Files {
+		if err := r.readScalaFileIndex(rule, ruleLabel, file); err != nil {
 			return err
 		}
 	}
@@ -241,7 +220,7 @@ func (r *ScalaSourceCrossResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) 
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec) error {
+func (r *ScalaSourceCrossResolver) readScalaFileIndex(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex) error {
 	r.providersMux.Lock()
 	defer r.providersMux.Unlock()
 
@@ -275,7 +254,7 @@ func (r *ScalaSourceCrossResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+func (r *ScalaSourceCrossResolver) provide(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex, imp string) {
 	if pp, ok := r.providers[imp]; ok {
 		p := pp[0]
 		if p.label == ruleLabel {
@@ -286,7 +265,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *index.ScalaRuleSpec, ruleLabel 
 	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *ScalaSourceCrossResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+func (r *ScalaSourceCrossResolver) providePackage(rule *sipb.ScalaRuleIndex, ruleLabel label.Label, file *sipb.ScalaFileIndex, imp string) {
 	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.
@@ -318,7 +297,7 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 	for _, rule := range r.byRule {
 		ruleNodeID := "rule/" + rule.Label
 
-		for _, file := range rule.Srcs {
+		for _, file := range rule.Files {
 			fileNodeID := path.Join("file", file.Filename)
 
 			r.addDependency(fileNodeID, ruleNodeID, "rule")
@@ -341,7 +320,8 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 				}
 			}
 
-			for token, symbols := range file.Extends {
+			for _, extends := range file.Extends {
+				token := extends.Base
 				for _, sym := range symbols {
 					suffix := "." + sym
 					var matched bool
@@ -380,7 +360,7 @@ func (r *ScalaSourceCrossResolver) OnEnd() {
 }
 
 func (r *ScalaSourceCrossResolver) writeIndex() error {
-	var idx index.ScalaRuleIndexSpec
+	var idx sipb.ScalaSourceIndex
 	for _, rule := range r.byRule {
 		idx.Rules = append(idx.Rules, rule)
 	}

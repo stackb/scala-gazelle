@@ -14,7 +14,7 @@ message ScalaSourceIndex {
 
 message ScalaRuleIndex {
 	// Label is the bazel label that names the source file in its srcs list.
-    string labe = 1;
+    string label = 1;
 	// Kind is the kind of rule named by Label.
     string kind = 2;
 	// Files is the list of files in the rule

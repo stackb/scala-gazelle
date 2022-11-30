@@ -46,68 +46,6 @@ func TestImportRegistryCompletions(t *testing.T) {
 	}
 }
 
-// TestImportRegistryDisambiguate tests the parsing of a starlark glob.
-func SkipTestImportRegistryDisambiguateErrors(t *testing.T) {
-	for name, tc := range map[string]struct {
-		registry *importRegistry
-		imp      string
-		labels   []label.Label
-		from     label.Label
-		want     string
-	}{
-		"empty": {
-			registry: newImportRegistryBuilder(t).build(),
-			want:     `no completions known for //: (aborting disambiguation attempt of "")`,
-		},
-	} {
-		t.Run(name, func(t *testing.T) {
-			c := &config.Config{}
-			_, got := tc.registry.Disambiguate(c, nil, resolve.ImportSpec{Imp: tc.imp, Lang: ScalaLangName}, ScalaLangName, tc.from, tc.labels)
-			if got == nil {
-				t.Fatal("expected err, got none")
-			}
-			if diff := cmp.Diff(tc.want, got.Error()); diff != "" {
-				t.Errorf("importRegistry.DisambiguateErrors (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
-// TestImportRegistryDisambiguate tests the parsing of a starlark glob.
-func TestImportRegistryDisambiguate(t *testing.T) {
-	for name, tc := range map[string]struct {
-		registry *importRegistry
-		imp      string
-		labels   []label.Label
-		from     label.Label
-		want     []label.Label
-	}{
-		"success": {
-			registry: newImportRegistryBuilder(t).
-				provides("//com/lib:bar", "com.lib.A").
-				provides("//com/lib:baz", "com.lib.C", "com.lib.D").
-				sourceImports("//com/app:app", "com/app/App.scala", "com.lib._").
-				notFoundTypes("com/app/App.scala", "D").
-				build(),
-			imp:    "com.lib._",
-			labels: mustParseLabels(t, "//com/lib:bar", "//com/lib:baz"),
-			from:   mustParseLabel(t, "//com/app:app"),
-			want:   mustParseLabels(t, "//com/lib:baz"),
-		},
-	} {
-		t.Run(name, func(t *testing.T) {
-			c := &config.Config{}
-			got, err := tc.registry.Disambiguate(c, nil, resolve.ImportSpec{Imp: tc.imp, Lang: ScalaLangName}, ScalaLangName, tc.from, tc.labels)
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("importRegistry.completions (-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
 // TestImportRegistryTransitiveImports transitive imports calculation.
 func TestImportRegistryTransitiveImports(t *testing.T) {
 	for name, tc := range map[string]struct {
@@ -184,7 +122,7 @@ func newImportRegistryBuilder(t *testing.T) *importRegistryBuilder {
 		t:            t,
 		ruleRegistry: rr,
 		compiler:     c,
-		registry:     newImportRegistry(rr, cr, c),
+		registry:     newImportRegistry(cr, c),
 	}
 }
 
@@ -242,19 +180,6 @@ func (b *importRegistryBuilder) build() *importRegistry {
 type fakeRuleRegistry struct {
 	t     *testing.T
 	rules map[label.Label]*index.ScalaRuleSpec
-}
-
-func (rr *fakeRuleRegistry) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
-	rule, ok := rr.rules[from]
-	return rule, ok
-}
-
-func (rr *fakeRuleRegistry) GetScalaRules() map[label.Label]*index.ScalaRuleSpec {
-	return rr.rules
-}
-
-func (rr *fakeRuleRegistry) GetScalaFile(filename string) *index.ScalaFileSpec {
-	return nil
 }
 
 type fakeClassRegistry struct {

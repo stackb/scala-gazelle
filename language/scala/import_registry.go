@@ -14,9 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
-	"github.com/bmatcuk/doublestar/v4"
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/index"
 )
 
 // ScalaImportRegistry implementations are capable of disambiguating wildcard
@@ -63,25 +61,22 @@ type DependencyRecorder func(src, dst, kind string)
 
 type dependencyMatrix map[uint32]*roaring.Bitmap
 
-func newImportRegistry(sourceRuleRegistry ScalaSourceRuleRegistry, classFileRegistry ScalaJarResolver, scalaCompiler ScalaCompiler) *importRegistry {
+func newImportRegistry(classFileRegistry ScalaJarResolver, scalaCompiler ScalaCompiler) *importRegistry {
 	return &importRegistry{
-		importsOut:         "/tmp/scala-gazelle-imports.csv",
-		sourceRuleRegistry: sourceRuleRegistry,
-		classFileRegistry:  classFileRegistry,
-		scalaCompiler:      scalaCompiler,
-		provides:           make(map[label.Label][]string),
-		imports:            make(map[string]label.Label),
-		classes:            make(map[string][]label.Label),
-		symbols:            NewSymbolTable(),
-		dependencies:       make(dependencyMatrix),
-		depEdges:           make(map[string]string),
+		importsOut:        "/tmp/scala-gazelle-imports.csv",
+		classFileRegistry: classFileRegistry,
+		scalaCompiler:     scalaCompiler,
+		provides:          make(map[label.Label][]string),
+		imports:           make(map[string]label.Label),
+		classes:           make(map[string][]label.Label),
+		symbols:           NewSymbolTable(),
+		dependencies:      make(dependencyMatrix),
+		depEdges:          make(map[string]string),
 	}
 }
 
 // importRegistry implements ScalaImportRegistry.
 type importRegistry struct {
-	// sourceRuleRegistry is used to assist with disambigation
-	sourceRuleRegistry ScalaSourceRuleRegistry
 	// classFileRegistry is used to assist with disambigation
 	classFileRegistry ScalaJarResolver
 	// scalaCompiler is used to assist with disambigation
@@ -314,144 +309,7 @@ func (ir *importRegistry) Completions(imp string) map[string]label.Label {
 }
 
 func (ir *importRegistry) Disambiguate(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string, from label.Label, labels []label.Label) ([]label.Label, error) {
-	debug := false
-
-	fail := func(reason string) ([]label.Label, error) {
-		return labels, fmt.Errorf(`%[1]q is ambiguous (symbol is provided by multiple rules %[2]v)
-
-Failed to automatically disambiguate it to a single label, or matching to an unambiguous list. 
-
-Reason: %[4]s
-
-Rule where the error originated: %[3]v
-
-Possible solutions:
-
-1. Use '# gazelle:resolve scala scala %[1]s LABEL' to pick one.
-   - Alternatively: '# gazelle:override scala glob GLOB LABEL' .
-2. If this is a wildcard import, remove the wildcard and be explicit.
-3. If this is a jar, add the desired choice to the 'preferred' attribute (java_index rule).
-4. If this is a jar, remove duplicate providers from the 'deps' attribute (java_index rule).
-`, imp.Imp, labels, from, reason)
-	}
-
-	// step 1: check override specs
-	if sc := getScalaConfig(c); sc != nil {
-		for _, override := range sc.overrides {
-			// log.Printf("%v: check match override %q with override: %v", from, imp, override.imp.Imp)
-			if ok, _ := doublestar.Match(override.imp.Imp, imp.Imp); ok {
-				if debug {
-					log.Printf("%v: disambiguated %q with override: %v", from, imp.Imp, override.dep)
-				}
-				return []label.Label{override.dep}, nil
-			}
-		}
-	}
-
-	if debug {
-		log.Printf("%v: disambiguating %q, candidate labels: %v", from, imp.Imp, labels)
-	}
-
-	// step 1a: check if this import is provided by a jar file.  If so, no point
-	// in trying to resolve it via srcs.
-	if result := ir.classFileRegistry.CrossResolve(c, ix, imp, lang); len(result) > 0 {
-		return fail("multiple jar files provide the import")
-	}
-
-	// step 2: get completion symbols for the import.  For example, if we had
-	// the import 'java.util._', get the set (java.util.List, java.util.Map,
-	// ...)
-	completions := ir.Completions(imp.Imp)
-	if len(completions) == 0 {
-		return fail(imp.Imp + " did not expand to any known concrete types")
-	}
-
-	if debug {
-		for i, c := range completions {
-			log.Printf("completion universe member %q: %v", i, c)
-		}
-	}
-
-	// step 3: gather the list of srcs in 'from' and filter them such that
-	// only those that explicitly use the import are retained.
-	rule, ok := ir.sourceRuleRegistry.GetScalaRule(from)
-	if !ok {
-		return fail(fmt.Sprintf("rule registry: unknown rule %v", from))
-	}
-
-	files := []*index.ScalaFileSpec{}
-	for _, file := range rule.Srcs {
-		for _, i := range file.Imports {
-			if imp.Imp == i {
-				files = append(files, file)
-				break
-			}
-		}
-	}
-	if len(files) == 0 {
-		return fail(fmt.Sprintf("did not find a source file in %v that actually imports %q; can't use source file symbols to help disambiguate futher", from, imp.Imp))
-	}
-
-	// step 4: use the scala compiler to list the unknown types in the source file.
-	types := make(map[string]bool)
-
-	for _, file := range files {
-		compilation, err := ir.scalaCompiler.Compile(c.RepoRoot, file.Filename)
-		if err != nil {
-			return fail(fmt.Sprintf("scala compiler error %q: %v", file.Filename, err))
-		}
-		for _, sym := range compilation.NotFound {
-			types[sym.Name] = true
-		}
-		for _, sym := range compilation.NotMember {
-			if sym.Package == imp.Imp {
-				types[sym.Name] = true
-			}
-		}
-		// augment the types map with any imports they specifically named in an import.
-		for _, fileImp := range file.Imports {
-			if strings.HasPrefix(fileImp, imp.Imp) {
-				sym := strings.TrimPrefix(fileImp[len(imp.Imp):], ".")
-				if sym != "" {
-					types[sym] = true
-				}
-			}
-		}
-		// also all applied names
-		for _, sym := range file.Names {
-			types[sym] = true
-		}
-	}
-
-	if debug {
-		for i, c := range types {
-			log.Printf("possible completion %q: %v", i, c)
-		}
-	}
-
-	// step 5: process all the unknown types in srcs.  If we find a completion
-	// match, we assume they are using this actual symbol.
-	match := make(map[label.Label]bool)
-
-	for sym := range types {
-		from, ok := completions[sym]
-		if ok {
-			match[from] = true
-		}
-	}
-
-	if len(match) == 0 {
-		return fail(fmt.Sprintf("unable to find a completion match in %v", types))
-	}
-
-	actuals := make([]label.Label, len(match))
-	i := 0
-	for from := range match {
-		actuals[i] = from
-		i++
-	}
-
-	return actuals, nil
+	return nil, fmt.Errorf("Disambiguate is no longer implemented.")
 }
 
 func importClass(imp string) (string, bool) {

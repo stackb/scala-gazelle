@@ -37,7 +37,6 @@ go_library(
         "scala_config.go",
         "scala_existing_rule.go",
         "scala_library.go",
-        "scala_source_index_resolver.go",
         "symbol_table.go",
     ],
     data = [
@@ -47,11 +46,10 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
-        "//api/scalaparse",
+        "//build/stack/gazelle/scala/sourceindex",
         "//pkg/collections",
         "//pkg/crossresolve",
         "//pkg/index",
-        "//pkg/scalaparse",
         "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

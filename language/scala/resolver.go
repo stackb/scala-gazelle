@@ -40,33 +40,14 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			continue
 		}
 
-		if shouldDisambiguate && len(labels) > 1 {
-			original := labels
-			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
-			if err != nil {
-				log.Printf("disambigation error: %v", err)
+		for _, dep := range labels {
+			if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
+				continue
 			}
 			if dbg {
-				log.Println(from, imp, original, "--[Disambiguate]-->", disambiguated)
+				log.Println(from, "| resolve hit:", imp, "to", dep, "via", origin)
 			}
-			labels = disambiguated
-
-			for _, dep := range disambiguated {
-				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
-					continue
-				}
-				resolved.Set(dep, imp, origin)
-			}
-		} else {
-			for _, dep := range labels {
-				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
-					continue
-				}
-				if dbg {
-					log.Println(from, "| resolve hit:", imp, "to", dep, "via", origin)
-				}
-				resolved.Set(dep, imp, origin)
-			}
+			resolved.Set(dep, imp, origin)
 		}
 	}
 }
