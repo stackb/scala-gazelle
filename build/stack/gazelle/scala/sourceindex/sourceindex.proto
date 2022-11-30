@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.sourceindex;
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/sourceindex;sourceindex";
+option java_package = "build.stack.gazelle.scala.sourceindex";
+option java_multiple_files = true;
+option java_outer_classname = "SourceIndexSpec";
+
+message ScalaSourceIndex {
+	// Rules []*ScalaRuleSpec `json:"rules,omitempty"`
+    repeated ScalaRuleIndex rules = 1;
+}
+
+message ScalaRuleIndex {
+	// Label is the bazel label that names the source file in its srcs list.
+    string labe = 1;
+	// Kind is the kind of rule named by Label.
+    string kind = 2;
+	// Files is the list of files in the rule
+    repeated ScalaFileIndex files = 3;
+}
+
+message ScalaFileIndex {
+	// Filename is the source filename
+    string filename = 1;
+	// Sha256 is the sha256 hash of the file contents
+    string sha256 = 2;
+	// Imports is a list of required imports.
+    repeated string imports = 3;
+	// Packages is a list of provided top-level classes.
+    repeated string packages = 4;
+	// Classes is a list of provided top-level classes.
+    repeated string classes = 5;
+	// Objects is a list of provided top-level classes.
+    repeated string objects = 6;
+	// Traits is a list of provided top-level classes.
+    repeated string traits = 7;
+	// Types is a list of provided top-level types (in package objects).
+    repeated string types = 8;
+	// Vals is a list of provided top-level vals (in package objects).
+    repeated string vals = 9;
+	// Names is a list of simple function calls.  In practice these look like
+	// constructor invocations.
+    repeated string names = 10;
+	// Extends is a mapping from the base type to a list of symbol names.
+    repeated ScalaExtends extends = 11;
+}
+
+message ScalaExtends {
+    string base = 1;
+    repeated string symbols = 2;
+}

@@ -35,6 +35,7 @@ go_library(
 go_test(
     name = "crossresolve_test",
     srcs = [
+        "crossresolve_test.go",
         "jar_index_cross_resolver_test.go",
         "maven_cross_resolver_test.go",
         "proto_cross_resolver_test.go",

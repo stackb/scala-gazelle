@@ -47,10 +47,10 @@ func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	for _, name := range strings.Split(sl.resolverNames, ",") {
 		resolver, err := crossresolve.Resolvers().LookupResolver(name)
 		if err != nil {
-			return fmt.Errorf("-scala_resolvers %q error: %v", name, err)
+			return fmt.Errorf("-%s %q error: %v", scalaResolversFlagName, name, err)
 		}
 		if err := resolver.CheckFlags(fs, c); err != nil {
-			return fmt.Errorf("check flags %s: %w", name, err)
+			return fmt.Errorf("checking flags for resolver %q: %w", name, err)
 		}
 		sl.resolvers[name] = resolver
 	}

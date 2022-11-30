@@ -132,6 +132,7 @@ go_test(
     deps = [
         "//pkg/crossresolve",
         "//pkg/index",
+        "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",

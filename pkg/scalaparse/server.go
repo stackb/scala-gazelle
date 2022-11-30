@@ -141,7 +141,12 @@ func (s *ScalaParseServer) Start() error {
 		}
 	}()
 
-	waitForConnectionAvailable("localhost", s.HttpPort, 3*time.Second)
+	host := "localhost"
+	port := s.HttpPort
+	timeout := 3 * time.Second
+	if !waitForConnectionAvailable(host, port, timeout) {
+		return fmt.Errorf("cound not connect to scala parse server %s:%d within %s", host, port, timeout)
+	}
 
 	//
 	// Setup the http client
