@@ -2,7 +2,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "scalacompile",
-    srcs = ["types.go"],
+    srcs = [
+        "io.go",
+        "types.go",
+    ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalacompile",
     visibility = ["//visibility:public"],
 )
