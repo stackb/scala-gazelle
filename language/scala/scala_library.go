@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/stackb/rules_proto/pkg/protoc"
 )
 
 const (
@@ -99,13 +100,13 @@ func (s *scalaLibraryRule) Srcs() []string {
 // Deps computes the deps list for the rule.
 func (s *scalaLibraryRule) Deps() []string {
 	deps := s.ruleConfig.GetDeps()
-	return DeduplicateAndSort(deps)
+	return protoc.DeduplicateAndSort(deps)
 }
 
 // imports computes the set of (scala) imports for the rule.
 func (s *scalaLibraryRule) imports() []string {
 	imps := make([]string, 0)
-	return DeduplicateAndSort(imps)
+	return protoc.DeduplicateAndSort(imps)
 }
 
 // Rule implements part of the ruleProvider interface.

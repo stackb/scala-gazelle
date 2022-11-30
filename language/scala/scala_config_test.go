@@ -6,6 +6,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 )
@@ -69,45 +70,30 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 	}
 }
 
-func TestScalaConfigParse(t *testing.T) {
+func TestScalaConfigParseOverrideDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       map[string]*RuleConfig
+		want       []*overrideSpec
 	}{
 		"degenerate": {
-			want: map[string]*RuleConfig{},
+			want: []*overrideSpec{},
 		},
-		"bad format": {
+		"bad example - silently ignores everything other than scala glob": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule scala_existing_rule"},
+				{Key: overrideDirective, Value: "scala scala com.foo.Bar //com/foo/bar"},
 			},
-			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule scala_existing_rule": expected three or more fields, got 2`),
+			want: []*overrideSpec{},
 		},
-		"example": {
+		"example - scala glob": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule implementation scala_existing_rule"},
-				{Key: ruleDirective, Value: "myrule deps @maven//:a"},
-				{Key: ruleDirective, Value: "myrule +deps @maven//:b"},
-				{Key: ruleDirective, Value: "myrule -deps @maven//:c"},
-				{Key: ruleDirective, Value: "myrule attr exports @maven//:a"},
-				{Key: ruleDirective, Value: "myrule option -fake_flag_name fake_flag_value"},
-				{Key: ruleDirective, Value: "myrule enabled false"},
+				{Key: overrideDirective, Value: "scala glob com.foo.* //com/foo/bar"},
 			},
-			want: map[string]*RuleConfig{
-				"myrule": {
-					Config:         config.New(),
-					Name:           "myrule",
-					Implementation: "scala_existing_rule",
-					Deps: map[string]bool{
-						"@maven//:a": true,
-						"@maven//:b": true,
-					},
-					Attrs: map[string]map[string]bool{
-						"exports": {"@maven//:a": true},
-					},
-					Options: map[string]bool{"-fake_flag_name fake_flag_value": true},
-					Enabled: false,
+			want: []*overrideSpec{
+				{
+					imp:  resolve.ImportSpec{Lang: "scala", Imp: "com.foo.*"},
+					lang: "glob",
+					dep:  label.New("", "com/foo/bar", "bar"),
 				},
 			},
 		},
@@ -120,13 +106,128 @@ func TestScalaConfigParse(t *testing.T) {
 			if tc.wantErr != nil {
 				return
 			}
-			got := sc.rules
+			got := sc.overrides
+			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(overrideSpec{})); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		wantErr    error
+		want       []*implicitImportSpec
+	}{
+		"degenerate": {
+			want: []*implicitImportSpec{},
+		},
+		"typical example": {
+			directives: []rule.Directive{
+				{Key: implicitImportDirective, Value: "java com.typesafe.scalalogging.LazyLogging org.slf4j.Logger"},
+			},
+			want: []*implicitImportSpec{
+				{
+					lang: "java",
+					imp:  "com.typesafe.scalalogging.LazyLogging",
+					deps: []string{"org.slf4j.Logger"},
+				},
+			},
+		},
+		"anatomic example": {
+			directives: []rule.Directive{
+				{Key: implicitImportDirective, Value: "lang imp a b c"},
+			},
+			want: []*implicitImportSpec{
+				{
+					lang: "lang",
+					imp:  "imp",
+					deps: []string{"a", "b", "c"},
+				},
+			},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := parseTestDirectives("", tc.directives...)
+			if !equalError(tc.wantErr, err) {
+				t.Fatal("errors: want:", tc.wantErr, "got:", err)
+			}
+			if tc.wantErr != nil {
+				return
+			}
+			got := sc.implicitImports
+			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(implicitImportSpec{})); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		wantErr    error
+		want       bool
+	}{
+		"degenerate": {},
+		"typical example": {
+			directives: []rule.Directive{
+				{Key: scalaExplainDependencies, Value: "true"},
+			},
+			want: true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := parseTestDirectives("", tc.directives...)
+			if !equalError(tc.wantErr, err) {
+				t.Fatal("errors: want:", tc.wantErr, "got:", err)
+			}
+			if tc.wantErr != nil {
+				return
+			}
+			got := sc.explainDependencies
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
 	}
 }
+
+func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		wantErr    error
+		want       map[string]mapKindImportNameSpec
+	}{
+		"degenerate": {
+			want: map[string]mapKindImportNameSpec{},
+		},
+		"anatomic example": {
+			directives: []rule.Directive{
+				{Key: mapKindImportNameDirective, Value: "kind src dst"},
+			},
+			want: map[string]mapKindImportNameSpec{
+				"kind": {src: "src", dst: "dst"},
+			},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := parseTestDirectives("", tc.directives...)
+			if !equalError(tc.wantErr, err) {
+				t.Fatal("errors: want:", tc.wantErr, "got:", err)
+			}
+			if tc.wantErr != nil {
+				return
+			}
+			got := sc.mapKindImportNames
+			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(mapKindImportNameSpec{})); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func parseTestDirectives(rel string, dd ...rule.Directive) (*scalaConfig, error) {
 	index := &mockRuleIndex{}
 	c := config.New()

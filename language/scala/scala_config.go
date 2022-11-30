@@ -225,7 +225,7 @@ func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) 
 	return r, nil
 }
 
-func (c *scalaConfig) GetImplicitImports(lang, imp string) (deps []string) {
+func (c *scalaConfig) getImplicitImports(lang, imp string) (deps []string) {
 	for _, d := range c.implicitImports {
 		if d.lang != lang {
 			continue
@@ -238,7 +238,7 @@ func (c *scalaConfig) GetImplicitImports(lang, imp string) (deps []string) {
 	return
 }
 
-func (c *scalaConfig) GetConfiguredRule(name string) (*RuleConfig, bool) {
+func (c *scalaConfig) getConfiguredRule(name string) (*RuleConfig, bool) {
 	rc, ok := c.rules[name]
 	return rc, ok
 }
@@ -260,20 +260,6 @@ func (c *scalaConfig) configuredRules() []*RuleConfig {
 
 func (c *scalaConfig) Overrides() []*overrideSpec {
 	return c.overrides
-}
-
-// DeduplicateAndSort removes duplicate entries and sorts the list
-func DeduplicateAndSort(in []string) (out []string) {
-	seen := make(map[string]bool)
-	for _, v := range in {
-		if seen[v] {
-			continue
-		}
-		seen[v] = true
-		out = append(out, v)
-	}
-	sort.Strings(out)
-	return
 }
 
 type overrideSpec struct {

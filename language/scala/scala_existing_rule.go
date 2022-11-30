@@ -213,7 +213,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	// gather implicit imports
 	implicits := make(collections.StringStack, 0)
 	for src := range imports {
-		for _, dst := range sc.GetImplicitImports(impLang, src) {
+		for _, dst := range sc.getImplicitImports(impLang, src) {
 			implicits.Push(dst)
 			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
@@ -221,7 +221,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	// gather transitive implicits
 	for !implicits.IsEmpty() {
 		src, _ := implicits.Pop()
-		for _, dst := range sc.GetImplicitImports(impLang, src) {
+		for _, dst := range sc.getImplicitImports(impLang, src) {
 			implicits.Push(dst)
 			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
