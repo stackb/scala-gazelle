@@ -351,10 +351,13 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 		}
 	}
 
-	// dump the index
-	if err := r.writeIndex(); err != nil {
-		log.Fatalf("failed to write index: %v", err)
+	// dump the index, but only if the file name is configured
+	if r.cacheFile != "" {
+		if err := r.writeIndex(); err != nil {
+			log.Fatalf("failed to write index: %v", err)
+		}
 	}
+
 }
 
 // OnEnd implements GazellePhaseTransitionListener.
@@ -362,11 +365,6 @@ func (r *ScalaSourceCrossResolver) OnEnd() {
 }
 
 func (r *ScalaSourceCrossResolver) writeIndex() error {
-	// index is not written if the file name is not configured
-	if r.cacheFile == "" {
-		return nil
-	}
-
 	var idx index.ScalaRuleIndexSpec
 	for _, rule := range r.byRule {
 		idx.Rules = append(idx.Rules, rule)
@@ -394,10 +392,6 @@ func (cr *ScalaSourceCrossResolver) IsLabelOwner(from label.Label, ruleIndex fun
 
 // CrossResolve implements the CrossResolver interface.
 func (r *ScalaSourceCrossResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
-	// defer func() {
-	// 	log.Println("(scala source resolver) CrossResolved", len(result), "for", lang, imp.Lang, imp.Imp)
-	// }()
-
 	if !(lang == r.lang || imp.Lang == r.lang) {
 		return
 	}
@@ -433,7 +427,6 @@ func (r *ScalaSourceCrossResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		return
 	}
 
-	// log.Println("source crossResolve miss:", imp.Imp)
 	return
 }
 
