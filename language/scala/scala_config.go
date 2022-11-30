@@ -20,11 +20,6 @@ const (
 	// overrideDirective is the well-know gazelle:override directive for
 	// disambiguation overrides.
 	overrideDirective = "override"
-	// indirectDependencyDirective is the directive for declaring indirect
-	// dependencies.  For example, if a class explicitly imports
-	// 'com.typesafe.scalalogging.LazyLogging', it is also going to need
-	// 'org.slf4j.Logger', without mentioning it.
-	indirectDependencyDirective = "indirect_dependency"
 	// implicitImportDirective adds additional imports for resolution
 	implicitImportDirective = "implicit_import"
 	// scala_explain_dependencies prints the reason why deps are included.
@@ -45,8 +40,6 @@ type scalaConfig struct {
 	rules map[string]*RuleConfig
 	// overrides patterns are parsed from 'gazelle:override scala glob IMPORT LABEL'
 	overrides []*overrideSpec
-	// indirects are parsed from 'gazelle:indirect-dependency scala foo bar'
-	indirects []*indirectDependencySpec
 	// implicitImports are parsed from 'gazelle:implicit_import scala foo bar [baz]...'
 	implicitImports []*implicitImportSpec
 	// map kinds are parsed from 'gazelle:map_kind_import_name
@@ -63,7 +56,6 @@ func newScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel
 		rel:                rel,
 		rules:              make(map[string]*RuleConfig),
 		overrides:          make([]*overrideSpec, 0),
-		indirects:          make([]*indirectDependencySpec, 0),
 		implicitImports:    make([]*implicitImportSpec, 0),
 		mapKindImportNames: make(map[string]mapKindImportNameSpec),
 	}
@@ -103,7 +95,6 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 		clone.mapKindImportNames[k] = v
 	}
 	clone.overrides = c.overrides[:]
-	clone.indirects = c.indirects[:]
 	clone.implicitImports = c.implicitImports[:]
 	return clone
 }
@@ -136,8 +127,6 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			}
 		case overrideDirective:
 			c.parseOverrideDirective(d)
-		case indirectDependencyDirective:
-			c.parseIndirectDependencyDirective(d)
 		case implicitImportDirective:
 			c.parseImplicitImportDirective(d)
 		case scalaExplainDependencies:
@@ -191,19 +180,6 @@ func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
 	c.overrides = append(c.overrides, &o)
 }
 
-func (c *scalaConfig) parseIndirectDependencyDirective(d rule.Directive) {
-	parts := strings.Fields(d.Value)
-	if len(parts) < 3 {
-		log.Printf("invalid gazelle:indirect-dependency directive: expected 3+ parts, got %d (%v)", len(parts), parts)
-		return
-	}
-	c.indirects = append(c.indirects, &indirectDependencySpec{
-		lang: parts[0],
-		imp:  parts[1],
-		deps: parts[2:],
-	})
-}
-
 func (c *scalaConfig) parseImplicitImportDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 3 {
@@ -249,26 +225,6 @@ func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) 
 	return r, nil
 }
 
-func (c *scalaConfig) GetIndirectDependencies(lang, imp string) (deps []string) {
-	dbg := false
-	if dbg {
-		log.Println("checking indirect deps", imp, len(c.indirects))
-	}
-	for _, d := range c.indirects {
-		if d.lang != lang {
-			continue
-		}
-		if d.imp != imp {
-			continue
-		}
-		deps = append(deps, d.deps...)
-	}
-	if dbg {
-		log.Println("indirect:", imp, deps)
-	}
-	return
-}
-
 func (c *scalaConfig) GetImplicitImports(lang, imp string) (deps []string) {
 	for _, d := range c.implicitImports {
 		if d.lang != lang {
@@ -306,10 +262,6 @@ func (c *scalaConfig) Overrides() []*overrideSpec {
 	return c.overrides
 }
 
-func (c *scalaConfig) Indirects() []*indirectDependencySpec {
-	return c.indirects
-}
-
 // DeduplicateAndSort removes duplicate entries and sorts the list
 func DeduplicateAndSort(in []string) (out []string) {
 	seen := make(map[string]bool)
@@ -328,15 +280,6 @@ type overrideSpec struct {
 	imp  resolve.ImportSpec
 	lang string
 	dep  label.Label
-}
-
-type indirectDependencySpec struct {
-	// lang is the language to which this indirect applies.  Always 'scala' for now.
-	lang string
-	// imp is the "source" dependency (e.g. LazyLogging)
-	imp string
-	// dep is the "destination" dependencies (e.g. org.slf4j.Logger)
-	deps []string
 }
 
 type implicitImportSpec struct {
