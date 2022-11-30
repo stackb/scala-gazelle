@@ -49,7 +49,7 @@ func ParseOptions(tmpDir, toolPath string, args []string) (*Options, error) {
 			opts.NodePath = filepath.Join(tmpDir, "pkg/scalaparse")
 		}
 		if opts.ScriptPath == "" {
-			opts.ScriptPath = filepath.Join(tmpDir, "pkg/scalaparse/sourceindexer.mjs")
+			opts.ScriptPath = filepath.Join(tmpDir, "pkg/scalaparse/scalaparser.mjs")
 		}
 	}
 
@@ -63,7 +63,7 @@ func ParseOptions(tmpDir, toolPath string, args []string) (*Options, error) {
 		opts.NodePath = filepath.Join(runfilesDir, "scala_gazelle/pkg/scalaparse")
 	}
 	if opts.ScriptPath == "" {
-		opts.ScriptPath = filepath.Join(runfilesDir, "scala_gazelle/pkg/scalaparse/sourceindexer.mjs")
+		opts.ScriptPath = filepath.Join(runfilesDir, "scala_gazelle/pkg/scalaparse/scalaparser.mjs")
 	}
 
 	return &opts, nil

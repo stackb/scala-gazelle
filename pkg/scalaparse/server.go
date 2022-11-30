@@ -76,7 +76,7 @@ func (s *ScalaParseServer) Start() error {
 		return err
 	}
 
-	scriptPath := filepath.Join(processDir, "sourceindexer.mjs")
+	scriptPath := filepath.Join(processDir, "scalaparser.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
@@ -117,7 +117,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("sourceindexer.mjs")
+	cmd := exe.Command("scalaparser.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,

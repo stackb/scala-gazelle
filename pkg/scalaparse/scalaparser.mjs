@@ -1,18 +1,15 @@
 /**
- * @fileoverview sourceindexer.mjs parses a list of source files and outputs a
+ * @fileoverview scalaparser.mjs parses a list of source files and outputs a
  * JSON summary of top-level symbols to stdout.
  */
 import * as fs from 'node:fs';
 import * as http from 'node:http';
-import * as path from 'node:path';
-import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
+import { Worker, parentPort, workerData, isMainThread } from 'node:worker_threads';
 import { Console } from 'node:console';
 import { parseSource } from 'scalameta-parsers';
 
 const __filename = new URL('', import.meta.url).pathname;
-const version = "1.0.0";
 const debug = false;
-const delim = Buffer.from([0x00]);
 
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
@@ -526,7 +523,7 @@ const requestHandler = (req, res) => {
     });
 }
 
-if (true) {
+if (isMainThread) {
     const server = http.createServer(requestHandler)
     const port = process.env.PORT || 3000;
     server.listen(port, (err) => {
