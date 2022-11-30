@@ -384,9 +384,6 @@ func (cr *ScalaSourceCrossResolver) IsLabelOwner(from label.Label, ruleIndex fun
 		log.Printf("ScalaSourceCrossResolver.IsLabelOwner hit %s: %s", from, r.Kind())
 		return true
 	}
-	if from.Name == "blending" {
-		log.Printf("ScalaSourceCrossResolver.IsLabelOwner miss %s", from)
-	}
 	return false
 }
 
