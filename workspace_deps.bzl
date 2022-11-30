@@ -17,11 +17,8 @@ def language_scala_deps():
     classgraph_jar()
     scalameta_parsers()
 
-    # see https://nodejs.org/dist/latest/ to update
-    node_bin_darwin_x64()
-    node_bin_darwin_arm64()
-    node_bin_linux_x64()
-    node_bin_windows_x64()
+    # see https://nodejs.org/dist/ to update
+    node_binaries()
 
 def workspace_deps():
     """workspace_deps loads all dependencies for the workspace
@@ -250,66 +247,54 @@ def com_google_protobuf():
         ],
     )
 
-def node_bin_darwin_x64():
-    _maybe(
-        http_archive,
-        name = "node_bin_darwin_x64",
-        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-x64.tar.gz"],
-        sha256 = "63f4284fa1474b779f0e4fa93985ddc2efa227484476f33d923ae44922637080",
-        strip_prefix = "node-v19.1.0-darwin-x64",
-        build_file_content = """
+def node_binaries():
+    versions = {
+        "linux-x64": struct(
+            executable = "bin/node",
+            sha256 = "1a42a67beb3e07289da2ad22a58717801c6ab80d09668e2da6b1c537b2a80a5e",
+            type = "tar.gz",
+            version = "v19.1.0",
+        ),
+        "darwin-arm64": struct(
+            executable = "bin/node",
+            sha256 = "d05a4a3c9f081c7fbab131f447714fa708328c5c1634c278716adfbdbae0ff26",
+            type = "tar.gz",
+            version = "v19.1.0",
+        ),
+        "darwin-x64": struct(
+            executable = "bin/node",
+            sha256 = "63f4284fa1474b779f0e4fa93985ddc2efa227484476f33d923ae44922637080",
+            type = "tar.gz",
+            version = "v19.1.0",
+        ),
+        "win-x64": struct(
+            executable = "node.exe",
+            sha256 = "9ca998da2063fd5b374dc889ee1937ada5a1e1f4fb50b5f989412dda7c6bb357",
+            type = "zip",
+            version = "v19.1.0",
+        ),
+    }
+    for os_arch, data in versions.items():
+        url = "https://nodejs.org/dist/{version}/node-{version}-{os_arch}.{type}".format(
+            os_arch = os_arch,
+            type = data.type,
+            version = data.version,
+        )
+        _maybe(
+            http_archive,
+            name = "node_bin_" + os_arch,
+            urls = [url],
+            sha256 = data.sha256,
+            strip_prefix = "node-{version}-{os_arch}".format(
+                os_arch = os_arch,
+                version = data.version,
+            ),
+            type = data.type,
+            build_file_content = """
 filegroup(
     name = "node",
-    srcs = ["bin/node"],
+    srcs = ["{executable}"],
     visibility = ["//visibility:public"],
 )
-        """,
-    )
-
-def node_bin_darwin_arm64():
-    _maybe(
-        http_archive,
-        name = "node_bin_darwin_arm64",
-        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-darwin-arm64.tar.gz"],
-        sha256 = "d05a4a3c9f081c7fbab131f447714fa708328c5c1634c278716adfbdbae0ff26",
-        strip_prefix = "node-v19.1.0-darwin-arm64",
-        build_file_content = """
-filegroup(
-    name = "node",
-    srcs = ["bin/node"],
-    visibility = ["//visibility:public"],
-)
-        """,
-    )
-
-def node_bin_linux_x64():
-    _maybe(
-        http_archive,
-        name = "node_bin_linux_x64",
-        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-linux-x64.tar.gz"],
-        sha256 = "1a42a67beb3e07289da2ad22a58717801c6ab80d09668e2da6b1c537b2a80a5e",
-        strip_prefix = "node-v19.1.0-linux-x64",
-        build_file_content = """
-filegroup(
-    name = "node",
-    srcs = ["bin/node"],
-    visibility = ["//visibility:public"],
-)
-        """,
-    )
-
-def node_bin_windows_x64():
-    _maybe(
-        http_archive,
-        name = "node_bin_windows_x64",
-        urls = ["https://nodejs.org/dist/latest/node-v19.1.0-win-x64.zip"],
-        sha256 = "9ca998da2063fd5b374dc889ee1937ada5a1e1f4fb50b5f989412dda7c6bb357",
-        strip_prefix = "node-v19.1.0-win-x64",
-        build_file_content = """
-filegroup(
-    name = "node",
-    srcs = ["node.exe"],
-    visibility = ["//visibility:public"],
-)
-        """,
-    )
+            """.format(executable = data.executable),
+        )
