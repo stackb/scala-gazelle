@@ -45,12 +45,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if strings.HasSuffix(outputFile, ".json") {
-		err = jarindex.WriteJarIndexJSONFile(outputFile, index)
-	} else {
-		err = jarindex.WriteJarIndexProtoFile(outputFile, index)
-	}
-	if err != nil {
+	if err := jarindex.WriteJarIndexFile(outputFile, index); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -104,7 +99,7 @@ func parseFlags(args []string) (files []string, err error) {
 func merge(filenames ...string) (*jipb.JarIndex, error) {
 	jars := make([]*jipb.JarFile, 0, len(filenames))
 	for _, filename := range filenames {
-		idx, err := jarindex.ReadJarIndexProtoFile(filename)
+		idx, err := jarindex.ReadJarIndexFile(filename)
 		if err != nil {
 			return nil, err
 		}
@@ -142,7 +137,7 @@ func writeJarIndexJarFileJSONFiles(idx *jipb.JarIndex) error {
 
 func writeJarFileJSONFile(file *jipb.JarFile) error {
 	jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
-	if err := jarindex.WriteJarFileJSONFile(jarFilename, file); err != nil {
+	if err := jarindex.WriteJarFileFile(jarFilename, file); err != nil {
 		return err
 	}
 	log.Println("Wrote:", jarFilename)
