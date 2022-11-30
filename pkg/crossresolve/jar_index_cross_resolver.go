@@ -46,8 +46,8 @@ type JarIndexCrossResolver struct {
 	// depsRecorder is used to write dependencies that are discovered when the
 	// JarSpecIndex is read.
 	depsRecorder DependencyRecorder
-	// jarIndexProtoFiles is a comma-separated list of filesystem paths.
-	jarIndexProtoFiles string
+	// jarIndexFiles is a comma-separated list of filesystem paths.
+	jarIndexFiles string
 	// byLabel is a mapping from an import string to the label that provides it.
 	// It is possible more than one label provides a class.
 	byLabel map[string][]label.Label
@@ -59,15 +59,15 @@ type JarIndexCrossResolver struct {
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
 func (r *JarIndexCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&r.jarIndexProtoFiles, "jarindex_proto_files", "", "comma-separated list of jarindex proto files")
+	fs.StringVar(&r.jarIndexFiles, "jarindex_files", "", "comma-separated list of jarindex proto (or JSON) files")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *JarIndexCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
-	if r.jarIndexProtoFiles == "" {
+	if r.jarIndexFiles == "" {
 		return nil
 	}
-	for _, filename := range strings.Split(r.jarIndexProtoFiles, ",") {
+	for _, filename := range strings.Split(r.jarIndexFiles, ",") {
 		if !filepath.IsAbs(filename) {
 			filename = filepath.Join(c.WorkDir, filename)
 		}

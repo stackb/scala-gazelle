@@ -7,20 +7,20 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
+	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 )
 
 type warnFunc func(format string, args ...interface{})
 
-func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jarindex.JarFile) (*jarindex.JarIndex, error) {
-	var index jarindex.JarIndex
+func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile) (*jipb.JarIndex, error) {
+	var index jipb.JarIndex
 
 	// jarLabels is used to prevent duplicate entries for a given jar.
 	labels := make(map[string]bool)
 
 	// providersByClass is used to check if more than one label provides a given
 	// class.
-	providersByClass := make(map[string]*jarindex.ClassFileProvider)
+	providersByClass := make(map[string]*jipb.ClassFileProvider)
 
 	// predefinedLabels do not need to be resolved
 	predefinedLabels := make(map[string]struct{})
@@ -69,9 +69,9 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jarindex.JarF
 
 func visitJarFile(
 	warn warnFunc,
-	jar *jarindex.JarFile,
+	jar *jipb.JarFile,
 	predefinedLabels, predefinedSymbols map[string]struct{},
-	providersByClass map[string]*jarindex.ClassFileProvider,
+	providersByClass map[string]*jipb.ClassFileProvider,
 ) {
 
 	if jar.Label == "" {
@@ -95,7 +95,7 @@ func visitJarFile(
 	for _, classFile := range jar.ClassFile {
 		providers, found := providersByClass[classFile.Name]
 		if !found {
-			providers = &jarindex.ClassFileProvider{Class: classFile.Name}
+			providers = &jipb.ClassFileProvider{Class: classFile.Name}
 			providersByClass[classFile.Name] = providers
 			// log.Println(classFile.Name, "is provided by:", jar.Label)
 		}
@@ -104,19 +104,19 @@ func visitJarFile(
 
 }
 
-func ReadJarIndexProtoFile(filename string) (*jarindex.JarIndex, error) {
+func ReadJarIndexProtoFile(filename string) (*jipb.JarIndex, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("read jarindex file %q: %w", filename, err)
 	}
-	index := jarindex.JarIndex{}
+	index := jipb.JarIndex{}
 	if err := proto.Unmarshal(data, &index); err != nil {
 		return nil, fmt.Errorf("unmarshal jarindex proto: %w", err)
 	}
 	return &index, nil
 }
 
-func WriteJarIndexProtoFile(filename string, index *jarindex.JarIndex) error {
+func WriteJarIndexProtoFile(filename string, index *jipb.JarIndex) error {
 	data, err := proto.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal jarindex proto: %w", err)
@@ -127,7 +127,7 @@ func WriteJarIndexProtoFile(filename string, index *jarindex.JarIndex) error {
 	return nil
 }
 
-func WriteJarIndexJSONFile(filename string, index *jarindex.JarIndex) error {
+func WriteJarIndexJSONFile(filename string, index *jipb.JarIndex) error {
 	data, err := protojson.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal jarindex json: %w", err)
@@ -138,19 +138,19 @@ func WriteJarIndexJSONFile(filename string, index *jarindex.JarIndex) error {
 	return nil
 }
 
-func ReadJarFileProtoFile(filename string) (*jarindex.JarFile, error) {
+func ReadJarFileProtoFile(filename string) (*jipb.JarFile, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("read jarfile file %q: %w", filename, err)
 	}
-	index := jarindex.JarFile{}
+	index := jipb.JarFile{}
 	if err := proto.Unmarshal(data, &index); err != nil {
 		return nil, fmt.Errorf("unmarshal jarfile proto: %w", err)
 	}
 	return &index, nil
 }
 
-func WriteJarFileProtoFile(filename string, index *jarindex.JarFile) error {
+func WriteJarFileProtoFile(filename string, index *jipb.JarFile) error {
 	data, err := proto.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal jarfile proto: %w", err)
@@ -161,7 +161,7 @@ func WriteJarFileProtoFile(filename string, index *jarindex.JarFile) error {
 	return nil
 }
 
-func WriteJarFileJSONFile(filename string, index *jarindex.JarFile) error {
+func WriteJarFileJSONFile(filename string, index *jipb.JarFile) error {
 	data, err := protojson.Marshal(index)
 	if err != nil {
 		return fmt.Errorf("marshal jarfile json: %w", err)

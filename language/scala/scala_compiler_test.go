@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
@@ -90,18 +92,18 @@ func TestParseScalaFileSpec(t *testing.T) {
 		"BigDecimal"
 	],
 	"extends": {
-		"object com.foo.RationalUtils": [
-			"RationalPriceUtils"
-		],
-		"object com.foo.RationalPriceUtils": [
-			"RationalPriceUtils"
-		],
-		"trait com.foo.RationalPriceUtils": [
-			"RationalUtils"
-		],
-		"trait com.foo.RationalUtils": [
-			"LazyLogging"
-		]
+		"object com.foo.RationalUtils": {
+			"classes": ["RationalPriceUtils"]
+		},
+		"object com.foo.RationalPriceUtils": {
+			"classes": ["RationalPriceUtils"]
+		},
+		"trait com.foo.RationalPriceUtils": {
+			"classes": ["RationalUtils"]
+		},
+		"trait com.foo.RationalUtils": {
+			"classes": ["LazyLogging"]
+		}
 	}
 }
 `,
@@ -112,11 +114,11 @@ func TestParseScalaFileSpec(t *testing.T) {
 				Objects:  []string{"com.foo.RationalUtils"},
 				Traits:   []string{"com.foo.RationalUtils"},
 				Names:    []string{"BigDecimal"},
-				Extends: map[string][]string{
-					"object com.foo.RationalPriceUtils": {"RationalPriceUtils"},
-					"object com.foo.RationalUtils":      {"RationalPriceUtils"},
-					"trait com.foo.RationalPriceUtils":  {"RationalUtils"},
-					"trait com.foo.RationalUtils":       {"LazyLogging"},
+				Extends: map[string]*sppb.ClassList{
+					"object com.foo.RationalPriceUtils": {Classes: []string{"RationalPriceUtils"}},
+					"object com.foo.RationalUtils":      {Classes: []string{"RationalPriceUtils"}},
+					"trait com.foo.RationalPriceUtils":  {Classes: []string{"RationalUtils"}},
+					"trait com.foo.RationalUtils":       {Classes: []string{"LazyLogging"}},
 				},
 			},
 		},
@@ -126,8 +128,11 @@ func TestParseScalaFileSpec(t *testing.T) {
 			if err := json.Unmarshal([]byte(tc.mockResponse), &got); err != nil {
 				t.Fatal(err)
 			}
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("ReadScalaFileSpec (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
+				sppb.File{},
+				sppb.ClassList{},
+			)); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
 	}

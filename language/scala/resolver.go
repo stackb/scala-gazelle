@@ -10,14 +10,21 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 )
 
-// resolverImpLangPrivateKey stores the implementation language override.
-const resolverImpLangPrivateKey = "_resolve_imp_lang"
+const (
+	// resolverImpLangPrivateKey stores the implementation language override.
+	resolverImpLangPrivateKey = "_resolve_imp_lang"
+	// debug is a developer setting
+	debug = false
+)
 
-// debug is a developer setting
-const debug = false
+var (
+	// PlatformLabel represents a label that does not need to be included in deps.
+	PlatformLabel = label.New("platform", "", "do_not_import")
+)
 
-// shouldDisambiguate is a developer flag
-const shouldDisambiguate = false
+// NameResolver is a function that takes a symbol name.  So for 'LazyLogging' it
+// should return 'com.typesafe.scalalogging.LazyLogging'.
+type NameResolver func(name string) (string, bool)
 
 func resolveImports(c *config.Config, ix *resolve.RuleIndex, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
 	sc := getScalaConfig(c)

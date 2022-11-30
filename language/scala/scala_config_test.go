@@ -112,8 +112,8 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
-		wantErr    error
 		want       []*implicitImportSpec
+		wantErr    error
 	}{
 		"degenerate": {
 			want: []*implicitImportSpec{},

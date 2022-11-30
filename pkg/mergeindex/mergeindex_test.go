@@ -9,9 +9,10 @@ import (
 
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/testing/protocmp"
+
+	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 )
 
 func TestReadWriteJarIndexProtoFile(t *testing.T) {
@@ -22,8 +23,8 @@ func TestReadWriteJarIndexProtoFile(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	filename := filepath.Join(tmpDir, "test.proto.jarindex")
-	want := &jarindex.JarIndex{
-		JarFile: []*jarindex.JarFile{
+	want := &jipb.JarIndex{
+		JarFile: []*jipb.JarFile{
 			{Filename: "foo.jar"},
 			{Filename: "bar.jar"},
 		},
@@ -48,7 +49,7 @@ func TestReadWriteJarFileProtoFile(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	filename := filepath.Join(tmpDir, "test.proto.jarfile")
-	want := &jarindex.JarFile{
+	want := &jipb.JarFile{
 		Filename: "foo.jar",
 	}
 	if err := WriteJarFileProtoFile(filename, want); err != nil {
@@ -66,13 +67,13 @@ func TestReadWriteJarFileProtoFile(t *testing.T) {
 func TestMergeJarFiles(t *testing.T) {
 	for name, tc := range map[string]struct {
 		predefined []string
-		jars       []*jarindex.JarFile
+		jars       []*jipb.JarFile
 		wantWarn   string
-		want       jarindex.JarIndex
+		want       jipb.JarIndex
 	}{
 		"degenerate": {},
 		"simple case": {
-			jars: []*jarindex.JarFile{
+			jars: []*jipb.JarFile{
 				{
 					Label:    "//:foo",
 					Filename: "foo.jar",
@@ -82,8 +83,8 @@ func TestMergeJarFiles(t *testing.T) {
 					Filename: "bar.jar",
 				},
 			},
-			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{
+			want: jipb.JarIndex{
+				JarFile: []*jipb.JarFile{
 					{
 						Label:    "//:foo",
 						Filename: "foo.jar",
@@ -96,29 +97,29 @@ func TestMergeJarFiles(t *testing.T) {
 			},
 		},
 		"warns about missing label": {
-			jars: []*jarindex.JarFile{
+			jars: []*jipb.JarFile{
 				{Filename: "foo.jar"},
 			},
 			wantWarn: "missing jar label: foo.jar",
-			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{
+			want: jipb.JarIndex{
+				JarFile: []*jipb.JarFile{
 					{Filename: "foo.jar"},
 				},
 			},
 		},
 		"warns about missing filename": {
-			jars: []*jarindex.JarFile{
+			jars: []*jipb.JarFile{
 				{Label: "//:foo"},
 			},
 			wantWarn: "missing jar filename: //:foo",
-			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{
+			want: jipb.JarIndex{
+				JarFile: []*jipb.JarFile{
 					{Label: "//:foo"},
 				},
 			},
 		},
 		"warns about duplicate labels": {
-			jars: []*jarindex.JarFile{
+			jars: []*jipb.JarFile{
 				{
 					Label:    "//:foo",
 					Filename: "foo.jar",
@@ -129,8 +130,8 @@ func TestMergeJarFiles(t *testing.T) {
 				},
 			},
 			wantWarn: "duplicate jar label: //:foo",
-			want: jarindex.JarIndex{
-				JarFile: []*jarindex.JarFile{
+			want: jipb.JarIndex{
+				JarFile: []*jipb.JarFile{
 					{
 						Label:    "//:foo",
 						Filename: "foo.jar",
