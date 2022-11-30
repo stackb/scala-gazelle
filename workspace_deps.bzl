@@ -251,27 +251,27 @@ def node_binaries():
     versions = {
         "linux-x64": struct(
             executable = "bin/node",
-            version = "v19.1.0",
             sha256 = "1a42a67beb3e07289da2ad22a58717801c6ab80d09668e2da6b1c537b2a80a5e",
             type = "tar.gz",
+            version = "v19.1.0",
         ),
         "darwin-arm64": struct(
             executable = "bin/node",
-            version = "v19.1.0",
             sha256 = "d05a4a3c9f081c7fbab131f447714fa708328c5c1634c278716adfbdbae0ff26",
             type = "tar.gz",
+            version = "v19.1.0",
         ),
         "darwin-x64": struct(
             executable = "bin/node",
-            version = "v19.1.0",
             sha256 = "63f4284fa1474b779f0e4fa93985ddc2efa227484476f33d923ae44922637080",
             type = "tar.gz",
+            version = "v19.1.0",
         ),
         "win-x64": struct(
             executable = "node.exe",
-            version = "v19.1.0",
             sha256 = "9ca998da2063fd5b374dc889ee1937ada5a1e1f4fb50b5f989412dda7c6bb357",
             type = "zip",
+            version = "v19.1.0",
         ),
     }
     for os_arch, data in versions.items():
