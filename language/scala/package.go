@@ -24,8 +24,6 @@ type ScalaPackage interface {
 	File() *rule.File
 	// ScalaRuleParser returns the parser instance to use.
 	ScalaRuleParser() crossresolve.ScalaRuleParser
-	// ScalaImportRegistry returns the registry instance.
-	ScalaImportRegistry() ScalaImportRegistry
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.

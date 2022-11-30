@@ -18,9 +18,7 @@ const ScalaLangName = "scala"
 func NewLanguage() language.Language {
 	depends := func(src, dst, kind string) {}
 	packages := make(map[string]*scalaPackage)
-
 	scalaCompiler := newScalaCompiler()
-	// var scalaCompiler *scalaCompiler
 
 	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName, depends)
 	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)

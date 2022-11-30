@@ -21,7 +21,6 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
-	"github.com/stackb/scala-gazelle/pkg/index"
 	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
@@ -179,7 +178,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*scalacompile.ScalaCompil
 		if _, err := os.Stat(specFile); errors.Is(err, os.ErrNotExist) {
 			log.Printf("Compile cache miss: <%s>", filename)
 		} else {
-			if spec, err := index.ReadScalaCompileSpec(specFile); err != nil {
+			if spec, err := scalacompile.ReadScalaCompileSpec(specFile); err != nil {
 				log.Printf("Compile cache error: <%s>: %v", filename, err)
 			} else {
 				// log.Printf("Compile cache hit: <%s>", filename)
@@ -240,7 +239,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*scalacompile.ScalaCompil
 		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
 			return nil, err
 		}
-		if err := index.WriteJSONFile(specFile, &spec); err != nil {
+		if err := scalacompile.WriteJSONFile(specFile, &spec); err != nil {
 			return nil, err
 		}
 		log.Printf("Compile cache put: <%s>", filename)
@@ -280,7 +279,7 @@ func processNotFoundErrorDiagnostic(msg string, spec *scalacompile.ScalaCompileS
 }
 
 func processNotPackageMemberErrorDiagnostic(obj, pkg string, spec *scalacompile.ScalaCompileSpec) {
-	spec.NotMember = append(spec.NotMember, &index.NotMemberSymbol{Kind: "object", Name: obj, Package: pkg})
+	spec.NotMember = append(spec.NotMember, &scalacompile.NotMemberSymbol{Kind: "object", Name: obj, Package: pkg})
 }
 
 type CompileRequest struct {
