@@ -1,4 +1,4 @@
-package mergeindex
+package jarindex
 
 import (
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"

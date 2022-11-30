@@ -1,4 +1,4 @@
-package mergeindex
+package jarindex
 
 import (
 	"fmt"
