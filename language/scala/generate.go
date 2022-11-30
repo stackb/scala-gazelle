@@ -18,7 +18,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		writeGenerateProgress(sl.progress, len(sl.packages), sl.totalPackageCount)
 	}
 
-	cfg := getOrCreateScalaConfig(args.Config)
+	cfg := getOrCreateScalaConfig(sl, args.Config, args.Rel)
 
 	pkg := newScalaPackage(sl.ruleRegistry, sl.scalaFileParser, sl.importRegistry, args.Rel, args.File, cfg)
 	// search for child packages, but only assign if a parent has not already
@@ -39,20 +39,23 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sl.lastPackage = pkg
 
 	rules := pkg.Rules()
+
 	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
 
 	sl.remainingRules += len(rules)
-	// empty := pkg.Empty()
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 		sl.importRegistry.AddDependency("pkg/"+args.Rel, "rule/"+label.New("", args.Rel, r.Name()).String(), "rule")
+		if r.Kind() != packageMarkerRuleKind {
+			from := label.New(args.Config.RepoName, args.Rel, r.Name())
+			sl.recordRule(from, r)
+		}
 	}
 
 	return language.GenerateResult{
-		Gen: rules,
-		// Empty:   empty,
+		Gen:     rules,
 		Imports: imports,
 	}
 }

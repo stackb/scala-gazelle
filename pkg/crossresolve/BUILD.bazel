@@ -5,10 +5,13 @@ go_library(
     srcs = [
         "configurable_cross_resolver.go",
         "dependency_recorder.go",
+        "gazelle_phase_transition_listener.go",
         "jar_index_cross_resolver.go",
+        "label_owner.go",
         "maven_cross_resolver.go",
         "proto_cross_resolver.go",
         "registry.go",
+        "rule_index.go",
         "scala_file_parser.go",
         "scala_source_cross_resolver.go",
         "scala_source_rule_registry.go",
@@ -35,6 +38,7 @@ go_test(
         "jar_index_cross_resolver_test.go",
         "maven_cross_resolver_test.go",
         "proto_cross_resolver_test.go",
+        "scala_source_cross_resolver_test.go",
     ],
     embed = [":crossresolve"],
     deps = [

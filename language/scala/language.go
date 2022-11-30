@@ -3,7 +3,9 @@ package scala
 import (
 	"os"
 
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
@@ -44,6 +46,7 @@ func NewLanguage() language.Language {
 		importRegistry:  importRegistry,
 		resolvers:       make(map[string]crossresolve.ConfigurableCrossResolver),
 		progress:        mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		allRules:        make(map[label.Label]*rule.Rule),
 	}
 }
 
@@ -86,7 +89,20 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// scalaExistingRules is the value of the scala_existing_rule repeatable flag
 	scalaExistingRules stringSliceFlags
+	// ruleIndex is a map of all known generated rules
+	allRules map[label.Label]*rule.Rule
 }
 
 // Name implements part of the language.Language interface
 func (sl *scalaLang) Name() string { return ScalaLangName }
+
+// KnownDirectives implements part of the language.Language interface
+func (*scalaLang) KnownDirectives() []string {
+	return []string{
+		ruleDirective,
+		overrideDirective,
+		implicitImportDirective,
+		scalaExplainDependencies,
+		mapKindImportNameDirective,
+	}
+}

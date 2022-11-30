@@ -33,7 +33,7 @@ type RuleConfig struct {
 	Name string
 }
 
-// NewRuleConfig returns a pointer to a new LanguageRule config with the
+// NewRuleConfig returns a pointer to a new RuleConfig config with the
 // 'Enabled' bit set to true.
 func NewRuleConfig(config *config.Config, name string) *RuleConfig {
 	return &RuleConfig{

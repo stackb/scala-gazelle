@@ -18,7 +18,7 @@ const (
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	getOrCreateScalaConfig(c) // ignoring return value, only want side-effect
+	getOrCreateScalaConfig(sl, c, "" /* rel="" */) // ignoring return value, only want side-effect
 
 	fs.IntVar(&sl.totalPackageCount, totalPackageCountFlagName, 0, "number of total packages for the workspace (used for progress estimation)")
 	fs.StringVar(&sl.resolverNames, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")

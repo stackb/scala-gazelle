@@ -2,6 +2,7 @@ package crossresolve
 
 import (
 	"errors"
+	"log"
 )
 
 // ErrUnknownResolver is the error returned when a resolver is not known.
@@ -44,7 +45,7 @@ func (p *registry) ByName() map[string]ConfigurableCrossResolver {
 func (p *registry) MustRegisterResolver(name string, resolver ConfigurableCrossResolver) Registry {
 	_, ok := p.resolvers[name]
 	if ok {
-		panic("duplicate CrossResolver registration: " + name)
+		log.Println("warning: duplicate CrossResolver registration: " + name)
 	}
 	p.resolvers[name] = resolver
 	return p

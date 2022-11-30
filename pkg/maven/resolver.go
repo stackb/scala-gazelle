@@ -18,15 +18,21 @@ type Resolver interface {
 // resolver finds Maven provided packages by reading the maven_install.json
 // file from rules_jvm_external.
 type resolver struct {
+	lang               string
 	name               string
+	warn               warnFunc
 	data               *StringMultiSet
 	artifacts          map[string]label.Label
 	directDependencies map[label.Label][]label.Label
 }
 
-func NewResolver(installFile, mavenWorkspaceName string) (Resolver, error) {
+type warnFunc func(format string, args ...interface{})
+
+func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc) (Resolver, error) {
 	r := resolver{
+		lang:               lang,
 		name:               mavenWorkspaceName,
+		warn:               warn,
 		data:               NewStringMultiSet(),
 		artifacts:          make(map[string]label.Label),
 		directDependencies: make(map[label.Label][]label.Label),
@@ -86,9 +92,9 @@ func (r *resolver) Resolve(pkg string) (label.Label, error) {
 		return label.Parse(ret)
 
 	default:
-		log.Println("Append one of the following to BUILD.bazel:")
+		r.warn("Java package %q is provided by more than one label.  Append one of the following to BUILD.bazel:", pkg)
 		for k := range v {
-			log.Printf("# gazelle:resolve java %s %s", pkg, k)
+			r.warn("# gazelle:resolve %s %s %s", r.lang, pkg, k)
 		}
 
 		return label.NoLabel, errors.New("many possible imports")

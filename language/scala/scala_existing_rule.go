@@ -213,7 +213,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	// gather implicit imports
 	implicits := make(collections.StringStack, 0)
 	for src := range imports {
-		for _, dst := range sc.GetImplicitImports(impLang, src) {
+		for _, dst := range sc.getImplicitImports(impLang, src) {
 			implicits.Push(dst)
 			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
@@ -221,7 +221,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	// gather transitive implicits
 	for !implicits.IsEmpty() {
 		src, _ := implicits.Pop()
-		for _, dst := range sc.GetImplicitImports(impLang, src) {
+		for _, dst := range sc.getImplicitImports(impLang, src) {
 			implicits.Push(dst)
 			imports.Add(dst, NewImplicitImportOrigin(src))
 		}
@@ -241,7 +241,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	if len(resolved) > 0 {
 		labelOwners := getLabelOwners()
 		keep := func(expr build.Expr) bool {
-			return shouldKeep(expr, labelOwners...)
+			return shouldKeep(expr, sc.LookupRule, labelOwners...)
 		}
 		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
 		r.SetAttr("deps", depsExpr)
@@ -272,7 +272,6 @@ func commentUnresolvedImports(unresolved ImportOriginMap, r *rule.Rule, attrName
 
 	for _, imp := range imports {
 		origin := unresolved[imp]
-		log.Println(imp, origin)
 		srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
 			Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
 		})
@@ -484,7 +483,7 @@ func isUnqualifiedImport(imp string) bool {
 	return strings.LastIndex(imp, ".") == -1
 }
 
-func shouldKeep(expr build.Expr, labelOwners ...crossresolve.LabelOwner) bool {
+func shouldKeep(expr build.Expr, lookupRule func(from label.Label) (*rule.Rule, bool), labelOwners ...crossresolve.LabelOwner) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
@@ -500,9 +499,7 @@ func shouldKeep(expr build.Expr, labelOwners ...crossresolve.LabelOwner) bool {
 	// if we can find a resolver than manages/owns this label, remove it;
 	// the resolver should cross-resolve the import again
 	for _, resolver := range labelOwners {
-		if resolver.IsLabelOwner(from, func(from label.Label) (*rule.Rule, bool) {
-			return nil, false
-		}) {
+		if resolver.IsLabelOwner(from, lookupRule) {
 			return false
 		}
 	}
