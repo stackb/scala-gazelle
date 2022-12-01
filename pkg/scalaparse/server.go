@@ -3,7 +3,6 @@ package scalaparse
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,20 +22,21 @@ import (
 	"github.com/amenzhinsky/go-memexec"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 
-	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-const contentTypeJSON = "application/json"
-
-type ScalaParseClient struct {
-}
+const (
+	contentTypeJSON = "application/json"
+	// debugParse is a debug flag for use by a developer
+	debugParse = false
+)
 
 func NewScalaParseServer() *ScalaParseServer {
 	return &ScalaParseServer{}
 }
 
 type ScalaParseServer struct {
-	sppb.UnimplementedScalaParserServer
+	sppb.UnimplementedParserServer
 
 	process    *memexec.Exec
 	processDir string
@@ -76,7 +76,7 @@ func (s *ScalaParseServer) Start() error {
 		return err
 	}
 
-	scriptPath := filepath.Join(processDir, "sourceindexer.mjs")
+	scriptPath := filepath.Join(processDir, "scalaparser.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
@@ -117,7 +117,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("sourceindexer.mjs")
+	cmd := exe.Command("scalaparser.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
@@ -141,7 +141,12 @@ func (s *ScalaParseServer) Start() error {
 		}
 	}()
 
-	waitForConnectionAvailable("localhost", s.HttpPort, 3*time.Second)
+	host := "localhost"
+	port := s.HttpPort
+	timeout := 3 * time.Second
+	if !waitForConnectionAvailable(host, port, timeout) {
+		return fmt.Errorf("cound not connect to scala parse server %s:%d within %s", host, port, timeout)
+	}
 
 	//
 	// Setup the http client
@@ -159,8 +164,8 @@ func (s *ScalaParseServer) Start() error {
 	return nil
 }
 
-func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest) (*sppb.ScalaParseResponse, error) {
-	req, err := newHttpScalaParseRequest(s.httpUrl, in)
+func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
 	}
@@ -190,8 +195,8 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ScalaParseRequest
 	if debugParse {
 		log.Printf("response body: %s", string(data))
 	}
-	var response sppb.ScalaParseResponse
 
+	var response sppb.ParseResponse
 	if err := protojson.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
 	}
@@ -214,20 +219,20 @@ func getFreePort() (int, error) {
 	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
-func newHttpScalaParseRequest(url string, in *sppb.ScalaParseRequest) (*http.Request, error) {
+func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, error) {
 	if url == "" {
 		return nil, status.Error(codes.InvalidArgument, "request URL is required")
 	}
 	if in == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "ScalaParseRequest is required")
+		return nil, status.Errorf(codes.InvalidArgument, "ParseRequest is required")
 	}
-	values := map[string]interface{}{"label": in.Label, "files": in.Filename}
-	jsonValue, err := json.Marshal(values)
+
+	json, err := protojson.Marshal(in)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "marshaling request: %v", err)
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "creating request: %v", err)
 	}
@@ -271,4 +276,17 @@ func waitForConnectionAvailable(host string, port int, timeout time.Duration) bo
 	case <-time.After(timeout):
 		return false
 	}
+}
+
+// listFiles is a convenience debugging function to log the files under a given dir.
+func listFiles(dir string) error {
+	log.Println("Listing files under " + dir)
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("%v\n", err)
+			return err
+		}
+		log.Println(path)
+		return nil
+	})
 }

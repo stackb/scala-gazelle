@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.parse;
+
+import "build/stack/gazelle/scala/parse/file.proto";
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
+option java_package = "build.stack.gazelle.scala.parse";
+option java_multiple_files = true;
+
+// ParseRequest holds a list of filenames to be parsed.
+message ParseRequest {
+    // filenames is the file list.
+    repeated string filenames = 1;
+}
+
+// ParseResponse holds the parsed file data.
+message ParseResponse {
+    // files is file parse result list.
+    repeated build.stack.gazelle.scala.parse.File files = 1;
+    // error is populated when a top-level parse error occurs that is 
+    // independent from a single file.
+    string error = 2;
+    // elapsed_millis is the total time spent on the request.
+    int64 elapsed_millis = 3;
+}
+
+// Parser is a service that can parse scala files.
+service Parser {
+    // Parse is a unary rpc function that takes a single request and returns a
+    // single response.
+    rpc Parse(ParseRequest) returns (ParseResponse) {}
+}

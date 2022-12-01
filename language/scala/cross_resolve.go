@@ -14,9 +14,5 @@ func (sl *scalaLang) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp r
 			return result
 		}
 	}
-	if result := sl.importRegistry.CrossResolve(c, ix, imp, lang); len(result) > 0 {
-		// log.Printf("scala.CrossResolve hit %T %s", sl.importRegistry, imp.Imp)
-		return result
-	}
 	return nil
 }

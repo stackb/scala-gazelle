@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/jarindex",
-        "//pkg/mergeindex",
+        "//pkg/jarindex",
     ],
 )
 

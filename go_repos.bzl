@@ -211,14 +211,6 @@ def go_repositories():
     )
 
     go_repository(
-        name = "com_github_emicklei_dot",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/emicklei/dot",
-        sum = "h1:7PseyizTgeQ/aSF1eo4LcEfWlQSlzamFZpzY/nMB9EY=",
-        version = "v0.16.0",
-    )
-
-    go_repository(
         name = "com_github_emicklei_proto",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/emicklei/proto",

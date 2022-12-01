@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.parse;
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
+option java_package = "build.stack.gazelle.scala.parse";
+option java_multiple_files = true;
+
+// File represents a parsed file named in a scala rule.srcs list.
+message File {
+    // filename is the (relative) source filename
+    string filename = 1;
+    // sha256 is the sha256 hash of the file contents
+    string sha256 = 2;
+    // imports is a list of required imports.
+    repeated string imports = 3;
+    // packages is a list of provided top-level classes.
+    repeated string packages = 4;
+    // classes is a list of provided top-level classes.
+    repeated string classes = 5;
+    // objects is a list of provided top-level classes.
+    repeated string objects = 6;
+    // traits is a list of provided top-level classes.
+    repeated string traits = 7;
+    // types is a list of provided top-level types (in package objects).
+    repeated string types = 8;
+    // vals is a list of provided top-level vals (in package objects).
+    repeated string vals = 9;
+    // names is a list of simple function calls.  In practice these look like
+    // constructor invocations.
+    repeated string names = 10;
+    // extends is a mapping from the base type to a list of symbol names.
+    map<string,ClassList> extends = 11;
+    // elapsed_millis is the time taken to parse the file
+    int64 elapsed_millis = 12;
+    // error is a string assigned when a parse error occurs
+    string error = 13;
+}
+
+// ClassList represents a set of files.
+message ClassList {
+    repeated string classes = 1;
+}

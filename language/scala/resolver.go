@@ -10,16 +10,23 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 )
 
-// resolverImpLangPrivateKey stores the implementation language override.
-const resolverImpLangPrivateKey = "_resolve_imp_lang"
+const (
+	// resolverImpLangPrivateKey stores the implementation language override.
+	resolverImpLangPrivateKey = "_resolve_imp_lang"
+	// debug is a developer setting
+	debug = false
+)
 
-// debug is a developer setting
-const debug = false
+var (
+	// PlatformLabel represents a label that does not need to be included in deps.
+	PlatformLabel = label.New("platform", "", "do_not_import")
+)
 
-// shouldDisambiguate is a developer flag
-const shouldDisambiguate = false
+// NameResolver is a function that takes a symbol name.  So for 'LazyLogging' it
+// should return 'com.typesafe.scalalogging.LazyLogging'.
+type NameResolver func(name string) (string, bool)
 
-func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry ScalaImportRegistry, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
+func resolveImports(c *config.Config, ix *resolve.RuleIndex, impLang, kind string, from label.Label, imports ImportOriginMap, resolved LabelImportMap) {
 	sc := getScalaConfig(c)
 
 	dbg := false
@@ -30,7 +37,7 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			// log.Println("resolved:\n", resolved.String())
 		}
 
-		labels := resolveImport(c, ix, importRegistry, origin, impLang, imp, from, resolved)
+		labels := resolveImport(c, ix, origin, impLang, imp, from, resolved)
 
 		if len(labels) == 0 {
 			resolved[label.NoLabel][imp] = origin
@@ -40,38 +47,19 @@ func resolveImports(c *config.Config, ix *resolve.RuleIndex, importRegistry Scal
 			continue
 		}
 
-		if shouldDisambiguate && len(labels) > 1 {
-			original := labels
-			disambiguated, err := importRegistry.Disambiguate(c, ix, resolve.ImportSpec{Lang: ScalaLangName, Imp: imp}, ScalaLangName, from, labels)
-			if err != nil {
-				log.Printf("disambigation error: %v", err)
+		for _, dep := range labels {
+			if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
+				continue
 			}
 			if dbg {
-				log.Println(from, imp, original, "--[Disambiguate]-->", disambiguated)
+				log.Println(from, "| resolve hit:", imp, "to", dep, "via", origin)
 			}
-			labels = disambiguated
-
-			for _, dep := range disambiguated {
-				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
-					continue
-				}
-				resolved.Set(dep, imp, origin)
-			}
-		} else {
-			for _, dep := range labels {
-				if dep == label.NoLabel || dep == PlatformLabel || from.Equal(dep) || isSameImport(sc, kind, from, dep) {
-					continue
-				}
-				if dbg {
-					log.Println(from, "| resolve hit:", imp, "to", dep, "via", origin)
-				}
-				resolved.Set(dep, imp, origin)
-			}
+			resolved.Set(dep, imp, origin)
 		}
 	}
 }
 
-func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImportRegistry, origin *ImportOrigin, lang string, imp string, from label.Label, resolved LabelImportMap) []label.Label {
+func resolveImport(c *config.Config, ix *resolve.RuleIndex, origin *ImportOrigin, lang string, imp string, from label.Label, resolved LabelImportMap) []label.Label {
 	// if the import is empty, we may have reached the root symbol.
 	if imp == "" {
 		return nil
@@ -93,12 +81,12 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 
 	// if this is a _root_ import, try without
 	if strings.HasPrefix(imp, "_root_.") {
-		return resolveImport(c, ix, registry, origin, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
+		return resolveImport(c, ix, origin, lang, strings.TrimPrefix(imp, "_root_."), from, resolved)
 	}
 
 	// if this is a wildcard import, try without
 	if strings.HasSuffix(imp, "._") {
-		return resolveImport(c, ix, registry, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
+		return resolveImport(c, ix, origin, lang, strings.TrimSuffix(imp, "._"), from, resolved)
 	}
 
 	// if this is a fqcn, try the package
@@ -111,18 +99,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, registry ScalaImport
 
 		if isCapitalized(child) {
 			parent := imp[0:lastDot]
-			return resolveImport(c, ix, registry, origin, lang, parent, from, resolved)
-		}
-	}
-
-	// we are down to a single symbol now.  Probe the importRegistry for a
-	// type in our package.
-	if origin.SourceFile != nil {
-		got, provider := findPackageSymbolCompletion(registry, origin.SourceFile.Packages, imp)
-		if got != "" {
-			origin.Actual = imp
-			resolved.Set(provider, imp, origin)
-			return []label.Label{provider}
+			return resolveImport(c, ix, origin, lang, parent, from, resolved)
 		}
 	}
 

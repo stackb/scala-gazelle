@@ -21,7 +21,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
-	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
 
 // NOT_FOUND is the diagnostic message prefix we expect from the scala compiler
@@ -37,7 +37,7 @@ var notPackageMemberRe = regexp.MustCompile(`^object ([^ ]+) is not a member of 
 // type system.
 type ScalaCompiler interface {
 	// Compile compiles the file and returns a compilespec.
-	Compile(dir, filename string) (*index.ScalaCompileSpec, error)
+	Compile(dir, filename string) (*scalacompile.ScalaCompileSpec, error)
 }
 
 func newScalaCompiler() *scalaCompiler {
@@ -84,9 +84,7 @@ func (p *scalaCompiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if false {
 		tool, err := bazel.Runfile(p.jarPath)
 		if err != nil {
-			log.Printf("failed to initialize compiler: %v\n", err)
-			index.ListFiles(".")
-			return err
+			return fmt.Errorf("initializing scala compiler: %w", err)
 		}
 		p.toolPath = tool
 
@@ -169,7 +167,7 @@ func (p *scalaCompiler) OnEnd() {
 
 // Compile a Scala file and returns the index. An error is raised if
 // communicating with the long-lived Scala compiler over stdin and stdout fails.
-func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, error) {
+func (p *scalaCompiler) Compile(dir, filename string) (*scalacompile.ScalaCompileSpec, error) {
 	// log.Printf("--- COMPILE <%s> ---", filename)
 	specFile := filepath.Join(p.cacheDir, filename+".json")
 
@@ -177,7 +175,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, 
 		if _, err := os.Stat(specFile); errors.Is(err, os.ErrNotExist) {
 			log.Printf("Compile cache miss: <%s>", filename)
 		} else {
-			if spec, err := index.ReadScalaCompileSpec(specFile); err != nil {
+			if spec, err := scalacompile.ReadScalaCompileSpec(specFile); err != nil {
 				log.Printf("Compile cache error: <%s>: %v", filename, err)
 			} else {
 				// log.Printf("Compile cache hit: <%s>", filename)
@@ -226,7 +224,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, 
 		return nil, fmt.Errorf("failed to compile %s: %w", filename, err)
 	}
 
-	var spec index.ScalaCompileSpec
+	var spec scalacompile.ScalaCompileSpec
 	for _, d := range compileResponse.Diagnostics {
 		processDiagnostic(&d, &spec)
 	}
@@ -238,7 +236,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, 
 		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
 			return nil, err
 		}
-		if err := index.WriteJSONFile(specFile, &spec); err != nil {
+		if err := scalacompile.WriteJSONFile(specFile, &spec); err != nil {
 			return nil, err
 		}
 		log.Printf("Compile cache put: <%s>", filename)
@@ -247,7 +245,7 @@ func (p *scalaCompiler) Compile(dir, filename string) (*index.ScalaCompileSpec, 
 	return &spec, nil
 }
 
-func processDiagnostic(d *Diagnostic, spec *index.ScalaCompileSpec) {
+func processDiagnostic(d *Diagnostic, spec *scalacompile.ScalaCompileSpec) {
 	switch d.Severity {
 	case "ERROR":
 		processErrorDiagnostic(d, spec)
@@ -256,7 +254,7 @@ func processDiagnostic(d *Diagnostic, spec *index.ScalaCompileSpec) {
 	}
 }
 
-func processErrorDiagnostic(d *Diagnostic, spec *index.ScalaCompileSpec) {
+func processErrorDiagnostic(d *Diagnostic, spec *scalacompile.ScalaCompileSpec) {
 	if strings.HasPrefix(d.Message, NOT_FOUND) {
 		processNotFoundErrorDiagnostic(d.Message[len(NOT_FOUND):], spec)
 	} else if match := notPackageMemberRe.FindStringSubmatch(d.Message); match != nil {
@@ -264,7 +262,7 @@ func processErrorDiagnostic(d *Diagnostic, spec *index.ScalaCompileSpec) {
 	}
 }
 
-func processNotFoundErrorDiagnostic(msg string, spec *index.ScalaCompileSpec) {
+func processNotFoundErrorDiagnostic(msg string, spec *scalacompile.ScalaCompileSpec) {
 	fields := strings.Fields(msg)
 	if len(fields) < 2 {
 		return
@@ -274,11 +272,11 @@ func processNotFoundErrorDiagnostic(msg string, spec *index.ScalaCompileSpec) {
 			return
 		}
 	}
-	spec.NotFound = append(spec.NotFound, &index.NotFoundSymbol{Kind: fields[0], Name: fields[1]})
+	spec.NotFound = append(spec.NotFound, &scalacompile.NotFoundSymbol{Kind: fields[0], Name: fields[1]})
 }
 
-func processNotPackageMemberErrorDiagnostic(obj, pkg string, spec *index.ScalaCompileSpec) {
-	spec.NotMember = append(spec.NotMember, &index.NotMemberSymbol{Kind: "object", Name: obj, Package: pkg})
+func processNotPackageMemberErrorDiagnostic(obj, pkg string, spec *scalacompile.ScalaCompileSpec) {
+	spec.NotMember = append(spec.NotMember, &scalacompile.NotMemberSymbol{Kind: "object", Name: obj, Package: pkg})
 }
 
 type CompileRequest struct {

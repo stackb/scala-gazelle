@@ -42,3 +42,18 @@ func MustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec)
 	}
 	return filenames
 }
+
+// EqualError reports whether errors a and b are considered equal.
+// They're equal if both are nil, or both are not nil and a.Error() == b.Error().
+func EqualError(a, b error) bool {
+	return a == nil && b == nil || a != nil && b != nil && a.Error() == b.Error()
+}
+
+// ExpectError asserts that the errors are equal.  Return value is true
+// if the "want" argument is non-nil.
+func ExpectError(t *testing.T, want, got error) bool {
+	if !EqualError(want, got) {
+		t.Fatal("errors: want:", want, "got:", got)
+	}
+	return want != nil
+}

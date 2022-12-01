@@ -4,37 +4,36 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	"github.com/stackb/scala-gazelle/pkg/index"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
-
-	sppb "github.com/stackb/scala-gazelle/api/scalaparse"
 )
 
-func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *ScalaSourceCrossResolver {
+func NewScalaSourceCrossResolver(lang string) *ScalaSourceCrossResolver {
 	return &ScalaSourceCrossResolver{
 		lang:         lang,
-		providers:    make(map[string][]*provider),
-		packages:     make(map[string][]*provider),
-		byFilename:   make(map[string]*index.ScalaFileSpec),
-		byRule:       make(map[label.Label]*index.ScalaRuleSpec),
 		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
-		depsRecorder: depsRecorder,
+		providers:    make(map[string][]*provider),
+		packages:     make(map[string][]*provider),
+		byFilename:   make(map[string]*sppb.File),
+		byRule:       make(map[label.Label]*sppb.Rule),
 	}
 }
 
@@ -52,9 +51,6 @@ func NewScalaSourceCrossResolver(lang string, depsRecorder DependencyRecorder) *
 type ScalaSourceCrossResolver struct {
 	// lang is the language name cross resolution should match on, typically "scala".
 	lang string
-	// depsRecorder is used to write dependencies of classes based on extends
-	// clauses.
-	depsRecorder DependencyRecorder
 	// filesystem path to the index cache to read/write.
 	cacheFile string
 	// providers and packages is a mapping from an import symbol to the things
@@ -68,70 +64,57 @@ type ScalaSourceCrossResolver struct {
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
-	byFilename map[string]*index.ScalaFileSpec
+	byFilename map[string]*sppb.File
 	// byRule is a mapping of the scala rule to the spec
-	byRule map[label.Label]*index.ScalaRuleSpec
+	byRule map[label.Label]*sppb.Rule
 	// parser is an instance of the scala source parser
 	parser *scalaparse.ScalaParseServer
 }
 
 type provider struct {
-	rule  *index.ScalaRuleSpec
-	file  *index.ScalaFileSpec
+	rule  *sppb.Rule
+	file  *sppb.File
 	label label.Label
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
-func (r *ScalaSourceCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&r.cacheFile, "scala_source_cache_file", "", "file path for optional source cache")
+func (r *ScalaSourceCrossResolver) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	flags.StringVar(&r.cacheFile, "scala_source_cache_file", "", "file path for optional source cache")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
-func (r *ScalaSourceCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if r.cacheFile != "" {
-		if err := r.readScalaRuleIndexSpec(r.cacheFile); err != nil {
-			log.Printf("warning (%T): %v", err, err)
+		r.cacheFile = os.ExpandEnv(r.cacheFile)
+		if err := r.readIndex(r.cacheFile); err != nil {
+			// don't report error if the file does not exist yet
+			if !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("reading cacheFile: %v (%T)", err, err)
+			}
 		}
 	}
 	return r.parser.Start()
 }
 
-// ParseScalaFiles implements ScalaFileParser
-func (r *ScalaSourceCrossResolver) ParseScalaFiles(dir string, from label.Label, kind string, srcs ...string) (*index.ScalaRuleSpec, error) {
-	rule := &index.ScalaRuleSpec{
+// ParseScalaFiles implements scalaparse.ScalaParser
+func (r *ScalaSourceCrossResolver) ParseScalaFiles(from label.Label, kind string, dir string, srcs ...string) (*sppb.Rule, error) {
+	rule := &sppb.Rule{
 		Label: from.String(),
 		Kind:  kind,
-		Srcs:  make([]*index.ScalaFileSpec, len(srcs)),
+		Files: make([]*sppb.File, len(srcs)),
 	}
 	for i, src := range srcs {
 		filename := filepath.Join(from.Pkg, src)
-		file, err := r.parseScalaFileSpec(dir, filename)
+		file, err := r.parseScalaFileIndex(dir, filename)
 		if err != nil {
 			return nil, err
 		}
-		rule.Srcs[i] = file
+		rule.Files[i] = file
 	}
-	if err := r.readScalaRuleSpec(rule); err != nil {
+	if err := r.readScalaRule(rule); err != nil {
 		return nil, err
 	}
 	return rule, nil
-}
-
-// GetScalaRule implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaRule(from label.Label) (*index.ScalaRuleSpec, bool) {
-	from.Repo = "" // TODO(pcj): this is correct?  We always want sources in the main repo.
-	rule, ok := r.byRule[from]
-	return rule, ok
-}
-
-// GetScalaRules implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaRules() map[label.Label]*index.ScalaRuleSpec {
-	return r.byRule
-}
-
-// GetScalaFile implements part of ScalaSourceRuleRegistry.
-func (r *ScalaSourceCrossResolver) GetScalaFile(filename string) *index.ScalaFileSpec {
-	return r.byFilename[filename]
 }
 
 // Provided implements the protoc.ImportProvider interface.
@@ -150,7 +133,9 @@ func (r *ScalaSourceCrossResolver) Provided(lang, impLang string) map[label.Labe
 	return result
 }
 
-func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*index.ScalaFileSpec, error) {
+func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*sppb.File, error) {
+	t1 := time.Now()
+
 	abs := filepath.Join(dir, filename)
 	sha256, err := fileSha256(abs)
 	if err != nil {
@@ -169,20 +154,23 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 		// log.Printf("file cache miss: <%s>", filename)
 	}
 
-	response, err := r.parser.Parse(context.Background(), &sppb.ScalaParseRequest{
-		Filename: []string{abs},
+	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
+		Filenames: []string{abs},
 	})
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
+
+	t2 := time.Now().Sub(t1).Round(1 * time.Millisecond)
+
 	if response.Error != "" {
 		log.Printf("Parse Error <%s>: %s", filename, response.Error)
 	} else {
-		log.Printf("Parsed <%s>", filename)
+		log.Printf("Parsed <%s> (%v)", filename, t2)
 	}
 
-	scalaFile := response.ScalaFiles[0]
-	file = &index.ScalaFileSpec{
+	scalaFile := response.Files[0]
+	return &sppb.File{
 		Filename: filename,
 		Packages: scalaFile.Packages,
 		Imports:  scalaFile.Imports,
@@ -192,18 +180,17 @@ func (r *ScalaSourceCrossResolver) parseScalaFileSpec(dir, filename string) (*in
 		Objects:  scalaFile.Objects,
 		Traits:   scalaFile.Traits,
 		Sha256:   sha256,
-	}
-	return file, nil
+	}, nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error {
-	index, err := index.ReadScalaRuleIndexSpec(filename)
+func (r *ScalaSourceCrossResolver) readIndex(filename string) error {
+	index, err := scalaparse.ReadRuleListFile(filename)
 	if err != nil {
-		return fmt.Errorf("error while reading index specification file %s: %v", filename, err)
+		return fmt.Errorf("error while reading index specification file %s: %w", filename, err)
 	}
 
 	for _, rule := range index.Rules {
-		if err := r.readScalaRuleSpec(rule); err != nil {
+		if err := r.readScalaRule(rule); err != nil {
 			return err
 		}
 	}
@@ -211,14 +198,14 @@ func (r *ScalaSourceCrossResolver) readScalaRuleIndexSpec(filename string) error
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) error {
+func (r *ScalaSourceCrossResolver) readScalaRule(rule *sppb.Rule) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
 	}
 
-	for _, file := range rule.Srcs {
-		if err := r.readScalaFileSpec(rule, ruleLabel, file); err != nil {
+	for _, file := range rule.Files {
+		if err := r.readScalaFile(rule, ruleLabel, file); err != nil {
 			return err
 		}
 	}
@@ -228,7 +215,7 @@ func (r *ScalaSourceCrossResolver) readScalaRuleSpec(rule *index.ScalaRuleSpec) 
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec) error {
+func (r *ScalaSourceCrossResolver) readScalaFile(rule *sppb.Rule, ruleLabel label.Label, file *sppb.File) error {
 	r.providersMux.Lock()
 	defer r.providersMux.Unlock()
 
@@ -262,7 +249,7 @@ func (r *ScalaSourceCrossResolver) readScalaFileSpec(rule *index.ScalaRuleSpec, 
 	return nil
 }
 
-func (r *ScalaSourceCrossResolver) provide(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Label, file *sppb.File, imp string) {
 	if pp, ok := r.providers[imp]; ok {
 		p := pp[0]
 		if p.label == ruleLabel {
@@ -273,7 +260,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *index.ScalaRuleSpec, ruleLabel 
 	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *ScalaSourceCrossResolver) providePackage(rule *index.ScalaRuleSpec, ruleLabel label.Label, file *index.ScalaFileSpec, imp string) {
+func (r *ScalaSourceCrossResolver) providePackage(rule *sppb.Rule, ruleLabel label.Label, file *sppb.File, imp string) {
 	if pp, ok := r.packages[imp]; ok {
 		p := pp[0]
 		// if there is an existing provider of the same package for the same rule, that is OK.
@@ -290,65 +277,11 @@ func (r *ScalaSourceCrossResolver) providePackage(rule *index.ScalaRuleSpec, rul
 	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
 }
 
-func (r *ScalaSourceCrossResolver) addDependency(src, dst, kind string) {
-	r.depsRecorder(src, dst, kind)
-}
-
 // OnResolve implements GazellePhaseTransitionListener.
 func (r *ScalaSourceCrossResolver) OnResolve() {
-	// stop the parser subprocess since the rule indexing phase is over.  No more parsing after this.
-	r.parser.Stop()
-
-	// record dependency graph
-	for _, rule := range r.byRule {
-		ruleNodeID := "rule/" + rule.Label
-
-		for _, file := range rule.Srcs {
-			fileNodeID := path.Join("file", file.Filename)
-
-			r.addDependency(fileNodeID, ruleNodeID, "rule")
-
-			var symbols []string
-			symbols = append(symbols, file.Objects...)
-			symbols = append(symbols, file.Classes...)
-			symbols = append(symbols, file.Traits...)
-			symbols = append(symbols, file.Types...)
-
-			for _, sym := range symbols {
-				impNodeID := path.Join("imp", sym)
-				r.addDependency(impNodeID, fileNodeID, "file")
-			}
-
-			if false {
-				for _, imp := range file.Imports {
-					impNodeID := path.Join("imp", imp)
-					r.addDependency(fileNodeID, impNodeID, "import")
-				}
-			}
-
-			for token, symbols := range file.Extends {
-				for _, sym := range symbols {
-					suffix := "." + sym
-					var matched bool
-					for _, imp := range file.Imports {
-						if strings.HasSuffix(imp, suffix) {
-							fields := strings.Fields(token)
-							src := path.Join("imp", fields[1])
-							dst := path.Join("imp", imp)
-							r.addDependency(src, dst, "extends")
-							matched = true
-							break
-						}
-					}
-					// TODO: prepend predefined symbols here as a match
-					// heuristic.  Examples: scala.AnyVal or
-					// java.lang.Exception.
-					if !matched {
-						log.Println("warning: failed to match extends:", token, sym, "in file", file.Filename)
-					}
-				}
-			}
-		}
+	// No more parsing after rule generation, we can stop the parser.
+	if r.parser != nil {
+		r.parser.Stop()
 	}
 
 	// dump the index, but only if the file name is configured
@@ -357,7 +290,6 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 			log.Fatalf("failed to write index: %v", err)
 		}
 	}
-
 }
 
 // OnEnd implements GazellePhaseTransitionListener.
@@ -365,12 +297,12 @@ func (r *ScalaSourceCrossResolver) OnEnd() {
 }
 
 func (r *ScalaSourceCrossResolver) writeIndex() error {
-	var idx index.ScalaRuleIndexSpec
+	var idx sppb.RuleList
 	for _, rule := range r.byRule {
 		idx.Rules = append(idx.Rules, rule)
 	}
 
-	if err := index.WriteJSONFile(r.cacheFile, &idx); err != nil {
+	if err := scalaparse.WriteRuleListFile(r.cacheFile, &idx); err != nil {
 		return err
 	}
 
@@ -380,8 +312,7 @@ func (r *ScalaSourceCrossResolver) writeIndex() error {
 // IsLabelOwner implements the LabelOwner interface.
 func (cr *ScalaSourceCrossResolver) IsLabelOwner(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the label points to a rule that was generated by this extension
-	if r, ok := ruleIndex(from); ok {
-		log.Printf("ScalaSourceCrossResolver.IsLabelOwner hit %s: %s", from, r.Kind())
+	if _, ok := ruleIndex(from); ok {
 		return true
 	}
 	return false

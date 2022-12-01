@@ -67,15 +67,14 @@ const jarJsonSimpleExample = `{
 
 func ExampleJarIndexCrossResolver_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	fakeRecorder := func(src, dst, kind string) {}
-	cr := NewJarIndexCrossResolver(scalaName, fakeRecorder)
+	cr := NewJarIndexCrossResolver(scalaName)
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, cmdGenerate, c)
 	got.PrintDefaults()
 	// output:
-	//	-jarindex_proto_files string
-	//     	comma-separated list of jarindex proto files
+	//	-jarindex_files string
+	//     	comma-separated list of jarindex proto (or JSON) files
 }
 
 func TestJarIndexCrossResolverFlags(t *testing.T) {
@@ -86,7 +85,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 	}{
 		"typical usage": {
 			args: []string{
-				"-jarindex_proto_files=./scala_jar_index.json",
+				"-jarindex_files=./scala_jar_index.json",
 			},
 			files: []testtools.FileSpec{
 				{
@@ -101,8 +100,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			fakeRecorder := func(src, dst, kind string) {}
-			cr := NewJarIndexCrossResolver(scalaName, fakeRecorder)
+			cr := NewJarIndexCrossResolver(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -114,7 +112,7 @@ func TestJarIndexCrossResolverFlags(t *testing.T) {
 			if err := cr.CheckFlags(fs, c); err != nil {
 				t.Fatal(err)
 			}
-			if diff := cmp.Diff(tc.wantJarIndexFile, cr.jarIndexProtoFiles); diff != "" {
+			if diff := cmp.Diff(tc.wantJarIndexFile, cr.jarIndexFiles); diff != "" {
 				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
 			}
 		})

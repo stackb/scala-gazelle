@@ -9,6 +9,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func TestScalaConfigParseRuleDirective(t *testing.T) {
@@ -56,10 +58,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := parseTestDirectives("", tc.directives...)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc.rules
@@ -100,10 +99,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := parseTestDirectives("", tc.directives...)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc.overrides
@@ -117,8 +113,8 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
-		wantErr    error
 		want       []*implicitImportSpec
+		wantErr    error
 	}{
 		"degenerate": {
 			want: []*implicitImportSpec{},
@@ -150,10 +146,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := parseTestDirectives("", tc.directives...)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc.implicitImports
@@ -180,10 +173,7 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := parseTestDirectives("", tc.directives...)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc.explainDependencies
@@ -214,10 +204,7 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := parseTestDirectives("", tc.directives...)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc.mapKindImportNames

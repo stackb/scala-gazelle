@@ -5,11 +5,13 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/google/go-cmp/cmp/cmpopts"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 func TestLabelImportMapSet(t *testing.T) {
-	io := NewDirectImportOrigin(&index.ScalaFileSpec{
+	io := NewDirectImportOrigin(&sppb.File{
 		Filename: "Bar.scala",
 	})
 	io.Import = "com.foo.Bar"
@@ -23,7 +25,7 @@ func TestLabelImportMapSet(t *testing.T) {
 	want.Add("com.foo.Bar", io)
 
 	got := lim[from]
-	if diff := cmp.Diff(want, got); diff != "" {
+	if diff := cmp.Diff(want, got, cmpopts.IgnoreUnexported(sppb.File{})); diff != "" {
 		t.Errorf("(-want +got):\n%s", diff)
 	}
 }

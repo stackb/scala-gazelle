@@ -16,18 +16,18 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/stackb/scala-gazelle/api/scalaparse"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 func TestServerParse(t *testing.T) {
 	for name, tc := range map[string]*struct {
 		files []testtools.FileSpec
-		in    scalaparse.ScalaParseRequest
-		want  scalaparse.ScalaParseResponse
+		in    sppb.ParseRequest
+		want  sppb.ParseResponse
 	}{
 		"degenerate": {
-			want: scalaparse.ScalaParseResponse{
-				Error: `bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`,
+			want: sppb.ParseResponse{
+				Error: `bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`,
 			},
 		},
 		"single file": {
@@ -42,15 +42,15 @@ class Foo extends HashMap {
 `,
 				},
 			},
-			want: scalaparse.ScalaParseResponse{
-				ScalaFiles: []*scalaparse.ScalaFile{
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
 					{
 						Filename: "A.scala",
 						Packages: []string{"a"},
 						Classes:  []string{"a.Foo"},
 						Imports:  []string{"java.util.HashMap"},
 						Names:    []string{"a", "java", "util"},
-						Extends: map[string]*scalaparse.ClassList{
+						Extends: map[string]*sppb.ClassList{
 							"class a.Foo": {
 								Classes: []string{"HashMap"},
 							},
@@ -68,7 +68,7 @@ class Foo extends HashMap {
 			defer os.RemoveAll(tmpDir)
 
 			files := mustWriteTestFiles(t, tmpDir, tc.files)
-			tc.in.Filename = files
+			tc.in.Filenames = files
 
 			server := NewScalaParseServer()
 			if err := server.Start(); err != nil {
@@ -83,17 +83,17 @@ class Foo extends HashMap {
 			got.ElapsedMillis = 0
 
 			// remove tmpdir prefix and zero the time delta for diff comparison
-			for i := range got.ScalaFiles {
-				got.ScalaFiles[i].ElapsedMillis = 0
-				if strings.HasPrefix(got.ScalaFiles[i].Filename, tmpDir) {
-					got.ScalaFiles[i].Filename = got.ScalaFiles[i].Filename[len(tmpDir)+1:]
+			for i := range got.Files {
+				got.Files[i].ElapsedMillis = 0
+				if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
+					got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
 				}
 			}
 
 			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
-				scalaparse.ScalaParseResponse{},
-				scalaparse.ScalaFile{},
-				scalaparse.ClassList{},
+				sppb.ParseResponse{},
+				sppb.File{},
+				sppb.ClassList{},
 			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
@@ -114,15 +114,14 @@ func TestGetFreePort(t *testing.T) {
 func TestNewHttpScalaParseRequest(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url      string
-		in       *scalaparse.ScalaParseRequest
+		in       *sppb.ParseRequest
 		want     *http.Request
 		wantBody string
 	}{
 		"prototypical": {
 			url: "http://localhost:3000",
-			in: &scalaparse.ScalaParseRequest{
-				Label:    "//app:scala",
-				Filename: []string{"A.scala", "B.scala"},
+			in: &sppb.ParseRequest{
+				Filenames: []string{"A.scala", "B.scala"},
 			},
 			want: &http.Request{
 				Method:        "POST",
@@ -131,14 +130,14 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 				ProtoMajor:    1,
 				ProtoMinor:    1,
 				Header:        http.Header{"Content-Type": {"application/json"}},
-				ContentLength: 53,
+				ContentLength: 36, // or 35, see below!
 				Host:          "localhost:3000",
 			},
-			wantBody: `{"files":["A.scala","B.scala"],"label":"//app:scala"}`,
+			wantBody: `{"filenames":["A.scala","B.scala"]}`,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got, err := newHttpScalaParseRequest(tc.url, tc.in)
+			got, err := newHttpParseRequest(tc.url, tc.in)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -146,24 +145,26 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			gotBody := string(body)
+			// remove all whitespace (and ignore content length) for the test:
+			// seeing CI failures between macos (M1) and linux.  Very strange!
+			gotBody := strings.ReplaceAll(string(body), " ", "")
 			if diff := cmp.Diff(tc.want, got,
 				cmpopts.IgnoreUnexported(http.Request{}),
-				cmpopts.IgnoreFields(http.Request{}, "GetBody", "Body"),
+				cmpopts.IgnoreFields(http.Request{}, "GetBody", "Body", "ContentLength"),
 			); diff != "" {
-				t.Errorf("newHttpScalaParseRequest (-want +got):\n%s", diff)
+				t.Errorf("(-want +got):\n%s", diff)
 			}
 			if diff := cmp.Diff(tc.wantBody, gotBody); diff != "" {
-				t.Errorf("newHttpScalaParseRequest body (-want +got):\n%s", diff)
+				t.Errorf("body (-want +got):\n%s", diff)
 			}
 		})
 	}
 }
 
-func TestNewHttpScalaParseRequestError(t *testing.T) {
+func TestNewHttpParseRequestError(t *testing.T) {
 	for name, tc := range map[string]struct {
 		url  string
-		in   *scalaparse.ScalaParseRequest
+		in   *sppb.ParseRequest
 		want error
 	}{
 		"missing-url": {
@@ -171,11 +172,11 @@ func TestNewHttpScalaParseRequestError(t *testing.T) {
 		},
 		"missing-request": {
 			url:  "http://localhost:3000",
-			want: fmt.Errorf("rpc error: code = InvalidArgument desc = ScalaParseRequest is required"),
+			want: fmt.Errorf("rpc error: code = InvalidArgument desc = ParseRequest is required"),
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			_, got := newHttpScalaParseRequest(tc.url, tc.in)
+			_, got := newHttpParseRequest(tc.url, tc.in)
 			if got == nil {
 				t.Fatalf("error was expected: %v", tc.want)
 			}

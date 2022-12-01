@@ -8,6 +8,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 const (
@@ -21,18 +23,14 @@ type ScalaPackage interface {
 	Dir() string
 	// File returns the BUILD file for the package
 	File() *rule.File
-	// ScalaFileParser returns the parser instance to use.
-	ScalaFileParser() ScalaFileParser
-	// ScalaImportRegistry returns the registry instance.
-	ScalaImportRegistry() ScalaImportRegistry
+	// ScalaParser returns the parser instance to use.
+	ScalaParser() scalaparse.Parser
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// parser is the file parser
-	scalaFileParser ScalaFileParser
-	// shared import registry
-	scalaImportRegistry ScalaImportRegistry
+	parser scalaparse.Parser
 	// rel is the package (args.Rel)
 	rel string
 	// the registry to use
@@ -50,15 +48,14 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, scalaFileParser ScalaFileParser, scalaImportRegistry ScalaImportRegistry, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, parser scalaparse.Parser, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
-		scalaFileParser:     scalaFileParser,
-		scalaImportRegistry: scalaImportRegistry,
-		rel:                 rel,
-		ruleRegistry:        ruleRegistry,
-		file:                file,
-		cfg:                 cfg,
-		rules:               make(map[string]*rule.Rule),
+		parser:       parser,
+		rel:          rel,
+		ruleRegistry: ruleRegistry,
+		file:         file,
+		cfg:          cfg,
+		rules:        make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -174,14 +171,9 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	return nil
 }
 
-// ScalaImportRegistry implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaImportRegistry() ScalaImportRegistry {
-	return s.scalaImportRegistry
-}
-
-// ScalaFileParser implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaFileParser() ScalaFileParser {
-	return s.scalaFileParser
+// ScalaParser implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaParser() scalaparse.Parser {
+	return s.parser
 }
 
 // File implements part of the ScalaPackage interface.

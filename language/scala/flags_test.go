@@ -6,6 +6,8 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func TestParseScalaExistingRules(t *testing.T) {
@@ -33,11 +35,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			err := parseScalaExistingRules(tc.rules)
-			if !equalError(tc.wantErr, err) {
-				t.Fatal("errors: want:", tc.wantErr, "got:", err)
-			}
-			if tc.wantErr != nil {
+			if testutil.ExpectError(t, tc.wantErr, parseScalaExistingRules(tc.rules)) {
 				return
 			}
 			if tc.check != nil {
@@ -57,10 +55,4 @@ func TestParseScalaExistingRules(t *testing.T) {
 			}
 		})
 	}
-}
-
-// equalError reports whether errors a and b are considered equal.
-// They're equal if both are nil, or both are not nil and a.Error() == b.Error().
-func equalError(a, b error) bool {
-	return a == nil && b == nil || a != nil && b != nil && a.Error() == b.Error()
 }

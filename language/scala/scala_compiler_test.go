@@ -7,7 +7,10 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/pkg/index"
+	"github.com/google/go-cmp/cmp/cmpopts"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
 
 // TestScalaCompileResponse tests translation of an XML response from the
@@ -17,7 +20,7 @@ func TestScalaCompileResponse(t *testing.T) {
 		dir          string
 		filename     string
 		mockResponse string
-		want         *index.ScalaCompileSpec
+		want         *scalacompile.ScalaCompileSpec
 	}{
 		"ok": {
 			filename: "lib/App.scala",
@@ -28,8 +31,8 @@ func TestScalaCompileResponse(t *testing.T) {
   <diagnostic line="67" sev="ERROR" source="lib/App.scala">not found: type Greeter</diagnostic>
 </compileResponse>
 `,
-			want: &index.ScalaCompileSpec{
-				NotFound: []*index.NotFoundSymbol{{Name: "Greeter", Kind: "type"}},
+			want: &scalacompile.ScalaCompileSpec{
+				NotFound: []*scalacompile.NotFoundSymbol{{Name: "Greeter", Kind: "type"}},
 			},
 		},
 	} {
@@ -66,7 +69,7 @@ func TestParseScalaFileSpec(t *testing.T) {
 		dir          string
 		filename     string
 		mockResponse string
-		want         index.ScalaFileSpec
+		want         sppb.File
 	}{
 		"ok": {
 			filename: "com/foo/Utils.scala",
@@ -89,44 +92,47 @@ func TestParseScalaFileSpec(t *testing.T) {
 		"BigDecimal"
 	],
 	"extends": {
-		"object com.foo.RationalUtils": [
-			"RationalPriceUtils"
-		],
-		"object com.foo.RationalPriceUtils": [
-			"RationalPriceUtils"
-		],
-		"trait com.foo.RationalPriceUtils": [
-			"RationalUtils"
-		],
-		"trait com.foo.RationalUtils": [
-			"LazyLogging"
-		]
+		"object com.foo.RationalUtils": {
+			"classes": ["RationalPriceUtils"]
+		},
+		"object com.foo.RationalPriceUtils": {
+			"classes": ["RationalPriceUtils"]
+		},
+		"trait com.foo.RationalPriceUtils": {
+			"classes": ["RationalUtils"]
+		},
+		"trait com.foo.RationalUtils": {
+			"classes": ["LazyLogging"]
+		}
 	}
 }
 `,
-			want: index.ScalaFileSpec{
+			want: sppb.File{
 				Filename: "com/foo/Utils.scala",
 				Imports:  []string{"com.typesafe.scalalogging.LazyLogging"},
 				Packages: []string{"com.foo"},
 				Objects:  []string{"com.foo.RationalUtils"},
 				Traits:   []string{"com.foo.RationalUtils"},
 				Names:    []string{"BigDecimal"},
-				Extends: map[string][]string{
-					"object com.foo.RationalPriceUtils": {"RationalPriceUtils"},
-					"object com.foo.RationalUtils":      {"RationalPriceUtils"},
-					"trait com.foo.RationalPriceUtils":  {"RationalUtils"},
-					"trait com.foo.RationalUtils":       {"LazyLogging"},
+				Extends: map[string]*sppb.ClassList{
+					"object com.foo.RationalPriceUtils": {Classes: []string{"RationalPriceUtils"}},
+					"object com.foo.RationalUtils":      {Classes: []string{"RationalPriceUtils"}},
+					"trait com.foo.RationalPriceUtils":  {Classes: []string{"RationalUtils"}},
+					"trait com.foo.RationalUtils":       {Classes: []string{"LazyLogging"}},
 				},
 			},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			var got index.ScalaFileSpec
+			var got sppb.File
 			if err := json.Unmarshal([]byte(tc.mockResponse), &got); err != nil {
 				t.Fatal(err)
 			}
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("ReadScalaFileSpec (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
+				sppb.File{},
+				sppb.ClassList{},
+			)); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
 	}
