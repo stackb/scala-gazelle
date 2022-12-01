@@ -166,7 +166,7 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 		"degenerate": {},
 		"typical example": {
 			directives: []rule.Directive{
-				{Key: scalaExplainDependencies, Value: "true"},
+				{Key: scalaExplainDeps, Value: "true"},
 			},
 			want: true,
 		},
@@ -176,7 +176,7 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
-			got := sc.explainDependencies
+			got := sc.explainDeps
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -184,6 +184,32 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 	}
 }
 
+func TestScalaConfigParseScalaExplainSrcs(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		wantErr    error
+		want       bool
+	}{
+		"degenerate": {},
+		"typical example": {
+			directives: []rule.Directive{
+				{Key: scalaExplainSrcs, Value: "true"},
+			},
+			want: true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := parseTestDirectives("", tc.directives...)
+			if testutil.ExpectError(t, tc.wantErr, err) {
+				return
+			}
+			got := sc.explainSrcs
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
 func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive

@@ -141,7 +141,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 		},
 		"simple+reason": {
 			in:         `scala_library(name="test")`,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -156,7 +156,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 		},
 		"simple+reason+deduplicate": {
 			in:         `scala_library(name="test")`,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -177,7 +177,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			want: `scala_library(
     name = "test",
     deps = [
@@ -194,7 +194,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},

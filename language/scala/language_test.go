@@ -18,6 +18,7 @@ func ExampleLanguage_KnownDirectives() {
 	// scala_rule
 	// override
 	// implicit_import
-	// scala_explain_dependencies
+	// scala_explain_deps
+	// scala_explain_srcs
 	// map_kind_import_name
 }

@@ -247,7 +247,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
 		r.SetAttr("deps", depsExpr)
 
-		if len(unresolved) > 0 && sc.explainDependencies {
+		if len(unresolved) > 0 && sc.explainDeps {
 			commentUnresolvedImports(unresolved, r, "srcs")
 		}
 	}
@@ -401,7 +401,7 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Ex
 	for id, dep := range keys {
 		imports := keeps[dep]
 		str := &build.StringExpr{Value: dep}
-		if sc.explainDependencies {
+		if sc.explainDeps {
 			explainDependencies(str, imports)
 			if debug {
 				str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
