@@ -22,7 +22,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/stackb/scala-gazelle/pkg/scalacompile"
-	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 // NOT_FOUND is the diagnostic message prefix we expect from the scala compiler
@@ -85,9 +84,7 @@ func (p *scalaCompiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if false {
 		tool, err := bazel.Runfile(p.jarPath)
 		if err != nil {
-			log.Printf("failed to initialize compiler: %v\n", err)
-			scalaparse.ListFiles(".")
-			return err
+			return fmt.Errorf("initializing scala compiler: %w", err)
 		}
 		p.toolPath = tool
 

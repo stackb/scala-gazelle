@@ -90,7 +90,7 @@ func parseFlags(args []string) (files []string, err error) {
 
 	files = fs.Args()
 	if len(files) == 0 {
-		err = fmt.Errorf("positional args should be a non-empty list of .jipb.json files to merge")
+		err = fmt.Errorf("mergeindex positional args should be a non-empty list of jarindex.{pb|json} files to merge")
 	}
 
 	return
