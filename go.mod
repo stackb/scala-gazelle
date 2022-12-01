@@ -10,7 +10,6 @@ require (
 	github.com/bazelbuild/rules_go v0.35.0
 	github.com/bmatcuk/doublestar/v4 v4.2.0
 	github.com/davecgh/go-spew v1.1.1
-	github.com/emicklei/dot v0.16.0
 	github.com/google/go-cmp v0.5.9
 	github.com/pcj/mobyprogress v0.0.0-20221114203314-669a7801d484
 	github.com/stackb/rules_proto v0.0.0-20221020023827-830238a0c071

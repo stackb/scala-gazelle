@@ -8,3 +8,9 @@ scalaparse_protos:
 .PHONY: protos
 protos: scalaparse_protos
 	echo "Done."
+
+.PHONY: tidy
+tidy:
+	bazel run @go_sdk//:bin/go -- mod tidy
+	bazel run //:update_go_repositories
+
