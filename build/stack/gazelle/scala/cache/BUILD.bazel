@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "cache_proto",
+    srcs = ["cache.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["//build/stack/gazelle/scala/parse:parse_proto"],
+)
+
+proto_compiled_sources(
+    name = "cache_go_compiled_sources",
+    srcs = ["cache.pb.go"],
+    output_mappings = ["cache.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache/cache.pb.go"],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "cache_proto",
+)
+
+go_library(
+    name = "cache",
+    srcs = ["cache.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)
