@@ -280,7 +280,7 @@ func commentUnresolvedImports(unresolved ImportOriginMap, r *rule.Rule, attrName
 	for _, imp := range imports {
 		origin := unresolved[imp]
 		srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
-			Token: fmt.Sprintf("# ❌ unresolved: %s (%s)", imp, origin.String()),
+			Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
 		})
 	}
 }
@@ -430,7 +430,7 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	}
 	reasons = protoc.DeduplicateAndSort(reasons)
 	for _, reason := range reasons {
-		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# ✅ " + reason})
+		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
 	}
 }
 
