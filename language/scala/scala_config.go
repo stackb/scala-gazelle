@@ -22,8 +22,10 @@ const (
 	overrideDirective = "override"
 	// implicitImportDirective adds additional imports for resolution
 	implicitImportDirective = "implicit_import"
-	// scala_explain_dependencies prints the reason why deps are included.
-	scalaExplainDependencies = "scala_explain_dependencies"
+	// scala_explain_deps prints the reason why deps are included.
+	scalaExplainDeps = "scala_explain_deps"
+	// scala_expand_srcs replaces the "srcs" attribute with actual srcs, if enabled.
+	scalaExplainSrcs = "scala_explain_srcs"
 	// mapKindImportNameDirective allows renaming of resolved labels.
 	mapKindImportNameDirective = "map_kind_import_name"
 )
@@ -44,8 +46,10 @@ type scalaConfig struct {
 	implicitImports []*implicitImportSpec
 	// map kinds are parsed from 'gazelle:map_kind_import_name
 	mapKindImportNames map[string]mapKindImportNameSpec
-	// explainDependencies is a flag to print additional comments on deps & exports
-	explainDependencies bool
+	// explainDeps is a flag to print additional comments on deps & exports
+	explainDeps bool
+	// explainSrcs is a flag to print additional comments on srcs
+	explainSrcs bool
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -87,7 +91,8 @@ func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Con
 // clone copies this config to a new one.
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	clone := newScalaConfig(c.ruleIndex, config, rel)
-	clone.explainDependencies = c.explainDependencies
+	clone.explainDeps = c.explainDeps
+	clone.explainSrcs = c.explainSrcs
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
@@ -129,8 +134,10 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseOverrideDirective(d)
 		case implicitImportDirective:
 			c.parseImplicitImportDirective(d)
-		case scalaExplainDependencies:
-			c.parseScalaExplainDependencies(d)
+		case scalaExplainDeps:
+			c.parseScalaExplainDeps(d)
+		case scalaExplainSrcs:
+			c.parseScalaExplainSrcs(d)
 		case mapKindImportNameDirective:
 			c.parseMapKindImportNameDirective(d)
 		}
@@ -206,13 +213,22 @@ func (c *scalaConfig) parseMapKindImportNameDirective(d rule.Directive) {
 	c.mapKindImportNames[kind] = mapKindImportNameSpec{src: src, dst: dst}
 }
 
-func (c *scalaConfig) parseScalaExplainDependencies(d rule.Directive) {
+func (c *scalaConfig) parseScalaExplainDeps(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 1 {
-		log.Printf("invalid gazelle:scala_explain_dependencies directive: expected 1+ parts, got %d (%v)", len(parts), parts)
+		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaExplainDeps, len(parts), parts)
 		return
 	}
-	c.explainDependencies = parts[0] == "true"
+	c.explainDeps = parts[0] == "true"
+}
+
+func (c *scalaConfig) parseScalaExplainSrcs(d rule.Directive) {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaExplainSrcs, len(parts), parts)
+		return
+	}
+	c.explainSrcs = parts[0] == "true"
 }
 
 func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {

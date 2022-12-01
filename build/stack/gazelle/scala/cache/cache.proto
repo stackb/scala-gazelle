@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.cache;
+
+import "build/stack/gazelle/scala/parse/rule.proto";
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache;cache";
+option java_package = "build.stack.gazelle.scala.cache";
+option java_multiple_files = true;
+
+// Cache represents the scala gazelle cache.
+message Cache {
+    // package_count is the number of packages visited
+    // during the generation phase.
+    int32 package_count = 1;
+    // rules is the list of parsed rules.
+    repeated build.stack.gazelle.scala.parse.Rule rules = 2;
+}

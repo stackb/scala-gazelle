@@ -141,7 +141,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 		},
 		"simple+reason": {
 			in:         `scala_library(name="test")`,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -156,7 +156,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 		},
 		"simple+reason+deduplicate": {
 			in:         `scala_library(name="test")`,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -177,7 +177,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			want: `scala_library(
     name = "test",
     deps = [
@@ -194,7 +194,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     ],
 )
 `,
-			directives: []rule.Directive{{Key: "scala_explain_dependencies", Value: "true"}},
+			directives: []rule.Directive{{Key: "scala_explain_deps", Value: "true"}},
 			resolved: map[string]string{
 				"com.typesafe.scalalogging.LazyLogging": "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
 			},
@@ -444,6 +444,76 @@ scala_library(
 			got := ruleString(r)
 			if diff := cmp.Diff(want, got); diff != "" {
 				t.Errorf("CommentUnresolvedImports() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestExplainSources(t *testing.T) {
+	type testCase struct {
+		// rel is the relative package directory
+		rel string
+		// src is the rule source code
+		src string
+		// unresolved is the import map under test
+		imports ImportOriginMap
+		// want is the formatted output
+		want string
+	}
+	for name, tc := range map[string]*testCase{
+		"no srcs attribute": {
+			imports: map[string]*ImportOrigin{
+				"com.foo.Bar": NewDirectImportOrigin(&sppb.File{
+					Filename: "Main.scala",
+				}),
+			},
+			src: `
+scala_library(
+    name = "test",
+    deps = [],
+)`,
+			want: `
+scala_library(
+    name = "test",
+    deps = [],
+)`,
+		},
+		"with srcs attribute": {
+			imports: map[string]*ImportOrigin{
+				"com.foo.Bar": NewDirectImportOrigin(&sppb.File{
+					Filename: "B.scala",
+				}),
+				"com.baz.Qux": NewDirectImportOrigin(&sppb.File{
+					Filename: "A.scala",
+				}),
+			},
+			src: `
+scala_library(
+    name = "test",
+    srcs = ["A.scala", "B.scala"],
+    deps = [],
+)`,
+			want: `
+scala_library(
+    name = "test",
+    srcs =
+    # A.scala - com.baz.Qux (direct)
+    # B.scala - com.foo.Bar (direct)
+    [
+        "A.scala",
+        "B.scala",
+    ],
+    deps = [],
+)`,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			r := mustLoadRule(t, tc.src)
+			explainSources(tc.rel, tc.imports, r, "srcs")
+			want := strings.TrimSpace(tc.want)
+			got := ruleString(r)
+			if diff := cmp.Diff(want, got); diff != "" {
+				t.Errorf("explainSources() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

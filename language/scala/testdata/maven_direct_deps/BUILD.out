@@ -1,11 +1,14 @@
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
-# gazelle:scala_explain_dependencies true
+# gazelle:scala_explain_deps true
+# gazelle:scala_explain_srcs true
 
 scala_library(
     name = "app",
-    srcs = ["Main.scala"],
+    srcs =
+    # Main.scala - com.typesafe.scalalogging.LazyLogging (direct)
+    ["Main.scala"],
     deps = [
         # com.typesafe.scalalogging.LazyLogging (direct from Main.scala)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
