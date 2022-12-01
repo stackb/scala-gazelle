@@ -90,7 +90,8 @@ func (*scalaLang) KnownDirectives() []string {
 		ruleDirective,
 		overrideDirective,
 		implicitImportDirective,
-		scalaExplainDependencies,
+		scalaExplainDeps,
+		scalaExplainSrcs,
 		mapKindImportNameDirective,
 	}
 }

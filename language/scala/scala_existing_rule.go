@@ -21,6 +21,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
+var pathSep = fmt.Sprintf("%c", filepath.Separator)
+
 // a lazily-computed list of resolvers that implement LabelOwner
 var labelOwners []crossresolve.LabelOwner
 
@@ -247,9 +249,13 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		depsExpr := makeLabeledListExpr(c, r.Kind(), keep, r.Attr("deps"), from, resolved)
 		r.SetAttr("deps", depsExpr)
 
-		if len(unresolved) > 0 && sc.explainDependencies {
+		if len(unresolved) > 0 && sc.explainDeps {
 			commentUnresolvedImports(unresolved, r, "srcs")
 		}
+	}
+
+	if sc.explainSrcs {
+		explainSources(sc.rel, imports, r, "srcs")
 	}
 
 	if debug {
@@ -401,7 +407,7 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Ex
 	for id, dep := range keys {
 		imports := keeps[dep]
 		str := &build.StringExpr{Value: dep}
-		if sc.explainDependencies {
+		if sc.explainDeps {
 			explainDependencies(str, imports)
 			if debug {
 				str.Comments.Suffix = []build.Comment{{Token: fmt.Sprintf("# %d", id)}}
@@ -425,6 +431,33 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	reasons = protoc.DeduplicateAndSort(reasons)
 	for _, reason := range reasons {
 		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+	}
+}
+
+func explainSources(rel string, imports ImportOriginMap, r *rule.Rule, attrName string) {
+	var comments *build.Comments
+	expr := r.Attr(attrName)
+	switch t := expr.(type) {
+	case *build.ListExpr:
+		comments = &t.Comments
+	case *build.CallExpr:
+		comments = &t.Comments
+	}
+	if comments == nil {
+		return
+	}
+
+	var tokens []string
+	for imp, origin := range imports {
+		if origin.Kind == ImportKindDirect {
+			filename := strings.TrimPrefix(origin.SourceFile.Filename, rel)
+			filename = strings.TrimPrefix(filename, pathSep)
+			tokens = append(tokens, fmt.Sprintf("# %s - %s (direct)", filename, imp))
+		}
+	}
+	sort.Strings(tokens)
+	for _, token := range tokens {
+		comments.Before = append(comments.Before, build.Comment{Token: token})
 	}
 }
 
