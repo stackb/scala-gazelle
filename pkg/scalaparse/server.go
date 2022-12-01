@@ -3,7 +3,6 @@ package scalaparse
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,9 +26,6 @@ import (
 )
 
 const contentTypeJSON = "application/json"
-
-type ScalaParseClient struct {
-}
 
 func NewScalaParseServer() *ScalaParseServer {
 	return &ScalaParseServer{}
@@ -195,8 +191,8 @@ func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ParseRequest) (*s
 	if debugParse {
 		log.Printf("response body: %s", string(data))
 	}
-	var response sppb.ParseResponse
 
+	var response sppb.ParseResponse
 	if err := protojson.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
 	}
@@ -226,13 +222,13 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 	if in == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "ParseRequest is required")
 	}
-	values := map[string]interface{}{"files": in.Filenames}
-	jsonValue, err := json.Marshal(values)
+
+	json, err := protojson.Marshal(in)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "marshaling request: %v", err)
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "creating request: %v", err)
 	}

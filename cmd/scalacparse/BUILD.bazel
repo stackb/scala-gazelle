@@ -1,11 +1,11 @@
 java_binary(
-    name = "scala_compiler",
+    name = "scalacserver",
     srcs = [
         "ScalacServer.java",
         "XmlReportableMainClass.java",
         "XmlReporter.java",
     ],
-    main_class = "scalaparse.ScalacServer",
+    main_class = "ScalacServer",
     visibility = ["//visibility:public"],
     deps = [
         "@io_bazel_rules_scala_scala_compiler",

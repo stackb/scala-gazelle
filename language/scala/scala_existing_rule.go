@@ -14,11 +14,11 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
-
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 // a lazily-computed list of resolvers that implement LabelOwner

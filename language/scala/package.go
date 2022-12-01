@@ -8,6 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
