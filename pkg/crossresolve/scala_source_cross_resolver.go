@@ -155,7 +155,7 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	}
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
-		Filename: []string{abs},
+		Filenames: []string{abs},
 	})
 	if err != nil {
 		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)

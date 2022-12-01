@@ -226,7 +226,7 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 	if in == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "ParseRequest is required")
 	}
-	values := map[string]interface{}{"files": in.Filename}
+	values := map[string]interface{}{"files": in.Filenames}
 	jsonValue, err := json.Marshal(values)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "marshaling request: %v", err)
