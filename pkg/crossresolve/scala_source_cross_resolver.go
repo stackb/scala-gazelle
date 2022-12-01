@@ -96,8 +96,8 @@ func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Con
 	return r.parser.Start()
 }
 
-// ParseScalaRule implements ScalaRuleParser
-func (r *ScalaSourceCrossResolver) ParseScalaRule(dir string, from label.Label, kind string, srcs ...string) (*sppb.Rule, error) {
+// ParseScalaFiles implements scalaparse.ScalaParser
+func (r *ScalaSourceCrossResolver) ParseScalaFiles(from label.Label, kind string, dir string, srcs ...string) (*sppb.Rule, error) {
 	rule := &sppb.Rule{
 		Label: from.String(),
 		Kind:  kind,

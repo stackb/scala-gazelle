@@ -47,6 +47,7 @@ go_library(
         "//pkg/collections",
         "//pkg/crossresolve",
         "//pkg/scalacompile",
+        "//pkg/scalaparse",
         "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

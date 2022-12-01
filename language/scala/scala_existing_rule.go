@@ -16,6 +16,7 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -97,7 +98,7 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 	if len(srcs) > 0 {
 		// log.Printf("skipping %s //%s:%s (no srcs)", r.Kind(), pkg.Rel(), r.Name())
 		// return nil
-		files, err = resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaRuleParser())
+		files, err = resolveScalaSrcs(pkg.Dir(), from, r.Kind(), srcs, pkg.ScalaParser())
 		if err != nil {
 			log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
 			return nil
@@ -469,8 +470,8 @@ func getAttrFiles(pkg ScalaPackage, r *rule.Rule, attrName string) (srcs []strin
 	return
 }
 
-func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser crossresolve.ScalaRuleParser) ([]*sppb.File, error) {
-	if index, err := parser.ParseScalaRule(dir, from, kind, srcs...); err != nil {
+func resolveScalaSrcs(dir string, from label.Label, kind string, srcs []string, parser scalaparse.Parser) ([]*sppb.File, error) {
+	if index, err := parser.ParseScalaFiles(from, kind, dir, srcs...); err != nil {
 		return nil, err
 	} else {
 		return index.Files, nil

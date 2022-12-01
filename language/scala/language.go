@@ -9,6 +9,7 @@ import (
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 const ScalaLangName = "scala"
@@ -48,7 +49,7 @@ type scalaLang struct {
 	// scalaParser is the parser implementation.  This is given to each
 	// ScalaPackage during GenerateRules such that rule implementations can use
 	// it.
-	scalaParser crossresolve.ScalaRuleParser
+	scalaParser scalaparse.Parser
 	// scalaCompiler is the compiler implementation.  This is passed to the
 	// importRegistry for use during import disambiguation.
 	scalaCompiler *scalaCompiler

@@ -8,7 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 const (
@@ -22,14 +22,14 @@ type ScalaPackage interface {
 	Dir() string
 	// File returns the BUILD file for the package
 	File() *rule.File
-	// ScalaRuleParser returns the parser instance to use.
-	ScalaRuleParser() crossresolve.ScalaRuleParser
+	// ScalaParser returns the parser instance to use.
+	ScalaParser() scalaparse.Parser
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// parser is the file parser
-	parser crossresolve.ScalaRuleParser
+	parser scalaparse.Parser
 	// rel is the package (args.Rel)
 	rel string
 	// the registry to use
@@ -47,7 +47,7 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, parser crossresolve.ScalaRuleParser, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(ruleRegistry RuleRegistry, parser scalaparse.Parser, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
 	s := &scalaPackage{
 		parser:       parser,
 		rel:          rel,
@@ -170,8 +170,8 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	return nil
 }
 
-// ScalaRuleParser implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaRuleParser() crossresolve.ScalaRuleParser {
+// ScalaParser implements part of the ScalaPackage interface.
+func (s *scalaPackage) ScalaParser() scalaparse.Parser {
 	return s.parser
 }
 

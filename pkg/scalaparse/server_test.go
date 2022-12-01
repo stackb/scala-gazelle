@@ -68,7 +68,7 @@ class Foo extends HashMap {
 			defer os.RemoveAll(tmpDir)
 
 			files := mustWriteTestFiles(t, tmpDir, tc.files)
-			tc.in.Filename = files
+			tc.in.Filenames = files
 
 			server := NewScalaParseServer()
 			if err := server.Start(); err != nil {
@@ -121,7 +121,7 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 		"prototypical": {
 			url: "http://localhost:3000",
 			in: &sppb.ParseRequest{
-				Filename: []string{"A.scala", "B.scala"},
+				Filenames: []string{"A.scala", "B.scala"},
 			},
 			want: &http.Request{
 				Method:        "POST",
