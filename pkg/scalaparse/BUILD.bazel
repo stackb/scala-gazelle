@@ -7,7 +7,6 @@ go_library(
         "exec.go",
         "io.go",
         "options.go",
-        "parse.go",
         "scala_parser.go",
         "server.go",
     ],

@@ -25,7 +25,11 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-const contentTypeJSON = "application/json"
+const (
+	contentTypeJSON = "application/json"
+	// debugParse is a debug flag for use by a developer
+	debugParse = false
+)
 
 func NewScalaParseServer() *ScalaParseServer {
 	return &ScalaParseServer{}
@@ -272,4 +276,17 @@ func waitForConnectionAvailable(host string, port int, timeout time.Duration) bo
 	case <-time.After(timeout):
 		return false
 	}
+}
+
+// listFiles is a convenience debugging function to log the files under a given dir.
+func listFiles(dir string) error {
+	log.Println("Listing files under " + dir)
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("%v\n", err)
+			return err
+		}
+		log.Println(path)
+		return nil
+	})
 }
