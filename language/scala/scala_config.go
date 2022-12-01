@@ -92,6 +92,7 @@ func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Con
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	clone := newScalaConfig(c.ruleIndex, config, rel)
 	clone.explainDeps = c.explainDeps
+	clone.explainSrcs = c.explainSrcs
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}

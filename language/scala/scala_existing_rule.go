@@ -252,6 +252,10 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 		}
 	}
 
+	if sc.explainSrcs {
+		explainSources(imports, r, "srcs")
+	}
+
 	if debug {
 		log.Println(from, "| END RESOLVE", impLang)
 		// printRules(r)
@@ -425,6 +429,31 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	reasons = protoc.DeduplicateAndSort(reasons)
 	for _, reason := range reasons {
 		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+	}
+}
+
+func explainSources(imports ImportOriginMap, r *rule.Rule, attrName string) {
+	var comments *build.Comments
+	expr := r.Attr(attrName)
+	switch t := expr.(type) {
+	case *build.ListExpr:
+		comments = &t.Comments
+	case *build.CallExpr:
+		comments = &t.Comments
+	}
+	if comments == nil {
+		return
+	}
+
+	var tokens []string
+	for imp, origin := range imports {
+		if origin.Kind == ImportKindDirect {
+			tokens = append(tokens, fmt.Sprintf("# %s - %s (direct)", origin.SourceFile.Filename, imp))
+		}
+	}
+	sort.Strings(tokens)
+	for _, token := range tokens {
+		comments.Before = append(comments.Before, build.Comment{Token: token})
 	}
 }
 
