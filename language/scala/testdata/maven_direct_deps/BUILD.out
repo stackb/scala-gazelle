@@ -10,7 +10,7 @@ scala_library(
     # Main.scala - com.typesafe.scalalogging.LazyLogging (direct)
     ["Main.scala"],
     deps = [
-        # com.typesafe.scalalogging.LazyLogging (direct from Main.scala)
+        # ✅ com.typesafe.scalalogging.LazyLogging (direct from Main.scala)
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )

@@ -21,6 +21,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
+var pathSep = fmt.Sprintf("%c", filepath.Separator)
+
 // a lazily-computed list of resolvers that implement LabelOwner
 var labelOwners []crossresolve.LabelOwner
 
@@ -253,7 +255,7 @@ func (s *scalaExistingRuleRule) Resolve(c *config.Config, ix *resolve.RuleIndex,
 	}
 
 	if sc.explainSrcs {
-		explainSources(imports, r, "srcs")
+		explainSources(sc.rel, imports, r, "srcs")
 	}
 
 	if debug {
@@ -278,7 +280,7 @@ func commentUnresolvedImports(unresolved ImportOriginMap, r *rule.Rule, attrName
 	for _, imp := range imports {
 		origin := unresolved[imp]
 		srcs.Comment().Before = append(srcs.Comment().Before, build.Comment{
-			Token: fmt.Sprintf("# unresolved: %s (%s)", imp, origin.String()),
+			Token: fmt.Sprintf("# ❌ unresolved: %s (%s)", imp, origin.String()),
 		})
 	}
 }
@@ -428,11 +430,11 @@ func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	}
 	reasons = protoc.DeduplicateAndSort(reasons)
 	for _, reason := range reasons {
-		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# " + reason})
+		str.Comments.Before = append(str.Comments.Before, build.Comment{Token: "# ✅ " + reason})
 	}
 }
 
-func explainSources(imports ImportOriginMap, r *rule.Rule, attrName string) {
+func explainSources(rel string, imports ImportOriginMap, r *rule.Rule, attrName string) {
 	var comments *build.Comments
 	expr := r.Attr(attrName)
 	switch t := expr.(type) {
@@ -448,7 +450,9 @@ func explainSources(imports ImportOriginMap, r *rule.Rule, attrName string) {
 	var tokens []string
 	for imp, origin := range imports {
 		if origin.Kind == ImportKindDirect {
-			tokens = append(tokens, fmt.Sprintf("# %s - %s (direct)", origin.SourceFile.Filename, imp))
+			filename := strings.TrimPrefix(origin.SourceFile.Filename, rel)
+			filename = strings.TrimPrefix(filename, pathSep)
+			tokens = append(tokens, fmt.Sprintf("# %s - %s (direct)", filename, imp))
 		}
 	}
 	sort.Strings(tokens)
