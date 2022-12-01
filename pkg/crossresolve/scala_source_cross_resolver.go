@@ -169,16 +169,16 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 		log.Printf("Parsed <%s> (%v)", filename, t2)
 	}
 
-	f0 := response.Files[0]
+	scalaFile := response.Files[0]
 	return &sppb.File{
 		Filename: filename,
-		Packages: f0.Packages,
-		Imports:  f0.Imports,
-		Classes:  f0.Classes,
-		Types:    f0.Types,
-		Vals:     f0.Vals,
-		Objects:  f0.Objects,
-		Traits:   f0.Traits,
+		Packages: scalaFile.Packages,
+		Imports:  scalaFile.Imports,
+		Classes:  scalaFile.Classes,
+		Types:    scalaFile.Types,
+		Vals:     scalaFile.Vals,
+		Objects:  scalaFile.Objects,
+		Traits:   scalaFile.Traits,
 		Sha256:   sha256,
 	}, nil
 }
