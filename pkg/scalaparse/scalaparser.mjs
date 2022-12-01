@@ -17,10 +17,10 @@ const debug = false;
 const enableNestedImports = false;
 
 /**
- * ScalaSourceFile parses a scala source file and aggregates symbols discovered
+ * ScalaFile parses a scala source file and aggregates symbols discovered
  * by walking the AST.
  */
-class ScalaSourceFile {
+class ScalaFile {
     constructor(filename) {
         /**
          * a console that always prints to stderr.
@@ -425,15 +425,15 @@ class ScalaSourceFile {
 }
 
 /**
- * parse takes a list of input files and returns a list of .
+ * parseFile parses a single file.
  * 
  * @param {string>} filename The file to parse (relative or absolute)
- * @returns {!ScalaSourceInfo}
+ * @returns {!ScalaFile}
  */
 function parseFile(filename) {
     const start = new Date().getTime();
     try {
-        const src = new ScalaSourceFile(filename);
+        const src = new ScalaFile(filename);
         src.parse();
         const result = src.toObject();
         result.elapsedMillis = new Date().getTime() - start;
@@ -447,10 +447,10 @@ function parseFile(filename) {
 }
 
 /**
- * parse takes a list of input files and returns a list of .
+ * parseFiles takes a list of input files and returns a list of results
  * 
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
- * @returns {!Array<ScalaSourceInfo>}
+ * @returns {!Array<ScalaFile>}
  */
 async function parseFiles(inputs) {
     return inputs.map(parseFile);
@@ -460,7 +460,7 @@ async function parseFiles(inputs) {
  * parse takes a list of input files and returns a list of .
  * 
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
- * @returns {!Array<ScalaSourceInfo>}
+ * @returns {!Array<ScalaFile>}
  */
 async function parseFilesParallel(inputs) {
     const work = inputs.map(filename => {
@@ -475,20 +475,20 @@ async function parseFilesParallel(inputs) {
 
 /**
  * Process a parse request
- * @param {{files: !Array<string>}} request 
+ * @param {{filenames: !Array<string>}} request
  * @returns Array<!Object>
  */
 async function processJSONRequest(request) {
-    if (!Array.isArray(request.files)) {
-        throw new Error(`bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`);
+    if (!Array.isArray(request.filenames)) {
+        throw new Error(`bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`);
     }
 
     const start = new Date().getTime();
     let files = [];
     if (process.env.PARALLEL_MODE) {
-        files = await parseFilesParallel(request.files);
+        files = await parseFilesParallel(request.filenames);
     } else {
-        files = await parseFiles(request.files);
+        files = await parseFiles(request.filenames);
     }
     const elapsedMillis = new Date().getTime() - start;
 

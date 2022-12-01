@@ -27,7 +27,7 @@ func TestServerParse(t *testing.T) {
 	}{
 		"degenerate": {
 			want: sppb.ParseResponse{
-				Error: `bad request: expected '{ "files": [LIST OF FILES TO PARSE] }', but files list was not present`,
+				Error: `bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`,
 			},
 		},
 		"single file": {
@@ -130,10 +130,10 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 				ProtoMajor:    1,
 				ProtoMinor:    1,
 				Header:        http.Header{"Content-Type": {"application/json"}},
-				ContentLength: 31,
+				ContentLength: 36,
 				Host:          "localhost:3000",
 			},
-			wantBody: `{"files":["A.scala","B.scala"]}`,
+			wantBody: `{"filenames":["A.scala", "B.scala"]}`,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {

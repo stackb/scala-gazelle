@@ -37,7 +37,7 @@ go_library(
         "symbol_table.go",
     ],
     data = [
-        ":scala_compiler.jar",
+        ":scalacserver.jar",
         ":sourceindexer",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
@@ -75,11 +75,11 @@ genrule(
 )
 
 genrule(
-    name = "scala_compiler_jar",
-    outs = ["scala_compiler.jar"],
-    cmd = "cp $(location //cmd/scalacparse:scala_compiler_deploy.jar) $@",
+    name = "scalacserver_jar",
+    outs = ["scalacserver.jar"],
+    cmd = "cp $(location //cmd/scalacserver:scalacserver_deploy.jar) $@",
     executable = True,
-    tools = ["//cmd/scalacparse:scala_compiler_deploy.jar"],
+    tools = ["//cmd/scalacserver:scalacserver_deploy.jar"],
 )
 
 genrule(
@@ -120,7 +120,7 @@ go_test(
     data = [
         ":gazelle",
         ":sourceindexer",
-        ":scala_compiler.jar",
+        ":scalacserver.jar",
     ] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
