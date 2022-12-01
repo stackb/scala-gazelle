@@ -4,6 +4,11 @@ import (
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 )
 
+const (
+	debugDuplicateClasses = false
+	debugSplitPackages    = true
+)
+
 type warnFunc func(format string, args ...interface{})
 
 func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile) (*jipb.JarIndex, error) {
@@ -11,6 +16,9 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile)
 
 	// jarLabels is used to prevent duplicate entries for a given jar.
 	labels := make(map[string]bool)
+
+	// labelsByPackage is used to detect split labelsByPackage
+	labelsByPackage := make(map[string][]string)
 
 	// providersByClass is used to check if more than one label provides a given
 	// class.
@@ -34,7 +42,7 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile)
 			continue
 		}
 		labels[jar.Label] = true
-		visitJarFile(warn, jar, predefinedLabels, predefinedSymbols, providersByClass)
+		visitJarFile(warn, jar, labelsByPackage, predefinedLabels, predefinedSymbols, providersByClass)
 		index.JarFile = append(index.JarFile, jar)
 	}
 
@@ -52,9 +60,19 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile)
 		}
 	}
 
-	for classname, providers := range providersByClass {
-		if len(providers.Label) > 1 {
-			warn("class is provided by more than one label: %s: %v", classname, providers.Label)
+	if debugDuplicateClasses {
+		for classname, providers := range providersByClass {
+			if len(providers.Label) > 1 {
+				warn("class is provided by more than one label: %s: %v", classname, providers.Label)
+			}
+		}
+	}
+
+	if debugSplitPackages {
+		for pkg, labels := range labelsByPackage {
+			if len(labels) > 1 {
+				warn("split-package! %q is provided by more than one label: %v", pkg, labels)
+			}
 		}
 	}
 
@@ -64,6 +82,7 @@ func MergeJarFiles(warn warnFunc, predefined []string, jarFiles []*jipb.JarFile)
 func visitJarFile(
 	warn warnFunc,
 	jar *jipb.JarFile,
+	packages map[string][]string,
 	predefinedLabels, predefinedSymbols map[string]struct{},
 	providersByClass map[string]*jipb.ClassFileProvider,
 ) {
@@ -84,6 +103,10 @@ func visitJarFile(
 		for _, file := range jar.ClassFile {
 			predefinedSymbols[file.Name] = struct{}{}
 		}
+	}
+
+	for _, pkg := range jar.PackageName {
+		packages[pkg] = append(packages[pkg], jar.Label)
 	}
 
 	for _, classFile := range jar.ClassFile {
