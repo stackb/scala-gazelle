@@ -2,5 +2,8 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
 
 scala_binary(
     name = "app",
-    srcs = ["Main.scala"],
+    srcs =
+    # unresolved: a.b.c.Main (main_class)
+    ["a/b/c/Main.scala"],
+    main_class = "a.b.c.Main",
 )
