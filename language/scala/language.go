@@ -13,7 +13,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
-const ScalaLangName = "scala"
+const scalaLangName = "scala"
 
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
@@ -21,10 +21,10 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 	scalaCompiler := newScalaCompiler()
 
-	sourceResolver := crossresolve.NewScalaSourceCrossResolver(ScalaLangName)
-	protoResolver := crossresolve.NewProtoResolver(ScalaLangName, protoc.GlobalResolver().Provided)
+	sourceResolver := crossresolve.NewScalaSourceCrossResolver(scalaLangName)
+	protoResolver := crossresolve.NewProtoResolver(scalaLangName, protoc.GlobalResolver().Provided)
 	mavenResolver := crossresolve.NewMavenResolver("java")
-	jarResolver := crossresolve.NewJarIndexCrossResolver(ScalaLangName)
+	jarResolver := crossresolve.NewJarIndexCrossResolver(scalaLangName)
 
 	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
 	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
@@ -84,7 +84,7 @@ type scalaLang struct {
 }
 
 // Name implements part of the language.Language interface
-func (sl *scalaLang) Name() string { return ScalaLangName }
+func (sl *scalaLang) Name() string { return scalaLangName }
 
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {

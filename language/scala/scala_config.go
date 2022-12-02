@@ -67,7 +67,7 @@ func newScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel
 
 // getScalaConfig returns the scala config.  Can be nil.
 func getScalaConfig(config *config.Config) *scalaConfig {
-	if existingExt, ok := config.Exts[ScalaLangName]; ok {
+	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		return existingExt.(*scalaConfig)
 	} else {
 		return nil
@@ -78,13 +78,13 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 // language name or replaces it with a clone.
 func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel string) *scalaConfig {
 	var cfg *scalaConfig
-	if existingExt, ok := config.Exts[ScalaLangName]; ok {
+	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)
 		cfg.rel = rel
 	} else {
 		cfg = newScalaConfig(ruleIndex, config, rel)
 	}
-	config.Exts[ScalaLangName] = cfg
+	config.Exts[scalaLangName] = cfg
 	return cfg
 }
 
@@ -165,7 +165,7 @@ func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
 	if len(parts) != 4 {
 		return
 	}
-	if parts[0] != ScalaLangName {
+	if parts[0] != scalaLangName {
 		return
 	}
 	if parts[1] != "glob" {

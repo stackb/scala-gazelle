@@ -89,7 +89,6 @@ func (r *ScalaSourceCrossResolver) RegisterFlags(flags *flag.FlagSet, cmd string
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	return nil
-	// return r.Start()
 }
 
 // ParseScalaFiles implements scalaparse.ScalaParser

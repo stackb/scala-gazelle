@@ -69,7 +69,7 @@ func TestFlags(t *testing.T) {
 			os.Setenv("TEST_TMPDIR", tmpDir)
 			lang := NewLanguage().(*scalaLang)
 
-			fs := flag.NewFlagSet(ScalaLangName, flag.ExitOnError)
+			fs := flag.NewFlagSet(scalaLangName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
 				Exts:    make(map[string]interface{}),
