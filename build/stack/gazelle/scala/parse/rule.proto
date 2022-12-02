@@ -18,8 +18,3 @@ message Rule {
     repeated build.stack.gazelle.scala.parse.File files = 3;
 }
 
-// RuleList represents a set of rules.
-message RuleList {
-    // rules is the list of rules.
-    repeated Rule rules = 1;
-}

@@ -14,13 +14,13 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		return language.GenerateResult{}
 	}
 
-	if sl.totalPackageCount > 0 {
-		writeGenerateProgress(sl.progress, len(sl.packages), sl.totalPackageCount)
+	if sl.cache.PackageCount > 0 {
+		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
 	cfg := getOrCreateScalaConfig(sl, args.Config, args.Rel)
 
-	pkg := newScalaPackage(sl.ruleRegistry, sl.scalaParser, args.Rel, args.File, cfg)
+	pkg := newScalaPackage(sl.ruleRegistry, sl.sourceResolver, args.Rel, args.File, cfg)
 	// search for child packages, but only assign if a parent has not already
 	// been assigned.  Given that gazelle uses a DFS walk, we should assign the
 	// child to the nearest parent.

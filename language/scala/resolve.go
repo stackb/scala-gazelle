@@ -8,7 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/pcj/mobyprogress"
+
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
@@ -80,18 +80,15 @@ func (sl *scalaLang) onResolve() {
 	}
 
 	sl.scalaCompiler.OnResolve()
+
+	if sl.cacheFile != "" {
+		if err := sl.writeCacheFile(); err != nil {
+			log.Fatalf("failed to write cache: %v", err)
+		}
+	}
 }
 
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
 	sl.scalaCompiler.stop()
-	// sl.recordDeps()
-	if len(sl.packages) != sl.totalPackageCount {
-		mobyprogress.Messagef(
-			sl.progress,
-			"generate", "expected %d packages, visited %d (update -total_package_count=%d to suppress this message)",
-			sl.totalPackageCount,
-			len(sl.packages),
-			len(sl.packages))
-	}
 }

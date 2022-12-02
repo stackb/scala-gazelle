@@ -8,6 +8,7 @@ load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 go_library(
     name = "scala",
     srcs = [
+        "cache.go",
         "configure.go",
         "cross_resolve.go",
         "fix.go",
@@ -43,9 +44,11 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
     deps = [
+        "//build/stack/gazelle/scala/cache",
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/crossresolve",
+        "//pkg/protobuf",
         "//pkg/scalacompile",
         "//pkg/scalaparse",
         "//pkg/starlarkeval",
