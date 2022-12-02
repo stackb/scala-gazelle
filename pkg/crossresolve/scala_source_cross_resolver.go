@@ -171,7 +171,7 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 }
 
 func (r *ScalaSourceCrossResolver) Rules() []*sppb.Rule {
-	rules := make([]*sppb.Rule, len(r.byRule))
+	rules := make([]*sppb.Rule, 0, len(r.byRule))
 	for _, r := range r.byRule {
 		rules = append(rules, r)
 	}
