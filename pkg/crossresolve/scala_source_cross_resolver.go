@@ -250,6 +250,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Labe
 		}
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
+	log.Printf("%q is provided by %s", imp, ruleLabel)
 	r.providers[imp] = append(r.providers[imp], &providerSpec{rule, file, ruleLabel})
 }
 
