@@ -148,7 +148,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			want: `scala_library(
     name = "test",
     deps = [
-        # com.typesafe.scalalogging.LazyLogging (comment)
+        # com.typesafe.scalalogging.LazyLogging <comment>
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )
@@ -163,7 +163,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
 			want: `scala_library(
     name = "test",
     deps = [
-        # com.typesafe.scalalogging.LazyLogging (comment)
+        # com.typesafe.scalalogging.LazyLogging <comment>
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )
@@ -202,7 +202,7 @@ func TestMakeLabeledListExpr(t *testing.T) {
     name = "test",
     deps = [
         ":foo",  # keep
-        # com.typesafe.scalalogging.LazyLogging (comment)
+        # com.typesafe.scalalogging.LazyLogging <comment>
         "@maven//:com_typesafe_scala_logging_scala_logging_2_12",
     ],
 )

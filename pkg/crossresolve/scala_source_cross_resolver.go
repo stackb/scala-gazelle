@@ -250,6 +250,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Labe
 		}
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
+	// log.Printf("%q is provided by %s", imp, ruleLabel)
 	r.providers[imp] = append(r.providers[imp], &providerSpec{rule, file, ruleLabel})
 }
 
@@ -298,26 +299,20 @@ func (r *ScalaSourceCrossResolver) CrossResolve(c *config.Config, ix *resolve.Ru
 		return
 	}
 
-	if true {
-		return
-	}
-
 	sym := imp.Imp
 
-	// sc := getScalaConfig(c)
-	// if providers, ok := r.providers[sym]; ok {
-	// 	result = make([]resolve.FindResult, len(providers))
-	// 	for i, p := range providers {
-	// 		// log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
-	// 		result[i] = resolve.FindResult{Label: p.label}
-	// 		if mapping, ok := sc.mapKindImportNames[p.rule.Kind]; ok {
-	// 			result[i].Label = mapping.Rename(result[i].Label)
-	// 		}
-	// 	}
-	// 	return
-	// }
-
-	sym = strings.TrimSuffix(sym, "._")
+	if providers, ok := r.providers[sym]; ok {
+		result = make([]resolve.FindResult, len(providers))
+		for i, p := range providers {
+			// log.Printf("source crossResolve %q provider hit %d: %v", imp.Imp, i, p.label)
+			result[i] = resolve.FindResult{Label: p.label}
+			// sc := getScalaConfig(c)
+			// if mapping, ok := sc.mapKindImportNames[p.rule.Kind]; ok {
+			// 	result[i].Label = mapping.Rename(result[i].Label)
+			// }
+		}
+		return
+	}
 
 	if packages, ok := r.packages[sym]; ok {
 		// pick the first result -- this might not be correct!

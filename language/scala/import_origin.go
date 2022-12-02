@@ -41,29 +41,31 @@ func NewImplicitImportOrigin(parent string) *ImportOrigin {
 	}
 }
 
-func (io *ImportOrigin) String() string {
+func (origin *ImportOrigin) String() string {
 	var s string
-	switch io.Kind {
+	switch origin.Kind {
 	case ImportKindDirect:
-		if io.SourceFile == nil {
+		if origin.SourceFile == nil {
 			panic("source file should always be set for direct import: this is a bug")
 		}
-		s = fmt.Sprintf("%s from %s", io.Kind, filepath.Base(io.SourceFile.Filename))
-		if io.Parent != "" {
-			s += " (materialized from " + io.Parent + ")"
+		s += fmt.Sprintf("%s from %s", origin.Kind, filepath.Base(origin.SourceFile.Filename))
+		if origin.Parent != "" {
+			s += " (materialized from " + origin.Parent + ")"
 		}
 	case ImportKindImplicit:
-		s = fmt.Sprintf("%s from %s", io.Kind, io.Parent)
+		s += fmt.Sprintf("%s from %s", origin.Kind, origin.Parent)
 	case ImportKindMainClass:
-		s = fmt.Sprintf("%s", io.Kind)
+		s += fmt.Sprintf("%s", origin.Kind)
 	case ImportKindComment:
-		s = fmt.Sprintf("%s", io.Kind)
+		s += fmt.Sprintf("%s", origin.Kind)
 	default:
-		return "unknown import origin kind: " + string(io.Kind)
+		return "unknown import origin kind: " + string(origin.Kind)
 	}
-	if len(io.Children) > 0 {
-		s += fmt.Sprintf(" (requires %v)", io.Children)
+
+	if len(origin.Children) > 0 {
+		s += fmt.Sprintf(" (requires %v)", origin.Children)
 	}
+
 	return s
 }
 
