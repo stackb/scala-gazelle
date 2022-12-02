@@ -250,7 +250,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Labe
 		}
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
-	log.Printf("%q is provided by %s", imp, ruleLabel)
+	// log.Printf("%q is provided by %s", imp, ruleLabel)
 	r.providers[imp] = append(r.providers[imp], &providerSpec{rule, file, ruleLabel})
 }
 
@@ -296,10 +296,6 @@ func (cr *ScalaSourceCrossResolver) IsLabelOwner(from label.Label, ruleIndex fun
 // CrossResolve implements the CrossResolver interface.
 func (r *ScalaSourceCrossResolver) CrossResolve(c *config.Config, ix *resolve.RuleIndex, imp resolve.ImportSpec, lang string) (result []resolve.FindResult) {
 	if !(lang == r.lang || imp.Lang == r.lang) {
-		return
-	}
-
-	if true {
 		return
 	}
 
