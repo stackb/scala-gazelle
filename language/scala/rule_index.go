@@ -39,11 +39,8 @@ func (sl *scalaLang) LookupImport(imp resolve.ImportSpec) (*crossresolve.ImportP
 }
 
 // recordImport sets the given import in the global import trie.
-func (sl *scalaLang) recordImport(imp resolve.ImportSpec, typ string, from label.Label) {
-	sl.allImports.Put(imp.Imp, &crossresolve.ImportProvider{
-		Label: from,
-		Type:  typ,
-	})
+func (sl *scalaLang) recordImport(imp resolve.ImportSpec, provider *crossresolve.ImportProvider) {
+	sl.allImports.Put(imp.Imp, provider)
 }
 
 // importSegmenter segments string key paths by dot separators. For example,

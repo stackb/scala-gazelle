@@ -63,7 +63,7 @@ go_library(
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_bmatcuk_doublestar_v4//:doublestar",
         "@com_github_davecgh_go_spew//spew",
-        "@com_github_dghubble_trie//:trie",
+        "@com_github_dghubble_trie//:go_default_library",
         "@com_github_pcj_mobyprogress//:mobyprogress",
         "@com_github_roaringbitmap_roaring//:roaring",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",

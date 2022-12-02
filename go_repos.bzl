@@ -41,6 +41,13 @@ def gazelle_extension_deps():
         sum = "h1:PK2mcOPKwsrU5xqxhZIrG2nihf2OSOqW2KqMPxxpBPQ=",
         version = "v0.0.0-20221114203314-669a7801d484",
     )
+    go_repository(
+        name = "com_github_dghubble_trie",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/dghubble/trie",
+        sum = "h1:TDVVzd8q/n2YLqidDna2iptspyyNyqi9nZmxNA6Yrg0=",
+        version = "v0.0.0-20220811160003-18e0eff3ca7b",
+    )
 
 def go_repositories():
     """go_repositories loads all go_repository dependencies
@@ -202,14 +209,6 @@ def go_repositories():
         sum = "h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=",
         version = "v1.1.1",
     )
-    go_repository(
-        name = "com_github_dghubble_trie",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/dghubble/trie",
-        sum = "h1:TDVVzd8q/n2YLqidDna2iptspyyNyqi9nZmxNA6Yrg0=",
-        version = "v0.0.0-20220811160003-18e0eff3ca7b",
-    )
-
     go_repository(
         name = "com_github_docker_go_units",
         build_file_proto_mode = "disable_global",
