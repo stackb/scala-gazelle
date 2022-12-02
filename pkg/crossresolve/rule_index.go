@@ -4,6 +4,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 // RuleIndex is an index of known rules indexed by their label.
@@ -17,5 +19,5 @@ type RuleIndex interface {
 
 type ImportProvider struct {
 	Label label.Label
-	Type  string
+	Type  sppb.ImportType
 }
