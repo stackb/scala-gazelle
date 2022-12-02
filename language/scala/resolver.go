@@ -113,7 +113,7 @@ func resolveImport(c *config.Config, ix *resolve.RuleIndex, origin *ImportOrigin
 // RuleIndex is consulted, which contains all rules indexed by gazelle in the
 // generation phase.
 func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp string, from label.Label) []label.Label {
-	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, ScalaLangName); ok {
+	if l, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, scalaLangName); ok {
 		if debug {
 			log.Println(from, "| resolveAnyKind: found rule with override:", l)
 		}
@@ -123,7 +123,7 @@ func resolveAnyKind(c *config.Config, ix *resolve.RuleIndex, lang string, imp st
 }
 
 func resolveWithIndex(c *config.Config, ix *resolve.RuleIndex, kind, imp string, from label.Label) []label.Label {
-	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, ScalaLangName)
+	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: kind, Imp: imp}, scalaLangName)
 	if debug && len(matches) == 0 {
 		log.Println(from, "| resolveWithIndex: no rules found for:", imp)
 		return nil

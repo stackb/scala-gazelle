@@ -4,14 +4,13 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
-	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -30,8 +29,8 @@ func NewScalaSourceCrossResolver(lang string) *ScalaSourceCrossResolver {
 		lang:         lang,
 		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
-		providers:    make(map[string][]*provider),
-		packages:     make(map[string][]*provider),
+		providers:    make(map[string][]*providerSpec),
+		packages:     make(map[string][]*providerSpec),
 		byFilename:   make(map[string]*sppb.File),
 		byRule:       make(map[label.Label]*sppb.Rule),
 	}
@@ -51,16 +50,14 @@ func NewScalaSourceCrossResolver(lang string) *ScalaSourceCrossResolver {
 type ScalaSourceCrossResolver struct {
 	// lang is the language name cross resolution should match on, typically "scala".
 	lang string
-	// filesystem path to the index cache to read/write.
-	cacheFile string
 	// providers and packages is a mapping from an import symbol to the things
 	// that provide it. It is legal for more than one label to provide a symbol
 	// (e.g., a test class can exist in multiple rule srcs attribute), but it is
 	// an error if such a symbol is attempted to be imported (e.g., a test class
 	// should not be imported). They are made distinct as they have different
 	// disambigation semantics.
-	providers map[string][]*provider
-	packages  map[string][]*provider
+	providers map[string][]*providerSpec
+	packages  map[string][]*providerSpec
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
@@ -71,29 +68,27 @@ type ScalaSourceCrossResolver struct {
 	parser *scalaparse.ScalaParseServer
 }
 
-type provider struct {
+type providerSpec struct {
 	rule  *sppb.Rule
 	file  *sppb.File
 	label label.Label
 }
 
+// Start begins the parser process
+func (r *ScalaSourceCrossResolver) Start() error {
+	if err := r.parser.Start(); err != nil {
+		return fmt.Errorf("starting parser: %w", err)
+	}
+	return nil
+}
+
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
-	flags.StringVar(&r.cacheFile, "scala_source_cache_file", "", "file path for optional source cache")
 }
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	if r.cacheFile != "" {
-		r.cacheFile = os.ExpandEnv(r.cacheFile)
-		if err := r.readIndex(r.cacheFile); err != nil {
-			// don't report error if the file does not exist yet
-			if !errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("reading cacheFile: %v (%T)", err, err)
-			}
-		}
-	}
-	return r.parser.Start()
+	return nil
 }
 
 // ParseScalaFiles implements scalaparse.ScalaParser
@@ -111,7 +106,7 @@ func (r *ScalaSourceCrossResolver) ParseScalaFiles(from label.Label, kind string
 		}
 		rule.Files[i] = file
 	}
-	if err := r.readScalaRule(rule); err != nil {
+	if err := r.AddRule(rule); err != nil {
 		return nil, err
 	}
 	return rule, nil
@@ -183,22 +178,20 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	}, nil
 }
 
-func (r *ScalaSourceCrossResolver) readIndex(filename string) error {
-	index, err := scalaparse.ReadRuleListFile(filename)
-	if err != nil {
-		return fmt.Errorf("error while reading index specification file %s: %w", filename, err)
+func (r *ScalaSourceCrossResolver) Rules() []*sppb.Rule {
+	rules := make([]*sppb.Rule, 0, len(r.byRule))
+	for _, r := range r.byRule {
+		rules = append(rules, r)
 	}
-
-	for _, rule := range index.Rules {
-		if err := r.readScalaRule(rule); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	sort.Slice(rules, func(i, j int) bool {
+		a := rules[i]
+		b := rules[j]
+		return a.Label < b.Label
+	})
+	return rules
 }
 
-func (r *ScalaSourceCrossResolver) readScalaRule(rule *sppb.Rule) error {
+func (r *ScalaSourceCrossResolver) AddRule(rule *sppb.Rule) error {
 	ruleLabel, err := label.Parse(rule.Label)
 	if err != nil || ruleLabel == label.NoLabel {
 		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
@@ -257,7 +250,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Labe
 		}
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
-	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
+	r.providers[imp] = append(r.providers[imp], &providerSpec{rule, file, ruleLabel})
 }
 
 func (r *ScalaSourceCrossResolver) providePackage(rule *sppb.Rule, ruleLabel label.Label, file *sppb.File, imp string) {
@@ -274,7 +267,7 @@ func (r *ScalaSourceCrossResolver) providePackage(rule *sppb.Rule, ruleLabel lab
 			return
 		}
 	}
-	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
+	r.packages[imp] = append(r.packages[imp], &providerSpec{rule, file, ruleLabel})
 }
 
 // OnResolve implements GazellePhaseTransitionListener.
@@ -284,29 +277,10 @@ func (r *ScalaSourceCrossResolver) OnResolve() {
 		r.parser.Stop()
 	}
 
-	// dump the index, but only if the file name is configured
-	if r.cacheFile != "" {
-		if err := r.writeIndex(); err != nil {
-			log.Fatalf("failed to write index: %v", err)
-		}
-	}
 }
 
 // OnEnd implements GazellePhaseTransitionListener.
 func (r *ScalaSourceCrossResolver) OnEnd() {
-}
-
-func (r *ScalaSourceCrossResolver) writeIndex() error {
-	var idx sppb.RuleList
-	for _, rule := range r.byRule {
-		idx.Rules = append(idx.Rules, rule)
-	}
-
-	if err := scalaparse.WriteRuleListFile(r.cacheFile, &idx); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // IsLabelOwner implements the LabelOwner interface.

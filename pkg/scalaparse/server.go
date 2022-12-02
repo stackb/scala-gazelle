@@ -73,20 +73,20 @@ func (s *ScalaParseServer) Start() error {
 	//
 	processDir, err := bazel.NewTmpDir("")
 	if err != nil {
-		return err
+		return fmt.Errorf("creating tmp process dir: %w", err)
 	}
 
 	scriptPath := filepath.Join(processDir, "scalaparser.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
-		return err
+		return fmt.Errorf("mkdir process tmpdir: %w", err)
 	}
 	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerMjs), os.ModePerm); err != nil {
-		return err
+		return fmt.Errorf("writing %s: %w", sourceindexerMjs, err)
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
-		return err
+		return fmt.Errorf("writing %s: %w", scalametaParsersIndexJs, err)
 	}
 
 	if debugParse {
@@ -129,7 +129,7 @@ func (s *ScalaParseServer) Start() error {
 	s.cmd = cmd
 
 	if err := cmd.Start(); err != nil {
-		return err
+		return fmt.Errorf("starting process %s: %w", scalametaParsersIndexJs, err)
 	}
 	go func() {
 		// does it make sense to wait for the process?  We kill it forcefully
@@ -145,7 +145,7 @@ func (s *ScalaParseServer) Start() error {
 	port := s.HttpPort
 	timeout := 3 * time.Second
 	if !waitForConnectionAvailable(host, port, timeout) {
-		return fmt.Errorf("cound not connect to scala parse server %s:%d within %s", host, port, timeout)
+		return fmt.Errorf("waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
 	}
 
 	//

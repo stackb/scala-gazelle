@@ -1,8 +1,11 @@
 package scala
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"io/fs"
+	"os"
 	"sort"
 	"strings"
 
@@ -11,16 +14,16 @@ import (
 )
 
 const (
-	totalPackageCountFlagName  = "total_package_count"
-	scalaResolversFlagName     = "scala_resolvers"
-	scalaExistingRulesFlagName = "scala_existing_rule"
+	scalaResolversFlagName        = "scala_resolvers"
+	scalaExistingRulesFlagName    = "scala_existing_rule"
+	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	getOrCreateScalaConfig(sl, c, "" /* rel="" */) // ignoring return value, only want side-effect
 
-	fs.IntVar(&sl.totalPackageCount, totalPackageCountFlagName, 0, "number of total packages for the workspace (used for progress estimation)")
+	fs.StringVar(&sl.cacheFile, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
 	fs.StringVar(&sl.resolverNames, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
 	fs.Var(&sl.scalaExistingRules, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
@@ -40,22 +43,33 @@ func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Confi
 }
 
 // CheckFlags implements part of the language.Language interface
-func (sl *scalaLang) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	if sl.cacheFile != "" {
+		sl.cacheFile = os.ExpandEnv(sl.cacheFile)
+		if err := sl.readCacheFile(); err != nil {
+			// don't report error if the file does not exist yet
+			if !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("reading cache file: %w", err)
+			}
+		}
+	}
+
 	if err := parseScalaExistingRules(sl.scalaExistingRules); err != nil {
 		return err
 	}
+
 	for _, name := range strings.Split(sl.resolverNames, ",") {
 		resolver, err := crossresolve.Resolvers().LookupResolver(name)
 		if err != nil {
 			return fmt.Errorf("-%s %q error: %v", scalaResolversFlagName, name, err)
 		}
-		if err := resolver.CheckFlags(fs, c); err != nil {
+		if err := resolver.CheckFlags(flags, c); err != nil {
 			return fmt.Errorf("checking flags for resolver %q: %w", name, err)
 		}
 		sl.resolvers[name] = resolver
 	}
 
-	if err := sl.scalaCompiler.CheckFlags(fs, c); err != nil {
+	if err := sl.scalaCompiler.CheckFlags(flags, c); err != nil {
 		return err
 	}
 

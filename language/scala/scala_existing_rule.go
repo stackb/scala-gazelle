@@ -152,7 +152,7 @@ func (s *scalaExistingRuleRule) Imports(c *config.Config, r *rule.Rule, file *ru
 	// ruleIndex to miss on the impLang, allowing us to override in the source
 	// CrossResolver.
 	sc := getScalaConfig(c)
-	lang := ScalaLangName
+	lang := scalaLangName
 	if _, ok := sc.mapKindImportNames[r.Kind()]; ok {
 		lang = r.Kind()
 	}

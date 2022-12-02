@@ -8,8 +8,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/pcj/mobyprogress"
-	"github.com/stackb/scala-gazelle/pkg/crossresolve"
 )
 
 // Imports implements part of the language.Language interface
@@ -68,30 +66,4 @@ func (sl *scalaLang) Resolve(
 		log.Printf("no known rule package for %v", from.Pkg)
 	}
 
-}
-
-// onResolve is called when gazelle transitions from the generate phase to the resolve phase
-func (sl *scalaLang) onResolve() {
-
-	for _, r := range sl.resolvers {
-		if l, ok := r.(crossresolve.GazellePhaseTransitionListener); ok {
-			l.OnResolve()
-		}
-	}
-
-	sl.scalaCompiler.OnResolve()
-}
-
-// onEnd is called when the last rule has been resolved.
-func (sl *scalaLang) onEnd() {
-	sl.scalaCompiler.stop()
-	// sl.recordDeps()
-	if len(sl.packages) != sl.totalPackageCount {
-		mobyprogress.Messagef(
-			sl.progress,
-			"generate", "expected %d packages, visited %d (update -total_package_count=%d to suppress this message)",
-			sl.totalPackageCount,
-			len(sl.packages),
-			len(sl.packages))
-	}
 }
