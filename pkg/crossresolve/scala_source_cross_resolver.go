@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -169,8 +170,17 @@ func (r *ScalaSourceCrossResolver) parseScalaFileIndex(dir, filename string) (*s
 	}, nil
 }
 
-func (r *ScalaSourceCrossResolver) Rules() map[label.Label]*sppb.Rule {
-	return r.byRule
+func (r *ScalaSourceCrossResolver) Rules() []*sppb.Rule {
+	rules := make([]*sppb.Rule, len(r.byRule))
+	for _, r := range r.byRule {
+		rules = append(rules, r)
+	}
+	sort.Slice(rules, func(i, j int) bool {
+		a := rules[i]
+		b := rules[j]
+		return a.Label < b.Label
+	})
+	return rules
 }
 
 func (r *ScalaSourceCrossResolver) AddRule(rule *sppb.Rule) error {
