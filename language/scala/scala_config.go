@@ -183,7 +183,6 @@ func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
 		log.Printf("gazelle:override %s: %v", d.Value, err)
 		return
 	}
-	// o.dep = o.dep.Abs("", c.rel) // TODO(pcj): this is really needed?
 	c.overrides = append(c.overrides, &o)
 }
 

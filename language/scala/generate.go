@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"log"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -16,6 +17,12 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	if sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
+	}
+
+	if len(sl.packages) == 0 {
+		if err := sl.sourceResolver.Start(); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	cfg := getOrCreateScalaConfig(sl, args.Config, args.Rel)

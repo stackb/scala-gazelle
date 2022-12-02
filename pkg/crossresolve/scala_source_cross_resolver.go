@@ -29,8 +29,8 @@ func NewScalaSourceCrossResolver(lang string) *ScalaSourceCrossResolver {
 		lang:         lang,
 		parser:       scalaparse.NewScalaParseServer(),
 		providersMux: &sync.Mutex{},
-		providers:    make(map[string][]*provider),
-		packages:     make(map[string][]*provider),
+		providers:    make(map[string][]*providerSpec),
+		packages:     make(map[string][]*providerSpec),
 		byFilename:   make(map[string]*sppb.File),
 		byRule:       make(map[label.Label]*sppb.Rule),
 	}
@@ -56,8 +56,8 @@ type ScalaSourceCrossResolver struct {
 	// an error if such a symbol is attempted to be imported (e.g., a test class
 	// should not be imported). They are made distinct as they have different
 	// disambigation semantics.
-	providers map[string][]*provider
-	packages  map[string][]*provider
+	providers map[string][]*providerSpec
+	packages  map[string][]*providerSpec
 	// providersMux protects providers map
 	providersMux *sync.Mutex
 	// byFilename is a mapping of the scala file to the spec
@@ -68,10 +68,18 @@ type ScalaSourceCrossResolver struct {
 	parser *scalaparse.ScalaParseServer
 }
 
-type provider struct {
+type providerSpec struct {
 	rule  *sppb.Rule
 	file  *sppb.File
 	label label.Label
+}
+
+// Start begins the parser process
+func (r *ScalaSourceCrossResolver) Start() error {
+	if err := r.parser.Start(); err != nil {
+		return fmt.Errorf("starting parser: %w", err)
+	}
+	return nil
 }
 
 // RegisterFlags implements part of the ConfigurableCrossResolver interface.
@@ -80,7 +88,8 @@ func (r *ScalaSourceCrossResolver) RegisterFlags(flags *flag.FlagSet, cmd string
 
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (r *ScalaSourceCrossResolver) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	return r.parser.Start()
+	return nil
+	// return r.Start()
 }
 
 // ParseScalaFiles implements scalaparse.ScalaParser
@@ -242,7 +251,7 @@ func (r *ScalaSourceCrossResolver) provide(rule *sppb.Rule, ruleLabel label.Labe
 		}
 		log.Printf("%q is provided by more than one rule (%s, %s)", imp, p.label, ruleLabel)
 	}
-	r.providers[imp] = append(r.providers[imp], &provider{rule, file, ruleLabel})
+	r.providers[imp] = append(r.providers[imp], &providerSpec{rule, file, ruleLabel})
 }
 
 func (r *ScalaSourceCrossResolver) providePackage(rule *sppb.Rule, ruleLabel label.Label, file *sppb.File, imp string) {
@@ -259,7 +268,7 @@ func (r *ScalaSourceCrossResolver) providePackage(rule *sppb.Rule, ruleLabel lab
 			return
 		}
 	}
-	r.packages[imp] = append(r.packages[imp], &provider{rule, file, ruleLabel})
+	r.packages[imp] = append(r.packages[imp], &providerSpec{rule, file, ruleLabel})
 }
 
 // OnResolve implements GazellePhaseTransitionListener.

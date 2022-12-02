@@ -8,41 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
-
-func TestScalaSourceCrossResolverConfigureCacheFile(t *testing.T) {
-	for name, tc := range map[string]struct {
-		args          []string
-		wantCacheFile string
-		wantErr       error
-	}{
-		"degenerate case": {},
-	} {
-		t.Run(name, func(t *testing.T) {
-			cr := NewScalaSourceCrossResolver(scalaName)
-			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
-			c := &config.Config{}
-			cr.RegisterFlags(fs, cmdGenerate, c)
-
-			if testutil.ExpectError(t, tc.wantErr, fs.Parse(tc.args)) {
-				return
-			}
-
-			//
-			// TODO: why does this just hang the test?
-			//
-
-			// if testutil.ExpectError(t, tc.wantErr, cr.CheckFlags(fs, c)) {
-			// 	return
-			// }
-
-			// if diff := cmp.Diff(tc.wantCacheFile, cr.cacheFile); diff != "" {
-			// 	t.Errorf(".cacheFile (-want +got):\n%s", diff)
-			// }
-		})
-	}
-}
 
 func TestScalaSourceCrossResolverIsLabelOwner(t *testing.T) {
 	for name, tc := range map[string]struct {

@@ -14,16 +14,16 @@ import (
 )
 
 const (
-	scalaResolversFlagName          = "scala_resolvers"
-	scalaExistingRulesFlagName      = "scala_existing_rule"
-	scalaExtensionCacheFileFlagName = "scala_gazelle_cache_file"
+	scalaResolversFlagName        = "scala_resolvers"
+	scalaExistingRulesFlagName    = "scala_existing_rule"
+	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	getOrCreateScalaConfig(sl, c, "" /* rel="" */) // ignoring return value, only want side-effect
 
-	fs.StringVar(&sl.cacheFile, scalaExtensionCacheFileFlagName, "", "name of the cache file (.json or .pb)")
+	fs.StringVar(&sl.cacheFile, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
 	fs.StringVar(&sl.resolverNames, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
 	fs.Var(&sl.scalaExistingRules, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
