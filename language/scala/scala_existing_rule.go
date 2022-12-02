@@ -422,7 +422,12 @@ func makeLabeledListExpr(c *config.Config, kind string, shouldKeep func(build.Ex
 func explainDependencies(str *build.StringExpr, imports ImportOriginMap) {
 	reasons := make([]string, 0, len(imports))
 	for imp, origin := range imports {
-		reason := imp + " (" + origin.String() + ")"
+		reason := imp
+		if origin.Actual != "" && origin.Actual != origin.Import {
+			reason += fmt.Sprintf(" (via %q)", origin.Actual)
+		}
+		reason += " <" + origin.String() + ">"
+
 		reasons = append(reasons, reason)
 	}
 	if len(reasons) == 0 {
