@@ -50,7 +50,7 @@ func TestFlags(t *testing.T) {
 				"-scala_gazelle_cache_file=${TEST_TMPDIR}/cache.json",
 			},
 			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
-				cacheFile := strings.TrimPrefix(strings.TrimPrefix(lang.cacheFile, tmpDir), "/")
+				cacheFile := strings.TrimPrefix(strings.TrimPrefix(lang.cacheFileFlagValue, tmpDir), "/")
 				if diff := cmp.Diff("cache.json", cacheFile); diff != "" {
 					t.Errorf("cacheFile (-want got):\n%s", diff)
 				}

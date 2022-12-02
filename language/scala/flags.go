@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const (
@@ -20,32 +19,27 @@ const (
 )
 
 // RegisterFlags implements part of the language.Language interface
-func (sl *scalaLang) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	getOrCreateScalaConfig(sl, c, "" /* rel="" */) // ignoring return value, only want side-effect
+func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	getOrCreateScalaConfig(c, "" /* rel="" */, sl) // ignoring return value, only want side-effect
 
-	fs.StringVar(&sl.cacheFile, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
-	fs.StringVar(&sl.resolverNames, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
-	fs.Var(&sl.scalaExistingRules, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
+	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
+	flags.StringVar(&sl.resolverNamesFlagValue, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
+	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
-	// all known cross-resolvers can register flags, but do it in repeatable order
-	resolvers := crossresolve.Resolvers().ByName()
-	names := make([]string, 0, len(resolvers))
-	for name := range resolvers {
-		names = append(names, name)
-	}
-	sort.Strings(names)
-
-	for _, name := range names {
-		resolvers[name].RegisterFlags(fs, cmd, c)
+	for _, provider := range sl.knownImportProviders {
+		provider.RegisterFlags(flags, cmd, c)
 	}
 
-	sl.scalaCompiler.RegisterFlags(fs, cmd, c)
+	sl.scalaCompiler.RegisterFlags(flags, cmd, c)
 }
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	if sl.cacheFile != "" {
-		sl.cacheFile = os.ExpandEnv(sl.cacheFile)
+	// initialize the resolver implementation
+	sl.importResolver = resolver.NewScalaResolver(scalaLangName, sl)
+
+	if sl.cacheFileFlagValue != "" {
+		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
 		if err := sl.readCacheFile(); err != nil {
 			// don't report error if the file does not exist yet
 			if !errors.Is(err, fs.ErrNotExist) {
@@ -54,19 +48,12 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		}
 	}
 
-	if err := parseScalaExistingRules(sl.scalaExistingRules); err != nil {
+	if err := parseScalaExistingRules(sl.scalaExistingRulesFlagValue); err != nil {
 		return err
 	}
 
-	for _, name := range strings.Split(sl.resolverNames, ",") {
-		resolver, err := crossresolve.Resolvers().LookupResolver(name)
-		if err != nil {
-			return fmt.Errorf("-%s %q error: %v", scalaResolversFlagName, name, err)
-		}
-		if err := resolver.CheckFlags(flags, c); err != nil {
-			return fmt.Errorf("checking flags for resolver %q: %w", name, err)
-		}
-		sl.resolvers[name] = resolver
+	for _, provider := range sl.knownImportProviders {
+		provider.CheckFlags(flags, c, sl)
 	}
 
 	if err := sl.scalaCompiler.CheckFlags(flags, c); err != nil {
@@ -87,16 +74,5 @@ func parseScalaExistingRules(rules []string) error {
 		isBinaryRule := strings.Contains(kind, "binary") || strings.Contains(kind, "test")
 		Rules().MustRegisterRule(fqn, &scalaExistingRule{load, kind, isBinaryRule})
 	}
-	return nil
-}
-
-type stringSliceFlags []string
-
-func (i *stringSliceFlags) String() string {
-	return strings.Join(*i, ",")
-}
-
-func (i *stringSliceFlags) Set(value string) error {
-	*i = append(*i, value)
 	return nil
 }

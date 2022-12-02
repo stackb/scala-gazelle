@@ -80,13 +80,13 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 		"bad example - silently ignores everything other than scala glob": {
 			directives: []rule.Directive{
-				{Key: overrideDirective, Value: "scala scala com.foo.Bar //com/foo/bar"},
+				{Key: resolveGlobDirective, Value: "scala scala com.foo.Bar //com/foo/bar"},
 			},
 			want: []*overrideSpec{},
 		},
 		"example - scala glob": {
 			directives: []rule.Directive{
-				{Key: overrideDirective, Value: "scala glob com.foo.* //com/foo/bar"},
+				{Key: resolveGlobDirective, Value: "scala glob com.foo.* //com/foo/bar"},
 			},
 			want: []*overrideSpec{
 				{
@@ -121,7 +121,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 		"typical example": {
 			directives: []rule.Directive{
-				{Key: implicitImportDirective, Value: "java com.typesafe.scalalogging.LazyLogging org.slf4j.Logger"},
+				{Key: resolveWithDirective, Value: "java com.typesafe.scalalogging.LazyLogging org.slf4j.Logger"},
 			},
 			want: []*implicitImportSpec{
 				{
@@ -133,7 +133,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 		"anatomic example": {
 			directives: []rule.Directive{
-				{Key: implicitImportDirective, Value: "lang imp a b c"},
+				{Key: resolveWithDirective, Value: "lang imp a b c"},
 			},
 			want: []*implicitImportSpec{
 				{
@@ -221,7 +221,7 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 		},
 		"anatomic example": {
 			directives: []rule.Directive{
-				{Key: mapKindImportNameDirective, Value: "kind src dst"},
+				{Key: resolveKindRewriteName, Value: "kind src dst"},
 			},
 			want: map[string]mapKindImportNameSpec{
 				"kind": {src: "src", dst: "dst"},
@@ -233,7 +233,7 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
-			got := sc.mapKindImportNames
+			got := sc.labelNameRewrites
 			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(mapKindImportNameSpec{})); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

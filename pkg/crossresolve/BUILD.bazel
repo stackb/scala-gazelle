@@ -10,14 +10,13 @@ go_library(
         "maven_cross_resolver.go",
         "proto_cross_resolver.go",
         "registry.go",
-        "rule_index.go",
         "scala_source_cross_resolver.go",
-        "symbol_table.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/crossresolve",
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
         "//pkg/jarindex",
         "//pkg/maven",
         "//pkg/scalaparse",
@@ -25,7 +24,6 @@ go_library(
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
-        "@com_github_roaringbitmap_roaring//:roaring",
     ],
 )
 

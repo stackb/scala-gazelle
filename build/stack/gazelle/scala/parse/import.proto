@@ -9,10 +9,38 @@ option java_multiple_files = true;
 // ImportType describes the possible things that can be imported.
 enum ImportType {
     IMPORT_TYPE_UNKNOWN = 0;
+    // Package type
     PACKAGE = 1;
+    // JVM class type
     CLASS = 2;
+    // JVM interface type
     INTERFACE = 3;
+    // Scala trait type
     TRAIT = 4;
+    // Scala object type
     OBJECT = 5;
+    // Scala val type
     VALUE = 7;
+    // OVERRIDE signals that the import was configured via a 'gazelle:resolve'
+    // override directive and hence we don't know the underlying type of thing.
+    OVERRIDE = 8;
+    // CROSS_RESOLVE signals that the import was resolved via gazelle's underlying
+    // cross resolver system.  We don't know the underlying type here either.
+    CROSS_RESOLVE = 9;
+    // PLATFORM imports include stdlib'ish things like java.lang.String.  We
+    // don't need a dep for them (and we don't know the underlying type).
+    PLATFORM = 10;
+}
+
+// ImportKind describes the source of an import.
+enum ImportKind {
+    IMPORT_KIND_UNKNOWN = 0;
+    // An import named by an import statement in a source file.
+    DIRECT = 1;
+    // An import named in the main_class attibute of a rule.
+    MAIN_CLASS = 2;
+    // An import that is externally configured to be required when the source
+    // import is needed (e.g. com.typesafe.scalalogging.LazyLogging always needs
+    // org.slf4j.Logger, even if not named in the source).
+    IMPLICIT = 3;
 }

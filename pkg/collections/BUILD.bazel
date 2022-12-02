@@ -3,9 +3,12 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "collections",
     srcs = [
+        "string_slice.go",
         "string_stack.go",
+        "symbol_table.go",
         "uint32stack.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/collections",
     visibility = ["//visibility:public"],
+    deps = ["@com_github_roaringbitmap_roaring//:roaring"],
 )

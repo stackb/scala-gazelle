@@ -379,7 +379,7 @@ test(
 			}
 			target := file.Rules[0]
 			expr := target.Attr("expr")
-			got := scalaDepLabel(expr)
+			got := labelFromDepExpr(expr)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("label (-want +got):\n%s", diff)

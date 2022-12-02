@@ -41,3 +41,20 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 	}
 	return loads
 }
+
+func fullyQualifiedLoadName(loads []*rule.Load, kind string) string {
+	for _, load := range loads {
+		for _, pair := range load.SymbolPairs() {
+			// when there is no aliasing, pair.From == pair.To, so this covers
+			// both cases (aliases and not).
+			if pair.From == pair.To && pair.From == kind {
+				return load.Name() + "%" + pair.From
+			}
+			if pair.To == kind {
+				return load.Name() + "%" + pair.From
+			}
+		}
+	}
+	// no match, just return the kind (e.g. native.java_binary)
+	return kind
+}

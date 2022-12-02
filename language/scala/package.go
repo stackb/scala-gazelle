@@ -1,14 +1,19 @@
 package scala
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
@@ -96,7 +101,7 @@ func (s *scalaPackage) Resolve(
 		return
 	}
 	provider.Resolve(c, ix, r, importsRaw, from)
-	s.rules[r.Name()] = r
+	s.rules[r.Name()] = r // TODO(pcj): do we need this assignment here?
 }
 
 // generateRules constructs a list of rules based on the configured set of rule
@@ -107,7 +112,7 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	existingRulesByFQN := make(map[string][]*rule.Rule)
 	if s.file != nil {
 		for _, r := range s.file.Rules {
-			fqn := FullyQualifiedName(s.file.Loads, r.Kind())
+			fqn := fullyQualifiedLoadName(s.file.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
 		}
 	}
@@ -228,19 +233,52 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 	return rules
 }
 
-func FullyQualifiedName(loads []*rule.Load, kind string) string {
-	for _, load := range loads {
-		for _, pair := range load.SymbolPairs() {
-			// when there is no aliasing, pair.From == pair.To, so this covers
-			// both cases (aliases and not).
-			if pair.From == pair.To && pair.From == kind {
-				return load.Name() + "%" + pair.From
-			}
-			if pair.To == kind {
-				return load.Name() + "%" + pair.From
+// collectSourceFilesFromExpr returns a list of source files for the srcs
+// attribute.  Each value is a repo-relative path.
+func collectSourceFilesFromExpr(pkg ScalaPackage, expr build.Expr) (srcs []string, err error) {
+	switch t := expr.(type) {
+	case *build.ListExpr:
+		// example: ["foo.scala", "bar.scala"]
+		for _, item := range t.List {
+			switch elem := item.(type) {
+			case *build.StringExpr:
+				srcs = append(srcs, elem.Value)
 			}
 		}
+	case *build.CallExpr:
+		// example: glob(["**/*.scala"])
+		if ident, ok := t.X.(*build.Ident); ok {
+			switch ident.Name {
+			case "glob":
+				glob := parseGlob(pkg.File(), t)
+				dir := filepath.Join(pkg.Dir(), pkg.Rel())
+				srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
+			default:
+				err = fmt.Errorf("not attempting to resolve function call %v(): consider making this simpler", ident.Name)
+			}
+		} else {
+			err = fmt.Errorf("not attempting to resolve call expression %+v: consider making this simpler", t)
+		}
+	case *build.Ident:
+		// example: srcs = LIST_OF_SOURCES
+		srcs, err = globalStringList(pkg.File(), t)
+		if err != nil {
+			err = fmt.Errorf("faile to resolve resolve identifier %q (consider inlining it): %w", t.Name, err)
+		}
+	case nil:
+		// TODO(pcj): should this be considered an error, or normal condition?
+		// err = fmt.Errorf("rule has no 'srcs' attribute")
+	default:
+		err = fmt.Errorf("uninterpretable 'srcs' attribute type: %T", t)
 	}
-	// no match, just return the kind (e.g. native.java_binary)
-	return kind
+
+	return
+}
+
+func parseScalaFiles(dir string, from label.Label, kind string, srcs []string, parser scalaparse.Parser) ([]*sppb.File, error) {
+	if index, err := parser.ParseScalaFiles(from, kind, dir, srcs...); err != nil {
+		return nil, err
+	} else {
+		return index.Files, nil
+	}
 }

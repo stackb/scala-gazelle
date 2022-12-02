@@ -40,6 +40,7 @@ go_library(
     name = "parse",
     srcs = [
         "file.pb.go",
+        "import.pb.go",
         "parser.pb.go",
         "parser_grpc.pb.go",
         "rule.pb.go",

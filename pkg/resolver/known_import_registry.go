@@ -1,10 +1,13 @@
 package resolver
 
+// KnownImportRegistry is an index of all imports that are known to the
+// extension at the beginning of the deps resolution phase.
 type KnownImportRegistry interface {
-	// RequireImport does a lookup of the given import symbol and returns the
+	// GetKnownImport does a lookup of the given import symbol and returns the
 	// known import.  If not known `(nil, false)` is returned.
-	RequireImport(imp string) (*KnownImport, bool)
+	GetKnownImport(imp string) (*KnownImport, bool)
 
-	// ProvideImport adds the given known import to the registry.
-	ProvideImport(known *KnownImport) error
+	// PutKnownImport adds the given known import to the registry.  It is an
+	// error to attempt duplicate registration of the same import twice.
+	PutKnownImport(known *KnownImport) error
 }

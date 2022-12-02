@@ -11,7 +11,9 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const scalaLangName = "scala"
@@ -38,19 +40,20 @@ func NewLanguage() language.Language {
 		sourceResolver: sourceResolver,
 		scalaCompiler:  scalaCompiler,
 		packages:       packages,
-		resolvers:      make(map[string]crossresolve.ConfigurableCrossResolver),
 		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		allRules:       make(map[label.Label]*rule.Rule),
-		allImports: trie.NewPathTrieWithConfig(&trie.PathTrieConfig{
-			Segmenter: importSegmenter,
-		}),
+		knownRules:     make(map[label.Label]*rule.Rule),
+		knownImports:   newKnownImportsTrie(),
 	}
 }
 
 // scalaLang implements language.Language.
 type scalaLang struct {
-	// cacheFile is the main cache file, if enabled
-	cacheFile string
+	// cacheFileFlagValue is the main cache file, if enabled
+	cacheFileFlagValue string
+	// resolverNamesFlagValue is a comma-separated list of resolver to enable
+	resolverNamesFlagValue string
+	// scalaExistingRulesFlagValue is the value of the scala_existing_rule repeatable flag
+	scalaExistingRulesFlagValue collections.StringSlice
 	// cache is the loaded cache, if configured
 	cache *scpb.Cache
 	// ruleRegistry is the rule registry implementation.  This holds the rules
@@ -62,31 +65,29 @@ type scalaLang struct {
 	// importRegistry for use during import disambiguation.
 	scalaCompiler *scalaCompiler
 	// packages is map from the config.Rel to *scalaPackage for the
-	// workspace-relative packate name.
+	// workspace-relative package name.
 	packages map[string]*scalaPackage
 	// isResolvePhase is a flag that is tracks if at least one Resolve() call
 	// has occurred.  It can be used to determine when the rule indexing phase
 	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
-	// resolvers is a list of cross resolver implementations named by the -scala_resolvers flag
-	resolvers map[string]crossresolve.ConfigurableCrossResolver
 	// lastPackage tracks if this is the last generated package
 	lastPackage *scalaPackage
-	// resolverNames is a comma-separated list of resolver to enable
-	resolverNames string
 	// remainingRules is a counter that tracks when all rules have been resolved.
 	remainingRules int
 	// totalRules is used for progress
 	totalRules int
 	// progress is the progress interface
 	progress mobyprogress.Output
-	// scalaExistingRules is the value of the scala_existing_rule repeatable flag
-	scalaExistingRules stringSliceFlags
-	// allRules is a map of all known generated rules
-	allRules map[label.Label]*rule.Rule
-	// allImports is a map of all known generated import providers
-	allImports *trie.PathTrie
+	// knownRules is a map of all known generated rules
+	knownRules map[label.Label]*rule.Rule
+	// knownImports is a map of all known generated import providers
+	knownImports *trie.PathTrie
+	// knownImportProviders is a list of providers
+	knownImportProviders []resolver.KnownImportProvider
+	// importResolver is our primary resolver implementation
+	importResolver resolver.ImportResolver
 }
 
 // Name implements part of the language.Language interface
@@ -96,10 +97,10 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
 		ruleDirective,
-		overrideDirective,
-		implicitImportDirective,
+		resolveGlobDirective,
+		resolveWithDirective,
 		scalaExplainDeps,
 		scalaExplainSrcs,
-		mapKindImportNameDirective,
+		resolveKindRewriteName,
 	}
 }

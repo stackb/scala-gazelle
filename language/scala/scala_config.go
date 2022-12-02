@@ -11,41 +11,44 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const (
 	// ruleDirective is the directive for toggling rule generation.
 	ruleDirective = "scala_rule"
-	// overrideDirective is the well-know gazelle:override directive for
-	// disambiguation overrides.
-	overrideDirective = "override"
-	// implicitImportDirective adds additional imports for resolution
-	implicitImportDirective = "implicit_import"
+	// resolveGlobDirective implements override via globs.
+	resolveGlobDirective = "resolve_glob"
+	// resolveWithDirective adds additional imports for resolution
+	resolveWithDirective = "resolve_with"
 	// scala_explain_deps prints the reason why deps are included.
 	scalaExplainDeps = "scala_explain_deps"
 	// scala_expand_srcs replaces the "srcs" attribute with actual srcs, if enabled.
 	scalaExplainSrcs = "scala_explain_srcs"
-	// mapKindImportNameDirective allows renaming of resolved labels.
-	mapKindImportNameDirective = "map_kind_import_name"
+	// resolveKindRewriteName allows renaming of resolved labels.
+	resolveKindRewriteName = "resolve_kind_rewrite_name"
+	// resolverImpLangPrivateKey stores the implementation language override.
+	resolverImpLangPrivateKey = "_resolve_imp_lang"
 )
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
-	// ruleIndex is the global rule map.
-	ruleIndex crossresolve.RuleIndex
 	// config is the parent gazelle config.
 	config *config.Config
 	// rel is the relative directory.
 	rel string
+	// resolver is the global resolver instance.
+	resolver resolver.KnownImportResolver
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
-	// overrides patterns are parsed from 'gazelle:override scala glob IMPORT LABEL'
+	// overrides patterns are parsed from 'gazelle:resolve_glob scala IMPORT LABEL'
 	overrides []*overrideSpec
-	// implicitImports are parsed from 'gazelle:implicit_import scala foo bar [baz]...'
+	// implicitImports are parsed from 'gazelle:resolve_implicit scala foo bar [baz]...'
 	implicitImports []*implicitImportSpec
-	// map kinds are parsed from 'gazelle:map_kind_import_name
-	mapKindImportNames map[string]mapKindImportNameSpec
+	// label kind rewrite specifications are parsed from 'gazelle:resolve_kind_rewrite_name'
+	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	// explainDeps is a flag to print additional comments on deps & exports
 	explainDeps bool
 	// explainSrcs is a flag to print additional comments on srcs
@@ -53,15 +56,15 @@ type scalaConfig struct {
 }
 
 // newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel string) *scalaConfig {
+func newScalaConfig(config *config.Config, rel string, rslv resolver.KnownImportResolver) *scalaConfig {
 	return &scalaConfig{
-		ruleIndex:          ruleIndex,
-		config:             config,
-		rel:                rel,
-		rules:              make(map[string]*RuleConfig),
-		overrides:          make([]*overrideSpec, 0),
-		implicitImports:    make([]*implicitImportSpec, 0),
-		mapKindImportNames: make(map[string]mapKindImportNameSpec),
+		config:            config,
+		rel:               rel,
+		resolver:          rslv,
+		rules:             make(map[string]*RuleConfig),
+		overrides:         make([]*overrideSpec, 0),
+		implicitImports:   make([]*implicitImportSpec, 0),
+		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
 	}
 }
 
@@ -76,13 +79,13 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Config, rel string) *scalaConfig {
+func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver.KnownImportResolver) *scalaConfig {
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)
 		cfg.rel = rel
 	} else {
-		cfg = newScalaConfig(ruleIndex, config, rel)
+		cfg = newScalaConfig(config, rel, resolver)
 	}
 	config.Exts[scalaLangName] = cfg
 	return cfg
@@ -90,24 +93,32 @@ func getOrCreateScalaConfig(ruleIndex crossresolve.RuleIndex, config *config.Con
 
 // clone copies this config to a new one.
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
-	clone := newScalaConfig(c.ruleIndex, config, rel)
+	clone := newScalaConfig(config, rel, c.resolver)
 	clone.explainDeps = c.explainDeps
 	clone.explainSrcs = c.explainSrcs
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
-	for k, v := range c.mapKindImportNames {
-		clone.mapKindImportNames[k] = v
+	for k, v := range c.labelNameRewrites {
+		clone.labelNameRewrites[k] = v
 	}
 	clone.overrides = c.overrides[:]
 	clone.implicitImports = c.implicitImports[:]
 	return clone
 }
 
-// LookupRule implements the crossresolve.RuleIndex interface.  It also
-// translates relative labels into their absolute form.
-func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
-	if c.ruleIndex == nil || from.Name == "" {
+func (c *scalaConfig) canProvide(from label.Label) bool {
+	for _, provider := range c.resolver.KnownImportProviders() {
+		if provider.CanProvide(from, c.resolver.GetKnownRule) {
+			return true
+		}
+	}
+	return false
+}
+
+// getKnownRule translates relative labels into their absolute form.
+func (c *scalaConfig) getKnownRule(from label.Label) (*rule.Rule, bool) {
+	if c.resolver == nil || from.Name == "" {
 		return nil, false
 	}
 	if from.Repo == "" {
@@ -116,7 +127,7 @@ func (c *scalaConfig) LookupRule(from label.Label) (*rule.Rule, bool) {
 	if from.Pkg == "" && from.Repo == c.config.RepoName {
 		from = label.New(from.Repo, c.rel, from.Name)
 	}
-	return c.ruleIndex.LookupRule(from)
+	return c.resolver.GetKnownRule(from)
 }
 
 // parseDirectives is called in each directory visited by gazelle.  The relative
@@ -130,16 +141,16 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
-		case overrideDirective:
-			c.parseOverrideDirective(d)
-		case implicitImportDirective:
-			c.parseImplicitImportDirective(d)
+		case resolveGlobDirective:
+			c.parseResolveGlobDirective(d)
+		case resolveWithDirective:
+			c.parseResolveWithDirective(d)
 		case scalaExplainDeps:
 			c.parseScalaExplainDeps(d)
 		case scalaExplainSrcs:
 			c.parseScalaExplainSrcs(d)
-		case mapKindImportNameDirective:
-			c.parseMapKindImportNameDirective(d)
+		case resolveKindRewriteName:
+			c.parseResolveKindRewriteNameDirective(d)
 		}
 	}
 	return
@@ -158,7 +169,7 @@ func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
 	return r.parseDirective(c, name, param, value)
 }
 
-func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
+func (c *scalaConfig) parseResolveGlobDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	o := overrideSpec{}
 	var lbl string
@@ -166,9 +177,6 @@ func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
 		return
 	}
 	if parts[0] != scalaLangName {
-		return
-	}
-	if parts[1] != "glob" {
 		return
 	}
 
@@ -180,16 +188,16 @@ func (c *scalaConfig) parseOverrideDirective(d rule.Directive) {
 	var err error
 	o.dep, err = label.Parse(lbl)
 	if err != nil {
-		log.Printf("gazelle:override %s: %v", d.Value, err)
+		log.Fatalf("bad gazelle:%s directive value %q: %v", resolveGlobDirective, d.Value, err)
 		return
 	}
 	c.overrides = append(c.overrides, &o)
 }
 
-func (c *scalaConfig) parseImplicitImportDirective(d rule.Directive) {
+func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 3 {
-		log.Printf("invalid gazelle:%s directive: expected 3+ parts, got %d (%v)", implicitImportDirective, len(parts), parts)
+		log.Printf("invalid gazelle:%s directive: expected 3+ parts, got %d (%v)", resolveWithDirective, len(parts), parts)
 		return
 	}
 	c.implicitImports = append(c.implicitImports, &implicitImportSpec{
@@ -199,17 +207,17 @@ func (c *scalaConfig) parseImplicitImportDirective(d rule.Directive) {
 	})
 }
 
-func (c *scalaConfig) parseMapKindImportNameDirective(d rule.Directive) {
+func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 3 {
-		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", mapKindImportNameDirective, parts)
+		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteName, parts)
 		return
 	}
 	kind := parts[0]
 	src := parts[1]
 	dst := parts[2]
 
-	c.mapKindImportNames[kind] = mapKindImportNameSpec{src: src, dst: dst}
+	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
 }
 
 func (c *scalaConfig) parseScalaExplainDeps(d rule.Directive) {
@@ -292,18 +300,41 @@ type implicitImportSpec struct {
 	deps []string
 }
 
-type mapKindImportNameSpec struct {
-	// src is the label name to match
-	src string
-	// dst is the label name to rewrite
-	dst string
-}
+func collectImports(sc *scalaConfig, r *rule.Rule, files []*sppb.File) resolver.ImportMap {
+	imports := resolver.NewImportMap()
 
-func (m *mapKindImportNameSpec) Rename(from label.Label) label.Label {
-	if !(m.src == from.Name || m.src == "%{name}") {
-		return from
+	impLang := r.Kind()
+	if overrideImpLang, ok := r.PrivateAttr(resolverImpLangPrivateKey).(string); ok {
+		impLang = overrideImpLang
 	}
-	to := label.New(from.Repo, from.Pkg, strings.ReplaceAll(m.dst, "%{name}", from.Name))
-	// log.Printf("matched map_kind_import_name", m, from, "->", to)
-	return to
+
+	// direct
+	for _, file := range files {
+		for _, imp := range file.Imports {
+			imports.Put(resolver.NewDirectImport(imp, file))
+		}
+	}
+
+	// if this rule has a main_class
+	if mainClass := r.AttrString("main_class"); mainClass != "" {
+		imports.Put(resolver.NewMainClassImport(mainClass))
+	}
+
+	// gather implicit imports
+	transitive := make(collections.StringStack, 0)
+	for src := range imports {
+		for _, dst := range sc.getImplicitImports(impLang, src) {
+			transitive.Push(dst)
+			imports.Put(resolver.NewImplicitImport(dst, src))
+		}
+	}
+	for !transitive.IsEmpty() {
+		src, _ := transitive.Pop()
+		for _, dst := range sc.getImplicitImports(impLang, src) {
+			transitive.Push(dst)
+			imports.Put(resolver.NewImplicitImport(dst, src))
+		}
+	}
+
+	return imports
 }

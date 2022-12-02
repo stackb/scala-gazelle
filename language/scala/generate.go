@@ -25,9 +25,9 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	cfg := getOrCreateScalaConfig(sl, args.Config, args.Rel)
+	sc := getOrCreateScalaConfig(args.Config, args.Rel, sl)
+	pkg := newScalaPackage(sl.ruleRegistry, sl.sourceResolver, args.Rel, args.File, sc)
 
-	pkg := newScalaPackage(sl.ruleRegistry, sl.sourceResolver, args.Rel, args.File, cfg)
 	// search for child packages, but only assign if a parent has not already
 	// been assigned.  Given that gazelle uses a DFS walk, we should assign the
 	// child to the nearest parent.
@@ -44,18 +44,17 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sl.lastPackage = pkg
 
 	rules := pkg.Rules()
+	for _, r := range rules {
+		from := label.New(args.Config.RepoName, args.Rel, r.Name())
+		sl.PutKnownRule(from, r)
+	}
 
 	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
-
 	sl.remainingRules += len(rules)
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
-		if r.Kind() != packageMarkerRuleKind {
-			from := label.New(args.Config.RepoName, args.Rel, r.Name())
-			sl.recordRule(from, r)
-		}
 	}
 
 	return language.GenerateResult{

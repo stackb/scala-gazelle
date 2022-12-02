@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/jarindex"
 )
 
@@ -26,7 +27,7 @@ func NewJarIndexCrossResolver(lang string) *JarIndexCrossResolver {
 		lang:      lang,
 		byLabel:   make(map[string][]label.Label),
 		preferred: make(map[label.Label]bool),
-		symbols:   NewSymbolTable(),
+		symbols:   collections.NewSymbolTable(),
 	}
 }
 
@@ -50,7 +51,7 @@ type JarIndexCrossResolver struct {
 	// It is possible more than one label provides a class.
 	byLabel map[string][]label.Label
 	// the full list of symbols
-	symbols *SymbolTable
+	symbols *collections.SymbolTable
 	// preferred is a mapping of preferred labels
 	preferred map[label.Label]bool
 }

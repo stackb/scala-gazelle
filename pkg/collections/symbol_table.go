@@ -1,4 +1,4 @@
-package scala
+package collections
 
 import (
 	"log"
