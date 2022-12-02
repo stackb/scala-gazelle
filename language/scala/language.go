@@ -6,6 +6,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/dghubble/trie"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
@@ -40,6 +41,9 @@ func NewLanguage() language.Language {
 		resolvers:      make(map[string]crossresolve.ConfigurableCrossResolver),
 		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		allRules:       make(map[label.Label]*rule.Rule),
+		allImports: trie.NewPathTrieWithConfig(&trie.PathTrieConfig{
+			Segmenter: importSegmenter,
+		}),
 	}
 }
 
@@ -79,8 +83,10 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// scalaExistingRules is the value of the scala_existing_rule repeatable flag
 	scalaExistingRules stringSliceFlags
-	// ruleIndex is a map of all known generated rules
+	// allRules is a map of all known generated rules
 	allRules map[label.Label]*rule.Rule
+	// allImports is a map of all known generated import providers
+	allImports *trie.PathTrie
 }
 
 // Name implements part of the language.Language interface
