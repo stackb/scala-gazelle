@@ -21,6 +21,7 @@ go_library(
         "kinds.go",
         "label_import_map.go",
         "language.go",
+        "lifecycle.go",
         "loads.go",
         "package.go",
         "progress.go",

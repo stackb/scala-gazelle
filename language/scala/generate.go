@@ -15,14 +15,14 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		return language.GenerateResult{}
 	}
 
-	if sl.cache.PackageCount > 0 {
-		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
-	}
-
 	if len(sl.packages) == 0 {
-		if err := sl.sourceResolver.Start(); err != nil {
+		if err := sl.onGenerate(); err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	if sl.cache.PackageCount > 0 {
+		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
 	cfg := getOrCreateScalaConfig(sl, args.Config, args.Rel)
