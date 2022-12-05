@@ -68,7 +68,7 @@ func (*scalaLang) KnownDirectives() []string {
 		resolveGlobDirective,
 		resolveWithDirective,
 		scalaExplainDeps,
-		scalaExplainSrcs,
+		scalaAnnotateImports,
 		resolveKindRewriteName,
 	}
 }
@@ -95,7 +95,6 @@ func NewLanguage() language.Language {
 		scalaLangName,
 		scalaLangName,
 		protoc.GlobalResolver(),
-		lang.knownImports,
 	))
 
 	return lang

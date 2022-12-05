@@ -17,5 +17,5 @@ type KnownImport struct {
 }
 
 func (ki *KnownImport) String() string {
-	return fmt.Sprintf("%v (from %v)", ki.Type, ki.Label)
+	return fmt.Sprintf("%v %s (%v)", ki.Type, ki.Import, ki.Label)
 }

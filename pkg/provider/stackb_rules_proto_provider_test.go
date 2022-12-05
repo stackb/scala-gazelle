@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"flag"
 	"testing"
 
+	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
@@ -47,7 +49,11 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 
 			p := NewStackbRulesProtoProvider(
 				tc.lang, tc.impLang,
-				importProvider, importRegistry)
+				importProvider)
+			c := config.New()
+			flags := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			p.CheckFlags(flags, c, importRegistry)
+
 			p.OnResolve()
 
 			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
@@ -86,7 +92,10 @@ func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 			importProvider := &mockImportProvider{imports: tc.imports}
 			importRegistry := &mockKnownImportRegistry{}
 
-			p := NewStackbRulesProtoProvider(tc.lang, tc.lang, importProvider, importRegistry)
+			p := NewStackbRulesProtoProvider(tc.lang, tc.lang, importProvider)
+			c := config.New()
+			flags := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			p.CheckFlags(flags, c, importRegistry)
 			p.OnResolve()
 
 			got := p.CanProvide(tc.from, tc.indexFunc)

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"flag"
+	"log"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -25,12 +26,11 @@ type StackbRulesProtoProvider struct {
 // NewStackbRulesProtoProvider constructs a new provider.  The lang/impLang
 // arguments are used to fetch the provided imports in the given importProvider
 // struct.
-func NewStackbRulesProtoProvider(lang, impLang string, importProvider protoc.ImportProvider, knownImportRegistry resolver.KnownImportRegistry) *StackbRulesProtoProvider {
+func NewStackbRulesProtoProvider(lang, impLang string, importProvider protoc.ImportProvider) *StackbRulesProtoProvider {
 	return &StackbRulesProtoProvider{
-		lang:                lang,
-		impLang:             impLang,
-		importProvider:      importProvider,
-		knownImportRegistry: knownImportRegistry,
+		lang:           lang,
+		impLang:        impLang,
+		importProvider: importProvider,
 	}
 }
 
@@ -45,11 +45,49 @@ func (p *StackbRulesProtoProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c
 
 // CheckFlags implements part of the resolver.KnownImportProvider interface.
 func (p *StackbRulesProtoProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.KnownImportRegistry) error {
+	p.knownImportRegistry = registry
 	return nil
 }
 
 // OnResolve implements part of the resolver.KnownImportProvider interface.
 func (p *StackbRulesProtoProvider) OnResolve() {
+	log.Println("StackbRulesProtoProvider.OnResolve!")
+	for from, symbols := range p.importProvider.Provided(p.lang, "package") {
+		for _, symbol := range symbols {
+			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+				Type:   sppb.ImportType_PACKAGE,
+				Import: symbol,
+				Label:  from,
+			})
+		}
+	}
+	for from, symbols := range p.importProvider.Provided(p.lang, "enum") {
+		for _, symbol := range symbols {
+			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+				Type:   sppb.ImportType_OBJECT,
+				Import: symbol,
+				Label:  from,
+			})
+		}
+	}
+	for from, symbols := range p.importProvider.Provided(p.lang, "message") {
+		for _, symbol := range symbols {
+			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+				Type:   sppb.ImportType_CLASS,
+				Import: symbol,
+				Label:  from,
+			})
+		}
+	}
+	for from, symbols := range p.importProvider.Provided(p.lang, "service") {
+		for _, symbol := range symbols {
+			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+				Type:   sppb.ImportType_CLASS,
+				Import: symbol,
+				Label:  from,
+			})
+		}
+	}
 	for from, symbols := range p.importProvider.Provided(p.lang, p.impLang) {
 		for _, symbol := range symbols {
 			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{

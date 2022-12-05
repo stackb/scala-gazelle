@@ -23,10 +23,10 @@ const (
 	resolveGlobDirective = "resolve_glob"
 	// resolveWithDirective adds additional imports for resolution
 	resolveWithDirective = "resolve_with"
-	// scala_explain_deps prints the reason why deps are included.
+	// scalaExplainDeps is the name of a directive.
 	scalaExplainDeps = "scala_explain_deps"
-	// scala_expand_srcs replaces the "srcs" attribute with actual srcs, if enabled.
-	scalaExplainSrcs = "scala_explain_srcs"
+	// scalaExplainDeps is the name of a directive.
+	scalaAnnotateImports = "scala_annotate_imports"
 	// resolveKindRewriteName allows renaming of resolved labels.
 	resolveKindRewriteName = "resolve_kind_rewrite_name"
 	// resolverImpLangPrivateKey stores the implementation language override.
@@ -51,8 +51,8 @@ type scalaConfig struct {
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	// explainDeps is a flag to print additional comments on deps & exports
 	explainDeps bool
-	// explainSrcs is a flag to print additional comments on srcs
-	explainSrcs bool
+	// annotateImports is a flag to print additional comments on srcs
+	annotateImports bool
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -95,7 +95,7 @@ func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	clone := newScalaConfig(config, rel, c.resolver)
 	clone.explainDeps = c.explainDeps
-	clone.explainSrcs = c.explainSrcs
+	clone.annotateImports = c.annotateImports
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
@@ -147,7 +147,7 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveWithDirective(d)
 		case scalaExplainDeps:
 			c.parseScalaExplainDeps(d)
-		case scalaExplainSrcs:
+		case scalaAnnotateImports:
 			c.parseScalaExplainSrcs(d)
 		case resolveKindRewriteName:
 			c.parseResolveKindRewriteNameDirective(d)
@@ -232,10 +232,10 @@ func (c *scalaConfig) parseScalaExplainDeps(d rule.Directive) {
 func (c *scalaConfig) parseScalaExplainSrcs(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 1 {
-		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaExplainSrcs, len(parts), parts)
+		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaAnnotateImports, len(parts), parts)
 		return
 	}
-	c.explainSrcs = parts[0] == "true"
+	c.annotateImports = parts[0] == "true"
 }
 
 func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {

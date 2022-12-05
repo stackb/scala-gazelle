@@ -82,8 +82,8 @@ func (s *ScalaParseServer) Start() error {
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
 		return fmt.Errorf("mkdir process tmpdir: %w", err)
 	}
-	if err := ioutil.WriteFile(scriptPath, []byte(sourceindexerMjs), os.ModePerm); err != nil {
-		return fmt.Errorf("writing %s: %w", sourceindexerMjs, err)
+	if err := ioutil.WriteFile(scriptPath, []byte(scalaparserMjs), os.ModePerm); err != nil {
+		return fmt.Errorf("writing %s: %w", scalaparserMjs, err)
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
 		return fmt.Errorf("writing %s: %w", scalametaParsersIndexJs, err)

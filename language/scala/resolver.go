@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"log"
 	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -76,7 +77,6 @@ func buildKeepDepsList(sc *scalaConfig, current build.Expr) *build.ListExpr {
 }
 
 func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from label.Label, imports resolver.ImportMap) {
-
 	// make a mapping of final deps to be included.  Getting strange behavior by
 	// just creating a build.ListExpr and sorting that list directly.
 	kept := make(map[string]resolver.ImportMap)
@@ -94,24 +94,30 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 		}
 		// relativize the dependency label.  For self-imports, this transforms into the empty label.
 		dep := imp.Known.Label.Rel(from.Repo, from.Pkg)
-
+		log.Println("addResolvedDeps dep:", dep)
 		if seen[dep] {
+			log.Println("addResolvedDeps seen!", dep)
 			continue
 		}
 		if dep == label.NoLabel {
+			log.Println("addResolvedDeps dep==label.NoLabel!", dep)
 			continue
 		}
 		if dep == from {
+			log.Println("addResolvedDeps dep==from!", dep)
 			continue
 		}
 		if from.Equal(dep) {
+			log.Println("addResolvedDeps from.Equal!", dep)
 			continue
 		}
 		if isSameImport(sc, kind, from, dep) {
+			log.Println("addResolvedDeps isSameImport!", dep, from)
 			continue
 		}
 
 		kept[dep.String()] = imports
+		log.Println("addResolvedDeps kept:", dep)
 		seen[dep] = true
 	}
 
@@ -147,7 +153,7 @@ func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
 		from = label.New(sc.config.RepoName, from.Pkg, from.Name)
 	}
 	if to.Repo == "" {
-		to = label.New(sc.config.RepoName, from.Pkg, from.Name)
+		to = label.New(sc.config.RepoName, to.Pkg, to.Name)
 	}
 	if mapping, ok := sc.labelNameRewrites[kind]; ok {
 		from = mapping.Rewrite(from)

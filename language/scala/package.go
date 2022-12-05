@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
@@ -250,9 +251,9 @@ func collectSourceFilesFromExpr(pkg ScalaPackage, expr build.Expr) (srcs []strin
 		if ident, ok := t.X.(*build.Ident); ok {
 			switch ident.Name {
 			case "glob":
-				glob := parseGlob(pkg.File(), t)
+				g := glob.Parse(pkg.File(), t)
 				dir := filepath.Join(pkg.Dir(), pkg.Rel())
-				srcs = append(srcs, applyGlob(glob, os.DirFS(dir))...)
+				srcs = append(srcs, glob.Apply(g, os.DirFS(dir))...)
 			default:
 				err = fmt.Errorf("not attempting to resolve function call %v(): consider making this simpler", ident.Name)
 			}

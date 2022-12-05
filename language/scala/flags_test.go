@@ -22,16 +22,11 @@ func TestFlags(t *testing.T) {
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scala_resolvers": {
-			files: []testtools.FileSpec{
-				{
-					Path:    "maven_install.json",
-					Content: "{}",
-				},
-			},
+		"scala_import_provider": {
 			args: []string{
-				"-scala_resolvers=maven,proto,source",
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-scala_import_provider=scala",
+				"-scala_import_provider=github.com/stackb/rules_proto",
+				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
 			},
 		},
 		"scala_gazelle_cache_file": {

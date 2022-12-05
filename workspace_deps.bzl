@@ -117,11 +117,15 @@ def build_stack_rules_proto():
     # Date: 2022-10-20 02:38:27 +0000 UTC
     # URL: https://github.com/stackb/rules_proto/releases/tag/v2.0.1
     # Size: 2071295 (2.1 MB)
-    http_archive(
+    # http_archive(
+    #     name = "build_stack_rules_proto",
+    #     sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
+    #     strip_prefix = "rules_proto-2.0.1",
+    #     urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
+    # )
+    native.local_repository(
         name = "build_stack_rules_proto",
-        sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
-        strip_prefix = "rules_proto-2.0.1",
-        urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
+        path = "/Users/pcj/go/src/github.com/stackb/rules_proto",
     )
 
 def rules_jvm_external():

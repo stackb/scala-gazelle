@@ -52,7 +52,7 @@ func NewMainClassImport(imp string) *Import {
 }
 
 func (imp *Import) String() string {
-	var s string // TODO: use strings.Builder
+	s := imp.Imp + ": "
 	switch imp.Kind {
 	case sppb.ImportKind_DIRECT:
 		if imp.Source == nil {
@@ -67,8 +67,10 @@ func (imp *Import) String() string {
 	default:
 		s += fmt.Sprintf("%v", imp.Kind)
 	}
-	if imp.Known.Import != imp.Imp {
-		s += fmt.Sprintf(" (via %s)", imp.Known.String())
+	if imp.Known != nil {
+		if imp.Known.Import != imp.Imp {
+			s += fmt.Sprintf(" (via %s)", imp.Known.String())
+		}
 	}
 
 	return s

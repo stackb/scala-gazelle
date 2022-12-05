@@ -193,7 +193,7 @@ func TestScalaConfigParseScalaExplainSrcs(t *testing.T) {
 		"degenerate": {},
 		"typical example": {
 			directives: []rule.Directive{
-				{Key: scalaExplainSrcs, Value: "true"},
+				{Key: scalaAnnotateImports, Value: "true"},
 			},
 			want: true,
 		},
@@ -203,7 +203,7 @@ func TestScalaConfigParseScalaExplainSrcs(t *testing.T) {
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
-			got := sc.explainSrcs
+			got := sc.annotateImports
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

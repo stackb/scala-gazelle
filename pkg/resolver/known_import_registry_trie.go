@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"log"
 	"strings"
 
 	"github.com/dghubble/trie"
@@ -35,6 +36,7 @@ func (r *KnownImportRegistryTrie) GetKnownImport(imp string) (*KnownImport, bool
 
 // PutKnownImport implements part of the KnownImportRegistry interface.
 func (r *KnownImportRegistryTrie) PutKnownImport(known *KnownImport) error {
+	log.Printf("PutKnownImport(%s)", known.String())
 	r.known.Put(known.Import, known)
 	return nil
 }

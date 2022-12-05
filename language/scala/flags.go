@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	scalaImportProvidersFlagName  = "scala_import_providers"
+	scalaImportProviderFlagName   = "scala_import_provider"
 	scalaExistingRulesFlagName    = "scala_existing_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 )
@@ -22,7 +22,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	getOrCreateScalaConfig(c, "" /* rel="" */, sl) // ignoring return value, only want side-effect
 
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
-	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProvidersFlagName, "comma-separated list of import provider implementations to enable")
+	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProviderFlagName, "name of a known import provider implementation to enable")
 	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	for _, provider := range sl.knownImportProviders {

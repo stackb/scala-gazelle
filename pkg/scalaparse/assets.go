@@ -5,7 +5,7 @@ import (
 )
 
 //go:embed scalaparser.mjs
-var sourceindexerMjs string
+var scalaparserMjs string
 
 //go:embed node_modules/scalameta-parsers/index.js
 var scalametaParsersIndexJs string
