@@ -7,11 +7,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
-	"github.com/stackb/rules_proto/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/crossresolve"
+	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -23,34 +22,31 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 	scalaCompiler := newScalaCompiler()
 
-	sourceResolver := crossresolve.NewScalaSourceCrossResolver(scalaLangName)
-	protoResolver := crossresolve.NewProtoResolver(scalaLangName, protoc.GlobalResolver().Provided)
-	mavenResolver := crossresolve.NewMavenResolver("java")
-	jarResolver := crossresolve.NewJarIndexCrossResolver(scalaLangName)
-
-	crossresolve.Resolvers().MustRegisterResolver("source", sourceResolver)
-	crossresolve.Resolvers().MustRegisterResolver("maven", mavenResolver)
-	crossresolve.Resolvers().MustRegisterResolver("proto", protoResolver)
-	crossresolve.Resolvers().MustRegisterResolver("jar", jarResolver)
-
-	return &scalaLang{
+	lang := &scalaLang{
 		cache:          &scpb.Cache{},
-		ruleRegistry:   globalRuleRegistry,
-		sourceResolver: sourceResolver,
-		scalaCompiler:  scalaCompiler,
+		knownImports:   resolver.NewKnownImportRegistryTrie(),
+		knownRules:     make(map[label.Label]*rule.Rule),
 		packages:       packages,
 		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		knownRules:     make(map[label.Label]*rule.Rule),
-		knownImports:   resolver.NewKnownImportRegistryTrie(),
+		ruleRegistry:   globalRuleRegistry,
+		scalaCompiler:  scalaCompiler,
+		sourceProvider: provider.NewScalaSourceProvider(),
 	}
+
+	lang.AddKnownImportProvider(lang.sourceProvider)
+	// lang.AddKnownImportProvider(provider.NewJarProvider(sl))
+	lang.AddKnownImportProvider(&provider.RulesJvmExternalProvider{})
+	lang.AddKnownImportProvider(provider.NewStackbRulesProtoProvider(scalaLangName, scalaLangName, sl))
+
+	return lang
 }
 
 // scalaLang implements language.Language.
 type scalaLang struct {
 	// cacheFileFlagValue is the main cache file, if enabled
 	cacheFileFlagValue string
-	// resolverNamesFlagValue is a comma-separated list of resolver to enable
-	resolverNamesFlagValue string
+	// importProviderNamesFlagValue is a repeatable list of resolver to enable
+	importProviderNamesFlagValue collections.StringSlice
 	// scalaExistingRulesFlagValue is the value of the scala_existing_rule repeatable flag
 	scalaExistingRulesFlagValue collections.StringSlice
 	// cache is the loaded cache, if configured
@@ -58,8 +54,8 @@ type scalaLang struct {
 	// ruleRegistry is the rule registry implementation.  This holds the rules
 	// configured via gazelle directives by the user.
 	ruleRegistry RuleRegistry
-	// sourceResolver is the source resolver implementation.
-	sourceResolver *crossresolve.ScalaSourceCrossResolver
+	// sourceProvider is the source resolver implementation.
+	sourceProvider *provider.ScalaSourceProvider
 	// scalaCompiler is the compiler implementation.  This is passed to the
 	// importRegistry for use during import disambiguation.
 	scalaCompiler *scalaCompiler
@@ -85,8 +81,8 @@ type scalaLang struct {
 	knownImports resolver.KnownImportRegistry
 	// knownImportProviders is a list of providers
 	knownImportProviders []resolver.KnownImportProvider
-	// importResolver is our primary resolver implementation
-	importResolver resolver.ImportResolver
+	// knownImportResolver is our top-level known import resolver implementation
+	knownImportResolver resolver.KnownImportResolver
 }
 
 // Name implements part of the language.Language interface

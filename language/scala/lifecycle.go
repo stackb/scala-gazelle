@@ -7,7 +7,7 @@ import (
 
 // onGenerate is called on the the first GenerateRules call.
 func (sl *scalaLang) onGenerate() error {
-	if err := sl.sourceResolver.Start(); err != nil {
+	if err := sl.sourceProvider.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}
 	return nil

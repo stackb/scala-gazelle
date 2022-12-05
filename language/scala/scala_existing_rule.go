@@ -159,7 +159,13 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 	imports := collectImports(sc, r, files)
 
 	if len(imports) > 0 {
-		sc.resolver.ResolveImports(c, ix, from, "java", imports.Values()...)
+		for _, imp := range imports.Values() {
+			if known, err := sc.resolver.ResolveImport(c, ix, from, "java", imp.Imp); err != nil {
+				imp.Error = err
+			} else {
+				imp.Known = known
+			}
+		}
 
 		deps := buildKeepDepsList(sc, r.Attr("deps"))
 		addResolvedDeps(deps, sc, r.Kind(), from, imports)

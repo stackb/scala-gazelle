@@ -9,11 +9,10 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const (
-	scalaResolversFlagName        = "scala_resolvers"
+	scalaImportProvidersFlagName  = "scala_import_providers"
 	scalaExistingRulesFlagName    = "scala_existing_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 )
@@ -23,7 +22,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	getOrCreateScalaConfig(c, "" /* rel="" */, sl) // ignoring return value, only want side-effect
 
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
-	flags.StringVar(&sl.resolverNamesFlagValue, scalaResolversFlagName, "maven,proto,source", "comma-separated list of scala cross-resolver implementations to enable")
+	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProvidersFlagName, "comma-separated list of import provider implementations to enable")
 	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	for _, provider := range sl.knownImportProviders {
@@ -36,7 +35,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	// initialize the resolver implementation
-	sl.importResolver = resolver.NewScalaResolver(scalaLangName, sl)
+	sl.knownImportResolver = NewKnownImportResolver(sl)
 
 	if sl.cacheFileFlagValue != "" {
 		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)

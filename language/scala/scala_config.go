@@ -40,7 +40,7 @@ type scalaConfig struct {
 	// rel is the relative directory.
 	rel string
 	// resolver is the global resolver instance.
-	resolver resolver.KnownImportResolver
+	resolver resolver.ImportResolver
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
 	// overrides patterns are parsed from 'gazelle:resolve_glob scala IMPORT LABEL'
@@ -56,7 +56,7 @@ type scalaConfig struct {
 }
 
 // newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(config *config.Config, rel string, rslv resolver.KnownImportResolver) *scalaConfig {
+func newScalaConfig(config *config.Config, rel string, rslv resolver.ImportResolver) *scalaConfig {
 	return &scalaConfig{
 		config:            config,
 		rel:               rel,
@@ -79,7 +79,7 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver.KnownImportResolver) *scalaConfig {
+func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver.ImportResolver) *scalaConfig {
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)

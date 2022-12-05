@@ -26,7 +26,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	sc := getOrCreateScalaConfig(args.Config, args.Rel, sl)
-	pkg := newScalaPackage(sl.ruleRegistry, sl.sourceResolver, args.Rel, args.File, sc)
+	pkg := newScalaPackage(sl.ruleRegistry, sl.sourceProvider, args.Rel, args.File, sc)
 
 	// search for child packages, but only assign if a parent has not already
 	// been assigned.  Given that gazelle uses a DFS walk, we should assign the
