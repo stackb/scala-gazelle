@@ -6,7 +6,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/dghubble/trie"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
@@ -42,7 +41,7 @@ func NewLanguage() language.Language {
 		packages:       packages,
 		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		knownRules:     make(map[label.Label]*rule.Rule),
-		knownImports:   newKnownImportsTrie(),
+		knownImports:   resolver.NewKnownImportRegistryTrie(),
 	}
 }
 
@@ -83,7 +82,7 @@ type scalaLang struct {
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
 	// knownImports is a map of all known generated import providers
-	knownImports *trie.PathTrie
+	knownImports resolver.KnownImportRegistry
 	// knownImportProviders is a list of providers
 	knownImportProviders []resolver.KnownImportProvider
 	// importResolver is our primary resolver implementation
