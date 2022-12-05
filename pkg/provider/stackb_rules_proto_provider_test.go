@@ -45,7 +45,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 			importProvider := &mockImportProvider{imports: tc.imports}
 			importRegistry := &mockKnownImportRegistry{}
 
-			p := NewStackbRulesProtoKnownImportProvider(
+			p := NewStackbRulesProtoProvider(
 				tc.lang, tc.impLang,
 				importProvider, importRegistry)
 			p.OnResolve()
@@ -86,7 +86,7 @@ func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 			importProvider := &mockImportProvider{imports: tc.imports}
 			importRegistry := &mockKnownImportRegistry{}
 
-			p := NewStackbRulesProtoKnownImportProvider(tc.lang, tc.lang, importProvider, importRegistry)
+			p := NewStackbRulesProtoProvider(tc.lang, tc.lang, importProvider, importRegistry)
 			p.OnResolve()
 
 			got := p.CanProvide(tc.from, tc.indexFunc)

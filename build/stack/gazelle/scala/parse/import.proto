@@ -30,6 +30,8 @@ enum ImportType {
     // PLATFORM imports include stdlib'ish things like java.lang.String.  We
     // don't need a dep for them (and we don't know the underlying type).
     PLATFORM = 10;
+    // Scala type type
+    TYPE = 11;
 }
 
 // ImportKind describes the source of an import.

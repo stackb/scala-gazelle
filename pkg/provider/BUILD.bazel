@@ -1,10 +1,13 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
+# gazelle:exclude testdata
+
 go_library(
     name = "provider",
     srcs = [
-        "proto_known_import_provider.go",
-        "rules_jvm_external_known_import_provider.go",
+        "rules_jvm_external_provider.go",
+        "scala_source_provider.go",
+        "stackb_rules_proto_provider.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/provider",
     visibility = ["//visibility:public"],
@@ -12,6 +15,7 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "//pkg/maven",
         "//pkg/resolver",
+        "//pkg/scalaparse",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
@@ -21,13 +25,16 @@ go_library(
 
 go_test(
     name = "provider_test",
+    size = "small",
     srcs = [
         "maven_install_json_test.go",
         "mock_import_provider_test.go",
         "mock_known_import_registry_test.go",
-        "proto_known_import_provider_test.go",
-        "rules_jvm_external_known_import_provider_test.go",
+        "rules_jvm_external_provider_test.go",
+        "scala_source_provider_test.go",
+        "stackb_rules_proto_provider_test.go",
     ],
+    data = glob(["testdata/**/*"]),
     embed = [":provider"],
     deps = [
         "//build/stack/gazelle/scala/parse",

@@ -15,9 +15,9 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// RulesJvmExternalKnownImportProvider is a provider of known imports for the
-// stackb/rules_proto gazelle extension.
-type RulesJvmExternalKnownImportProvider struct {
+// RulesJvmExternalProvider is a provider of known imports for the
+// bazelbuild/rules_jvm_external gazelle extension.
+type RulesJvmExternalProvider struct {
 	// the cross resolve language name to match
 	lang string
 	// raw comma-separated flag string
@@ -26,21 +26,21 @@ type RulesJvmExternalKnownImportProvider struct {
 	resolvers []maven.Resolver
 }
 
-// NewRulesJvmExternalKnownImportProvider constructs a new provider having the
+// NewRulesJvmExternalProvider constructs a new provider having the
 // given resolving lang/impLang as well as the importRegistry instance.
-func NewRulesJvmExternalKnownImportProvider(lang string) *RulesJvmExternalKnownImportProvider {
-	return &RulesJvmExternalKnownImportProvider{
+func NewRulesJvmExternalProvider(lang string) *RulesJvmExternalProvider {
+	return &RulesJvmExternalProvider{
 		lang: lang,
 	}
 }
 
 // Name implements part of the resolver.KnownImportRegistry interface.
-func (p *RulesJvmExternalKnownImportProvider) Name() string {
+func (p *RulesJvmExternalProvider) Name() string {
 	return "github.com/bazelbuild/rules_jvm_external"
 }
 
 // RegisterFlags implements part of the resolver.KnownImportRegistry interface.
-func (p *RulesJvmExternalKnownImportProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (p *RulesJvmExternalProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&p.pinnedMavenInstallFlagValue,
 		"pinned_maven_install_json_files",
 		"",
@@ -49,7 +49,7 @@ func (p *RulesJvmExternalKnownImportProvider) RegisterFlags(fs *flag.FlagSet, cm
 }
 
 // CheckFlags implements part of the resolver.KnownImportRegistry interface.
-func (p *RulesJvmExternalKnownImportProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.KnownImportRegistry) error {
+func (p *RulesJvmExternalProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
 	if p.pinnedMavenInstallFlagValue == "" {
 		return fmt.Errorf("maven cross resolver was requested but the -pinned_maven_install_json_files flag was not set")
 	}
@@ -72,7 +72,7 @@ func (p *RulesJvmExternalKnownImportProvider) CheckFlags(fs *flag.FlagSet, c *co
 		}
 		resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
 			log.Printf(format, args...)
-		}, registry.PutKnownImport)
+		}, importRegistry.PutKnownImport)
 		if err != nil {
 			return fmt.Errorf("initializing maven resolver: %w", err)
 		}
@@ -83,7 +83,7 @@ func (p *RulesJvmExternalKnownImportProvider) CheckFlags(fs *flag.FlagSet, c *co
 }
 
 // CanProvide implements part of the resolver.KnownImportRegistry interface.
-func (p *RulesJvmExternalKnownImportProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *RulesJvmExternalProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
 	if len(p.resolvers) == 0 {
@@ -101,5 +101,5 @@ func (p *RulesJvmExternalKnownImportProvider) CanProvide(dep label.Label, knownR
 }
 
 // OnResolve implements part of the resolver.KnownImportRegistry interface.
-func (p *RulesJvmExternalKnownImportProvider) OnResolve() {
+func (p *RulesJvmExternalProvider) OnResolve() {
 }

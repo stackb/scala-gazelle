@@ -17,9 +17,9 @@ import (
 
 const scalaName = "scala"
 
-func ExampleRulesJvmExternalKnownImportProvider_RegisterFlags_printdefaults() {
+func ExampleRulesJvmExternalProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	cr := NewRulesJvmExternalKnownImportProvider(scalaName)
+	cr := NewRulesJvmExternalProvider(scalaName)
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
@@ -29,7 +29,7 @@ func ExampleRulesJvmExternalKnownImportProvider_RegisterFlags_printdefaults() {
 	//     	comma-separated list of maven_install pinned deps files
 }
 
-func TestRulesJvmExternalKnownImportProviderFlags(t *testing.T) {
+func TestRulesJvmExternalProviderFlags(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args  []string
 		files []testtools.FileSpec
@@ -90,7 +90,7 @@ func TestRulesJvmExternalKnownImportProviderFlags(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			p := NewRulesJvmExternalKnownImportProvider(scalaName)
+			p := NewRulesJvmExternalProvider(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -113,7 +113,7 @@ func TestRulesJvmExternalKnownImportProviderFlags(t *testing.T) {
 	}
 }
 
-func TestRulesJvmExternalKnownImportProviderCanProvide(t *testing.T) {
+func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		mavenInstallJsonContent string
 		lang                    string
@@ -154,7 +154,7 @@ func TestRulesJvmExternalKnownImportProviderCanProvide(t *testing.T) {
 			})
 			defer cleanup()
 
-			p := NewRulesJvmExternalKnownImportProvider(scalaName)
+			p := NewRulesJvmExternalProvider(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{WorkDir: tmpDir}
 			p.RegisterFlags(fs, "update", c)
