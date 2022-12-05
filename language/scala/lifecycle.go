@@ -19,8 +19,6 @@ func (sl *scalaLang) onResolve() {
 		provider.OnResolve()
 	}
 
-	sl.scalaCompiler.OnResolve()
-
 	if sl.cacheFileFlagValue != "" {
 		if err := sl.writeCacheFile(); err != nil {
 			log.Fatalf("failed to write cache: %v", err)
@@ -30,5 +28,4 @@ func (sl *scalaLang) onResolve() {
 
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
-	sl.scalaCompiler.stop()
 }

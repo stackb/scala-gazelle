@@ -8,6 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
 
+	"github.com/stackb/rules_proto/pkg/protoc"
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
@@ -15,31 +16,6 @@ import (
 )
 
 const scalaLangName = "scala"
-
-// NewLanguage is called by Gazelle to install this language extension in a
-// binary.
-func NewLanguage() language.Language {
-	packages := make(map[string]*scalaPackage)
-	scalaCompiler := newScalaCompiler()
-
-	lang := &scalaLang{
-		cache:          &scpb.Cache{},
-		knownImports:   resolver.NewKnownImportRegistryTrie(),
-		knownRules:     make(map[label.Label]*rule.Rule),
-		packages:       packages,
-		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		ruleRegistry:   globalRuleRegistry,
-		scalaCompiler:  scalaCompiler,
-		sourceProvider: provider.NewScalaSourceProvider(),
-	}
-
-	lang.AddKnownImportProvider(lang.sourceProvider)
-	// lang.AddKnownImportProvider(provider.NewJarProvider(sl))
-	lang.AddKnownImportProvider(&provider.RulesJvmExternalProvider{})
-	lang.AddKnownImportProvider(provider.NewStackbRulesProtoProvider(scalaLangName, scalaLangName, sl))
-
-	return lang
-}
 
 // scalaLang implements language.Language.
 type scalaLang struct {
@@ -56,9 +32,6 @@ type scalaLang struct {
 	ruleRegistry RuleRegistry
 	// sourceProvider is the source resolver implementation.
 	sourceProvider *provider.ScalaSourceProvider
-	// scalaCompiler is the compiler implementation.  This is passed to the
-	// importRegistry for use during import disambiguation.
-	scalaCompiler *scalaCompiler
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -98,4 +71,32 @@ func (*scalaLang) KnownDirectives() []string {
 		scalaExplainSrcs,
 		resolveKindRewriteName,
 	}
+}
+
+// NewLanguage is called by Gazelle to install this language extension in a
+// binary.
+func NewLanguage() language.Language {
+	packages := make(map[string]*scalaPackage)
+
+	lang := &scalaLang{
+		cache:          &scpb.Cache{},
+		knownImports:   resolver.NewKnownImportRegistryTrie(),
+		knownRules:     make(map[label.Label]*rule.Rule),
+		packages:       packages,
+		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		ruleRegistry:   globalRuleRegistry,
+		sourceProvider: provider.NewScalaSourceProvider(),
+	}
+
+	lang.AddKnownImportProvider(lang.sourceProvider)
+	// lang.AddKnownImportProvider(provider.NewJarProvider(sl))
+	lang.AddKnownImportProvider(&provider.RulesJvmExternalProvider{})
+	lang.AddKnownImportProvider(provider.NewStackbRulesProtoProvider(
+		scalaLangName,
+		scalaLangName,
+		protoc.GlobalResolver(),
+		lang.knownImports,
+	))
+
+	return lang
 }

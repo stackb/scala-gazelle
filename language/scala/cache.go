@@ -9,7 +9,7 @@ func (sl *scalaLang) readCacheFile() error {
 		return err
 	}
 	for _, rule := range sl.cache.Rules {
-		if err := sl.sourceProvider.AddRule(rule); err != nil {
+		if err := sl.sourceProvider.ProvideRule(rule); err != nil {
 			return err
 		}
 	}
@@ -18,6 +18,6 @@ func (sl *scalaLang) readCacheFile() error {
 
 func (sl *scalaLang) writeCacheFile() error {
 	sl.cache.PackageCount = int32(len(sl.packages))
-	sl.cache.Rules = sl.sourceProvider.Rules()
+	sl.cache.Rules = sl.sourceProvider.ProvidedRules()
 	return protobuf.WriteFile(sl.cacheFileFlagValue, sl.cache)
 }

@@ -28,8 +28,6 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	for _, provider := range sl.knownImportProviders {
 		provider.RegisterFlags(flags, cmd, c)
 	}
-
-	sl.scalaCompiler.RegisterFlags(flags, cmd, c)
 }
 
 // CheckFlags implements part of the language.Language interface
@@ -53,10 +51,6 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 
 	for _, provider := range sl.knownImportProviders {
 		provider.CheckFlags(flags, c, sl)
-	}
-
-	if err := sl.scalaCompiler.CheckFlags(flags, c); err != nil {
-		return err
 	}
 
 	return nil
