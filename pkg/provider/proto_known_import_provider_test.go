@@ -50,7 +50,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 				importProvider, importRegistry)
 			p.OnResolve()
 
-			if diff := cmp.Diff(tc.want, importRegistry.put); diff != "" {
+			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
 				t.Errorf(".OnResolve (-want +got):\n%s", diff)
 			}
 		})

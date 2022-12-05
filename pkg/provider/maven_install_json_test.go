@@ -1,0 +1,31 @@
+package provider
+
+const mavenInstallJsonExample = `{
+	"dependency_tree": {
+		"dependencies": [
+			{
+				"coord": "xml-apis:xml-apis:1.4.01",
+				"dependencies": [],
+				"directDependencies": [],
+				"exclusions": [
+					"log4j:log4j"
+				],
+				"file": "v1/https/repo.maven.apache.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar",
+				"mirror_urls": [
+					"https://repo.maven.apache.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar",
+					"https://omnistac.jfrog.io/artifactory/libs-release/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar"
+				],
+				"packages": [
+					"javax.xml",
+					"javax.xml.datatype",
+					"javax.xml.namespace",
+					"javax.xml.parsers",
+					"javax.xml.stream"
+				],
+				"sha256": "a840968176645684bb01aed376e067ab39614885f9eee44abe35a5f20ebe7fad",
+				"url": "https://repo.maven.apache.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar"
+			}
+		],
+		"version": "0.1.0"
+	}
+}`

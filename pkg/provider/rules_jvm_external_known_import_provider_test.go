@@ -1,0 +1,182 @@
+package provider
+
+import (
+	"flag"
+	"os"
+	"testing"
+
+	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/google/go-cmp/cmp"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/testutil"
+)
+
+const scalaName = "scala"
+
+func ExampleRulesJvmExternalKnownImportProvider_RegisterFlags_printdefaults() {
+	os.Stderr = os.Stdout
+	cr := NewRulesJvmExternalKnownImportProvider(scalaName)
+	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
+	c := &config.Config{}
+	cr.RegisterFlags(got, "update", c)
+	got.PrintDefaults()
+	// output:
+	//	-pinned_maven_install_json_files string
+	//     	comma-separated list of maven_install pinned deps files
+}
+
+func TestRulesJvmExternalKnownImportProviderFlags(t *testing.T) {
+	for name, tc := range map[string]struct {
+		args  []string
+		files []testtools.FileSpec
+		want  []*resolver.KnownImport
+	}{
+		"empty maven file": {
+			args: []string{
+				"-pinned_maven_install_json_files=./maven_install.json",
+			},
+			files: []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: "{}",
+				},
+			},
+			want: nil,
+		},
+		"example maven file": {
+			args: []string{
+				"-pinned_maven_install_json_files=./maven_install.json",
+			},
+			files: []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: mavenInstallJsonExample,
+				},
+			},
+			want: []*resolver.KnownImport{
+				{
+					Type:   sppb.ImportType_PACKAGE,
+					Import: "javax.xml",
+					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				},
+				{
+					Type:   sppb.ImportType_PACKAGE,
+					Import: "javax.xml.datatype",
+					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				},
+				{
+					Type:   sppb.ImportType_PACKAGE,
+					Import: "javax.xml.namespace",
+					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				},
+				{
+					Type:   sppb.ImportType_PACKAGE,
+					Import: "javax.xml.parsers",
+					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				},
+				{
+					Type:   sppb.ImportType_PACKAGE,
+					Import: "javax.xml.stream",
+					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				},
+			},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
+			defer cleanup()
+
+			p := NewRulesJvmExternalKnownImportProvider(scalaName)
+			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			c := &config.Config{
+				WorkDir: tmpDir,
+			}
+			p.RegisterFlags(fs, "update", c)
+			if err := fs.Parse(tc.args); err != nil {
+				t.Fatal(err)
+			}
+
+			importRegistry := &mockKnownImportRegistry{}
+
+			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+				t.Fatal(err)
+			}
+
+			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
+				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestRulesJvmExternalKnownImportProviderCanProvide(t *testing.T) {
+	for name, tc := range map[string]struct {
+		mavenInstallJsonContent string
+		lang                    string
+		from                    label.Label
+		want                    bool
+	}{
+		"degenerate case": {
+			mavenInstallJsonContent: mavenInstallJsonExample,
+			lang:                    scalaName,
+			from:                    label.NoLabel,
+			want:                    false,
+		},
+		"managed xml_apis_xml_apis": {
+			mavenInstallJsonContent: mavenInstallJsonExample,
+			lang:                    scalaName,
+			from:                    label.New("maven", "", "xml_apis_xml_apis"),
+			want:                    true,
+		},
+		"managed generic maven dependency": {
+			mavenInstallJsonContent: mavenInstallJsonExample,
+			lang:                    scalaName,
+			from:                    label.New("maven", "", "com_guava_guava"),
+			want:                    true,
+		},
+		"unmanaged non-maven dependency": {
+			mavenInstallJsonContent: mavenInstallJsonExample,
+			lang:                    scalaName,
+			from:                    label.New("artifactory", "", "xml_apis_xml_apis"),
+			want:                    false,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: tc.mavenInstallJsonContent,
+				},
+			})
+			defer cleanup()
+
+			p := NewRulesJvmExternalKnownImportProvider(scalaName)
+			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			c := &config.Config{WorkDir: tmpDir}
+			p.RegisterFlags(fs, "update", c)
+			if err := fs.Parse([]string{
+				"-pinned_maven_install_json_files=./maven_install.json",
+			}); err != nil {
+				t.Fatal(err)
+			}
+
+			importRegistry := &mockKnownImportRegistry{}
+
+			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+				t.Fatal(err)
+			}
+
+			got := p.CanProvide(tc.from, func(from label.Label) (*rule.Rule, bool) {
+				return nil, false
+			})
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf(".CanProvide (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
