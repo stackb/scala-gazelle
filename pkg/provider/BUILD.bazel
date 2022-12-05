@@ -1,0 +1,36 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "provider",
+    srcs = [
+        "proto_known_import_provider.go",
+        "rules_jvm_external_known_import_provider.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/provider",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/maven",
+        "//pkg/resolver",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@build_stack_rules_proto//pkg/protoc",
+    ],
+)
+
+go_test(
+    name = "provider_test",
+    srcs = [
+        "mock_import_provider_test.go",
+        "mock_known_import_registry_test.go",
+        "proto_known_import_provider_test.go",
+    ],
+    embed = [":provider"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/resolver",
+        "@bazel_gazelle//label:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+    ],
+)
