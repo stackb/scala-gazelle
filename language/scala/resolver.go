@@ -1,7 +1,6 @@
 package scala
 
 import (
-	"log"
 	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -88,37 +87,35 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 		from.Repo = sc.config.RepoName
 	}
 
-	log.Println("addResolvedDeps from:", from)
-
 	for _, imp := range imports {
 		if imp.Known == nil || imp.Error != nil {
 			continue
 		}
 		dep := imp.Known.Label
 		if seen[dep] {
-			log.Println("addResolvedDeps seen!", dep)
+			// log.Println("addResolvedDeps seen!", dep)
 			continue
 		}
 		if dep == label.NoLabel {
-			log.Println("addResolvedDeps dep==label.NoLabel!", dep)
+			// log.Println("addResolvedDeps dep==label.NoLabel!", dep)
 			continue
 		}
 		if dep == from {
-			log.Println("addResolvedDeps dep==from!", dep)
+			// log.Println("addResolvedDeps dep==from!", dep)
 			continue
 		}
 		if from.Equal(dep) {
-			log.Println("addResolvedDeps from.Equal!", dep)
+			// log.Println("addResolvedDeps from.Equal!", dep)
 			continue
 		}
 		if isSameImport(sc, kind, from, dep) {
-			log.Println("addResolvedDeps isSameImport!", dep, from)
+			// log.Println("addResolvedDeps isSameImport!", dep, from)
 			continue
 		}
 
 		seen[dep] = true
 		kept[dep.Rel(from.Repo, from.Pkg).String()] = imports
-		log.Println("addResolvedDeps kept:", dep)
+		// log.Println("addResolvedDeps kept:", dep)
 	}
 
 	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.shouldAnnotateResolvedDeps(), from)...)

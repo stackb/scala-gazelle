@@ -1,8 +1,6 @@
 package resolver
 
 import (
-	"log"
-
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
@@ -29,7 +27,7 @@ func (r *MemoResolver) ResolveKnownImport(c *config.Config, ix *resolve.RuleInde
 	}
 	known, err := r.next.ResolveKnownImport(c, ix, from, lang, imp)
 	if known != nil && err == nil {
-		log.Printf("memo.ResolveKnownImport(%q) -> %s", imp, known)
+		// log.Printf("memo.ResolveKnownImport(%q) -> %s", imp, known)
 		r.known[imp] = known
 	}
 	return known, err

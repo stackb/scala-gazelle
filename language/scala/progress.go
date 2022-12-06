@@ -7,6 +7,14 @@ import (
 
 const packageMarkerRuleKind = "_package_marker"
 
+func writeParseProgress(output mobyprogress.Output, message string) {
+	output.WriteProgress(mobyprogress.Progress{
+		ID:      "parse",
+		Action:  "parse",
+		Message: message,
+	})
+}
+
 func writeGenerateProgress(output mobyprogress.Output, current, total int) {
 	output.WriteProgress(mobyprogress.Progress{
 		ID:      "walk",

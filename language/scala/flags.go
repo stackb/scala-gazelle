@@ -36,16 +36,6 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	// initialize the resolver implementation
 	sl.knownImportResolver = NewKnownImportResolver(sl)
 
-	if sl.cacheFileFlagValue != "" {
-		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
-		if err := sl.readCacheFile(); err != nil {
-			// don't report error if the file does not exist yet
-			if !errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("reading cache file: %w", err)
-			}
-		}
-	}
-
 	if err := parseScalaExistingRules(sl.scalaExistingRulesFlagValue); err != nil {
 		return err
 	}
@@ -54,6 +44,16 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		sl.knownImportProviders, sl.importProviderNamesFlagValue)
 	for _, provider := range sl.knownImportProviders {
 		provider.CheckFlags(flags, c, sl)
+	}
+
+	if sl.cacheFileFlagValue != "" {
+		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
+		if err := sl.readCacheFile(); err != nil {
+			// don't report error if the file does not exist yet
+			if !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("reading cache file: %w", err)
+			}
+		}
 	}
 
 	return nil

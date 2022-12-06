@@ -56,9 +56,10 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 			r.data.Add(pkg, labelString)
 			// log.Printf("maven: %v -> %v", pkg, l.String())
 			putKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_PACKAGE,
-				Import: pkg,
-				Label:  l,
+				Provider: mavenWorkspaceName,
+				Type:     sppb.ImportType_PACKAGE,
+				Import:   pkg,
+				Label:    l,
 			})
 		}
 	}

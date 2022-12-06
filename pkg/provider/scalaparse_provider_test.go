@@ -46,7 +46,7 @@ func TestScalaSourceProvider(t *testing.T) {
 			}
 			testutil.ListFiles(t, dir)
 
-			p := NewScalaSourceProvider()
+			p := NewScalaparseProvider()
 
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{

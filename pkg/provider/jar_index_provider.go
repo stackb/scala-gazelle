@@ -38,7 +38,7 @@ func NewJarIndexProvider() *JarIndexProvider {
 
 // Name implements part of the resolver.KnownImportProvider interface.
 func (p *JarIndexProvider) Name() string {
-	return "jar_index"
+	return "jarindex"
 }
 
 // RegisterFlags implements part of the resolver.KnownImportProvider interface.
@@ -128,19 +128,11 @@ func (p *JarIndexProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[l
 	}
 
 	for _, pkg := range jarFile.PackageName {
-		p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-			Type:   sppb.ImportType_PACKAGE,
-			Import: pkg,
-			Label:  from,
-		})
+		p.putKnownImport(sppb.ImportType_PACKAGE, pkg, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {
-		p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-			Type:   sppb.ImportType_CLASS,
-			Import: classFile.Name,
-			Label:  from,
-		})
+		p.putKnownImport(sppb.ImportType_CLASS, classFile.Name, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {
@@ -155,9 +147,14 @@ func (p *JarIndexProvider) readClassFile(classFile *jipb.ClassFile, from label.L
 	if classFile.IsInterface {
 		impType = sppb.ImportType_INTERFACE
 	}
+	p.putKnownImport(impType, classFile.Name, from)
+}
+
+func (p *JarIndexProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
 	p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-		Type:   impType,
-		Import: classFile.Name,
-		Label:  from,
+		Provider: p.Name(),
+		Type:     impType,
+		Import:   imp,
+		Label:    from,
 	})
 }

@@ -1,20 +1,15 @@
 package scala
 
 import (
-	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
@@ -232,48 +227,6 @@ func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve 
 		rules = append(rules, r)
 	}
 	return rules
-}
-
-// collectSourceFilesFromExpr returns a list of source files for the srcs
-// attribute.  Each value is a repo-relative path.
-func collectSourceFilesFromExpr(pkg ScalaPackage, expr build.Expr) (srcs []string, err error) {
-	switch t := expr.(type) {
-	case *build.ListExpr:
-		// example: ["foo.scala", "bar.scala"]
-		for _, item := range t.List {
-			switch elem := item.(type) {
-			case *build.StringExpr:
-				srcs = append(srcs, elem.Value)
-			}
-		}
-	case *build.CallExpr:
-		// example: glob(["**/*.scala"])
-		if ident, ok := t.X.(*build.Ident); ok {
-			switch ident.Name {
-			case "glob":
-				g := glob.Parse(pkg.File(), t)
-				dir := filepath.Join(pkg.Dir(), pkg.Rel())
-				srcs = append(srcs, glob.Apply(g, os.DirFS(dir))...)
-			default:
-				err = fmt.Errorf("not attempting to resolve function call %v(): consider making this simpler", ident.Name)
-			}
-		} else {
-			err = fmt.Errorf("not attempting to resolve call expression %+v: consider making this simpler", t)
-		}
-	case *build.Ident:
-		// example: srcs = LIST_OF_SOURCES
-		srcs, err = globalStringList(pkg.File(), t)
-		if err != nil {
-			err = fmt.Errorf("faile to resolve resolve identifier %q (consider inlining it): %w", t.Name, err)
-		}
-	case nil:
-		// TODO(pcj): should this be considered an error, or normal condition?
-		// err = fmt.Errorf("rule has no 'srcs' attribute")
-	default:
-		err = fmt.Errorf("uninterpretable 'srcs' attribute type: %T", t)
-	}
-
-	return
 }
 
 func parseScalaFiles(dir string, from label.Label, kind string, srcs []string, parser scalaparse.Parser) ([]*sppb.File, error) {

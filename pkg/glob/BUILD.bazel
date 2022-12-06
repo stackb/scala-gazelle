@@ -2,7 +2,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "glob",
-    srcs = ["glob.go"],
+    srcs = [
+        "collect.go",
+        "glob.go",
+    ],
     importpath = "github.com/stackb/scala-gazelle/pkg/glob",
     visibility = ["//visibility:public"],
     deps = [

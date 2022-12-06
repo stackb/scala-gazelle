@@ -52,47 +52,27 @@ func (p *StackbRulesProtoProvider) CheckFlags(fs *flag.FlagSet, c *config.Config
 func (p *StackbRulesProtoProvider) OnResolve() {
 	for from, symbols := range p.importProvider.Provided(p.lang, "package") {
 		for _, symbol := range symbols {
-			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_PACKAGE,
-				Import: symbol,
-				Label:  from,
-			})
+			p.putKnownImport(sppb.ImportType_PACKAGE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider.Provided(p.lang, "enum") {
 		for _, symbol := range symbols {
-			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_OBJECT,
-				Import: symbol,
-				Label:  from,
-			})
+			p.putKnownImport(sppb.ImportType_OBJECT, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider.Provided(p.lang, "message") {
 		for _, symbol := range symbols {
-			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_CLASS,
-				Import: symbol,
-				Label:  from,
-			})
+			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider.Provided(p.lang, "service") {
 		for _, symbol := range symbols {
-			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_CLASS,
-				Import: symbol,
-				Label:  from,
-			})
+			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider.Provided(p.lang, p.impLang) {
 		for _, symbol := range symbols {
-			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-				Type:   sppb.ImportType_CLASS,
-				Import: symbol,
-				Label:  from,
-			})
+			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
 }
@@ -101,4 +81,13 @@ func (p *StackbRulesProtoProvider) OnResolve() {
 func (p *StackbRulesProtoProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	return strings.HasSuffix(dep.Name, "proto_scala_library") ||
 		strings.HasSuffix(dep.Name, "grpc_scala_library")
+}
+
+func (p *StackbRulesProtoProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
+	p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+		Provider: p.Name(),
+		Type:     impType,
+		Import:   imp,
+		Label:    from,
+	})
 }

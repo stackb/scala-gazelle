@@ -31,7 +31,7 @@ type scalaLang struct {
 	// configured via gazelle directives by the user.
 	ruleRegistry RuleRegistry
 	// sourceProvider is the source resolver implementation.
-	sourceProvider *provider.ScalaSourceProvider
+	sourceProvider *provider.ScalaparseProvider
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -78,14 +78,17 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 
 	lang := &scalaLang{
-		cache:          &scpb.Cache{},
-		knownImports:   resolver.NewKnownImportRegistryTrie(),
-		knownRules:     make(map[label.Label]*rule.Rule),
-		packages:       packages,
-		progress:       mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		ruleRegistry:   globalRuleRegistry,
-		sourceProvider: provider.NewScalaSourceProvider(),
+		cache:        &scpb.Cache{},
+		knownImports: resolver.NewKnownImportRegistryTrie(),
+		knownRules:   make(map[label.Label]*rule.Rule),
+		packages:     packages,
+		progress:     mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		ruleRegistry: globalRuleRegistry,
 	}
+
+	lang.sourceProvider = provider.NewScalaparseProvider(func(msg string) {
+		writeParseProgress(lang.progress, msg)
+	})
 
 	lang.AddKnownImportProvider(lang.sourceProvider)
 	lang.AddKnownImportProvider(provider.NewJarIndexProvider())

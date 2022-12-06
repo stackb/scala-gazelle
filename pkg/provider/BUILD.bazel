@@ -7,7 +7,7 @@ go_library(
     srcs = [
         "jar_index_provider.go",
         "rules_jvm_external_provider.go",
-        "scala_source_provider.go",
+        "scalaparse_provider.go",
         "stackb_rules_proto_provider.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/provider",
@@ -35,7 +35,7 @@ go_test(
         "mock_import_provider_test.go",
         "mock_known_import_registry_test.go",
         "rules_jvm_external_provider_test.go",
-        "scala_source_provider_test.go",
+        "scalaparse_provider_test.go",
         "stackb_rules_proto_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),

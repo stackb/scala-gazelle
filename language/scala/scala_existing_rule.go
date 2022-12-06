@@ -1,7 +1,10 @@
 package scala
 
 import (
+	"fmt"
 	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -11,6 +14,7 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -63,7 +67,7 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 // ResolveRule implement the RuleResolver interface.  It will attempt to parse
 // imports and resolve deps.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
-	filenames, err := collectSourceFilesFromExpr(pkg, r.Attr("srcs"))
+	filenames, err := glob.CollectFilenames(pkg.File(), pkg.Dir(), pkg.Rel(), r.Attr("srcs"))
 	if err != nil {
 		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
 		return nil
@@ -165,7 +169,6 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 				imp.Error = err
 			} else {
 				imp.Known = known
-				log.Printf("%s: resolved %q to %s", from, imp.Imp, known)
 			}
 		}
 
@@ -182,19 +185,56 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		case *build.CallExpr:
 			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
+		case *build.BinaryExpr:
+			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		}
 	}
 }
 
 func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantImports, wantUnresolved bool) {
 	comments.Before = nil
-	imports.Annotate(comments, func(i *resolver.Import) bool {
-		if wantImports {
-			return true
+	for _, key := range imports.Keys() {
+		imp := imports[key]
+		if !(wantImports || (wantUnresolved && imp.Known == nil)) {
+			continue
 		}
-		if wantUnresolved || i.Error != nil {
-			return true
+		var impType string
+		if imp.Known != nil {
+			impType = fmt.Sprintf("%v", imp.Known.Type)
+		} else if imp.Error != nil {
+			impType = "ERROR"
 		}
-		return false
-	})
+		parts := []string{
+			fmt.Sprintf("# %s<%s>", key, impType),
+		}
+
+		if imp.Known != nil {
+			to := imp.Known.Label.String()
+			if to == "//:" {
+				to = "NO-LABEL"
+			}
+			parts = append(parts, fmt.Sprintf("✅ %s<%s>", to, imp.Known.Provider))
+		} else if imp.Error != nil {
+			parts = append(parts, fmt.Sprintf("❌ %v", imp.Error))
+		}
+
+		parts = append(parts, fmt.Sprintf("(%v", imp.Kind))
+		if imp.Source != nil {
+			parts = append(parts, fmt.Sprintf("of %s)", filepath.Base(imp.Source.Filename)))
+		} else if imp.Src != "" {
+			parts = append(parts, fmt.Sprintf("of %s)", imp.Src))
+		}
+
+		comments.Before = append(comments.Before, build.Comment{Token: strings.Join(parts, " ")})
+	}
+
+	// imports.Annotate(comments, func(i *resolver.Import) bool {
+	// 	if wantImports {
+	// 		return true
+	// 	}
+	// 	if wantUnresolved || i.Error != nil {
+	// 		return true
+	// 	}
+	// 	return false
+	// })
 }
