@@ -42,47 +42,46 @@ func TestJarIndexProviderFlags(t *testing.T) {
 			},
 			want: nil,
 		},
-		// "example maven file": {
-		// 	args: []string{
-		// 		"-jarindex_file=./jarindex.json",
-		// 	},
-		// 	files: []testtools.FileSpec{
-		// 		{
-		// 			Path:    "jarindex.json",
-		// 			Content: mavenInstallJsonExample,
-		// 		},
-		// 	},
-		// 	want: []*resolver.KnownImport{
-		// 		{
-		// 			Type:   sppb.ImportType_PACKAGE,
-		// 			Import: "javax.xml",
-		// 			Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
-		// 		},
-		// 		{
-		// 			Type:   sppb.ImportType_PACKAGE,
-		// 			Import: "javax.xml.datatype",
-		// 			Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
-		// 		},
-		// 		{
-		// 			Type:   sppb.ImportType_PACKAGE,
-		// 			Import: "javax.xml.namespace",
-		// 			Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
-		// 		},
-		// 		{
-		// 			Type:   sppb.ImportType_PACKAGE,
-		// 			Import: "javax.xml.parsers",
-		// 			Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
-		// 		},
-		// 		{
-		// 			Type:   sppb.ImportType_PACKAGE,
-		// 			Import: "javax.xml.stream",
-		// 			Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
-		// 		},
-		// 	},
-		// },
+		"example jarindex file": {
+			args: []string{
+				"-jarindex_file=./testdata/jarindex.json",
+			},
+			files: []testtools.FileSpec{
+				{
+					Path: "testdata/jarindex.json",
+				},
+			},
+			want: []*resolver.KnownImport{
+				// {
+				// 	Type:   sppb.ImportType_PACKAGE,
+				// 	Import: "javax.xml",
+				// 	Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				// },
+				// {
+				// 	Type:   sppb.ImportType_PACKAGE,
+				// 	Import: "javax.xml.datatype",
+				// 	Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				// },
+				// {
+				// 	Type:   sppb.ImportType_PACKAGE,
+				// 	Import: "javax.xml.namespace",
+				// 	Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				// },
+				// {
+				// 	Type:   sppb.ImportType_PACKAGE,
+				// 	Import: "javax.xml.parsers",
+				// 	Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				// },
+				// {
+				// 	Type:   sppb.ImportType_PACKAGE,
+				// 	Import: "javax.xml.stream",
+				// 	Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+				// },
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
+			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
 			p := NewJarIndexProvider()

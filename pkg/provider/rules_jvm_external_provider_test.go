@@ -86,16 +86,7 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			cwd, err := os.Getwd()
-			if err != nil {
-				t.Fatal(err)
-			}
-			for i := range tc.files {
-				if tc.files[i].Content == "" {
-					tc.files[i].Content = testutil.MustReadTestFile(t, cwd, tc.files[i].Path)
-				}
-			}
-			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
+			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
 			p := NewRulesJvmExternalProvider(scalaName)
@@ -149,19 +140,9 @@ func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			cwd, err := os.Getwd()
-			if err != nil {
-				t.Fatal(err)
-			}
-			files := []testtools.FileSpec{
+			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, []testtools.FileSpec{
 				{Path: "testdata/maven_install.json"},
-			}
-			for i := range files {
-				if files[i].Content == "" {
-					files[i].Content = testutil.MustReadTestFile(t, cwd, files[i].Path)
-				}
-			}
-			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, files)
+			})
 			defer cleanup()
 
 			p := NewRulesJvmExternalProvider(scalaName)

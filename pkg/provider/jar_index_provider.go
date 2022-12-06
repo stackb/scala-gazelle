@@ -135,13 +135,29 @@ func (p *JarIndexProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[l
 		})
 	}
 
-	for _, class := range jarFile.ClassName {
+	for _, classFile := range jarFile.ClassFile {
 		p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
 			Type:   sppb.ImportType_CLASS,
-			Import: class,
+			Import: classFile.Name,
 			Label:  from,
 		})
 	}
 
+	for _, classFile := range jarFile.ClassFile {
+		p.readClassFile(classFile, from)
+	}
+
 	return nil
+}
+
+func (p *JarIndexProvider) readClassFile(classFile *jipb.ClassFile, from label.Label) {
+	impType := sppb.ImportType_CLASS
+	if classFile.IsInterface {
+		impType = sppb.ImportType_INTERFACE
+	}
+	p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
+		Type:   impType,
+		Import: classFile.Name,
+		Label:  from,
+	})
 }

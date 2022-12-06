@@ -61,7 +61,7 @@ def build_mergeindex(ctx, output_file, jarindex_files):
     args = ctx.actions.args()
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
-    args.add_joined("--predefined", [str(Label(lbl)) for lbl in ctx.attr.predefined], uniquify = True, join_with = ",")
+    args.add_joined("--predefined", [target.label for target in ctx.attr.platform_jars], uniquify = True, join_with = ",")
     args.add_joined("--preferred", [str(Label(lbl)) for lbl in ctx.attr.preferred], uniquify = True, join_with = ",")
     args.add_all(jarindex_files)
 
@@ -141,9 +141,6 @@ jar_class_index = rule(
         "platform_jars": attr.label_list(
             doc = "list of jar files to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
-        ),
-        "predefined": attr.string_list(
-            doc = "list of labels that do not need to be included in deps",
         ),
         "preferred": attr.string_list(
             doc = """A list of labels that should be chosen in the case of a resolve ambiguity.

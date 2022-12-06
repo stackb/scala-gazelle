@@ -111,8 +111,12 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 		}
 	}
 
-	predefined := strings.Split(predefinedLabels, ",")
-	preferred := strings.Split(preferredLabels, ",")
+	var predefined []string
+	if predefinedLabels != "" {
+		predefined = strings.Split(predefinedLabels, ",")
+	}
+
+	log.Println("predefined:", predefined)
 
 	index, err := jarindex.MergeJarFiles(func(format string, args ...interface{}) {
 		log.Printf("warning: "+format, args...)
@@ -121,7 +125,7 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 		return nil, err
 	}
 
-	index.Preferred = preferred
+	index.Predefined = predefined
 
 	return index, nil
 }

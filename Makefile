@@ -1,4 +1,10 @@
 
+.PHONY: jarindex_protos
+jarindex_protos:
+	bazel run //build/stack/gazelle/scala/jarindex:jarindex_go_compiled_sources.update
+	mv build/stack/gazelle/scala/jarindex/build/stack/gazelle/scala/jarindex/*.go build/stack/gazelle/scala/jarindex/
+	rm -rf build/stack/gazelle/scala/jarindex/build
+
 .PHONY: scalaparse_protos
 scalaparse_protos:
 	bazel run //build/stack/gazelle/scala/parse:parse_go_compiled_sources.update
@@ -12,7 +18,7 @@ scalacache_protos:
 	rm -rf build/stack/gazelle/scala/cache/build
 
 .PHONY: protos
-protos: scalaparse_protos scalacache_protos
+protos: jarindex_protos scalaparse_protos scalacache_protos
 	echo "Done."
 
 .PHONY: tidy

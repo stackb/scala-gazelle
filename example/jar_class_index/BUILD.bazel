@@ -4,11 +4,11 @@ load("@build_stack_scala_gazelle//rules:jar_class_index.bzl", "jar_class_index")
 # Use "jq '.providers' < bazel-bin/jar_class_index.jarindex.json" to show only the providers mappings.
 # Use "CLASS='com.foo.Bar' jq ".providers[] | select(.class==\"$CLASS\") | ." < bazel-bin/jar_class_index.jarindex.json" for a single class
 jar_class_index(
-    name = "jar_class_index",
+    name = "example",
     jars = [
         "@maven//:com_google_code_gson_gson",
     ],
-    out_json = "jar_class_index.proto.bin",
-    out_proto = "jar_class_index.proto.json",
+    out_json = "example.pb",
+    out_proto = "example.json",
     platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
 )

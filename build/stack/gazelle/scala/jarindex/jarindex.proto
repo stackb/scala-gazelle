@@ -11,7 +11,6 @@ option java_outer_classname = "JarIndexSpec";
 message JarIndex {
     // jar_file is a list of jars in the index
     repeated JarFile jar_file = 2 [json_name = "jarFiles"];
-    // predefined is a user 
     repeated string predefined = 3;
     repeated string preferred = 4;
     // providers is a summary set of the classes in the index and the labels
@@ -61,6 +60,8 @@ message ClassFile {
     repeated ClassField fields = 6;
     // methods is a list of methods in this class.
     repeated ClassMethod methods = 7;
+    // interface
+    bool is_interface = 8;
 }
 
 // ClassField is a set of metadata about a field in jvm class.

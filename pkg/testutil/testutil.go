@@ -10,6 +10,19 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
+func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := range files {
+		if files[i].Content == "" {
+			files[i].Content = MustReadTestFile(t, cwd, files[i].Path)
+		}
+	}
+	return MustPrepareTestFiles(t, files)
+}
+
 func MustPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
 	tmpDir, err := bazel.NewTmpDir("")
 	if err != nil {
