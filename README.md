@@ -57,14 +57,14 @@ gazelle_binary(
 gazelle(
     name = "gazelle",
     args = [
-        "-pinned_maven_install_json_files=$(location maven_install.json)",
+        "-maven_install_json_file=$(location maven_install.json)",
     ],
     data = ["//:maven_install.json"],
     gazelle = ":gazelle-scala",
 )
 ```
 
-> NOTE: -pinned_maven_install_json_files can be a comma-separated list of 
+> NOTE: -maven_install_json_file can be a comma-separated list of 
 > @{EXTERNAL_MAVEN_WORKSPACE_NAME}_install.json files.
 
 # Configuration

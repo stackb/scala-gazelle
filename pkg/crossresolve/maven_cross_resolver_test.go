@@ -22,7 +22,7 @@ func ExampleMavenCrossResolver_RegisterFlags_printdefaults() {
 	cr.RegisterFlags(got, cmdGenerate, c)
 	got.PrintDefaults()
 	// output:
-	//	-pinned_maven_install_json_files string
+	//	-maven_install_json_file string
 	//     	comma-separated list of maven_install pinned deps files
 }
 
@@ -35,7 +35,7 @@ func TestMavenCrossResolverFlags(t *testing.T) {
 	}{
 		"typical usage": {
 			args: []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 			},
 			files: []testtools.FileSpec{
 				{
@@ -119,7 +119,7 @@ func TestMavenCrossResolverCrossResolve(t *testing.T) {
 			defer cleanup()
 
 			args := []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 			}
 
 			cr := NewMavenResolver(tc.lang)
@@ -185,7 +185,7 @@ func TestMavenCrossResolverIsLabelOwner(t *testing.T) {
 			defer cleanup()
 
 			args := []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 			}
 
 			cr := NewMavenResolver(tc.lang)

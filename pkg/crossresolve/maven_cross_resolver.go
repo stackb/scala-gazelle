@@ -44,12 +44,12 @@ func (cr *MavenCrossResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *con
 // CheckFlags implements part of the ConfigurableCrossResolver interface.
 func (cr *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	if cr.pinnedMavenInstallFlagValue == "" {
-		return fmt.Errorf("maven cross resolver was requested but the -pinned_maven_install_json_files flag was not set")
+		return fmt.Errorf("maven cross resolver was requested but the -maven_install_json_file flag was not set")
 	}
 
 	filenames := strings.Split(cr.pinnedMavenInstallFlagValue, ",")
 	if len(filenames) == 0 {
-		return fmt.Errorf("maven cross resolver was requested but the -pinned_maven_install_json_files flag did not specify any maven_install.json files")
+		return fmt.Errorf("maven cross resolver was requested but the -maven_install_json_file flag did not specify any maven_install.json files")
 	}
 
 	cr.resolvers = make([]maven.Resolver, len(filenames))
@@ -57,7 +57,7 @@ func (cr *MavenCrossResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) err
 	for i, filename := range filenames {
 		basename := filepath.Base(filename)
 		if !strings.HasSuffix(basename, "_install.json") {
-			return fmt.Errorf("maven cross resolver: -pinned_maven_install_json_files base name must match the pattern {name}_install.json (got %s)", basename)
+			return fmt.Errorf("maven cross resolver: -maven_install_json_file base name must match the pattern {name}_install.json (got %s)", basename)
 		}
 		name := basename[:len(basename)-len("_install.json")]
 		if !filepath.IsAbs(filename) {

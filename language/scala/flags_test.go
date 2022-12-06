@@ -41,7 +41,7 @@ func TestFlags(t *testing.T) {
 				},
 			},
 			args: []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 				"-scala_gazelle_cache_file=${TEST_TMPDIR}/cache.json",
 			},
 			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
