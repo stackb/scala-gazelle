@@ -59,7 +59,51 @@ class Foo extends HashMap {
 				},
 			},
 		},
+		"nested import": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Example.scala",
+					Content: `
+package example
+
+import com.typesafe.scalalogging.LazyLogging
+import corp.common.core.vm.utils.ArgProcessor
+
+object Main extends LazyLogging {
+	def main(args: Array[String]): Unit = {
+	import corp.common.core.reports.DotFormatReport
+	ArgProcessor.process(args)
+	logger.info(DotFormatReport(new BlendTestService).dotForm())
+	}
+}
+					
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Example.scala",
+						Packages: []string{"example"},
+						Objects:  []string{"example.Main"},
+						Imports: []string{
+							"com.typesafe.scalalogging.LazyLogging",
+							"corp.common.core.reports.DotFormatReport",
+							"corp.common.core.vm.utils.ArgProcessor",
+						},
+						Extends: map[string]*sppb.ClassList{
+							"object a.Main": {
+								Classes: []string{"com.typesafe.scalalogging.LazyLogging"},
+							},
+						},
+					},
+				},
+			},
+		},
 	} {
+		if name != "nested import" {
+			continue
+		}
 		t.Run(name, func(t *testing.T) {
 			tmpDir, err := bazel.NewTmpDir("")
 			if err != nil {
@@ -94,7 +138,7 @@ class Foo extends HashMap {
 				sppb.ParseResponse{},
 				sppb.File{},
 				sppb.ClassList{},
-			)); diff != "" {
+			), cmpopts.IgnoreFields(sppb.File{}, "Names")); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
 		})
