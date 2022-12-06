@@ -73,9 +73,10 @@ func (imp *Import) String() string {
 		if imp.Known.Import != imp.Imp {
 			s += "<" + imp.Known.Import + ">"
 		}
+		s += " to " + imp.Known.Label.String()
 	}
 	if imp.Error != nil {
-		s += fmt.Sprintf(": %v", imp.Error)
+		s += fmt.Sprintf(": error %v", imp.Error)
 	}
 
 	return s

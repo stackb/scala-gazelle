@@ -161,7 +161,7 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {
-			if known, err := sc.resolver.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
+			if known, err := sc.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
 				imp.Known = known

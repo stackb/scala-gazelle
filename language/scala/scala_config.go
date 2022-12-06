@@ -137,6 +137,11 @@ func (c *scalaConfig) getKnownRule(from label.Label) (*rule.Rule, bool) {
 	return c.resolver.GetKnownRule(from)
 }
 
+// ResolveKnownImport implements the resolver.ImportResolver interface.
+func (sc *scalaConfig) ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.KnownImport, error) {
+	return sc.resolver.ResolveKnownImport(c, ix, from, lang, imp)
+}
+
 // parseDirectives is called in each directory visited by gazelle.  The relative
 // directory name is given by 'rel' and the list of directives in the BUILD file
 // are specified by 'directives'.

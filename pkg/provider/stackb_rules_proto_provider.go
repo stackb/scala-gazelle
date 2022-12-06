@@ -2,7 +2,6 @@ package provider
 
 import (
 	"flag"
-	"log"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -51,7 +50,6 @@ func (p *StackbRulesProtoProvider) CheckFlags(fs *flag.FlagSet, c *config.Config
 
 // OnResolve implements part of the resolver.KnownImportProvider interface.
 func (p *StackbRulesProtoProvider) OnResolve() {
-	log.Println("StackbRulesProtoProvider.OnResolve!")
 	for from, symbols := range p.importProvider.Provided(p.lang, "package") {
 		for _, symbol := range symbols {
 			p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{

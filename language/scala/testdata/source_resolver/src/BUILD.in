@@ -1,7 +1,12 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library")
 
 scala_binary(
     name = "app",
     main_class= "a.b.c.Main",
     srcs = ["a/b/c/Main.scala"],
+)
+
+scala_library(
+    name = "lib",
+    srcs = ["a/b/c/Lib.scala"],
 )

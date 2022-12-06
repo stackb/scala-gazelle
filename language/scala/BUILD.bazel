@@ -91,10 +91,10 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
-        "flags_test.go",
+        # "flags_test.go",
         "golden_test.go",
-        "language_test.go",
-        "loads_test.go",
+        # "language_test.go",
+        # "loads_test.go",
         # "resolver_test.go",
         # "rule_index_test.go",
         # "scala_compiler_test.go",

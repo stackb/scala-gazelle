@@ -88,13 +88,13 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 		from.Repo = sc.config.RepoName
 	}
 
+	log.Println("addResolvedDeps from:", from)
+
 	for _, imp := range imports {
 		if imp.Known == nil || imp.Error != nil {
 			continue
 		}
-		// relativize the dependency label.  For self-imports, this transforms into the empty label.
-		dep := imp.Known.Label.Rel(from.Repo, from.Pkg)
-		log.Println("addResolvedDeps dep:", dep)
+		dep := imp.Known.Label
 		if seen[dep] {
 			log.Println("addResolvedDeps seen!", dep)
 			continue
@@ -116,26 +116,25 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 			continue
 		}
 
-		kept[dep.String()] = imports
-		log.Println("addResolvedDeps kept:", dep)
 		seen[dep] = true
+		kept[dep.Rel(from.Repo, from.Pkg).String()] = imports
+		log.Println("addResolvedDeps kept:", dep)
 	}
 
-	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.shouldAnnotateResolvedDeps())...)
+	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.shouldAnnotateResolvedDeps(), from)...)
 }
 
-func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool) (exprs []build.Expr) {
-	keys := make([]string, 0, len(deps))
+func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool, from label.Label) (exprs []build.Expr) {
+	labels := make([]string, 0, len(deps))
 	for key := range deps {
-		keys = append(keys, key)
+		labels = append(labels, key)
 	}
-	sort.Strings(keys)
+	sort.Strings(labels)
 
-	for _, dep := range keys {
-		imports := deps[dep]
+	for _, dep := range labels {
 		str := &build.StringExpr{Value: dep}
 		if annotate {
-			imports.Annotate(&str.Comments, func(imp *resolver.Import) bool {
+			deps[dep].Annotate(&str.Comments, func(imp *resolver.Import) bool {
 				return imp.Error == nil && imp.Known != nil
 			})
 		}

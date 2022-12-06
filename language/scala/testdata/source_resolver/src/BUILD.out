@@ -1,9 +1,16 @@
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library")
 
 scala_binary(
     name = "app",
     srcs =
-    # a.b.c.Main (MAIN_CLASS): resolved OBJECT
+    # a.b.c.Lib (DIRECT from Main.scala): resolved OBJECT to //src:lib
+    # a.b.c.Main (MAIN_CLASS): resolved OBJECT to //src:app
     ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
+    deps = [":lib"],
+)
+
+scala_library(
+    name = "lib",
+    srcs = ["a/b/c/Lib.scala"],
 )

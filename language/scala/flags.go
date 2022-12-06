@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const (
@@ -49,11 +50,24 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 
+	sl.knownImportProviders = filterNamedKnownImportProviders(
+		sl.knownImportProviders, sl.importProviderNamesFlagValue)
 	for _, provider := range sl.knownImportProviders {
 		provider.CheckFlags(flags, c, sl)
 	}
 
 	return nil
+}
+
+func filterNamedKnownImportProviders(current []resolver.KnownImportProvider, names []string) (want []resolver.KnownImportProvider) {
+	for _, name := range names {
+		for _, provider := range current {
+			if name == provider.Name() {
+				want = append(want, provider)
+			}
+		}
+	}
+	return
 }
 
 func parseScalaExistingRules(rules []string) error {
