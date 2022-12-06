@@ -6,15 +6,15 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs =
-    # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml>
-    # org.junit.rules.TemporaryFolder (DIRECT from Main.scala): import not found
+    # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml> to @maven//:xml_apis_xml_apis
+    # org.junit.rules.TemporaryFolder (DIRECT from Main.scala): error import not found
     ["Main.scala"],
     deps = [
         # junit is required for compilation but we haven't specified
         # that @atlassian-public deps should be managed by the scala-gazelle
         # extension (so this is left alone despite no # keep directive)
         "@atlassian-public//:junit_junit",
-        # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml>
+        # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml> to @maven//:xml_apis_xml_apis
         "@maven//:xml_apis_xml_apis",
     ],
 )

@@ -15,7 +15,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs =
-    # not.Exists (DIRECT from Main.scala): import not found
+    # not.Exists (DIRECT from Main.scala): error import not found
     # proto.Customer (DIRECT from Main.scala): resolved CLASS
     ["Main.scala"],
     deps = [
