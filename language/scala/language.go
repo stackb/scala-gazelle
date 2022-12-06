@@ -67,8 +67,7 @@ func (*scalaLang) KnownDirectives() []string {
 		ruleDirective,
 		resolveGlobDirective,
 		resolveWithDirective,
-		scalaExplainDeps,
-		scalaAnnotateImports,
+		scalaAnnotateDirective,
 		resolveKindRewriteName,
 	}
 }

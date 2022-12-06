@@ -10,7 +10,7 @@ func TestScala(t *testing.T) {
 	goldentest.FromDir("language/scala",
 		goldentest.WithOnlyTests(
 			// "maven_direct_deps",
-			// "maven_resolver",
+			"maven_resolver",
 			"proto_resolver",
 			// "source_resolver",
 		),

@@ -16,6 +16,15 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+type annotation int
+
+const (
+	AnnotateUnknown        annotation = 0
+	AnnotateImports        annotation = 1
+	AnnotateUnresolvedDeps annotation = 2
+	AnnotateResolvedDeps   annotation = 3
+)
+
 const (
 	// ruleDirective is the directive for toggling rule generation.
 	ruleDirective = "scala_rule"
@@ -23,10 +32,8 @@ const (
 	resolveGlobDirective = "resolve_glob"
 	// resolveWithDirective adds additional imports for resolution
 	resolveWithDirective = "resolve_with"
-	// scalaExplainDeps is the name of a directive.
-	scalaExplainDeps = "scala_explain_deps"
-	// scalaExplainDeps is the name of a directive.
-	scalaAnnotateImports = "scala_annotate_imports"
+	// scalaAnnotate is the name of a directive.
+	scalaAnnotateDirective = "scala_annotate"
 	// resolveKindRewriteName allows renaming of resolved labels.
 	resolveKindRewriteName = "resolve_kind_rewrite_name"
 	// resolverImpLangPrivateKey stores the implementation language override.
@@ -49,10 +56,8 @@ type scalaConfig struct {
 	implicitImports []*implicitImportSpec
 	// label kind rewrite specifications are parsed from 'gazelle:resolve_kind_rewrite_name'
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
-	// explainDeps is a flag to print additional comments on deps & exports
-	explainDeps bool
-	// annotateImports is a flag to print additional comments on srcs
-	annotateImports bool
+	// annotations is a flag to print additional comments on srcs
+	annotations map[annotation]interface{}
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -61,6 +66,7 @@ func newScalaConfig(config *config.Config, rel string, rslv resolver.ImportResol
 		config:            config,
 		rel:               rel,
 		resolver:          rslv,
+		annotations:       make(map[annotation]interface{}),
 		rules:             make(map[string]*RuleConfig),
 		overrides:         make([]*overrideSpec, 0),
 		implicitImports:   make([]*implicitImportSpec, 0),
@@ -94,8 +100,9 @@ func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver
 // clone copies this config to a new one.
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	clone := newScalaConfig(config, rel, c.resolver)
-	clone.explainDeps = c.explainDeps
-	clone.annotateImports = c.annotateImports
+	for k, v := range c.annotations {
+		clone.annotations[k] = v
+	}
 	for k, v := range c.rules {
 		clone.rules[k] = v.clone()
 	}
@@ -145,12 +152,10 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
 			c.parseResolveWithDirective(d)
-		case scalaExplainDeps:
-			c.parseScalaExplainDeps(d)
-		case scalaAnnotateImports:
-			c.parseScalaExplainSrcs(d)
 		case resolveKindRewriteName:
 			c.parseResolveKindRewriteNameDirective(d)
+		case scalaAnnotateDirective:
+			return c.parseScalaAnnotation(d)
 		}
 	}
 	return
@@ -220,22 +225,21 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
 }
 
-func (c *scalaConfig) parseScalaExplainDeps(d rule.Directive) {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaExplainDeps, len(parts), parts)
-		return
+func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
+	for _, key := range strings.Fields(d.Value) {
+		intent := parseIntent(key)
+		annot := parseAnnotation(intent.Value)
+		if annot == AnnotateUnknown {
+			return fmt.Errorf("invalid directive gazelle:%s: unknown annotation value '%v'", d.Key, intent.Value)
+		}
+		if intent.Want {
+			var val interface{}
+			c.annotations[annot] = val
+		} else {
+			delete(c.annotations, annot)
+		}
 	}
-	c.explainDeps = parts[0] == "true"
-}
-
-func (c *scalaConfig) parseScalaExplainSrcs(d rule.Directive) {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		log.Printf("invalid gazelle:%s directive: expected 1+ parts, got %d (%v)", scalaAnnotateImports, len(parts), parts)
-		return
-	}
-	c.annotateImports = parts[0] == "true"
+	return nil
 }
 
 func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {
@@ -283,6 +287,21 @@ func (c *scalaConfig) configuredRules() []*RuleConfig {
 
 func (c *scalaConfig) Overrides() []*overrideSpec {
 	return c.overrides
+}
+
+func (c *scalaConfig) shouldAnnotateImports() bool {
+	_, ok := c.annotations[AnnotateImports]
+	return ok
+}
+
+func (c *scalaConfig) shouldAnnotateResolvedDeps() bool {
+	_, ok := c.annotations[AnnotateResolvedDeps]
+	return ok
+}
+
+func (c *scalaConfig) shouldAnnotateUnresolvedDeps() bool {
+	_, ok := c.annotations[AnnotateUnresolvedDeps]
+	return ok
 }
 
 type overrideSpec struct {
@@ -337,4 +356,17 @@ func collectImports(sc *scalaConfig, r *rule.Rule, files []*sppb.File) resolver.
 	}
 
 	return imports
+}
+
+func parseAnnotation(val string) annotation {
+	switch val {
+	case "imports":
+		return AnnotateImports
+	case "resolved_deps":
+		return AnnotateResolvedDeps
+	case "unresolved_deps":
+		return AnnotateUnresolvedDeps
+	default:
+		return AnnotateUnknown
+	}
 }

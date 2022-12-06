@@ -49,27 +49,12 @@ func (imports ImportMap) HasErrors() bool {
 	return false
 }
 
-func (imports ImportMap) AnnotateErrors(comments *build.Comments) {
-	imports.Annotate(comments, func(imp *Import) bool {
-		return imp.Error != nil
-	})
-}
-
 func (imports ImportMap) Annotate(comments *build.Comments, accept func(imp *Import) bool) {
-	seen := make(map[string]bool)
-	lines := make([]string, 0, len(imports))
-	for _, imp := range imports {
+	for _, key := range imports.Keys() {
+		imp := imports[key]
 		if !accept(imp) {
 			continue
 		}
-		line := imp.String()
-		if seen[line] {
-			continue
-		}
-		lines = append(lines, line)
-	}
-	sort.Strings(lines)
-	for _, line := range lines {
-		comments.Before = append(comments.Before, build.Comment{Token: "# " + line})
+		comments.Before = append(comments.Before, build.Comment{Token: "# " + imp.String()})
 	}
 }

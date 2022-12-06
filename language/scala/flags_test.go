@@ -26,7 +26,7 @@ func TestFlags(t *testing.T) {
 			args: []string{
 				"-scala_import_provider=scala",
 				"-scala_import_provider=github.com/stackb/rules_proto",
-				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
+				"-scala_import_provider=github.com/bazelbuild/rules_proto",
 			},
 		},
 		"scala_gazelle_cache_file": {

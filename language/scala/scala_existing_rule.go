@@ -175,29 +175,26 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 		r.SetAttr("deps", deps)
 	}
 
-	if sc.annotateImports {
-		srcs := r.Attr("srcs")
-		switch t := srcs.(type) {
+	if sc.shouldAnnotateImports() || sc.shouldAnnotateResolvedDeps() {
+		attr := r.Attr("srcs")
+		switch t := attr.(type) {
 		case *build.ListExpr:
-			annotateImports(imports, &t.Comments)
+			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		case *build.CallExpr:
-			annotateImports(imports, &t.Comments)
-		}
-	}
-	if sc.explainDeps && imports.HasErrors() {
-		srcs := r.Attr("srcs")
-		switch t := srcs.(type) {
-		case *build.ListExpr:
-			imports.AnnotateErrors(&t.Comments)
-		case *build.CallExpr:
-			imports.AnnotateErrors(&t.Comments)
+			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		}
 	}
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments) {
-	for _, k := range imports.Keys() {
-		imp := imports[k]
-		comments.Before = append(comments.Before, build.Comment{Token: "# " + imp.String()})
-	}
+func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantImports, wantUnresolved bool) {
+	comments.Before = nil
+	imports.Annotate(comments, func(i *resolver.Import) bool {
+		if wantImports {
+			return true
+		}
+		if wantUnresolved || i.Error != nil {
+			return true
+		}
+		return false
+	})
 }

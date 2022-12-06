@@ -121,7 +121,7 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 		seen[dep] = true
 	}
 
-	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.explainDeps)...)
+	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.shouldAnnotateResolvedDeps())...)
 }
 
 func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool) (exprs []build.Expr) {
