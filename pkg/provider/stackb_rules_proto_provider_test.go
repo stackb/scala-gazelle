@@ -16,28 +16,34 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 	for name, tc := range map[string]struct {
 		lang    string
 		impLang string
-		imports map[label.Label][]string
+		imports map[string]map[label.Label][]string
 		want    []*resolver.KnownImport
 	}{
 		"degenerate": {},
 		"hit": {
 			lang:    "scala",
 			impLang: "scala",
-			imports: map[label.Label][]string{
-				label.New("", "com/foo/bar/proto", "proto_scala_library"): {
-					"com.foo.bar.proto.Message",
-					"com.foo.bar.proto.Enum",
+			imports: map[string]map[label.Label][]string{
+				"message": {
+					label.New("", "com/foo/bar/proto", "proto_scala_library"): {
+						"com.foo.bar.proto.Message",
+					},
+				},
+				"enum": {
+					label.New("", "com/foo/bar/proto", "proto_scala_library"): {
+						"com.foo.bar.proto.Enum",
+					},
 				},
 			},
 			want: []*resolver.KnownImport{
 				{
-					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.bar.proto.Message",
+					Type:   sppb.ImportType_OBJECT,
+					Import: "com.foo.bar.proto.Enum",
 					Label:  label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 				},
 				{
 					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.bar.proto.Enum",
+					Import: "com.foo.bar.proto.Message",
 					Label:  label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 				},
 			},
@@ -66,7 +72,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		lang      string
-		imports   map[label.Label][]string
+		imports   map[string]map[label.Label][]string
 		from      label.Label
 		indexFunc func(from label.Label) (*rule.Rule, bool)
 		want      bool

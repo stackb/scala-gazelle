@@ -11,6 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/maven"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
@@ -21,7 +22,7 @@ type RulesJvmExternalProvider struct {
 	// the cross resolve language name to match
 	lang string
 	// raw comma-separated flag string
-	pinnedMavenInstallFlagValue string
+	mavenInstallJSONFiles collections.StringSlice
 	// internal resolver instances, preserving order of the flag
 	resolvers []maven.Resolver
 }
@@ -41,45 +42,40 @@ func (p *RulesJvmExternalProvider) Name() string {
 
 // RegisterFlags implements part of the resolver.KnownImportRegistry interface.
 func (p *RulesJvmExternalProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.StringVar(&p.pinnedMavenInstallFlagValue,
-		"pinned_maven_install_json_files",
-		"",
-		"comma-separated list of maven_install pinned deps files",
-	)
+	fs.Var(&p.mavenInstallJSONFiles, "maven_install_json_file", "path to maven_install.json file")
 }
 
 // CheckFlags implements part of the resolver.KnownImportRegistry interface.
 func (p *RulesJvmExternalProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
-	if p.pinnedMavenInstallFlagValue == "" {
-		return fmt.Errorf("maven cross resolver was requested but the -pinned_maven_install_json_files flag was not set")
-	}
+	p.resolvers = make([]maven.Resolver, len(p.mavenInstallJSONFiles))
 
-	filenames := strings.Split(p.pinnedMavenInstallFlagValue, ",")
-	if len(filenames) == 0 {
-		return fmt.Errorf("maven cross resolver was requested but the -pinned_maven_install_json_files flag did not specify any maven_install.json files")
-	}
-
-	p.resolvers = make([]maven.Resolver, len(filenames))
-
-	for i, filename := range filenames {
-		basename := filepath.Base(filename)
-		if !strings.HasSuffix(basename, "_install.json") {
-			return fmt.Errorf("maven cross resolver: -pinned_maven_install_json_files base name must match the pattern {name}_install.json (got %s)", basename)
-		}
-		name := basename[:len(basename)-len("_install.json")]
-		if !filepath.IsAbs(filename) {
-			filename = filepath.Join(c.WorkDir, filename)
-		}
-		resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
-			log.Printf(format, args...)
-		}, importRegistry.PutKnownImport)
+	for i, filename := range p.mavenInstallJSONFiles {
+		resolver, err := p.loadFile(c.WorkDir, filename, importRegistry)
 		if err != nil {
-			return fmt.Errorf("initializing maven resolver: %w", err)
+			return err
 		}
 		p.resolvers[i] = resolver
 	}
 
 	return nil
+}
+
+func (p *RulesJvmExternalProvider) loadFile(dir string, filename string, importRegistry resolver.KnownImportRegistry) (maven.Resolver, error) {
+	basename := filepath.Base(filename)
+	if !strings.HasSuffix(basename, "_install.json") {
+		return nil, fmt.Errorf("maven cross resolver: -maven_install_json_file base name must match the pattern {name}_install.json (got %s)", basename)
+	}
+	name := basename[:len(basename)-len("_install.json")]
+	if !filepath.IsAbs(filename) {
+		filename = filepath.Join(dir, filename)
+	}
+	resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
+		log.Printf(format, args...)
+	}, importRegistry.PutKnownImport)
+	if err != nil {
+		return nil, fmt.Errorf("initializing maven resolver: %w", err)
+	}
+	return resolver, nil
 }
 
 // CanProvide implements part of the resolver.KnownImportRegistry interface.

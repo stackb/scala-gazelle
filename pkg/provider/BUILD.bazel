@@ -5,6 +5,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "provider",
     srcs = [
+        "jar_index_provider.go",
         "rules_jvm_external_provider.go",
         "scala_source_provider.go",
         "stackb_rules_proto_provider.go",
@@ -12,7 +13,10 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/provider",
     visibility = ["//visibility:public"],
     deps = [
+        "//build/stack/gazelle/scala/jarindex",
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/jarindex",
         "//pkg/maven",
         "//pkg/resolver",
         "//pkg/scalaparse",
@@ -27,7 +31,7 @@ go_test(
     name = "provider_test",
     size = "small",
     srcs = [
-        "maven_install_json_test.go",
+        "jar_index_provider_test.go",
         "mock_import_provider_test.go",
         "mock_known_import_registry_test.go",
         "rules_jvm_external_provider_test.go",

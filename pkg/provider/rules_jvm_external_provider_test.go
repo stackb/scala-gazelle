@@ -25,8 +25,8 @@ func ExampleRulesJvmExternalProvider_RegisterFlags_printdefaults() {
 	cr.RegisterFlags(got, "update", c)
 	got.PrintDefaults()
 	// output:
-	//	-pinned_maven_install_json_files string
-	//     	comma-separated list of maven_install pinned deps files
+	//	-maven_install_json_file value
+	//     	path to maven_install.json file
 }
 
 func TestRulesJvmExternalProviderFlags(t *testing.T) {
@@ -37,7 +37,7 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 	}{
 		"empty maven file": {
 			args: []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 			},
 			files: []testtools.FileSpec{
 				{
@@ -49,12 +49,11 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 		},
 		"example maven file": {
 			args: []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./testdata/maven_install.json",
 			},
 			files: []testtools.FileSpec{
 				{
-					Path:    "maven_install.json",
-					Content: mavenInstallJsonExample,
+					Path: "testdata/maven_install.json",
 				},
 			},
 			want: []*resolver.KnownImport{
@@ -87,6 +86,15 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			cwd, err := os.Getwd()
+			if err != nil {
+				t.Fatal(err)
+			}
+			for i := range tc.files {
+				if tc.files[i].Content == "" {
+					tc.files[i].Content = testutil.MustReadTestFile(t, cwd, tc.files[i].Path)
+				}
+			}
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
@@ -115,43 +123,45 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 
 func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
-		mavenInstallJsonContent string
-		lang                    string
-		from                    label.Label
-		want                    bool
+		lang string
+		from label.Label
+		want bool
 	}{
 		"degenerate case": {
-			mavenInstallJsonContent: mavenInstallJsonExample,
-			lang:                    scalaName,
-			from:                    label.NoLabel,
-			want:                    false,
+			lang: scalaName,
+			from: label.NoLabel,
+			want: false,
 		},
 		"managed xml_apis_xml_apis": {
-			mavenInstallJsonContent: mavenInstallJsonExample,
-			lang:                    scalaName,
-			from:                    label.New("maven", "", "xml_apis_xml_apis"),
-			want:                    true,
+			lang: scalaName,
+			from: label.New("maven", "", "xml_apis_xml_apis"),
+			want: true,
 		},
 		"managed generic maven dependency": {
-			mavenInstallJsonContent: mavenInstallJsonExample,
-			lang:                    scalaName,
-			from:                    label.New("maven", "", "com_guava_guava"),
-			want:                    true,
+			lang: scalaName,
+			from: label.New("maven", "", "com_guava_guava"),
+			want: true,
 		},
 		"unmanaged non-maven dependency": {
-			mavenInstallJsonContent: mavenInstallJsonExample,
-			lang:                    scalaName,
-			from:                    label.New("artifactory", "", "xml_apis_xml_apis"),
-			want:                    false,
+			lang: scalaName,
+			from: label.New("artifactory", "", "xml_apis_xml_apis"),
+			want: false,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, []testtools.FileSpec{
-				{
-					Path:    "maven_install.json",
-					Content: tc.mavenInstallJsonContent,
-				},
-			})
+			cwd, err := os.Getwd()
+			if err != nil {
+				t.Fatal(err)
+			}
+			files := []testtools.FileSpec{
+				{Path: "testdata/maven_install.json"},
+			}
+			for i := range files {
+				if files[i].Content == "" {
+					files[i].Content = testutil.MustReadTestFile(t, cwd, files[i].Path)
+				}
+			}
+			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, files)
 			defer cleanup()
 
 			p := NewRulesJvmExternalProvider(scalaName)
@@ -159,7 +169,7 @@ func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 			c := &config.Config{WorkDir: tmpDir}
 			p.RegisterFlags(fs, "update", c)
 			if err := fs.Parse([]string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./testdata/maven_install.json",
 			}); err != nil {
 				t.Fatal(err)
 			}
