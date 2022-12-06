@@ -45,6 +45,7 @@ go_test(
     embed = [":resolver"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",

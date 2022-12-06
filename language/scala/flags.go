@@ -5,7 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
+	"log"
 	"os"
+	"path/filepath"
+	"runtime/pprof"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -16,13 +19,17 @@ const (
 	scalaImportProviderFlagName   = "scala_import_provider"
 	scalaExistingRulesFlagName    = "scala_existing_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
+	cpuprofileFileFlagName        = "cpuprofile_file"
+	memprofileFileFlagName        = "memprofile_file"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
 	getOrCreateScalaConfig(c, "" /* rel="" */, sl) // ignoring return value, only want side-effect
 
-	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path the a cache file (.json or .pb)")
+	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
+	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
+	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProviderFlagName, "name of a known import provider implementation to enable")
 	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
@@ -33,6 +40,23 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	if sl.cpuprofileFlagValue != "" {
+		if !filepath.IsAbs(sl.cpuprofileFlagValue) {
+			sl.cpuprofileFlagValue = filepath.Join(c.WorkDir, sl.cpuprofileFlagValue)
+		}
+		f, err := os.Create(sl.cpuprofileFlagValue)
+		if err != nil {
+			return err
+		}
+		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
+		pprof.StartCPUProfile(f)
+	}
+	if sl.memprofileFlagValue != "" {
+		if !filepath.IsAbs(sl.memprofileFlagValue) {
+			sl.memprofileFlagValue = filepath.Join(c.WorkDir, sl.memprofileFlagValue)
+		}
+	}
+
 	// initialize the resolver implementation
 	sl.knownImportResolver = NewKnownImportResolver(sl)
 

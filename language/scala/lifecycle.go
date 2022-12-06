@@ -3,6 +3,8 @@ package scala
 import (
 	"fmt"
 	"log"
+	"os"
+	"runtime/pprof"
 )
 
 // onGenerate is called on the the first GenerateRules call.
@@ -28,4 +30,17 @@ func (sl *scalaLang) onResolve() {
 
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
+	if sl.cpuprofileFlagValue != "" {
+		pprof.StopCPUProfile()
+	}
+
+	if sl.memprofileFlagValue != "" {
+		f, err := os.Create(sl.memprofileFlagValue)
+		if err != nil {
+			log.Fatalf("creating memprofile: %v", err)
+		}
+		log.Println("Writing memprofile to", sl.memprofileFlagValue)
+		pprof.WriteHeapProfile(f)
+	}
+
 }

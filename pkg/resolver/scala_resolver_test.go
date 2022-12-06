@@ -13,15 +13,13 @@ import (
 
 func TestScalaResolver(t *testing.T) {
 	for name, tc := range map[string]struct {
-		lang    string
-		from    label.Label
-		known   []*KnownImport
-		imp     *Import
-		want    *Import
-		wantErr error
+		lang string
+		from label.Label
+		imp  string
+		want string
 	}{
 		"degenerate": {},
-		"resolve success": {
+		"unchanged": {
 			lang: "scala",
 			from: label.Label{Pkg: "src", Name: "scala"},
 			known: []*KnownImport{
@@ -35,15 +33,7 @@ func TestScalaResolver(t *testing.T) {
 				Kind: sppb.ImportKind_DIRECT,
 				Imp:  "com.foo.Bar",
 			},
-			want: &Import{
-				Kind: sppb.ImportKind_DIRECT,
-				Imp:  "com.foo.Bar",
-				Known: &KnownImport{
-					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.Bar",
-					Label:  label.Label{Pkg: "lib", Name: "scala_lib"},
-				},
-			},
+			want: "com.foo.bar",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -54,17 +44,32 @@ func TestScalaResolver(t *testing.T) {
 				}
 			}
 
-			rslv := NewScalaResolver("scala", importRegistry)
+			next := &mockResolver{}
+
+			rslv := NewScalaResolver(next)
 			c := config.New()
 
 			mrslv := func(r *rule.Rule, pkgRel string) resolve.Resolver { return nil }
 			ix := resolve.NewRuleIndex(mrslv)
 
-			rslv.ResolveImport(c, ix, tc.from, tc.lang, tc.imp)
+			rslv.ResolveKnownImport(c, ix, tc.from, tc.lang, tc.imp)
 
-			if diff := cmp.Diff(tc.want, tc.imp); diff != "" {
+			got := next.gotImp
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
 	}
+}
+
+type mockResolver struct {
+	wantImport *KnownImport
+	wantErr    error
+	gotImp     string
+}
+
+func (r *mockResolver) ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*KnownImport, error) {
+	r.gotImp = imp
+	return r.wantImport, r.wantErr
 }

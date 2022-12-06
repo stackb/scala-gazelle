@@ -2,12 +2,13 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
 # gazelle:scala_annotate imports resolved_deps unresolved_deps
+# gazelle:resolve_with scala javax.xml._ javax.inject._
 
 scala_library(
     name = "app",
     srcs =
-    # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml> to @maven//:xml_apis_xml_apis
-    # org.junit.rules.TemporaryFolder (DIRECT from Main.scala): error import not found
+    # javax.xml._<PACKAGE> ✅ @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
+    # org.junit.rules.TemporaryFolder<ERROR> ❌ import not found (DIRECT of Main.scala)
     ["Main.scala"],
     deps = [
         # junit is required for compilation but we haven't specified
@@ -16,5 +17,6 @@ scala_library(
         "@atlassian-public//:junit_junit",
         # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml> to @maven//:xml_apis_xml_apis
         "@maven//:xml_apis_xml_apis",
+        "@maven//:javax_inject_javax_inject",
     ],
 )

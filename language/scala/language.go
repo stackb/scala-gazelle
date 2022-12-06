@@ -25,6 +25,8 @@ type scalaLang struct {
 	importProviderNamesFlagValue collections.StringSlice
 	// scalaExistingRulesFlagValue is the value of the scala_existing_rule repeatable flag
 	scalaExistingRulesFlagValue collections.StringSlice
+	cpuprofileFlagValue         string
+	memprofileFlagValue         string
 	// cache is the loaded cache, if configured
 	cache *scpb.Cache
 	// ruleRegistry is the rule registry implementation.  This holds the rules

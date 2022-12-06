@@ -2,11 +2,14 @@ package scala
 
 import (
 	"log"
+	"time"
 
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
 func (sl *scalaLang) readCacheFile() error {
+	t1 := time.Now()
+
 	if err := protobuf.ReadFile(sl.cacheFileFlagValue, sl.cache); err != nil {
 		return err
 	}
@@ -15,7 +18,10 @@ func (sl *scalaLang) readCacheFile() error {
 			return err
 		}
 	}
-	log.Printf("Read %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))
+
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+
+	log.Printf("Read %s (%d rules) %v", sl.cacheFileFlagValue, len(sl.cache.Rules), t2)
 	return nil
 }
 

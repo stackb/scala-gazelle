@@ -127,10 +127,10 @@ func (r *ScalaparseProvider) parseScalaFile(dir, filename string) (*sppb.File, e
 			// log.Printf("file cache hit: <%s> (%s)", filename, sha256)
 			return file, nil
 		} else {
-			log.Printf("file cache out-of-date: <%s> (%s)", filename, sha256)
+			// log.Printf("file cache out-of-date: <%s> (%s)", filename, sha256)
 		}
 	} else {
-		log.Printf("file cache miss: <%s>", filename)
+		// log.Printf("file cache miss: <%s>", filename)
 	}
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{

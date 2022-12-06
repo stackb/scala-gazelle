@@ -10,13 +10,15 @@ import (
 // NewKnownImportResolver constructs the top-level known import resolver.
 func NewKnownImportResolver(known resolver.KnownImportRegistry) resolver.KnownImportResolver {
 	chain := resolver.NewChainResolver(
-		resolver.NewOverrideResolver(scalaLangName),
+		// this one kills you!
+		// resolver.NewMemoResolver(resolver.NewOverrideResolver(scalaLangName)),
 		resolver.NewKnownResolver(known),
 		resolver.NewCrossResolver(scalaLangName),
-		resolver.NewOverrideResolver("java"),
-		resolver.NewCrossResolver("java"),
+		// resolver.NewMemoResolver(resolver.NewOverrideResolver("java")),
+		// resolver.NewMemoResolver(resolver.NewCrossResolver("java")),
 	)
 	scala := resolver.NewScalaResolver(chain)
+	// return scala
 	return resolver.NewMemoResolver(scala)
 }
 
