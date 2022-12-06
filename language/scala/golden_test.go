@@ -12,7 +12,7 @@ func TestScala(t *testing.T) {
 			// "maven_direct_deps",
 			"maven_resolver",
 			"proto_resolver",
-			// "source_resolver",
+			"source_resolver",
 		),
 	).Run(t, "gazelle")
 }

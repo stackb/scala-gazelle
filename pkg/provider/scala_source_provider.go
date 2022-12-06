@@ -49,7 +49,7 @@ type ScalaSourceProvider struct {
 
 // Name implements part of the resolver.KnownImportProvider interface.
 func (r *ScalaSourceProvider) Name() string {
-	return "scala"
+	return "source/scala"
 }
 
 // RegisterFlags implements part of the resolver.KnownImportProvider interface.
