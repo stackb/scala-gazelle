@@ -11,7 +11,7 @@ func TestScala(t *testing.T) {
 		goldentest.WithOnlyTests(
 			// "maven_direct_deps",
 			"maven_resolver",
-			// "proto_resolver",
+			"proto_resolver",
 			"source_resolver",
 		),
 	).Run(t, "gazelle")

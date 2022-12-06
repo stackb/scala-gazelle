@@ -1,2 +1,3 @@
+-scala_import_provider=source/scala
 -scala_import_provider=github.com/stackb/rules_proto
 -pinned_maven_install_json_files=./maven_install.json

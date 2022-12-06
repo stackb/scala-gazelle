@@ -16,10 +16,10 @@ scala_library(
     name = "app",
     srcs =
     # not.Exists (DIRECT from Main.scala): error import not found
-    # proto.Customer (DIRECT from Main.scala): resolved CLASS
+    # proto.Customer (DIRECT from Main.scala): resolved CLASS to //proto:proto_proto_scala_library
     ["Main.scala"],
     deps = [
-        # proto.Customer (DIRECT from Main.scala): resolved CLASS
+        # proto.Customer (DIRECT from Main.scala): resolved CLASS to //proto:proto_proto_scala_library
         "//proto:proto_proto_scala_library",
     ],
 )
