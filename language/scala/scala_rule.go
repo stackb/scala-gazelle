@@ -59,9 +59,9 @@ func (r *ScalaRule) addFromFile(file *sppb.File) {
 	for _, imp := range file.Vals {
 		r.putKnownImport(imp, sppb.ImportType_VALUE)
 	}
-	for _, imp := range file.Packages {
-		r.putKnownImport(imp, sppb.ImportType_PACKAGE)
-	}
+	// for _, imp := range file.Packages {
+	// 	r.putKnownImport(imp, sppb.ImportType_PACKAGE)
+	// }
 	for token, extends := range file.Extends {
 		r.putExtends(token, extends)
 	}
@@ -77,7 +77,7 @@ func (r *ScalaRule) putFileImport(imp string) {
 func (r *ScalaRule) putKnownImport(imp string, impType sppb.ImportType) {
 	// since we don't need to resolve same-rule symbols to a different label,
 	// record all imports as label.NoLabel!
-	r.registry.PutKnownImport(resolver.NewKnownImport(impType, imp, r.From.String(), label.NoLabel))
+	r.registry.PutKnownImport(resolver.NewKnownImport(impType, imp, "self-import", label.NoLabel))
 }
 
 func (r *ScalaRule) putExtends(token string, types *sppb.ClassList) {

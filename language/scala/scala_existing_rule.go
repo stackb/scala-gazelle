@@ -207,11 +207,12 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantI
 			parts = append(parts, fmt.Sprintf("❌ %v", imp.Error))
 		}
 
-		parts = append(parts, fmt.Sprintf("(%v", imp.Kind))
 		if imp.Source != nil {
-			parts = append(parts, fmt.Sprintf("of %s)", filepath.Base(imp.Source.Filename)))
+			parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, filepath.Base(imp.Source.Filename)))
 		} else if imp.Src != "" {
-			parts = append(parts, fmt.Sprintf("of %s)", imp.Src))
+			parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
+		} else {
+			parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
 		}
 
 		comments.Before = append(comments.Before, build.Comment{Token: strings.Join(parts, " ")})

@@ -195,22 +195,22 @@ func (r *ScalaparseProvider) provideFile(from label.Label, rule *sppb.Rule, file
 	}
 
 	for _, imp := range file.Classes {
-		r.putKnownImport(from, imp, sppb.ImportType_CLASS)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_CLASS)
 	}
 	for _, imp := range file.Objects {
-		r.putKnownImport(from, imp, sppb.ImportType_OBJECT)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_OBJECT)
 	}
 	for _, imp := range file.Traits {
-		r.putKnownImport(from, imp, sppb.ImportType_TRAIT)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_TRAIT)
 	}
 	for _, imp := range file.Types {
-		r.putKnownImport(from, imp, sppb.ImportType_TYPE)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_TYPE)
 	}
 	for _, imp := range file.Vals {
-		r.putKnownImport(from, imp, sppb.ImportType_VALUE)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_VALUE)
 	}
 	for _, imp := range file.Packages {
-		r.putKnownImport(from, imp, sppb.ImportType_PACKAGE)
+		r.putKnownImport(rule, from, imp, sppb.ImportType_PACKAGE)
 	}
 
 	r.byFilename[file.Filename] = file
@@ -219,8 +219,8 @@ func (r *ScalaparseProvider) provideFile(from label.Label, rule *sppb.Rule, file
 	return nil
 }
 
-func (r *ScalaparseProvider) putKnownImport(from label.Label, imp string, impType sppb.ImportType) {
-	r.importRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, r.Name(), from))
+func (r *ScalaparseProvider) putKnownImport(rule *sppb.Rule, from label.Label, imp string, impType sppb.ImportType) {
+	r.importRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, rule.Kind, from))
 }
 
 // fileSha256 computes the sha256 hash of a file

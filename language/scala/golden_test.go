@@ -12,7 +12,7 @@ func TestScala(t *testing.T) {
 			// "maven_direct_deps",
 			// "rules_jvm_external_provider",
 			// "stackb_rules_proto_provider",
-			// "source_scala_provider",
+			"scalaparse_provider",
 			"override_provider",
 		),
 	).Run(t, "gazelle")
