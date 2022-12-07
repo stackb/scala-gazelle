@@ -5,7 +5,6 @@ go_library(
     srcs = [
         "chain_resolver.go",
         "cross_resolver.go",
-        "fileset_resolver.go",
         "import.go",
         "import_ambiguous_error.go",
         "import_map.go",
@@ -22,6 +21,7 @@ go_library(
         "label_name_rewrite_spec.go",
         "memo_resolver.go",
         "override_resolver.go",
+        "package_resolver.go",
         "scala_resolver.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver",

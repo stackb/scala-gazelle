@@ -13,8 +13,6 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -66,28 +64,17 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 
 // ResolveRule implements the RuleResolver interface.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
-	filenames, err := glob.CollectFilenames(pkg.File(), pkg.Dir(), pkg.Rel(), r.Attr("srcs"))
+	scalaRule, err := pkg.ParseScalaRule(r)
 	if err != nil {
-		log.Printf("skipping %s //%s:%s (unable to collect srcs: %v)", r.Kind(), pkg.Rel(), r.Name(), err)
+		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
 		return nil
 	}
 
-	from := label.New("", pkg.Rel(), r.Name())
-	files := make([]*sppb.File, 0)
-
-	if len(filenames) > 0 {
-		files, err = parseScalaFiles(pkg.Dir(), from, r.Kind(), filenames, pkg.ScalaParser())
-		if err != nil {
-			log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
-			return nil
-		}
-	}
-
-	r.SetPrivateAttr(config.GazelleImportsKey, files)
+	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 	r.SetPrivateAttr(resolverImpLangPrivateKey, "java")
 	// r.SetPrivateAttr(resolverImpLangPrivateKey, ScalaLangName)
 
-	return &scalaExistingRuleProvider{cfg, pkg, r, files, s.isBinaryRule}
+	return &scalaExistingRuleProvider{cfg, pkg, r, scalaRule, s.isBinaryRule}
 }
 
 // scalaExistingRuleProvider implements RuleProvider for existing scala rules.
@@ -95,7 +82,7 @@ type scalaExistingRuleProvider struct {
 	cfg          *RuleConfig
 	pkg          ScalaPackage
 	rule         *rule.Rule
-	files        []*sppb.File
+	scalaRule    *ScalaRule
 	isBinaryRule bool
 }
 
@@ -116,8 +103,10 @@ func (s *scalaExistingRuleProvider) Rule() *rule.Rule {
 
 // Imports implements part of the RuleProvider interface.
 func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	// binary rules are not deps of anything else, so we don't advertise to
-	// provide any imports
+	// binary rules should not be deps of anything else, so we don't advertise
+	// any imports. TODO(pcj): this is too simplisitic: test helpers can be used
+	// by other test rules.  So we should probably use the 'impLang' to differentiate
+	// generic imports ('scala') vs testonly imports ('test').
 	if s.isBinaryRule {
 		return nil
 	}
@@ -127,13 +116,16 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 	// ruleIndex to miss on the impLang, allowing us to override in the source
 	// CrossResolver.
 	sc := getScalaConfig(c)
+
+	// FIXME(pcj): huh?  why are we rewriting the scalaLangName using a
+	// rewrite??? this is so wrong.
 	lang := scalaLangName
 	if _, ok := sc.labelNameRewrites[r.Kind()]; ok {
 		lang = r.Kind()
 	}
 
 	provides := make([]string, 0)
-	for _, file := range s.files {
+	for _, file := range s.scalaRule.Files {
 		provides = append(provides, file.Packages...)
 		provides = append(provides, file.Classes...)
 		provides = append(provides, file.Objects...)
@@ -154,17 +146,17 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 
 // Resolve implements part of the RuleProvider interface.
 func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
-	files, ok := importsRaw.([]*sppb.File)
+	scalaRule, ok := importsRaw.(*ScalaRule)
 	if !ok {
 		return
 	}
 
 	sc := getScalaConfig(c)
-	imports := collectImports(sc, from, r, files)
+	imports := scalaRule.Imports(sc)
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {
-			if known, err := sc.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
+			if known, err := scalaRule.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
 				imp.Known = known
@@ -227,13 +219,4 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantI
 		comments.Before = append(comments.Before, build.Comment{Token: strings.Join(parts, " ")})
 	}
 
-	// imports.Annotate(comments, func(i *resolver.Import) bool {
-	// 	if wantImports {
-	// 		return true
-	// 	}
-	// 	if wantUnresolved || i.Error != nil {
-	// 		return true
-	// 	}
-	// 	return false
-	// })
 }

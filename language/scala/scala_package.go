@@ -10,6 +10,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/glob"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
@@ -18,22 +20,18 @@ const (
 )
 
 type ScalaPackage interface {
-	// // Rel returns the relative path to this package
-	// Rel() string
-	// // Dir returns the absolute path to the worksace
-	// Dir() string
-	// // File returns the BUILD file for the package
-	// File() *rule.File
-	// ScalaParser returns the parser instance to use.
-	ParseScala(r *rule.Rule)
+	// ParseScalaRule parses the given rule from its 'srcs' attribute.
+	ParseScalaRule(r *rule.Rule) (*ScalaRule, error)
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
-	// parser is the file parser
-	parser scalaparse.Parser
 	// rel is the package (args.Rel)
 	rel string
+	// parser is the file parser
+	parser scalaparse.Parser
+	// importResolver is the parent importResolver
+	importResolver resolver.KnownImportResolver
 	// the registry to use
 	ruleRegistry RuleRegistry
 	// the build file
@@ -49,14 +47,15 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(ruleRegistry RuleRegistry, parser scalaparse.Parser, rel string, file *rule.File, cfg *scalaConfig) *scalaPackage {
+func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, ruleRegistry RuleRegistry, parser scalaparse.Parser, importResolver resolver.KnownImportResolver) *scalaPackage {
 	s := &scalaPackage{
-		parser:       parser,
-		rel:          rel,
-		ruleRegistry: ruleRegistry,
-		file:         file,
-		cfg:          cfg,
-		rules:        make(map[string]*rule.Rule),
+		rel:            rel,
+		parser:         parser,
+		importResolver: importResolver,
+		ruleRegistry:   ruleRegistry,
+		file:           file,
+		cfg:            cfg,
+		rules:          make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -143,7 +142,7 @@ func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
-			s.Rel(),
+			s.rel,
 			rc.Implementation,
 			s.ruleRegistry.RuleNames(),
 		)
@@ -158,7 +157,7 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	if err == ErrUnknownRule {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
-			s.Rel(),
+			s.rel,
 			rc.Implementation,
 			globalRuleRegistry.RuleNames(),
 		)
@@ -172,23 +171,29 @@ func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
 	return nil
 }
 
-// ScalaParser implements part of the ScalaPackage interface.
-func (s *scalaPackage) ScalaParser() scalaparse.Parser {
-	return s.parser
+// ParseScalaRule implements part of the ScalaPackage interface.
+func (s *scalaPackage) ParseScalaRule(r *rule.Rule) (*ScalaRule, error) {
+	filenames, err := glob.CollectFilenames(s.file, s.repoRootDir(), s.rel, r.Attr("srcs"))
+	if err != nil {
+		return nil, err
+	}
+
+	if len(filenames) == 0 {
+		return nil, err
+	}
+
+	from := label.New("", s.rel, r.Name())
+
+	files, err := parseScalaFiles(s.repoRootDir(), from, r.Kind(), filenames, s.parser)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewScalaRule(s.importResolver, r, from, files), nil
 }
 
-// File implements part of the ScalaPackage interface.
-func (s *scalaPackage) File() *rule.File {
-	return s.file
-}
-
-// Rel implements part of the ScalaPackage interface.
-func (s *scalaPackage) Rel() string {
-	return s.rel
-}
-
-// Dir implements part of the ScalaPackage interface.
-func (s *scalaPackage) Dir() string {
+// repoRootDir return the root directory of the repo.
+func (s *scalaPackage) repoRootDir() string {
 	return s.cfg.config.RepoRoot
 }
 

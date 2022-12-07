@@ -104,8 +104,6 @@ func (r *ScalaparseProvider) ParseScalaFiles(from label.Label, kind string, dir 
 		rule.Files[i] = file
 	}
 
-	resolveRuleImports(rule)
-
 	if err := r.ProvideRule(rule); err != nil {
 		return nil, err
 	}

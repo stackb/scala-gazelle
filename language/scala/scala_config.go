@@ -11,8 +11,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -135,11 +133,6 @@ func (c *scalaConfig) getKnownRule(from label.Label) (*rule.Rule, bool) {
 		from = label.New(from.Repo, c.rel, from.Name)
 	}
 	return c.resolver.GetKnownRule(from)
-}
-
-// ResolveKnownImport implements the resolver.ImportResolver interface.
-func (sc *scalaConfig) ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.KnownImport, error) {
-	return sc.resolver.ResolveKnownImport(c, ix, from, lang, imp)
 }
 
 // parseDirectives is called in each directory visited by gazelle.  The relative
@@ -322,47 +315,6 @@ type implicitImportSpec struct {
 	imp string
 	// dep is the "destination" dependencies (e.g. org.slf4j.Logger)
 	deps []string
-}
-
-func collectImports(sc *scalaConfig, from label.Label, r *rule.Rule, files []*sppb.File) resolver.ImportMap {
-	imports := resolver.NewImportMap()
-
-	impLang := r.Kind()
-	if overrideImpLang, ok := r.PrivateAttr(resolverImpLangPrivateKey).(string); ok {
-		impLang = overrideImpLang
-	}
-
-	fileResolver := resolver.NewFilesetResolver(sc, from, files...)
-
-	// direct
-	for _, file := range files {
-		for _, imp := range file.Imports {
-			imports.Put(resolver.NewDirectImport(imp, file))
-		}
-	}
-
-	// if this rule has a main_class
-	if mainClass := r.AttrString("main_class"); mainClass != "" {
-		imports.Put(resolver.NewMainClassImport(mainClass))
-	}
-
-	// gather implicit imports
-	transitive := make(collections.StringStack, 0)
-	for src := range imports {
-		for _, dst := range sc.getImplicitImports(impLang, src) {
-			transitive.Push(dst)
-			imports.Put(resolver.NewImplicitImport(dst, src))
-		}
-	}
-	for !transitive.IsEmpty() {
-		src, _ := transitive.Pop()
-		for _, dst := range sc.getImplicitImports(impLang, src) {
-			transitive.Push(dst)
-			imports.Put(resolver.NewImplicitImport(dst, src))
-		}
-	}
-
-	return imports
 }
 
 func parseAnnotation(val string) annotation {
