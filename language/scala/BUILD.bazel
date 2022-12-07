@@ -98,8 +98,8 @@ go_test(
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
-        "//mocks",  # keep
         "//pkg/resolver",
+        "//pkg/resolver/mocks",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
@@ -108,6 +108,7 @@ go_test(
         "@bazel_gazelle//testtools:go_default_library",
         "@build_stack_rules_proto//pkg/goldentest",
         "@com_github_google_go_cmp//cmp",
+        "@com_github_stretchr_testify//mock",
     ],
 )
 

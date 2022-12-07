@@ -1,4 +1,8 @@
 
+.PHONY: test
+test:
+	bazel test //pkg/... //language/scala:scala_test
+
 .PHONY: jarindex_protos
 jarindex_protos:
 	bazel run //build/stack/gazelle/scala/jarindex:jarindex_go_compiled_sources.update
@@ -22,6 +26,10 @@ protos: jarindex_protos scalaparse_protos scalacache_protos
 	echo "Done."
 
 .PHONY: tidy
+gazelle:
+	bazel run //:gazelle
+
+.PHONY: tidy
 tidy:
 	bazel run @go_sdk//:bin/go -- mod tidy
 	bazel run //:update_go_repositories
@@ -32,5 +40,6 @@ tools:
 
 .PHONY: mocks
 mocks:
-	mockery --output pkg/mocks --name=KnownImportProvider --dir=pkg/resolver
-	mockery --output pkg/mocks --name=ImportResolver --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=KnownImportResolver --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=KnownImportProvider --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=ImportResolver --dir=pkg/resolver

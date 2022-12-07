@@ -9,9 +9,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/mock"
 
-	"github.com/stackb/scala-gazelle/pkg/mocks"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -192,7 +193,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 	}
 }
 
-func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
+func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
@@ -223,19 +224,13 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 	}
 }
 
-func parseTestDirectives(t *testing.T, rel string, dd ...rule.Directive) (*scalaConfig, error) {
-	c := config.New()
-	sc := newScalaConfig(c, rel, mocks.NewImportResolver(t))
-	err := sc.parseDirectives(dd)
-	return sc, err
-}
-
 func TestScalaConfigGetKnownRule(t *testing.T) {
 	for name, tc := range map[string]struct {
-		repoName string
-		rel      string
-		from     label.Label
-		want     label.Label
+		repoName  string
+		rel       string
+		from      label.Label
+		want      label.Label
+		wantTimes int
 	}{
 		"degenerate": {
 			from: label.NoLabel,
@@ -248,35 +243,47 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 			want:     label.NoLabel,
 		},
 		"makes package absolute": {
-			rel:  "a",
-			from: label.New("", "", "test"),
-			want: label.New("", "a", "test"),
+			rel:       "a",
+			from:      label.New("", "", "test"),
+			want:      label.New("", "a", "test"),
+			wantTimes: 1,
 		},
 		"makes repo absolute": {
-			repoName: "foo",
-			from:     label.New("", "", "test"),
-			want:     label.New("foo", "", "test"),
+			repoName:  "foo",
+			from:      label.New("", "", "test"),
+			want:      label.New("foo", "", "test"),
+			wantTimes: 1,
 		},
 		"absolute remains unchanged": {
-			from: label.New("bar", "b", "test"),
-			want: label.New("bar", "b", "test"),
+			from:      label.New("bar", "b", "test"),
+			want:      label.New("bar", "b", "test"),
+			wantTimes: 1,
 		},
 		"absolute without package unchanged": {
-			repoName: "foo",
-			rel:      "a",
-			from:     label.New("bar", "", "test"),
-			want:     label.New("bar", "", "test"),
+			repoName:  "foo",
+			rel:       "a",
+			from:      label.New("bar", "", "test"),
+			want:      label.New("bar", "", "test"),
+			wantTimes: 1,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			mock := mocks.NewImportResolver(t)
-			sc := newScalaConfig(c, tc.rel, mock)
+			fake := mocks.NewImportResolver(t)
+
+			var got label.Label
+			if tc.wantTimes > 0 {
+				fake.On("GetKnownRule", mock.MatchedBy(func(from label.Label) bool {
+					got = from
+					return true
+				})).Times(tc.wantTimes).Return(nil, false)
+			}
+			sc := newScalaConfig(c, tc.rel, fake)
 
 			sc.GetKnownRule(tc.from)
-			call := mock.Calls[0]
-			got := call.Arguments.Get(0)
+
+			fake.AssertExpectations(t)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -334,4 +341,11 @@ func TestIsSameImport(t *testing.T) {
 			}
 		})
 	}
+}
+
+func parseTestDirectives(t *testing.T, rel string, dd ...rule.Directive) (*scalaConfig, error) {
+	c := config.New()
+	sc := newScalaConfig(c, rel, mocks.NewImportResolver(t))
+	err := sc.parseDirectives(dd)
+	return sc, err
 }

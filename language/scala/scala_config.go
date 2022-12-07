@@ -119,7 +119,7 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 
 // GetKnownRule translates relative labels into their absolute form.
 func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
-	if c.resolver == nil || from.Name == "" {
+	if from.Name == "" {
 		return nil, false
 	}
 	if from.Repo == "" {
