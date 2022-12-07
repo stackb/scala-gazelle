@@ -99,6 +99,45 @@ object Main extends LazyLogging {
 				},
 			},
 		},
+		"extends with": {
+			files: []testtools.FileSpec{
+				{
+					Path: "FooTest.scala",
+					Content: `
+package foo.test
+
+import org.scalatest.{FlatSpec, Matchers}
+import java.time.{LocalDate, LocalTime}
+
+class FooTest extends FlatSpec with Matchers {
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "FooTest.scala",
+						Packages: []string{"foo.test"},
+						Classes:  []string{"foo.test.FooTest"},
+						Imports: []string{
+							"java.time.LocalDate",
+							"java.time.LocalTime",
+							"org.scalatest.FlatSpec",
+							"org.scalatest.Matchers",
+						},
+						Extends: map[string]*sppb.ClassList{
+							"class foo.test.FooTest": {
+								Classes: []string{
+									"org.scalatest.FlatSpec",
+									"org.scalatest.Matchers",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	} {
 		// if name != "nested import" {
 		// 	continue
