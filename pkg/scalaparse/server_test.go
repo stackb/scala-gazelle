@@ -52,7 +52,7 @@ class Foo extends HashMap {
 						Names:    []string{"a", "java", "util"},
 						Extends: map[string]*sppb.ClassList{
 							"class a.Foo": {
-								Classes: []string{"HashMap"},
+								Classes: []string{"java.util.HashMap"},
 							},
 						},
 					},
@@ -76,8 +76,7 @@ object Main extends LazyLogging {
 	logger.info(DotFormatReport(new BlendTestService).dotForm())
 	}
 }
-					
-					`,
+`,
 				},
 			},
 			want: sppb.ParseResponse{
@@ -92,7 +91,7 @@ object Main extends LazyLogging {
 							"corp.common.core.vm.utils.ArgProcessor",
 						},
 						Extends: map[string]*sppb.ClassList{
-							"object a.Main": {
+							"object example.Main": {
 								Classes: []string{"com.typesafe.scalalogging.LazyLogging"},
 							},
 						},
@@ -101,9 +100,9 @@ object Main extends LazyLogging {
 			},
 		},
 	} {
-		if name != "nested import" {
-			continue
-		}
+		// if name != "nested import" {
+		// 	continue
+		// }
 		t.Run(name, func(t *testing.T) {
 			tmpDir, err := bazel.NewTmpDir("")
 			if err != nil {

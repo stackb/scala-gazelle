@@ -14,7 +14,62 @@ const debug = false;
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
 // the top-level, which then must be suppressed with resolve directives.
-const enableNestedImports = false;
+const enableNestedImports = true;
+
+class Scope {
+    /**
+     * Construct a scope having a possibly-undefined parent scope.
+     * @param {Scope|undefined} parent 
+     */
+    constructor(parent) {
+        /**
+         * @type {Scope|undefined}
+         */
+        this.parent = parent;
+        /**
+         * Imports is a list of imports in the scope.
+         * @type {!Set<string>}
+         */
+        this.imports = new Set();
+        /**
+         * Symbols is a mapping of known symbols that resolve to an import.
+         * @type {!Map<string,string>|undefined}
+         */
+        this.symbols = new Map();
+    }
+
+    /**
+     * Add the given import to import set and bubble it up to the parent. The
+     * sym argument is the current name, whereas the imp is the full import
+     * string. For example, imp='com.typesafe.scalalogging.LazyLogging' and
+     * sym='LazyLogging'. For 'com.typesafe.scalalogging._', sym is undefined.
+     * @param {string} imp
+     * @param {?string} sym
+     */
+    addImport(imp, sym) {
+        this.imports.add(imp);
+        if (sym) {
+            this.symbols.set(sym, imp);
+        }
+        if (this.parent) {
+            this.parent.addImport(sym, imp)
+        }
+    }
+
+    /**
+     * resolveSymbol attempts to match the given symbol to the known list of
+     * fully-qualified imports.  If not match, return original symbol.
+     * @param {string} sym
+     * @returns {string}
+     */
+    resolveSymbol(sym) {
+        const imp = this.symbols.get(sym);
+        if (imp) {
+            return imp;
+        }
+        return sym;
+    }
+}
 
 /**
  * ScalaFile parses a scala source file and aggregates symbols discovered
@@ -33,6 +88,16 @@ class ScalaFile {
         this.filename = filename;
 
         /**
+         * The root scope.
+         */
+        this.root = new Scope(undefined);
+
+        /**
+         * The scope stack.
+         */
+        this.scopes = [this.root];
+
+        /**
          * The stack of package names.  This is used to resolve package
          * membership when visiting top-level objects and classes.
          * @type {Array<string>}
@@ -44,12 +109,6 @@ class ScalaFile {
          * @type {Set<string>}
          */
         this.packages = new Set();
-
-        /**
-         * A set of package names that exist in the source.
-         * @type {Set<string>}
-         */
-        this.imports = new Set();
 
         /**
          * An error, if the tree failed to parse.
@@ -111,29 +170,55 @@ class ScalaFile {
         }
         const buffer = fs.readFileSync(this.filename);
         const tree = parseSource(buffer.toString());
-        this.printNode(tree);
-
-        this.traverse(tree, [], (key, node, stack) => {
-            if (!node) {
-                return false
-            }
-            if (node.type === 'Term.Name' && node.value) {
-                this.names.add(node.value);
-            }
-            if (enableNestedImports) {
-                if (node.type === 'Import') {
-                    this.visitImport(node);
-                    return false;
-                }
-            }
-            return true;
-        });
+        // this.printNode(tree);
 
         if (tree.error) {
             this.visitError(tree);
         } else {
+            this.traverse(tree, [], (key, node, stack) => {
+                if (!node) {
+                    return false
+                }
+                if (node.type === 'Term.Name' && node.value) {
+                    this.names.add(node.value);
+                }
+                if (enableNestedImports) {
+                    if (node.type === 'Import') {
+                        this.visitImport(node);
+                        return false;
+                    }
+                }
+                return true;
+            });
+
             this.visitNode(tree);
         }
+    }
+
+    /**
+     * currentScope returns the top of the scope stack.
+     * @returns {!Scope}
+     */
+    currentScope() {
+        return this.scopes[this.scopes.length - 1];
+    }
+
+    /**
+     * Push scope create a new scope and pushed it on the stack
+     * @returns {Scope|undefined}
+     */
+    pushScope() {
+        const scope = new Scope(this.currentScope());
+        this.scopes.push(scope);
+        return scope;
+    }
+
+    /**
+     * popScope removes the top of the scope stack
+     * @returns {Scope|undefined}
+     */
+    popScope() {
+        return this.scopes.pop();
     }
 
     /**
@@ -151,6 +236,7 @@ class ScalaFile {
         }
         if (obj.type) {
             stack.push(obj);
+            this.pushScope();
         }
         Object.entries(obj).forEach(([key, value]) => {
             // Key is either an array index or object key
@@ -160,6 +246,7 @@ class ScalaFile {
         });
         if (obj.type) {
             stack.pop();
+            this.popScope();
         }
     }
 
@@ -264,23 +351,24 @@ class ScalaFile {
 
     visitImporter(node) {
         const ref = this.parseName(node.ref);
+        const scope = this.currentScope();
         node.importees.forEach(importee => {
             switch (importee.type) {
                 case 'Importee.Name':
-                    this.imports.add([ref, importee.name.value].join('.'))
+                    scope.addImport([ref, importee.name.value].join('.'), importee.name.value)
                     break;
                 case 'Importee.Rename':
-                    this.imports.add([ref, importee.name.value].join('.'))
+                    scope.addImport([ref, importee.name.value].join('.'), importee.name.value)
                     break;
                 case 'Importee.Unimport':
                     // an unimport is specifically excluded from the scala
                     // import symbol table, but since it still implies an
                     // interaction with the package we go ahead and index it
                     // here.
-                    this.imports.add([ref, importee.name.value].join('.'))
+                    scope.addImport([ref, importee.name.value].join('.'))
                     break;
                 case 'Importee.Wildcard':
-                    this.imports.add([ref, '_'].join('.'))
+                    scope.addImport([ref, '_'].join('.'))
                     break;
                 default:
                     this.console.log('unhandled importee type', importee.type);
@@ -344,6 +432,12 @@ class ScalaFile {
         }
     }
 
+    resolveExtends() {
+        this.extendsMap.forEach((classlist) => {
+            classlist.classes = classlist.classes.map(sym => this.root.resolveSymbol(sym));
+        });
+    }
+
     toObject() {
         const obj = {
             filename: this.filename,
@@ -351,6 +445,8 @@ class ScalaFile {
         if (this.error) {
             obj.error = this.error;
         }
+
+        this.resolveExtends();
 
         const maybeAssignList = (set, prop) => {
             const list = Array.from(set);
@@ -372,7 +468,7 @@ class ScalaFile {
         };
 
         maybeAssignList(this.packages, 'packages');
-        maybeAssignList(this.imports, 'imports');
+        maybeAssignList(this.root.imports, 'imports');
         maybeAssignList(this.topClasses, 'classes');
         maybeAssignList(this.topTraits, 'traits');
         maybeAssignList(this.topObjects, 'objects');
