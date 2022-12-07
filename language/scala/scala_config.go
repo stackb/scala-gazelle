@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
@@ -40,35 +41,27 @@ const (
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
-	// config is the parent gazelle config.
-	config *config.Config
-	// rel is the relative directory.
-	rel string
-	// resolver is the global resolver instance.
+	config   *config.Config
+	rel      string
 	resolver resolver.ImportResolver
-	// exclude patterns for rules that should be skipped for this package.
-	rules map[string]*RuleConfig
-	// overrides patterns are parsed from 'gazelle:resolve scala IMPORT LABEL'
-	overrides []*overrideSpec
-	// implicitImports are parsed from 'gazelle:resolve_implicit scala foo bar [baz]...'
-	implicitImports []*implicitImportSpec
-	// label kind rewrite specifications are parsed from 'gazelle:resolve_kind_rewrite_name'
+
+	rules             map[string]*RuleConfig
+	overrides         []*overrideSpec
+	implicitImports   []*implicitImportSpec
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
-	// annotations is a flag to print additional comments on srcs
-	annotations map[annotation]interface{}
+	annotations       map[annotation]interface{}
 }
 
 // newScalaConfig initializes a new scalaConfig.
 func newScalaConfig(config *config.Config, rel string, rslv resolver.ImportResolver) *scalaConfig {
 	return &scalaConfig{
-		config:            config,
-		rel:               rel,
-		resolver:          rslv,
+		config:   config,
+		rel:      rel,
+		resolver: rslv,
+
 		annotations:       make(map[annotation]interface{}),
-		rules:             make(map[string]*RuleConfig),
-		overrides:         make([]*overrideSpec, 0),
-		implicitImports:   make([]*implicitImportSpec, 0),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
+		rules:             make(map[string]*RuleConfig),
 	}
 }
 
@@ -87,7 +80,6 @@ func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)
-		cfg.rel = rel
 	} else {
 		cfg = newScalaConfig(config, rel, resolver)
 	}
@@ -107,8 +99,12 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	for k, v := range c.labelNameRewrites {
 		clone.labelNameRewrites[k] = v
 	}
-	clone.overrides = c.overrides[:]
-	clone.implicitImports = c.implicitImports[:]
+	if c.overrides != nil {
+		clone.overrides = c.overrides[:]
+	}
+	if c.implicitImports != nil {
+		clone.implicitImports = c.implicitImports[:]
+	}
 	return clone
 }
 
@@ -265,28 +261,19 @@ func (c *scalaConfig) getImplicitImports(lang, imp string) (deps []string) {
 	return
 }
 
-func (c *scalaConfig) getConfiguredRule(name string) (*RuleConfig, bool) {
-	rc, ok := c.rules[name]
-	return rc, ok
-}
-
-// configuredRules returns a determinstic ordered list of configured
-// rules
+// configuredRules returns an ordered list of configured rules
 func (c *scalaConfig) configuredRules() []*RuleConfig {
+
 	names := make([]string, 0)
 	for name := range c.rules {
 		names = append(names, name)
 	}
 	sort.Strings(names)
-	rules := make([]*RuleConfig, 0)
-	for _, name := range names {
-		rules = append(rules, c.rules[name])
+	rules := make([]*RuleConfig, len(names))
+	for i, name := range names {
+		rules[i] = c.rules[name]
 	}
 	return rules
-}
-
-func (c *scalaConfig) Overrides() []*overrideSpec {
-	return c.overrides
 }
 
 func (c *scalaConfig) shouldAnnotateImports() bool {
@@ -302,6 +289,14 @@ func (c *scalaConfig) shouldAnnotateResolvedDeps() bool {
 func (c *scalaConfig) shouldAnnotateUnresolvedDeps() bool {
 	_, ok := c.annotations[AnnotateUnresolvedDeps]
 	return ok
+}
+
+func (c *scalaConfig) Comment() build.Comment {
+	return build.Comment{Token: "# " + c.String()}
+}
+
+func (c *scalaConfig) String() string {
+	return fmt.Sprintf("scalaConfig rel=%q, annotations=%+v", c.rel, c.annotations)
 }
 
 type overrideSpec struct {
@@ -330,4 +325,20 @@ func parseAnnotation(val string) annotation {
 	default:
 		return AnnotateUnknown
 	}
+}
+
+// isSameImport returns true if the "from" and "to" labels are the same,
+// normalizing to the config.RepoName and performing label name remapping if the
+// kind matches.
+func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
+	if from.Repo == "" {
+		from = label.New(sc.config.RepoName, from.Pkg, from.Name)
+	}
+	if to.Repo == "" {
+		to = label.New(sc.config.RepoName, to.Pkg, to.Name)
+	}
+	if mapping, ok := sc.labelNameRewrites[kind]; ok {
+		from = mapping.Rewrite(from)
+	}
+	return from == to
 }

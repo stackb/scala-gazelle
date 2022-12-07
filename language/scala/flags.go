@@ -25,86 +25,60 @@ const (
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
-	getOrCreateScalaConfig(c, "" /* rel="" */, sl) // ignoring return value, only want side-effect
-
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProviderFlagName, "name of a known import provider implementation to enable")
 	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
-	for _, provider := range sl.knownImportProviders {
+	sl.registerKnownImportProviders(flags, cmd, c)
+}
+
+func (sl *scalaLang) registerKnownImportProviders(flags *flag.FlagSet, cmd string, c *config.Config) {
+	providers := resolver.GlobalKnownImportProviderRegistry().KnownImportProviders()
+	for _, provider := range providers {
 		provider.RegisterFlags(flags, cmd, c)
 	}
 }
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	if sl.cpuprofileFlagValue != "" {
-		if !filepath.IsAbs(sl.cpuprofileFlagValue) {
-			sl.cpuprofileFlagValue = filepath.Join(c.WorkDir, sl.cpuprofileFlagValue)
-		}
-		f, err := os.Create(sl.cpuprofileFlagValue)
-		if err != nil {
-			return err
-		}
-		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
-		pprof.StartCPUProfile(f)
-	}
-	if sl.memprofileFlagValue != "" {
-		if !filepath.IsAbs(sl.memprofileFlagValue) {
-			sl.memprofileFlagValue = filepath.Join(c.WorkDir, sl.memprofileFlagValue)
-		}
-	}
+	sl.knownImportResolver = newKnownImportResolver(sl)
 
-	// initialize the resolver implementation
-	sl.knownImportResolver = NewKnownImportResolver(sl)
-
-	if err := parseScalaExistingRules(sl.scalaExistingRulesFlagValue); err != nil {
+	if err := sl.setupKnownImportProviders(flags, c, sl.importProviderNamesFlagValue); err != nil {
 		return err
 	}
-
-	providers, err := filterNamedKnownImportProviders(
-		sl.knownImportProviders, sl.importProviderNamesFlagValue)
-	if err != nil {
+	if err := sl.setupScalaExistingRules(sl.scalaExistingRulesFlagValue); err != nil {
 		return err
 	}
-	sl.knownImportProviders = providers
-	for _, provider := range sl.knownImportProviders {
-		provider.CheckFlags(flags, c, sl)
+	if err := sl.setupCache(); err != nil {
+		return err
 	}
-
-	if sl.cacheFileFlagValue != "" {
-		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
-		if err := sl.readCacheFile(); err != nil {
-			// don't report error if the file does not exist yet
-			if !errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("reading cache file: %w", err)
-			}
-		}
+	if err := sl.setupCpuProfiling(c.WorkDir); err != nil {
+		return err
+	}
+	if err := sl.setupMemoryProfiling(c.WorkDir); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func filterNamedKnownImportProviders(current []resolver.KnownImportProvider, names []string) (want []resolver.KnownImportProvider, err error) {
-	for _, name := range names {
-		found := false
-		for _, provider := range current {
-			if name == provider.Name() {
-				want = append(want, provider)
-				found = true
-				break
-			}
-		}
-		if !found {
-			return nil, fmt.Errorf("resolver.KnownImportProvider not found: %q", name)
+func (sl *scalaLang) setupKnownImportProviders(flags *flag.FlagSet, c *config.Config, names []string) error {
+	providers, err := resolver.GetNamedKnownImportProviders(sl.importProviderNamesFlagValue)
+	if err != nil {
+		return err
+	}
+	for _, provider := range providers {
+		if err := provider.CheckFlags(flags, c, sl); err != nil {
+			return err
 		}
 	}
-	return
+	sl.knownImportProviders = providers
+	return nil
 }
 
-func parseScalaExistingRules(rules []string) error {
+func (sl *scalaLang) setupScalaExistingRules(rules []string) error {
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
@@ -116,4 +90,58 @@ func parseScalaExistingRules(rules []string) error {
 		Rules().MustRegisterRule(fqn, &scalaExistingRule{load, kind, isBinaryRule})
 	}
 	return nil
+}
+
+func (sl *scalaLang) setupCache() error {
+	if sl.cacheFileFlagValue != "" {
+		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
+		if err := sl.readCacheFile(); err != nil {
+			// don't report error if the file does not exist yet
+			if !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("reading cache file: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupCpuProfiling(workDir string) error {
+	if sl.cpuprofileFlagValue != "" {
+		if !filepath.IsAbs(sl.cpuprofileFlagValue) {
+			sl.cpuprofileFlagValue = filepath.Join(workDir, sl.cpuprofileFlagValue)
+		}
+		f, err := os.Create(sl.cpuprofileFlagValue)
+		if err != nil {
+			return err
+		}
+		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
+		pprof.StartCPUProfile(f)
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupMemoryProfiling(workDir string) error {
+	if sl.memprofileFlagValue != "" {
+		if !filepath.IsAbs(sl.memprofileFlagValue) {
+			sl.memprofileFlagValue = filepath.Join(workDir, sl.memprofileFlagValue)
+		}
+	}
+	return nil
+}
+
+func (sl *scalaLang) stopCpuProfiling() {
+	if sl.cpuprofileFlagValue != "" {
+		pprof.StopCPUProfile()
+	}
+}
+
+func (sl *scalaLang) stopMemoryProfiling() {
+	if sl.memprofileFlagValue != "" {
+		f, err := os.Create(sl.memprofileFlagValue)
+		if err != nil {
+			log.Fatalf("creating memprofile: %v", err)
+		}
+		log.Println("Writing memprofile to", sl.memprofileFlagValue)
+		pprof.WriteHeapProfile(f)
+	}
 }

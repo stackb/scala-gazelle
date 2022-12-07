@@ -1,8 +1,6 @@
 package scala
 
 import (
-	"log"
-
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/repo"
@@ -16,16 +14,11 @@ func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []res
 
 	pkg, ok := sl.packages[from.Pkg]
 	if !ok {
-		// log.Println("scala.Imports(): Unknown package", from.Pkg)
 		return nil
 	}
 
 	provider := pkg.ruleProvider(r)
-	// NOTE: gazelle attempts to index rules found in the build file regardless
-	// of whether we returned the rule from GenerateRules or not, so this will
-	// be nil in that case.
 	if provider == nil {
-		// log.Println("scala.Imports(): Unknown provider", from)
 		return nil
 	}
 
@@ -47,24 +40,21 @@ func (sl *scalaLang) Resolve(
 	if !sl.isResolvePhase {
 		sl.isResolvePhase = true
 		sl.onResolve()
-		sl.totalRules = sl.remainingRules
 	}
 
-	if pkg, ok := sl.packages[from.Pkg]; ok {
-		if r.Kind() == packageMarkerRuleKind {
-			resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
-		} else {
-			//
-			pkg.Resolve(c, ix, rc, r, importsRaw, from)
-		}
+	pkg, ok := sl.packages[from.Pkg]
+	if !ok {
+		return
+	}
 
-		sl.remainingRules--
-
-		if sl.remainingRules == 0 {
-			sl.onEnd()
-		}
+	if r.Kind() == packageMarkerRuleKind {
+		resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
 	} else {
-		log.Printf("no known rule package for %v", from.Pkg)
+		pkg.Resolve(c, ix, rc, r, importsRaw, from)
 	}
 
+	sl.remainingPackages--
+	if sl.remainingPackages == 0 {
+		sl.onEnd()
+	}
 }

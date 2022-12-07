@@ -7,10 +7,10 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// NewKnownImportResolver constructs the top-level known import resolver.
-func NewKnownImportResolver(known resolver.KnownImportRegistry) resolver.KnownImportResolver {
+// newKnownImportResolver constructs the top-level known import resolver.
+func newKnownImportResolver(known resolver.KnownImportRegistry) resolver.KnownImportResolver {
 	chain := resolver.NewChainResolver(
-		// override resolver is the least performant
+		// override resolver is the least performant!
 		resolver.NewMemoResolver(resolver.NewOverrideResolver(scalaLangName)),
 		resolver.NewKnownResolver(known),
 		resolver.NewCrossResolver(scalaLangName),
@@ -18,7 +18,6 @@ func NewKnownImportResolver(known resolver.KnownImportRegistry) resolver.KnownIm
 		// resolver.NewMemoResolver(resolver.NewCrossResolver("java")),
 	)
 	scala := resolver.NewScalaResolver(chain)
-	// return scala
 	return resolver.NewMemoResolver(scala)
 }
 

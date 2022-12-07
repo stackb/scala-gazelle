@@ -1,4 +1,4 @@
-package scala
+package scalacompile
 
 import (
 	"encoding/json"
@@ -10,7 +10,6 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
 
 // TestScalaCompileResponse tests translation of an XML response from the
@@ -20,7 +19,7 @@ func TestScalaCompileResponse(t *testing.T) {
 		dir          string
 		filename     string
 		mockResponse string
-		want         *scalacompile.ScalaCompileSpec
+		want         *ScalaCompileSpec
 	}{
 		"ok": {
 			filename: "lib/App.scala",
@@ -31,8 +30,8 @@ func TestScalaCompileResponse(t *testing.T) {
   <diagnostic line="67" sev="ERROR" source="lib/App.scala">not found: type Greeter</diagnostic>
 </compileResponse>
 `,
-			want: &scalacompile.ScalaCompileSpec{
-				NotFound: []*scalacompile.NotFoundSymbol{{Name: "Greeter", Kind: "type"}},
+			want: &ScalaCompileSpec{
+				NotFound: []*NotFoundSymbol{{Name: "Greeter", Kind: "type"}},
 			},
 		},
 	} {

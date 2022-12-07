@@ -112,7 +112,8 @@ func TestParseScalaExistingRules(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			if testutil.ExpectError(t, tc.wantErr, parseScalaExistingRules(tc.rules)) {
+			lang := NewLanguage().(*scalaLang)
+			if testutil.ExpectError(t, tc.wantErr, lang.setupScalaExistingRules(tc.rules)) {
 				return
 			}
 			if tc.check != nil {

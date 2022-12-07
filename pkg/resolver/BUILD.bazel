@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "chain_resolver.go",
         "cross_resolver.go",
+        "global_known_import_provider_registry.go",
         "import.go",
         "import_ambiguous_error.go",
         "import_map.go",
@@ -33,7 +34,7 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
-        "@com_github_dghubble_trie//:go_default_library",
+        "@com_github_dghubble_trie//:trie",
     ],
 )
 

@@ -25,3 +25,12 @@ protos: jarindex_protos scalaparse_protos scalacache_protos
 tidy:
 	bazel run @go_sdk//:bin/go -- mod tidy
 	bazel run //:update_go_repositories
+
+.PHONY: tools
+tools:
+	go install github.com/vektra/mockery/v2@latest
+
+.PHONY: mocks
+mocks:
+	mockery --output pkg/mocks --name=KnownImportProvider --dir=pkg/resolver
+	mockery --output pkg/mocks --name=ImportResolver --dir=pkg/resolver

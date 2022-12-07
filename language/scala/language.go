@@ -42,12 +42,8 @@ type scalaLang struct {
 	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
-	// lastPackage tracks if this is the last generated package
-	lastPackage *scalaPackage
-	// remainingRules is a counter that tracks when all rules have been resolved.
-	remainingRules int
-	// totalRules is used for progress
-	totalRules int
+	// remainingPackages is a counter that tracks when all packages have been resolved.
+	remainingPackages int
 	// progress is the progress interface
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules

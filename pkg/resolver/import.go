@@ -3,7 +3,9 @@ package resolver
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
+	"github.com/bazelbuild/buildtools/build"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
@@ -60,33 +62,37 @@ func NewMainClassImport(imp string) *Import {
 	}
 }
 
+func (imp *Import) Comment() build.Comment {
+	return build.Comment{Token: "# " + imp.String()}
+}
+
 func (imp *Import) String() string {
-	s := imp.Imp + " ("
-	switch imp.Kind {
-	case sppb.ImportKind_DIRECT:
-		if imp.Source == nil {
-			panic("source file should always be set for direct import: this is a bug")
-		}
-		s += fmt.Sprintf("%v from %s", imp.Kind, filepath.Base(imp.Source.Filename))
-	case sppb.ImportKind_IMPLICIT:
-		if imp.Src == "" {
-			panic("src/parent should always be set for an implicit import: this is a bug")
-		}
-		s += fmt.Sprintf("%v from %s", imp.Kind, imp.Parent)
-	default:
-		s += fmt.Sprintf("%v", imp.Kind)
-	}
-	s += ")"
+	var impType string
 	if imp.Known != nil {
-		s += fmt.Sprintf(": resolved %v", imp.Known.Type)
-		if imp.Known.Import != imp.Imp {
-			s += "<" + imp.Known.Import + ">"
-		}
-		s += " to " + imp.Known.Label.String()
+		impType = fmt.Sprintf("%v", imp.Known.Type)
+	} else if imp.Error != nil {
+		impType = "ERROR"
 	}
-	if imp.Error != nil {
-		s += fmt.Sprintf(": error %v", imp.Error)
+	parts := []string{
+		fmt.Sprintf("%s<%s>", imp.Imp, impType),
 	}
 
-	return s
+	if imp.Known != nil {
+		to := imp.Known.Label.String()
+		if to == "//:" {
+			to = "NO-LABEL"
+		}
+		parts = append(parts, fmt.Sprintf("✅ %s<%s>", to, imp.Known.Provider))
+	} else if imp.Error != nil {
+		parts = append(parts, fmt.Sprintf("❌ %v", imp.Error))
+	}
+
+	if imp.Source != nil {
+		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, filepath.Base(imp.Source.Filename)))
+	} else if imp.Src != "" {
+		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
+	} else {
+		parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
+	}
+	return strings.Join(parts, " ")
 }

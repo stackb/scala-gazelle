@@ -210,6 +210,14 @@ def go_repositories():
         version = "v1.1.1",
     )
     go_repository(
+        name = "com_github_dghubble_trie",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/dghubble/trie",
+        sum = "h1:TDVVzd8q/n2YLqidDna2iptspyyNyqi9nZmxNA6Yrg0=",
+        version = "v0.0.0-20220811160003-18e0eff3ca7b",
+    )
+
+    go_repository(
         name = "com_github_docker_go_units",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/docker/go-units",

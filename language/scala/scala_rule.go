@@ -124,6 +124,7 @@ func (r *ScalaRule) putRequiredTypes(imp string, types *sppb.ClassList) {
 
 // ResolveKnownImport implements the resolver.KnownImportResolver interface
 func (r *ScalaRule) ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.KnownImport, error) {
+	log.Printf("ScalaRule.ResolveKnownImport %q", imp)
 	if known, ok := r.registry.GetKnownImport(imp); ok {
 		return known, nil
 	}

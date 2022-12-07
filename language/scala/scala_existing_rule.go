@@ -1,10 +1,7 @@
 package scala
 
 import (
-	"fmt"
 	"log"
-	"path/filepath"
-	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -64,6 +61,8 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 
 // ResolveRule implements the RuleResolver interface.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
+	log.Println("scalaExistingRuleProvider.ResolveRule")
+
 	scalaRule, err := pkg.ParseScalaRule(r)
 	if err != nil {
 		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
@@ -149,6 +148,8 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 		return
 	}
 
+	log.Println("scalaExistingRuleProvider.Resolve")
+
 	sc := getScalaConfig(c)
 	imports := scalaRule.Imports(sc)
 
@@ -178,6 +179,8 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		}
 	}
+
+	// r.Attr("name").(*build.StringExpr).Comments.Before = []build.Comment{sc.Comment()}
 }
 
 func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantImports, wantUnresolved bool) {
@@ -187,35 +190,6 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantI
 		if !(wantImports || (wantUnresolved && imp.Known == nil)) {
 			continue
 		}
-		var impType string
-		if imp.Known != nil {
-			impType = fmt.Sprintf("%v", imp.Known.Type)
-		} else if imp.Error != nil {
-			impType = "ERROR"
-		}
-		parts := []string{
-			fmt.Sprintf("# %s<%s>", key, impType),
-		}
-
-		if imp.Known != nil {
-			to := imp.Known.Label.String()
-			if to == "//:" {
-				to = "NO-LABEL"
-			}
-			parts = append(parts, fmt.Sprintf("✅ %s<%s>", to, imp.Known.Provider))
-		} else if imp.Error != nil {
-			parts = append(parts, fmt.Sprintf("❌ %v", imp.Error))
-		}
-
-		if imp.Source != nil {
-			parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, filepath.Base(imp.Source.Filename)))
-		} else if imp.Src != "" {
-			parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
-		} else {
-			parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
-		}
-
-		comments.Before = append(comments.Before, build.Comment{Token: strings.Join(parts, " ")})
+		comments.Before = append(comments.Before, imp.Comment())
 	}
-
 }

@@ -11,7 +11,7 @@ import (
 func (sl *scalaLang) Configure(c *config.Config, rel string, f *rule.File) {
 	if f != nil {
 		if err := getOrCreateScalaConfig(c, rel, sl).parseDirectives(f.Directives); err != nil {
-			log.Fatalf("parsing rule directives in package %q: %v", rel, err)
+			log.Fatalf("parsing directives in package %q: %v", rel, err)
 		}
 	}
 }

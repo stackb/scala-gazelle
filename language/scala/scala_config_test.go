@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 
+	"github.com/stackb/scala-gazelle/pkg/mocks"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
@@ -58,7 +59,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
+			sc, err := parseTestDirectives(t, "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -76,9 +77,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		wantErr    error
 		want       []*overrideSpec
 	}{
-		"degenerate": {
-			want: []*overrideSpec{},
-		},
+		"degenerate": {},
 		"scala scala": {
 			directives: []rule.Directive{
 				{Key: resolveGlobDirective, Value: "scala scala com.foo.Bar //com/foo/bar"},
@@ -105,7 +104,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
+			sc, err := parseTestDirectives(t, "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -123,9 +122,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		want       []*implicitImportSpec
 		wantErr    error
 	}{
-		"degenerate": {
-			want: []*implicitImportSpec{},
-		},
+		"degenerate": {},
 		"typical example": {
 			directives: []rule.Directive{
 				{Key: resolveWithDirective, Value: "java com.typesafe.scalalogging.LazyLogging org.slf4j.Logger"},
@@ -152,7 +149,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
+			sc, err := parseTestDirectives(t, "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -183,7 +180,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
+			sc, err := parseTestDirectives(t, "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -214,7 +211,7 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
+			sc, err := parseTestDirectives(t, "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -226,9 +223,9 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 	}
 }
 
-func parseTestDirectives(rel string, dd ...rule.Directive) (*scalaConfig, error) {
+func parseTestDirectives(t *testing.T, rel string, dd ...rule.Directive) (*scalaConfig, error) {
 	c := config.New()
-	sc := newScalaConfig(c, rel, &fakeImportResolver{})
+	sc := newScalaConfig(c, rel, mocks.NewImportResolver(t))
 	err := sc.parseDirectives(dd)
 	return sc, err
 }
@@ -274,11 +271,64 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			fake := &fakeImportResolver{}
-			sc := newScalaConfig(c, tc.rel, fake)
+			mock := mocks.NewImportResolver(t)
+			sc := newScalaConfig(c, tc.rel, mock)
 
 			sc.GetKnownRule(tc.from)
-			got := fake.getKnownRuleFromArgument
+			call := mock.Calls[0]
+			got := call.Arguments.Get(0)
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestIsSameImport(t *testing.T) {
+	for name, tc := range map[string]struct {
+		repoName string
+		kind     string
+		from, to label.Label
+		want     bool
+	}{
+		"degenerate": {
+			want: true,
+		},
+		"equal": {
+			from: label.New("corp", "pkg", "name"),
+			to:   label.New("corp", "pkg", "name"),
+			want: true,
+		},
+		"different": {
+			repoName: "corp",
+			from:     label.New("other", "pkg", "name"),
+			to:       label.New("other", "pkg", "name"),
+			want:     true,
+		},
+		"both internal labels": {
+			repoName: "corp",
+			from:     label.New("", "pkg", "name"),
+			to:       label.New("", "pkg", "name"),
+			want:     true,
+		},
+		"from has repo": {
+			repoName: "corp",
+			from:     label.New("corp", "pkg", "name"),
+			to:       label.New("", "pkg", "name"),
+			want:     true,
+		},
+		"to has repo": {
+			repoName: "corp",
+			from:     label.New("", "pkg", "name"),
+			to:       label.New("corp", "pkg", "name"),
+			want:     true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			c := config.New()
+			c.RepoName = tc.repoName
+			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

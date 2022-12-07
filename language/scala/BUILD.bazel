@@ -30,7 +30,6 @@ go_library(
         "rule_info.go",
         "rule_provider.go",
         "rule_registry.go",
-        "scala_compiler.go",
         "scala_config.go",
         "scala_existing_rule.go",
         "scala_package.go",
@@ -46,7 +45,6 @@ go_library(
         "//pkg/protobuf",
         "//pkg/provider",
         "//pkg/resolver",
-        "//pkg/scalacompile",
         "//pkg/scalaparse",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
@@ -57,7 +55,6 @@ go_library(
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_pcj_mobyprogress//:mobyprogress",
-        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
     ],
 )
 
@@ -95,18 +92,14 @@ go_test(
         "golden_test.go",
         "language_test.go",
         "loads_test.go",
-        # "resolver_test.go",
-        # "rule_index_test.go",
-        # "scala_compiler_test.go",
         "scala_config_test.go",
-        # "scala_existing_rule_test.go",
-        "fake_import_resolver_test.go",
+        "scala_existing_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
-        "//build/stack/gazelle/scala/parse",
-        "//pkg/scalacompile",
+        "//mocks",  # keep
+        "//pkg/resolver",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
@@ -114,9 +107,7 @@ go_test(
         "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
         "@build_stack_rules_proto//pkg/goldentest",
-        "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_google_go_cmp//cmp",
-        "@com_github_google_go_cmp//cmp/cmpopts",
     ],
 )
 

@@ -140,19 +140,3 @@ func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool, fr
 
 	return
 }
-
-// isSameImport returns true if the "from" and "to" labels are the same,
-// normalizing to the config.RepoName and performing label name remapping if the
-// kind matches.
-func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
-	if from.Repo == "" {
-		from = label.New(sc.config.RepoName, from.Pkg, from.Name)
-	}
-	if to.Repo == "" {
-		to = label.New(sc.config.RepoName, to.Pkg, to.Name)
-	}
-	if mapping, ok := sc.labelNameRewrites[kind]; ok {
-		from = mapping.Rewrite(from)
-	}
-	return from == to
-}

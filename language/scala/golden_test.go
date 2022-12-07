@@ -13,7 +13,7 @@ func TestScala(t *testing.T) {
 			// "rules_jvm_external_provider",
 			// "stackb_rules_proto_provider",
 			"scalaparse_provider",
-			"override_provider",
+			// "override_provider",
 		),
 	).Run(t, "gazelle")
 }

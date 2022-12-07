@@ -2,7 +2,6 @@ package scala
 
 import (
 	"log"
-	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -11,6 +10,7 @@ import (
 
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+
 	if args.File == nil {
 		return language.GenerateResult{}
 	}
@@ -25,23 +25,10 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	sc := getOrCreateScalaConfig(args.Config, args.Rel, sl)
+	sc := getScalaConfig(args.Config)
 	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleRegistry, sl.sourceProvider, sl)
-
-	// search for child packages, but only assign if a parent has not already
-	// been assigned.  Given that gazelle uses a DFS walk, we should assign the
-	// child to the nearest parent.
-	for rel, child := range sl.packages {
-		if child.parent != nil {
-			continue
-		}
-		if !strings.HasPrefix(rel, args.Rel) {
-			continue
-		}
-		child.parent = pkg
-	}
 	sl.packages[args.Rel] = pkg
-	sl.lastPackage = pkg
+	sl.remainingPackages++
 
 	rules := pkg.Rules()
 	for _, r := range rules {
@@ -50,7 +37,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
-	sl.remainingRules += len(rules)
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
