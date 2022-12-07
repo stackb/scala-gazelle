@@ -17,8 +17,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// JarIndexProvider is a provider of known imports for a set of
-// jar index protos.
+// JarIndexProvider is a provider of known imports for a set of jar index
+// protos.
 type JarIndexProvider struct {
 	jarindexFiles collections.StringSlice
 
@@ -26,9 +26,8 @@ type JarIndexProvider struct {
 	byLabel             map[label.Label]*jipb.JarFile
 }
 
-// NewJarIndexProvider constructs a new provider.  The lang/impLang
-// arguments are used to fetch the provided imports in the given importProvider
-// struct.
+// NewJarIndexProvider constructs a new provider.  The lang/impLang arguments
+// are used to fetch the provided imports in the given importProvider struct.
 func NewJarIndexProvider() *JarIndexProvider {
 	return &JarIndexProvider{
 		byLabel:       make(map[label.Label]*jipb.JarFile),
@@ -64,7 +63,6 @@ func (p *JarIndexProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, regist
 
 // OnResolve implements part of the resolver.KnownImportProvider interface.
 func (p *JarIndexProvider) OnResolve() {
-
 }
 
 // CanProvide implements part of the resolver.KnownImportProvider interface.
@@ -90,14 +88,6 @@ func (p *JarIndexProvider) readJarIndex(filename string) error {
 		isPredefined[lbl] = true
 	}
 
-	// for _, v := range index.Preferred {
-	// 	lbl, err := label.Parse(v)
-	// 	if err != nil {
-	// 		return fmt.Errorf("bad preferred label %q: %v", v, err)
-	// 	}
-	// 	p.preferred[lbl] = true
-	// }
-
 	for _, jarFile := range index.JarFile {
 		if err := p.readJarFile(jarFile, isPredefined); err != nil {
 			return err
@@ -109,7 +99,7 @@ func (p *JarIndexProvider) readJarIndex(filename string) error {
 
 func (p *JarIndexProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label.Label]bool) error {
 	if jarFile.Filename == "" {
-		log.Panicf("unnamed jar? %+v", jarFile)
+		log.Panicf("jarFile must have a name: %+v", jarFile)
 	}
 
 	var from label.Label

@@ -111,12 +111,11 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	}
 
 	configuredRules := s.cfg.configuredRules()
-	log.Println("scalaPackage configuredRules", configuredRules)
 
 	for _, rc := range configuredRules {
 		// if enabled != rc.Enabled {
 		if !rc.Enabled {
-			log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
+			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
 			continue
 		}
 		rule := s.provideRule(rc)
@@ -218,13 +217,10 @@ func (s *scalaPackage) Empty() []*rule.Rule {
 }
 
 func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve bool) []*rule.Rule {
-	log.Printf("scalaPackage[%s].getProvidedRules: providers: %v", s.rel, providers)
-
 	rules := make([]*rule.Rule, 0)
 	for _, p := range providers {
 		r := p.Rule()
 		if r == nil {
-			log.Printf("scalaPackage.getProvidedRules: skipping %s (no rule):", p.Name())
 			continue
 		}
 		if shouldResolve {

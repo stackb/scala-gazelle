@@ -1,0 +1,825 @@
+{
+    "jarFiles": [
+        {
+            "filename": "bazel-out/darwin_arm64-fastbuild/bin/external/maven/v1/https/repo1.maven.org/maven2/com/google/code/gson/gson/2.8.9/processed_gson-2.8.9.jar",
+            "label": "@maven//:com_google_code_gson_gson",
+            "files": [
+                {
+                    "name": "com.google.gson.ExclusionStrategy",
+                    "symbols": [
+                        "com.google.gson.FieldAttributes",
+                        "java.lang.Class"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.FieldAttributes",
+                    "symbols": [
+                        "java.lang.Class",
+                        "java.lang.String",
+                        "java.lang.annotation.Annotation",
+                        "java.lang.reflect.Type",
+                        "java.util.Collection"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$1",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$2",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$3",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$4",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$5",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingPolicy$6",
+                    "symbols": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "java.lang.Enum",
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.FieldNamingPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.FieldNamingStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.FieldNamingStrategy",
+                    "symbols": [
+                        "java.lang.String",
+                        "java.lang.reflect.Field"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.Gson",
+                    "symbols": [
+                        "com.google.gson.FieldNamingStrategy",
+                        "com.google.gson.GsonBuilder",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.LongSerializationPolicy",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.TypeAdapterFactory",
+                        "com.google.gson.internal.Excluder",
+                        "com.google.gson.reflect.TypeToken",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.Appendable",
+                        "java.lang.Class",
+                        "java.lang.String",
+                        "java.lang.reflect.Type"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$1",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.Double",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$2",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.Float",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$3",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$4",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.String",
+                        "java.util.concurrent.atomic.AtomicLong"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$5",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.String",
+                        "java.util.concurrent.atomic.AtomicLongArray"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.Gson$FutureTypeAdapter",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.GsonBuilder",
+                    "symbols": [
+                        "com.google.gson.ExclusionStrategy",
+                        "com.google.gson.FieldNamingPolicy",
+                        "com.google.gson.FieldNamingStrategy",
+                        "com.google.gson.Gson",
+                        "com.google.gson.GsonBuilder",
+                        "com.google.gson.LongSerializationPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.TypeAdapterFactory",
+                        "java.lang.Class",
+                        "java.lang.String",
+                        "java.lang.reflect.Type",
+                        "java.util.List"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.InstanceCreator",
+                    "symbols": [
+                        "java.lang.reflect.Type"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.JsonArray",
+                    "symbols": [
+                        "com.google.gson.JsonArray",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonNull",
+                        "com.google.gson.JsonObject",
+                        "com.google.gson.JsonPrimitive",
+                        "java.lang.Boolean",
+                        "java.lang.Character",
+                        "java.lang.Iterable",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal",
+                        "java.math.BigInteger",
+                        "java.util.Iterator"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonElement"
+                    ],
+                    "interfaces": [
+                        "java.lang.Iterable"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonDeserializationContext",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "java.lang.reflect.Type"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.JsonDeserializer",
+                    "symbols": [
+                        "com.google.gson.JsonDeserializationContext",
+                        "com.google.gson.JsonElement",
+                        "java.lang.reflect.Type"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.JsonElement",
+                    "symbols": [
+                        "com.google.gson.JsonArray",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonNull",
+                        "com.google.gson.JsonObject",
+                        "com.google.gson.JsonPrimitive",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal",
+                        "java.math.BigInteger"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonIOException",
+                    "symbols": [
+                        "com.google.gson.JsonParseException",
+                        "java.lang.RuntimeException"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonParseException",
+                        "java.lang.RuntimeException"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonNull",
+                    "symbols": [
+                        "com.google.gson.JsonArray",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonNull",
+                        "com.google.gson.JsonObject",
+                        "com.google.gson.JsonPrimitive",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal",
+                        "java.math.BigInteger"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonElement"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonObject",
+                    "symbols": [
+                        "com.google.gson.JsonArray",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonNull",
+                        "com.google.gson.JsonObject",
+                        "com.google.gson.JsonPrimitive",
+                        "java.lang.Boolean",
+                        "java.lang.Character",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal",
+                        "java.math.BigInteger",
+                        "java.util.Set"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonElement"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonParseException",
+                    "symbols": [
+                        "java.lang.RuntimeException"
+                    ],
+                    "superclasses": [
+                        "java.lang.RuntimeException"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonParser",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.stream.JsonReader",
+                        "java.io.Reader",
+                        "java.lang.String"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonPrimitive",
+                    "symbols": [
+                        "com.google.gson.JsonArray",
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonNull",
+                        "com.google.gson.JsonObject",
+                        "com.google.gson.JsonPrimitive",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal",
+                        "java.math.BigInteger"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonElement"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonSerializationContext",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "java.lang.reflect.Type"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.JsonSerializer",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.JsonSerializationContext",
+                        "java.lang.reflect.Type"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.JsonStreamParser",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "java.util.Iterator"
+                    ],
+                    "interfaces": [
+                        "java.util.Iterator"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.JsonSyntaxException",
+                    "symbols": [
+                        "com.google.gson.JsonParseException",
+                        "java.lang.RuntimeException"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.JsonParseException",
+                        "java.lang.RuntimeException"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.LongSerializationPolicy",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.LongSerializationPolicy",
+                        "java.lang.Enum",
+                        "java.lang.Long",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "java.lang.Enum"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.LongSerializationPolicy$1",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.LongSerializationPolicy",
+                        "java.lang.Enum",
+                        "java.lang.Long",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.LongSerializationPolicy",
+                        "java.lang.Enum"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.LongSerializationPolicy$2",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.LongSerializationPolicy",
+                        "java.lang.Enum",
+                        "java.lang.Long",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.LongSerializationPolicy",
+                        "java.lang.Enum"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberPolicy",
+                    "symbols": [
+                        "com.google.gson.ToNumberPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Enum",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.ToNumberStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberPolicy$1",
+                    "symbols": [
+                        "com.google.gson.ToNumberPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Double",
+                        "java.lang.Enum",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.ToNumberPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.ToNumberStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberPolicy$2",
+                    "symbols": [
+                        "com.google.gson.ToNumberPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Enum",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.ToNumberPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.ToNumberStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberPolicy$3",
+                    "symbols": [
+                        "com.google.gson.ToNumberPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Enum",
+                        "java.lang.Number",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.ToNumberPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.ToNumberStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberPolicy$4",
+                    "symbols": [
+                        "com.google.gson.ToNumberPolicy",
+                        "com.google.gson.ToNumberStrategy",
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Enum",
+                        "java.lang.Number",
+                        "java.lang.String",
+                        "java.math.BigDecimal"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.ToNumberPolicy",
+                        "java.lang.Enum"
+                    ],
+                    "interfaces": [
+                        "com.google.gson.ToNumberStrategy"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.ToNumberStrategy",
+                    "symbols": [
+                        "com.google.gson.stream.JsonReader",
+                        "java.lang.Number"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.TypeAdapter",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.String"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.TypeAdapter$1",
+                    "symbols": [
+                        "com.google.gson.JsonElement",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.stream.JsonReader",
+                        "com.google.gson.stream.JsonWriter",
+                        "java.io.Reader",
+                        "java.io.Writer",
+                        "java.lang.String"
+                    ],
+                    "superclasses": [
+                        "com.google.gson.TypeAdapter"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.TypeAdapterFactory",
+                    "symbols": [
+                        "com.google.gson.Gson",
+                        "com.google.gson.TypeAdapter",
+                        "com.google.gson.reflect.TypeToken"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "com.google.gson.annotations.Expose",
+                    "symbols": [
+                        "java.lang.annotation.Annotation"
+                    ],
+                    "interfaces": [
+                        "java.lang.annotation.Annotation"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.annotations.JsonAdapter",
+                    "symbols": [
+                        "java.lang.Class",
+                        "java.lang.annotation.Annotation"
+                    ],
+                    "interfaces": [
+                        "java.lang.annotation.Annotation"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.annotations.SerializedName",
+                    "symbols": [
+                        "java.lang.String",
+                        "java.lang.annotation.Annotation"
+                    ],
+                    "interfaces": [
+                        "java.lang.annotation.Annotation"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.annotations.Since",
+                    "symbols": [
+                        "java.lang.annotation.Annotation"
+                    ],
+                    "interfaces": [
+                        "java.lang.annotation.Annotation"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.annotations.Until",
+                    "symbols": [
+                        "java.lang.annotation.Annotation"
+                    ],
+                    "interfaces": [
+                        "java.lang.annotation.Annotation"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.internal.$Gson$Preconditions"
+                },
+                {
+                    "name": "com.google.gson.internal.$Gson$Types",
+                    "symbols": [
+                        "java.lang.Class",
+                        "java.lang.String",
+                        "java.lang.reflect.GenericArrayType",
+                        "java.lang.reflect.ParameterizedType",
+                        "java.lang.reflect.Type",
+                        "java.lang.reflect.TypeVariable",
+                        "java.lang.reflect.WildcardType",
+                        "java.util.Map"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl",
+                    "symbols": [
+                        "java.io.Serializable",
+                        "java.lang.String",
+                        "java.lang.reflect.GenericArrayType",
+                        "java.lang.reflect.Type"
+                    ],
+                    "interfaces": [
+                        "java.lang.reflect.GenericArrayType",
+                        "java.io.Serializable"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl",
+                    "symbols": [
+                        "java.io.Serializable",
+                        "java.lang.String",
+                        "java.lang.reflect.ParameterizedType",
+                        "java.lang.reflect.Type"
+                    ],
+                    "interfaces": [
+                        "java.lang.reflect.ParameterizedType",
+                        "java.io.Serializable"
+                    ]
+                },
+                {
+                    "name": "com.google.gson.internal.$Gson$Types$WildcardTypeImpl",
+                    "symbols": [
+                        "java.io.Serializable",
+                        "java.lang.String",
+                        "java.lang.reflect.Type",
+                        "java.lang.reflect.WildcardType"
+                    ],
+                    "interfaces": [
+                        "java.lang.reflect.WildcardType",
+                        "java.io.Serializable"
+                    ]
+                }
+            ],
+            "packages": [
+                "com.google.gson",
+                "com.google.gson.annotations",
+                "com.google.gson.internal",
+                "com.google.gson.internal.bind",
+                "com.google.gson.internal.bind.util",
+                "com.google.gson.internal.reflect",
+                "com.google.gson.internal.sql",
+                "com.google.gson.reflect",
+                "com.google.gson.stream"
+            ]
+        },
+        {
+            "filename": "bazel-out/darwin_arm64-fastbuild/bin/external/bazel_tools/tools/jdk/platformclasspath.jar",
+            "label": "@bazel_tools//tools/jdk:platformclasspath",
+            "files": [
+                {
+                    "name": "java.util.Map",
+                    "symbols": [
+                        "java.util.Collection",
+                        "java.util.Map",
+                        "java.util.Map$Entry",
+                        "java.util.Set",
+                        "java.util.function.BiConsumer",
+                        "java.util.function.BiFunction",
+                        "java.util.function.Function"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "java.util.Map$Entry",
+                    "symbols": [
+                        "java.lang.invoke.SerializedLambda",
+                        "java.util.Comparator",
+                        "java.util.Map$Entry"
+                    ],
+                    "isInterface": true
+                },
+                {
+                    "name": "java.util.MissingFormatArgumentException",
+                    "symbols": [
+                        "java.io.ObjectInputStream",
+                        "java.io.ObjectOutputStream",
+                        "java.io.PrintStream",
+                        "java.io.PrintWriter",
+                        "java.io.Serializable",
+                        "java.lang.Exception",
+                        "java.lang.IllegalArgumentException",
+                        "java.lang.RuntimeException",
+                        "java.lang.StackTraceElement",
+                        "java.lang.String",
+                        "java.lang.Throwable",
+                        "java.lang.Throwable$PrintStreamOrWriter",
+                        "java.util.IllegalFormatException",
+                        "java.util.List",
+                        "java.util.Set"
+                    ],
+                    "superclasses": [
+                        "java.util.IllegalFormatException",
+                        "java.lang.IllegalArgumentException",
+                        "java.lang.RuntimeException",
+                        "java.lang.Exception",
+                        "java.lang.Throwable"
+                    ],
+                    "interfaces": [
+                        "java.io.Serializable"
+                    ]
+                }
+            ],
+            "packages": [
+                "java.util"
+            ]
+        }
+    ],
+    "predefined": [
+        "@bazel_tools//tools/jdk:platformclasspath"
+    ]
+}

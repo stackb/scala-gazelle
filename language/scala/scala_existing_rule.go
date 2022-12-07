@@ -61,8 +61,6 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 
 // ResolveRule implements the RuleResolver interface.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
-	log.Println("scalaExistingRuleProvider.ResolveRule")
-
 	scalaRule, err := pkg.ParseScalaRule(r)
 	if err != nil {
 		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
@@ -147,8 +145,6 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 	if !ok {
 		return
 	}
-
-	log.Println("scalaExistingRuleProvider.Resolve")
 
 	sc := getScalaConfig(c)
 	imports := scalaRule.Imports(sc)

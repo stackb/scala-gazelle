@@ -1,6 +1,8 @@
 package scala
 
 import (
+	"log"
+
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -11,5 +13,6 @@ func (sl *scalaLang) GetKnownImport(imp string) (*resolver.KnownImport, bool) {
 
 // PutKnownImport implements part of the resolver.KnownImportRegistry interface.
 func (sl *scalaLang) PutKnownImport(known *resolver.KnownImport) error {
+	log.Println("scalaLang.PutKnownImport", known)
 	return sl.knownImports.PutKnownImport(known)
 }
