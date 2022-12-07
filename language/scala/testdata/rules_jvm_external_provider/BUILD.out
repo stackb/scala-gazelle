@@ -7,6 +7,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs =
+    # javax.inject._<PACKAGE> ✅ @maven//:javax_inject_javax_inject<maven> (IMPLICIT of javax.xml._)
     # javax.xml._<PACKAGE> ✅ @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
     # org.junit.rules.TemporaryFolder<ERROR> ❌ import not found (DIRECT of Main.scala)
     ["Main.scala"],
@@ -15,8 +16,11 @@ scala_library(
         # that @atlassian-public deps should be managed by the scala-gazelle
         # extension (so this is left alone despite no # keep directive)
         "@atlassian-public//:junit_junit",
-        # javax.xml._ (DIRECT from Main.scala): resolved PACKAGE<javax.xml> to @maven//:xml_apis_xml_apis
-        "@maven//:xml_apis_xml_apis",
+        # javax.inject._<PACKAGE> ✅ @maven//:javax_inject_javax_inject<maven> (IMPLICIT of javax.xml._)
+        # javax.xml._<PACKAGE> ✅ @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
         "@maven//:javax_inject_javax_inject",
+        # javax.inject._<PACKAGE> ✅ @maven//:javax_inject_javax_inject<maven> (IMPLICIT of javax.xml._)
+        # javax.xml._<PACKAGE> ✅ @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
+        "@maven//:xml_apis_xml_apis",
     ],
 )
