@@ -142,8 +142,6 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
-		case resolveDirective:
-			c.parseResolveGlobDirective(d)
 		case resolveGlobDirective:
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
@@ -151,7 +149,9 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 		case resolveKindRewriteName:
 			c.parseResolveKindRewriteNameDirective(d)
 		case scalaAnnotateDirective:
-			return c.parseScalaAnnotation(d)
+			if err := c.parseScalaAnnotation(d); err != nil {
+				return err
+			}
 		}
 	}
 	return

@@ -9,12 +9,88 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
+
+func TestScalaConfigParseDirectives(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		wantErr    error
+		want       *scalaConfig
+	}{
+		"degenerate": {
+			want: &scalaConfig{
+				rules:             map[string]*RuleConfig{},
+				annotations:       map[annotation]any{},
+				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
+			},
+		},
+		"annotation after rule": {
+			directives: []rule.Directive{
+				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
+				{Key: "scala_annotate", Value: "imports"},
+			},
+			want: &scalaConfig{
+				rules: map[string]*RuleConfig{
+					"scala_binary": {
+						Deps:           map[string]bool{},
+						Attrs:          map[string]map[string]bool{},
+						Options:        map[string]bool{},
+						Enabled:        true,
+						Implementation: "@io_bazel_rules_scala//scala:scala.bzl%scala_binary",
+						Name:           "scala_binary",
+					},
+				},
+				annotations: map[annotation]any{
+					AnnotateImports: nil,
+				},
+				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
+			},
+		},
+		"rule after annotation": {
+			directives: []rule.Directive{
+				{Key: "scala_annotate", Value: "imports"},
+				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
+			},
+			want: &scalaConfig{
+				rules: map[string]*RuleConfig{
+					"scala_binary": {
+						Deps:           map[string]bool{},
+						Attrs:          map[string]map[string]bool{},
+						Options:        map[string]bool{},
+						Enabled:        true,
+						Implementation: "@io_bazel_rules_scala//scala:scala.bzl%scala_binary",
+						Name:           "scala_binary",
+					},
+				},
+				annotations: map[annotation]any{
+					AnnotateImports: nil,
+				},
+				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
+			},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := parseTestDirectives(t, "", tc.directives...)
+			if testutil.ExpectError(t, tc.wantErr, err) {
+				return
+			}
+			got := sc
+			if diff := cmp.Diff(tc.want, got,
+				cmp.AllowUnexported(scalaConfig{}),
+				cmpopts.IgnoreFields(scalaConfig{}, "config", "resolver"),
+				cmpopts.IgnoreFields(RuleConfig{}, "Config"),
+			); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
 
 func TestScalaConfigParseRuleDirective(t *testing.T) {
 	for name, tc := range map[string]struct {

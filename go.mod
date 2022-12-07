@@ -1,6 +1,6 @@
 module github.com/stackb/scala-gazelle
 
-go 1.17
+go 1.18
 
 require (
 	github.com/RoaringBitmap/roaring v0.9.4
