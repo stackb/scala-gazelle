@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -78,13 +79,19 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		"degenerate": {
 			want: []*overrideSpec{},
 		},
-		"bad example - silently ignores everything other than scala glob": {
+		"scala scala": {
 			directives: []rule.Directive{
 				{Key: resolveGlobDirective, Value: "scala scala com.foo.Bar //com/foo/bar"},
 			},
-			want: []*overrideSpec{},
+			want: []*overrideSpec{
+				{
+					imp:  resolve.ImportSpec{Lang: "scala", Imp: "com.foo.Bar"},
+					lang: "scala",
+					dep:  label.New("", "com/foo/bar", "bar"),
+				},
+			},
 		},
-		"example - scala glob": {
+		"scala glob": {
 			directives: []rule.Directive{
 				{Key: resolveGlobDirective, Value: "scala glob com.foo.* //com/foo/bar"},
 			},
@@ -157,18 +164,22 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 	}
 }
 
-func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
+func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       bool
+		want       map[annotation]interface{}
 	}{
-		"degenerate": {},
-		"typical example": {
+		"degenerate": {
+			want: map[annotation]interface{}{},
+		},
+		"imports": {
 			directives: []rule.Directive{
-				{Key: scalaExplainDeps, Value: "true"},
+				{Key: scalaAnnotateDirective, Value: "imports"},
 			},
-			want: true,
+			want: map[annotation]interface{}{
+				AnnotateImports: nil,
+			},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -176,7 +187,7 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
-			got := sc.explainDeps
+			got := sc.annotations
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -184,47 +195,21 @@ func TestScalaConfigParseScalaExplainDependencies(t *testing.T) {
 	}
 }
 
-func TestScalaConfigParseScalaExplainSrcs(t *testing.T) {
-	for name, tc := range map[string]struct {
-		directives []rule.Directive
-		wantErr    error
-		want       bool
-	}{
-		"degenerate": {},
-		"typical example": {
-			directives: []rule.Directive{
-				{Key: scalaAnnotateImports, Value: "true"},
-			},
-			want: true,
-		},
-	} {
-		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives("", tc.directives...)
-			if testutil.ExpectError(t, tc.wantErr, err) {
-				return
-			}
-			got := sc.annotateImports
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("(-want +got):\n%s", diff)
-			}
-		})
-	}
-}
 func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       map[string]mapKindImportNameSpec
+		want       map[string]resolver.LabelNameRewriteSpec
 	}{
 		"degenerate": {
-			want: map[string]mapKindImportNameSpec{},
+			want: map[string]resolver.LabelNameRewriteSpec{},
 		},
 		"anatomic example": {
 			directives: []rule.Directive{
 				{Key: resolveKindRewriteName, Value: "kind src dst"},
 			},
-			want: map[string]mapKindImportNameSpec{
-				"kind": {src: "src", dst: "dst"},
+			want: map[string]resolver.LabelNameRewriteSpec{
+				"kind": {Src: "src", Dst: "dst"},
 			},
 		},
 	} {
@@ -234,7 +219,7 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 				return
 			}
 			got := sc.labelNameRewrites
-			if diff := cmp.Diff(tc.want, got, cmp.AllowUnexported(mapKindImportNameSpec{})); diff != "" {
+			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
@@ -242,14 +227,13 @@ func TestScalaConfigParseMapKindImportNameDirective(t *testing.T) {
 }
 
 func parseTestDirectives(rel string, dd ...rule.Directive) (*scalaConfig, error) {
-	index := &mockRuleIndex{}
 	c := config.New()
-	sc := newScalaConfig(index, c, rel)
+	sc := newScalaConfig(c, rel, &fakeImportResolver{})
 	err := sc.parseDirectives(dd)
 	return sc, err
 }
 
-func TestScalaConfigLookupRule(t *testing.T) {
+func TestScalaConfigGetKnownRule(t *testing.T) {
 	for name, tc := range map[string]struct {
 		repoName string
 		rel      string
@@ -290,10 +274,11 @@ func TestScalaConfigLookupRule(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			index := &mockRuleIndex{}
-			sc := newScalaConfig(index, c, tc.rel)
-			sc.LookupRule(tc.from)
-			got := index.from
+			fake := &fakeImportResolver{}
+			sc := newScalaConfig(c, tc.rel, fake)
+
+			sc.GetKnownRule(tc.from)
+			got := fake.getKnownRuleFromArgument
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

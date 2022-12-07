@@ -48,19 +48,13 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse coordinate %v: %w", dep.Coord, err)
 		}
-		l := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
-		labelString := l.String()
-		r.artifacts[dep.Coord] = l
+		from := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
+		labelString := from.String()
+		r.artifacts[dep.Coord] = from
 
 		for _, pkg := range dep.Packages {
 			r.data.Add(pkg, labelString)
-			// log.Printf("maven: %v -> %v", pkg, l.String())
-			putKnownImport(&resolver.KnownImport{
-				Provider: mavenWorkspaceName,
-				Type:     sppb.ImportType_PACKAGE,
-				Import:   pkg,
-				Label:    l,
-			})
+			putKnownImport(resolver.NewKnownImport(sppb.ImportType_PACKAGE, pkg, mavenWorkspaceName, from))
 		}
 	}
 

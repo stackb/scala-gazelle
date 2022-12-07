@@ -71,8 +71,6 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 	}
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
-	r.SetPrivateAttr(resolverImpLangPrivateKey, "java")
-	// r.SetPrivateAttr(resolverImpLangPrivateKey, ScalaLangName)
 
 	return &scalaExistingRuleProvider{cfg, pkg, r, scalaRule, s.isBinaryRule}
 }

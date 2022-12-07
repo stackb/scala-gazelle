@@ -24,18 +24,18 @@ const (
 )
 
 const (
-	// ruleDirective is the directive for toggling rule generation.
+	// scalaAnnotate is the name of a directive.
+	scalaAnnotateDirective = "scala_annotate"
+	// ruleDirective is the directive for enabling rule generation.
 	ruleDirective = "scala_rule"
+	// resolveDirective is the well-known gazelle:resolve directive.
+	resolveDirective = "resolve"
 	// resolveGlobDirective implements override via globs.
 	resolveGlobDirective = "resolve_glob"
 	// resolveWithDirective adds additional imports for resolution
 	resolveWithDirective = "resolve_with"
-	// scalaAnnotate is the name of a directive.
-	scalaAnnotateDirective = "scala_annotate"
 	// resolveKindRewriteName allows renaming of resolved labels.
 	resolveKindRewriteName = "resolve_kind_rewrite_name"
-	// resolverImpLangPrivateKey stores the implementation language override.
-	resolverImpLangPrivateKey = "_resolve_imp_lang"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -48,7 +48,7 @@ type scalaConfig struct {
 	resolver resolver.ImportResolver
 	// exclude patterns for rules that should be skipped for this package.
 	rules map[string]*RuleConfig
-	// overrides patterns are parsed from 'gazelle:resolve_glob scala IMPORT LABEL'
+	// overrides patterns are parsed from 'gazelle:resolve scala IMPORT LABEL'
 	overrides []*overrideSpec
 	// implicitImports are parsed from 'gazelle:resolve_implicit scala foo bar [baz]...'
 	implicitImports []*implicitImportSpec
@@ -121,8 +121,8 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 	return false
 }
 
-// getKnownRule translates relative labels into their absolute form.
-func (c *scalaConfig) getKnownRule(from label.Label) (*rule.Rule, bool) {
+// GetKnownRule translates relative labels into their absolute form.
+func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	if c.resolver == nil || from.Name == "" {
 		return nil, false
 	}
@@ -146,6 +146,8 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
+		case resolveDirective:
+			c.parseResolveGlobDirective(d)
 		case resolveGlobDirective:
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:

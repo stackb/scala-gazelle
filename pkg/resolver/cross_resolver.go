@@ -25,11 +25,7 @@ func (sr *CrossResolver) ResolveKnownImport(c *config.Config, ix *resolve.RuleIn
 	case 0:
 		return nil, ErrImportNotFound
 	case 1:
-		return &KnownImport{
-			Type:   sppb.ImportType_CROSS_RESOLVE,
-			Import: imp,
-			Label:  matches[0].Label,
-		}, nil
+		return NewKnownImport(sppb.ImportType_CROSS_RESOLVE, imp, "cross-resolve", matches[0].Label), nil
 	default:
 		return nil, NewImportAmbiguousError(imp, matches)
 	}

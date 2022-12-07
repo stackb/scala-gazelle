@@ -220,12 +220,7 @@ func (r *ScalaparseProvider) provideFile(from label.Label, rule *sppb.Rule, file
 }
 
 func (r *ScalaparseProvider) putKnownImport(from label.Label, imp string, impType sppb.ImportType) {
-	r.importRegistry.PutKnownImport(&resolver.KnownImport{
-		Provider: r.Name(),
-		Type:     impType,
-		Import:   imp,
-		Label:    from,
-	})
+	r.importRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, r.Name(), from))
 }
 
 // fileSha256 computes the sha256 hash of a file

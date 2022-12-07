@@ -77,12 +77,7 @@ func (r *ScalaRule) putFileImport(imp string) {
 func (r *ScalaRule) putKnownImport(imp string, impType sppb.ImportType) {
 	// since we don't need to resolve same-rule symbols to a different label,
 	// record all imports as label.NoLabel!
-	r.registry.PutKnownImport(&resolver.KnownImport{
-		Provider: r.From.String(),
-		Type:     impType,
-		Import:   imp,
-		Label:    label.NoLabel,
-	})
+	r.registry.PutKnownImport(resolver.NewKnownImport(impType, imp, r.From.String(), label.NoLabel))
 }
 
 func (r *ScalaRule) putExtends(token string, types *sppb.ClassList) {
@@ -141,13 +136,7 @@ func (r *ScalaRule) putRequiredType(src, dst string) {
 
 func (r *ScalaRule) Imports(sc *scalaConfig) resolver.ImportMap {
 	imports := resolver.NewImportMap()
-
-	impLang := r.Kind()
-	if overrideImpLang, ok := r.PrivateAttr(resolverImpLangPrivateKey).(string); ok {
-		impLang = overrideImpLang
-	}
-
-	// fileResolver := resolver.NewFilesetResolver(sc, from, files...)
+	impLang := scalaLangName
 
 	// direct
 	for _, file := range r.Files {

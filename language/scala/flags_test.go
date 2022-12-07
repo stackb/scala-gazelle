@@ -22,11 +22,12 @@ func TestFlags(t *testing.T) {
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scala_import_provider": {
+		"scalaparse_import_provider": {
 			args: []string{
-				"-scala_import_provider=scala",
+				"-scala_import_provider=scalaparse",
+				"-scala_import_provider=jarindex",
 				"-scala_import_provider=github.com/stackb/rules_proto",
-				"-scala_import_provider=github.com/bazelbuild/rules_proto",
+				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
 			},
 		},
 		"scala_gazelle_cache_file": {

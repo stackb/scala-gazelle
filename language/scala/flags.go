@@ -98,7 +98,7 @@ func filterNamedKnownImportProviders(current []resolver.KnownImportProvider, nam
 			}
 		}
 		if !found {
-			return nil, fmt.Errorf("resolver.KnownImportProvider not found: %s", name)
+			return nil, fmt.Errorf("resolver.KnownImportProvider not found: %q", name)
 		}
 	}
 	return

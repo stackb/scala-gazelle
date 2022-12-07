@@ -151,10 +151,5 @@ func (p *JarIndexProvider) readClassFile(classFile *jipb.ClassFile, from label.L
 }
 
 func (p *JarIndexProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
-	p.knownImportRegistry.PutKnownImport(&resolver.KnownImport{
-		Provider: p.Name(),
-		Type:     impType,
-		Import:   imp,
-		Label:    from,
-	})
+	p.knownImportRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, p.Name(), from))
 }
