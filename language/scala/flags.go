@@ -64,8 +64,12 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 
-	sl.knownImportProviders = filterNamedKnownImportProviders(
+	providers, err := filterNamedKnownImportProviders(
 		sl.knownImportProviders, sl.importProviderNamesFlagValue)
+	if err != nil {
+		return err
+	}
+	sl.knownImportProviders = providers
 	for _, provider := range sl.knownImportProviders {
 		provider.CheckFlags(flags, c, sl)
 	}
@@ -83,12 +87,18 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	return nil
 }
 
-func filterNamedKnownImportProviders(current []resolver.KnownImportProvider, names []string) (want []resolver.KnownImportProvider) {
+func filterNamedKnownImportProviders(current []resolver.KnownImportProvider, names []string) (want []resolver.KnownImportProvider, err error) {
 	for _, name := range names {
+		found := false
 		for _, provider := range current {
 			if name == provider.Name() {
 				want = append(want, provider)
+				found = true
+				break
 			}
+		}
+		if !found {
+			return nil, fmt.Errorf("resolver.KnownImportProvider not found: %s", name)
 		}
 	}
 	return

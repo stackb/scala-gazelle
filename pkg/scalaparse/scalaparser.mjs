@@ -49,11 +49,20 @@ class Scope {
     addImport(imp, sym) {
         this.imports.add(imp);
         if (sym) {
-            this.symbols.set(sym, imp);
+            this.addSymbol(sym, imp);
         }
         if (this.parent) {
             this.parent.addImport(sym, imp)
         }
+    }
+
+    /**
+     * Add the given symbol and its fully-qualified import name.
+     * @param {string} sym
+     * @param {string} imp
+     */
+    addSymbol(sym, imp) {
+        this.symbols.set(sym, imp);
     }
 
     /**

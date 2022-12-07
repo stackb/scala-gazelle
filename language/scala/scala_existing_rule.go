@@ -64,12 +64,11 @@ func (s *scalaExistingRule) ProvideRule(cfg *RuleConfig, pkg ScalaPackage) RuleP
 	return nil
 }
 
-// ResolveRule implement the RuleResolver interface.  It will attempt to parse
-// imports and resolve deps.
+// ResolveRule implements the RuleResolver interface.
 func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *rule.Rule) RuleProvider {
 	filenames, err := glob.CollectFilenames(pkg.File(), pkg.Dir(), pkg.Rel(), r.Attr("srcs"))
 	if err != nil {
-		log.Printf("skipping %s //%s:%s (%v)", r.Kind(), pkg.Rel(), r.Name(), err)
+		log.Printf("skipping %s //%s:%s (unable to collect srcs: %v)", r.Kind(), pkg.Rel(), r.Name(), err)
 		return nil
 	}
 
@@ -161,7 +160,7 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 	}
 
 	sc := getScalaConfig(c)
-	imports := collectImports(sc, r, files)
+	imports := collectImports(sc, from, r, files)
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {

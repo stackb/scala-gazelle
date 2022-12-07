@@ -18,14 +18,14 @@ const (
 )
 
 type ScalaPackage interface {
-	// Rel returns the relative path to this package
-	Rel() string
-	// Dir returns the absolute path to the worksace
-	Dir() string
-	// File returns the BUILD file for the package
-	File() *rule.File
+	// // Rel returns the relative path to this package
+	// Rel() string
+	// // Dir returns the absolute path to the worksace
+	// Dir() string
+	// // File returns the BUILD file for the package
+	// File() *rule.File
 	// ScalaParser returns the parser instance to use.
-	ScalaParser() scalaparse.Parser
+	ParseScala(r *rule.Rule)
 }
 
 // scalaPackage provides a set of proto_library derived rules for the package.

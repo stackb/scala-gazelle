@@ -54,6 +54,7 @@ func (sl *scalaLang) Resolve(
 		if r.Kind() == packageMarkerRuleKind {
 			resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
 		} else {
+			//
 			pkg.Resolve(c, ix, rc, r, importsRaw, from)
 		}
 

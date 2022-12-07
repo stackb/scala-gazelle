@@ -43,6 +43,15 @@ func NewImplicitImport(imp, src string) *Import {
 	}
 }
 
+// NewExtendsImport creates a new extends import from the given requiring type.
+func NewExtendsImport(imp, src string) *Import {
+	return &Import{
+		Kind: sppb.ImportKind_EXTENDS,
+		Imp:  imp,
+		Src:  src,
+	}
+}
+
 // NewMainClassImport creates a new main_class import.
 func NewMainClassImport(imp string) *Import {
 	return &Import{

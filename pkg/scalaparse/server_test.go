@@ -138,6 +138,75 @@ class FooTest extends FlatSpec with Matchers {
 				},
 			},
 		},
+		"nested import rename": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Palette.scala",
+					Content: `
+package color
+
+import java.awt.Color
+
+object Palette {
+  val random100: MandelPalette = {
+    import scala.util.Random.{nextInt => rint}
+    Palette(100, Seq.tabulate[Color](100)(_ => new Color(rint(255), rint(255), rint(255))).toArray)
+  }
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Palette.scala",
+						Packages: []string{"color"},
+						Objects:  []string{"color.Palette"},
+						Imports: []string{
+							"java.awt.Color",
+							"scala.util.Random.nextInt",
+						},
+					},
+				},
+			},
+		},
+		"nested import same package": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package example
+
+import akka.actor.ActorSystem
+
+object MainContext {
+	implicit var asys: ActorSystem = _
+}
+  
+object Main {
+	private def makeRequest(params: Map[String, String]): Unit = {
+		import MainContext._
+	}	
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Packages: []string{"example"},
+						Objects: []string{
+							"example.Main",
+							"example.MainContext",
+						},
+						Imports: []string{
+							"akka.actor.ActorSystem",
+						},
+					},
+				},
+			},
+		},
 	} {
 		// if name != "nested import" {
 		// 	continue

@@ -324,13 +324,15 @@ type implicitImportSpec struct {
 	deps []string
 }
 
-func collectImports(sc *scalaConfig, r *rule.Rule, files []*sppb.File) resolver.ImportMap {
+func collectImports(sc *scalaConfig, from label.Label, r *rule.Rule, files []*sppb.File) resolver.ImportMap {
 	imports := resolver.NewImportMap()
 
 	impLang := r.Kind()
 	if overrideImpLang, ok := r.PrivateAttr(resolverImpLangPrivateKey).(string); ok {
 		impLang = overrideImpLang
 	}
+
+	fileResolver := resolver.NewFilesetResolver(sc, from, files...)
 
 	// direct
 	for _, file := range files {

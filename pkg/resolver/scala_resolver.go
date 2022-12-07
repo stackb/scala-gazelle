@@ -23,5 +23,7 @@ func (sr *ScalaResolver) ResolveKnownImport(c *config.Config, ix *resolve.RuleIn
 	imp = strings.TrimPrefix(imp, "_root_.")
 	imp = strings.TrimSuffix(imp, "._")
 
+	// TODO: if have unresolved dep, try add 'scala.'
+
 	return sr.next.ResolveKnownImport(c, ix, from, lang, imp)
 }

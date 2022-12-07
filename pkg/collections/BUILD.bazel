@@ -3,6 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "collections",
     srcs = [
+        "path_trie.go",
         "string_slice.go",
         "string_stack.go",
         "symbol_table.go",
@@ -10,5 +11,8 @@ go_library(
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/collections",
     visibility = ["//visibility:public"],
-    deps = ["@com_github_roaringbitmap_roaring//:roaring"],
+    deps = [
+        "@com_github_dghubble_trie//:go_default_library",
+        "@com_github_roaringbitmap_roaring//:roaring",
+    ],
 )

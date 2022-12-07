@@ -45,4 +45,6 @@ enum ImportKind {
     // import is needed (e.g. com.typesafe.scalalogging.LazyLogging always needs
     // org.slf4j.Logger, even if not named in the source).
     IMPLICIT = 3;
+    // An import named in an extends clause. For example 'class Foo extends Bar'. 
+    EXTENDS = 4;
 }
