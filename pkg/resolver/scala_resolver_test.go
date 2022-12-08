@@ -1,4 +1,4 @@
-package resolver
+package resolver_test
 
 import (
 	"testing"
@@ -9,6 +9,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stretchr/testify/mock"
 )
@@ -35,14 +36,18 @@ func TestScalaResolver(t *testing.T) {
 				return true
 			}
 			importResolver := mocks.NewKnownImportResolver(t)
-			importResolver.On("ResolveKnownImport",
-				mock.Anything,
-				mock.Anything,
-				mock.Anything,
-				mock.AnythingOfType("string"),
-				mock.MatchedBy(captureImport),
-			)
-			rslv := NewScalaResolver(importResolver)
+			importResolver.
+				On("ResolveKnownImport",
+					mock.Anything,
+					mock.Anything,
+					mock.Anything,
+					mock.AnythingOfType("string"),
+					mock.MatchedBy(captureImport),
+				).
+				Maybe().
+				Return(nil, nil)
+
+			rslv := resolver.NewScalaResolver(importResolver)
 			c := config.New()
 
 			mrslv := func(r *rule.Rule, pkgRel string) resolve.Resolver { return nil }

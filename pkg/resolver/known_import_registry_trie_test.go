@@ -1,4 +1,4 @@
-package resolver
+package resolver_test
 
 import (
 	"testing"
@@ -7,13 +7,23 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 func TestKnownImportRegistryTrie(t *testing.T) {
+	makeKnownImport := func(typ sppb.ImportType, imp string, from label.Label) *resolver.KnownImport {
+		return &resolver.KnownImport{
+			Type:     typ,
+			Import:   imp,
+			Label:    label.NoLabel,
+			Provider: "test",
+		}
+	}
+
 	for name, tc := range map[string]struct {
-		known []*KnownImport
+		known []*resolver.KnownImport
 		imp   string
-		want  *KnownImport
+		want  *resolver.KnownImport
 	}{
 		"degenerate": {},
 		"miss": {
@@ -21,64 +31,36 @@ func TestKnownImportRegistryTrie(t *testing.T) {
 			want: nil,
 		},
 		"direct hit": {
-			known: []*KnownImport{
-				{
-					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.Bar",
-					Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-				},
+			known: []*resolver.KnownImport{
+				makeKnownImport(sppb.ImportType_CLASS, "com.foo.Bar", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 			},
-			imp: "com.foo.Bar",
-			want: &KnownImport{
-				Type:   sppb.ImportType_CLASS,
-				Import: "com.foo.Bar",
-				Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-			},
+			imp:  "com.foo.Bar",
+			want: makeKnownImport(sppb.ImportType_CLASS, "com.foo.Bar", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 		},
 		"parent class hit": {
-			known: []*KnownImport{
-				{
-					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.Bar",
-					Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-				},
+			known: []*resolver.KnownImport{
+				makeKnownImport(sppb.ImportType_CLASS, "com.foo.Bar", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 			},
-			imp: "com.foo.Bar.method",
-			want: &KnownImport{
-				Type:   sppb.ImportType_CLASS,
-				Import: "com.foo.Bar",
-				Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-			},
+			imp:  "com.foo.Bar.method",
+			want: makeKnownImport(sppb.ImportType_CLASS, "com.foo.Bar", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 		},
 		"parent package hit": {
-			known: []*KnownImport{
-				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "com.foo",
-					Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-				},
+			known: []*resolver.KnownImport{
+				makeKnownImport(sppb.ImportType_PACKAGE, "com.foo", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 			},
-			imp: "com.foo.Bar",
-			want: &KnownImport{
-				Type:   sppb.ImportType_PACKAGE,
-				Import: "com.foo",
-				Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-			},
+			imp:  "com.foo.Bar",
+			want: makeKnownImport(sppb.ImportType_PACKAGE, "com.foo", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 		},
 		"parent package miss": {
-			known: []*KnownImport{
-				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "com.foo",
-					Label:  label.Label{Pkg: "com/foo", Name: "scala_lib"},
-				},
+			known: []*resolver.KnownImport{
+				makeKnownImport(sppb.ImportType_PACKAGE, "com.foo", label.Label{Pkg: "com/foo", Name: "scala_lib"}),
 			},
 			imp:  "com.bar.Baz",
 			want: nil,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			importRegistry := NewKnownImportRegistryTrie()
+			importRegistry := resolver.NewKnownImportRegistryTrie()
 			for _, known := range tc.known {
 				if err := importRegistry.PutKnownImport(known); err != nil {
 					t.Fatal(err)

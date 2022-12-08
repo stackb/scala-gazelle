@@ -37,7 +37,7 @@ func (r *KnownImportRegistryTrie) GetKnownImport(imp string) (*KnownImport, bool
 // PutKnownImport implements part of the KnownImportRegistry interface.
 func (r *KnownImportRegistryTrie) PutKnownImport(known *KnownImport) error {
 	if known.Provider == "" {
-		log.Fatalf("missing provider: PutKnownImport(%s)", known.String())
+		log.Panicf("fatal (missing provider): %+v", known)
 	}
 	r.known.Put(known.Import, known)
 	return nil

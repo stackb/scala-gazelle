@@ -101,6 +101,7 @@ go_test(
     deps = [
         "//build/stack/gazelle/scala/parse",
         "//pkg/resolver",
+        "//pkg/resolver/mocks",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
