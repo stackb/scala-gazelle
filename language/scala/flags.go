@@ -88,7 +88,9 @@ func (sl *scalaLang) setupScalaExistingRules(rules []string) error {
 		load := parts[0]
 		kind := parts[1]
 		isBinaryRule := strings.Contains(kind, "binary") || strings.Contains(kind, "test")
-		Rules().MustRegisterRule(fqn, &scalaExistingRule{load, kind, isBinaryRule})
+		if err := sl.ruleProviderRegistry.RegisterProvider(fqn, &existingRuleProvider{load, kind, isBinaryRule}); err != nil {
+			return err
+		}
 	}
 	return nil
 }

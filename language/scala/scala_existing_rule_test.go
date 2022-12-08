@@ -1,7 +1,6 @@
 package scala
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -143,13 +142,13 @@ import (
 // 	}
 // }
 
-func printRule(rules ...*rule.Rule) string {
-	file := rule.EmptyFile("", "")
-	for _, r := range rules {
-		r.Insert(file)
-	}
-	return string(file.Format())
-}
+// func printRule(rules ...*rule.Rule) string {
+// 	file := rule.EmptyFile("", "")
+// 	for _, r := range rules {
+// 		r.Insert(file)
+// 	}
+// 	return string(file.Format())
+// }
 
 // func TestShouldKeep(t *testing.T) {
 // 	for name, tc := range map[string]struct {
@@ -418,19 +417,19 @@ test(
 // 	}
 // }
 
-func mustLoadRule(t *testing.T, content string) *rule.Rule {
-	f, err := rule.LoadData("<in-memory>", "", []byte(content))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(f.Rules) != 1 {
-		t.Fatal("want 1 rule, got:", len(f.Rules))
-	}
-	return f.Rules[0]
-}
+// func mustLoadRule(t *testing.T, content string) *rule.Rule {
+// 	f, err := rule.LoadData("<in-memory>", "", []byte(content))
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+// 	if len(f.Rules) != 1 {
+// 		t.Fatal("want 1 rule, got:", len(f.Rules))
+// 	}
+// 	return f.Rules[0]
+// }
 
-func ruleString(r *rule.Rule) string {
-	file := rule.EmptyFile("", "")
-	r.Insert(file)
-	return strings.TrimSpace(string(file.Format()))
-}
+// func ruleString(r *rule.Rule) string {
+// 	file := rule.EmptyFile("", "")
+// 	r.Insert(file)
+// 	return strings.TrimSpace(string(file.Format()))
+// }

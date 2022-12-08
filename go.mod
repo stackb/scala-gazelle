@@ -3,7 +3,6 @@ module github.com/stackb/scala-gazelle
 go 1.18
 
 require (
-	github.com/RoaringBitmap/roaring v0.9.4
 	github.com/amenzhinsky/go-memexec v0.7.0
 	github.com/bazelbuild/bazel-gazelle v0.28.1-0.20221114044302-2d1002926dd1
 	github.com/bazelbuild/buildtools v0.0.0-20221004120235-7186f635531b
@@ -22,13 +21,11 @@ require (
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/moby/term v0.0.0-20221105221325-4eb28fa6025c // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
-	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
 	golang.org/x/net v0.1.0 // indirect

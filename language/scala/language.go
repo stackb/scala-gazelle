@@ -13,6 +13,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 const scalaLangName = "scala"
@@ -30,9 +31,9 @@ type scalaLang struct {
 	memprofileFlagValue         string
 	// cache is the loaded cache, if configured
 	cache *scpb.Cache
-	// ruleRegistry is the rule registry implementation.  This holds the rules
-	// configured via gazelle directives by the user.
-	ruleRegistry RuleRegistry
+	// ruleProviderRegistry is the rule registry implementation.  This holds the
+	// rules configured via gazelle directives by the user.
+	ruleProviderRegistry scalarule.ProviderRegistry
 	// sourceProvider is the source resolver implementation.
 	sourceProvider *provider.ScalaparseProvider
 	// packages is map from the config.Rel to *scalaPackage for the
@@ -77,12 +78,12 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 
 	lang := &scalaLang{
-		cache:        &scpb.Cache{},
-		knownImports: resolver.NewKnownImportRegistryTrie(),
-		knownRules:   make(map[label.Label]*rule.Rule),
-		packages:     packages,
-		progress:     mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		ruleRegistry: globalRuleRegistry,
+		cache:                &scpb.Cache{},
+		knownImports:         resolver.NewKnownImportRegistryTrie(),
+		knownRules:           make(map[label.Label]*rule.Rule),
+		packages:             packages,
+		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
 	lang.sourceProvider = provider.NewScalaparseProvider(func(msg string) {

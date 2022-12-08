@@ -1,4 +1,4 @@
-package scala
+package scalarule
 
 import (
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -12,15 +12,13 @@ import (
 type RuleProvider interface {
 	// Kind of rule e.g. 'scala_library'
 	Kind() string
-	// Name provides the name of the rule.
+	// Name of the rule.
 	Name() string
-	// Rule provides the gazelle rule implementation.  A list of other generating rules in
-	// the package are provided.
+	// Rule provides the gazelle rule implementation.
 	Rule() *rule.Rule
 	// Resolve performs deps resolution, similar to the gazelle Resolver
-	// interface.  Imports here are always the scala_library file .proto
-	// imports.
+	// interface.
 	Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label)
-	// Imports implements part of the Resolver interface
+	// Imports implements part of the resolve.Resolver interface.
 	Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec
 }

@@ -1,10 +1,14 @@
 
-![github-ci](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)
-
+[![CI](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml)
 
 - [Overview](#overview)
 - [Installation](#installation)
+  - [Primary Dependency](#primary-dependency)
+  - [Transitive Dependencies](#transitive-dependencies)
+  - [Gazelle Binary](#gazelle-binary)
+  - [Gazelle Rule](#gazelle-rule)
 - [Configuration](#configuration)
+  - [Rule Providers](#rule-providers)
   - [Flags](#flags)
   - [Directives](#directives)
   - [Known Import Providers](#known-import-providers)
@@ -18,33 +22,45 @@
 
 This is an experimental gazelle extension for scala.  It has the following design characteristics:
 
-- it only manages scala dependencies.  You are responsible for manually creating
-  `scala_library`, `scala_binary`, and `scala_test` targets.
-- existing scala rules are inspected for the contents of their `srcs`.  
+- It only manages scala dependencies.  You are responsible for manually creating
+  `scala_library`, `scala_binary`, and `scala_test` targets in their respective packages.
+- Existing scala rules are evaluated for the contents of their `srcs`.  
   Globs are interpreted the same as bazel starlark (unless a bug exists).
-- source files named in the `srcs` are parsed for their import statements.
-- dependencies are gathered from three possible locations:
+- Source files named in the `srcs` are parsed for their import statements and exportable symbols (classes, traits, objects, ...).
+- Dependencies are resolved be matching required imports against their providing rule labels.  The resolution procedure is configurable.
+
+
     1. override directives (e.g. `gazelle:resolve scala com.typesafe.scalalogging.LazyLogging @maven_@maven//:com_typesafe_scala_logging_scala_logging_2_12`)
     2. so-called "import providers".  See below for details.
     3. cross-resolution for language `scala`.  This is only relevant if you have
        a custom extension that implement a custom CrossResolver for scala
        imports. 
 
-#  Installation
+# Installation
 
 Add the `build_stack_scala_gazelle` as an external workspace For example:
 
+## Primary Dependency
+
 ```bazel
-    native.local_repository(
-        name = "build_stack_scala_gazelle",
-        path = "/Users/you/go/src/github.com/stackb/scala-gazelle",
-    )
+# Branch: master
+# Commit: 7a74c78c24e4a4a1877fea854865be8687c87f2c
+# Date: 2022-12-08 05:32:02 +0000 UTC
+# URL: https://github.com/stackb/scala-gazelle/commit/7a74c78c24e4a4a1877fea854865be8687c87f2c
+# 
+# Redesign resolution strategy with `resolver.ImportResolver` (#51)
+# Size: 160362 (160 kB)
+http_archive(
+    name = "build_stack_scala_gazelle",
+    sha256 = "8229a7e5bc94fa07ef8700b1c89e4afe312d9608ff17523f044b274ea07b6233",
+    strip_prefix = "scala-gazelle-7a74c78c24e4a4a1877fea854865be8687c87f2c",
+    urls = ["https://github.com/stackb/scala-gazelle/archive/7a74c78c24e4a4a1877fea854865be8687c87f2c.tar.gz"],
+)
 ```
 
-> NOTE: local_repository is in the README to indicate how experimental this extension
-> currently is.  If you're using it, you're probably actively developing it, too.
+## Transitive Dependencies
 
-Load corresponding dependencies in your `WORKSPACE`:
+Load corresponding transitive dependencies in your `WORKSPACE` as follows:
 
 ```bazel
 load("@build_stack_scala_gazelle//:workspace_deps.bzl", "language_scala_deps")
@@ -56,7 +72,9 @@ load("@build_stack_scala_gazelle//:go_repos.bzl", build_stack_scala_gazelle_gaze
 build_stack_scala_gazelle_gazelle_extension_deps()
 ```
 
-Include the language/scala extension in your gazelle_binary rule.  For example:
+## Gazelle Binary
+
+Include the language/scala extension in your `gazelle_binary` rule.  For example:
 
 ```bazel
 gazelle_binary(
@@ -68,21 +86,64 @@ gazelle_binary(
         "@build_stack_scala_gazelle//language/scala",
     ],
 )
+```
 
+## Gazelle Rule
+
+Reference the binary in the gazelle rule:
+
+```bazel
 gazelle(
     name = "gazelle",
-    args = [
-        "-maven_install_json_file=$(location maven_install.json)",
-    ],
-    data = ["//:maven_install.json"],
+    args = [...],
     gazelle = ":gazelle-scala",
 )
 ```
 
-> NOTE: -maven_install_json_file can be a comma-separated list of 
-> @{EXTERNAL_MAVEN_WORKSPACE_NAME}_install.json files.
+The `args` and `data` for this rule are discussed below. 
 
 # Configuration
+
+## Rule Providers
+
+The extension needs to know which rules it should manage (parse imports/resolve deps).  This is done using `gazelle:scala_rule` directives.  Example:
+
+```bazel
+# gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
+```
+
+> This reads as "create a rule provider configuration named 'scala_library' whose provider implementation is registered under the name '@io_bazel_rules_scala//scala:scala.bzl%scala_library'
+
+There is a registry of implementations; a preset catalog of  [builtin implementations](https://github.com/stackb/scala-gazelle/blob/7a74c78c24e4a4a1877fea854865be8687c87f2c/language/scala/scala_existing_rule.go#L21-L24) is available out-of-the-box.
+
+You may have your own scala rule macros that look like a `scala_library` or `scala_binary`, but have their own rule kind names and loads.  To register these rules/macros as  `scalaExistingRule` provider implementations, use the `-scala_existing_rule=LOAD%KIND` flag.  For example:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_existing_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
+        "-scala_existing_rule=//bazel_tools:scala.bzl%scala_app",
+        ...
+    ],
+    ...
+)
+```
+
+This can then be instatiated as:
+
+```bazel
+# gazelle:scala_rule scala_app implementation //bazel_tools:scala.bzl%scala_app
+# gazelle:scala_rule scala_app enabled false
+```
+
+This rule could then be selectively enabled/disabled in subpackages as follows:
+
+```bazel
+# gazelle:scala_rule scala_app enabled true
+```
+
+An advanced use-case would involve creating your own `Rule
 
 Configure the scala rules you want dependencies to be resolved for.  Often this 
 is done in the root `BUILD.bazel` file, but it can be elsewhere:

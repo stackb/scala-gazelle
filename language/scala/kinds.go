@@ -13,12 +13,12 @@ func (sl *scalaLang) Kinds() map[string]rule.KindInfo {
 		ResolveAttrs: map[string]bool{"deps": true},
 	}
 
-	for _, name := range sl.ruleRegistry.RuleNames() {
-		rule, err := sl.ruleRegistry.LookupRule(name)
-		if err != nil {
-			log.Fatal("Kinds:", err)
+	for _, name := range sl.ruleProviderRegistry.ProviderNames() {
+		if provider, ok := sl.ruleProviderRegistry.LookupProvider(name); ok {
+			kinds[provider.Name()] = provider.KindInfo()
+		} else {
+			log.Fatal("rule provider not found:", name)
 		}
-		kinds[rule.Name()] = rule.KindInfo()
 	}
 
 	return kinds

@@ -13,16 +13,12 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 const (
 	ruleProviderKey = "_scala_rule_provider"
 )
-
-type ScalaPackage interface {
-	// ParseScalaRule parses the given rule from its 'srcs' attribute.
-	ParseScalaRule(r *rule.Rule) (*ScalaRule, error)
-}
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
@@ -33,27 +29,27 @@ type scalaPackage struct {
 	// importResolver is the parent importResolver
 	importResolver resolver.KnownImportResolver
 	// the registry to use
-	ruleRegistry RuleRegistry
+	providerRegistry scalarule.ProviderRegistry
 	// the build file
 	file *rule.File
 	// the config for this package
 	cfg *scalaConfig
 	// the generated and empty rule providers
-	gen, empty []RuleProvider
+	gen, empty []scalarule.RuleProvider
 	// resolved is the final state of generated rules, by name.
 	rules map[string]*rule.Rule
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, ruleRegistry RuleRegistry, parser scalaparse.Parser, importResolver resolver.KnownImportResolver) *scalaPackage {
+func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.KnownImportResolver) *scalaPackage {
 	s := &scalaPackage{
-		rel:            rel,
-		parser:         parser,
-		importResolver: importResolver,
-		ruleRegistry:   ruleRegistry,
-		file:           file,
-		cfg:            cfg,
-		rules:          make(map[string]*rule.Rule),
+		rel:              rel,
+		parser:           parser,
+		importResolver:   importResolver,
+		providerRegistry: providerRegistry,
+		file:             file,
+		cfg:              cfg,
+		rules:            make(map[string]*rule.Rule),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -66,15 +62,9 @@ func (s *scalaPackage) Config() *scalaConfig {
 	return s.cfg
 }
 
-// getRule returns the named rule, if it exists
-func (s *scalaPackage) getRule(name string) (*rule.Rule, bool) {
-	got, ok := s.rules[name]
-	return got, ok
-}
-
 // ruleProvider returns the provider of a rule or nil if not known.
-func (s *scalaPackage) ruleProvider(r *rule.Rule) RuleProvider {
-	if provider, ok := r.PrivateAttr(ruleProviderKey).(RuleProvider); ok {
+func (s *scalaPackage) ruleProvider(r *rule.Rule) scalarule.RuleProvider {
+	if provider, ok := r.PrivateAttr(ruleProviderKey).(scalarule.RuleProvider); ok {
 		return provider
 	}
 	return nil
@@ -99,8 +89,8 @@ func (s *scalaPackage) Resolve(
 
 // generateRules constructs a list of rules based on the configured set of rule
 // configurations.
-func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
-	rules := make([]RuleProvider, 0)
+func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
+	rules := make([]scalarule.RuleProvider, 0)
 
 	existingRulesByFQN := make(map[string][]*rule.Rule)
 	if s.file != nil {
@@ -137,43 +127,43 @@ func (s *scalaPackage) generateRules(enabled bool) []RuleProvider {
 	return rules
 }
 
-func (s *scalaPackage) provideRule(rc *RuleConfig) RuleProvider {
-	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
-	if err == ErrUnknownRule {
+func (s *scalaPackage) provideRule(rc *scalarule.Config) scalarule.RuleProvider {
+	provider, ok := s.providerRegistry.LookupProvider(rc.Implementation)
+	if !ok {
 		log.Fatalf(
-			"%s: rule not registered: %q (available: %v)",
+			"%s: rule provider not registered: %q (available: %v)",
 			s.rel,
 			rc.Implementation,
-			s.ruleRegistry.RuleNames(),
+			s.providerRegistry.ProviderNames(),
 		)
 	}
-	rc.Impl = impl
+	rc.Provider = provider
 
-	return impl.ProvideRule(rc, s)
+	return provider.ProvideRule(rc, s)
 }
 
-func (s *scalaPackage) resolveRule(rc *RuleConfig, r *rule.Rule) RuleProvider {
-	impl, err := s.ruleRegistry.LookupRule(rc.Implementation)
-	if err == ErrUnknownRule {
+func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule.RuleProvider {
+	provider, ok := s.providerRegistry.LookupProvider(rc.Implementation)
+	if !ok {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
 			s.rel,
 			rc.Implementation,
-			globalRuleRegistry.RuleNames(),
+			s.providerRegistry.ProviderNames(),
 		)
 	}
-	rc.Impl = impl
+	rc.Provider = provider
 
-	if rr, ok := impl.(RuleResolver); ok {
+	if rr, ok := provider.(scalarule.RuleResolver); ok {
 		return rr.ResolveRule(rc, s, r)
 	}
 
 	return nil
 }
 
-// ParseScalaRule implements part of the ScalaPackage interface.
-func (s *scalaPackage) ParseScalaRule(r *rule.Rule) (*ScalaRule, error) {
-	filenames, err := glob.CollectFilenames(s.file, s.repoRootDir(), s.rel, r.Attr("srcs"))
+// ParseRule implements part of the scalarule.Package interface.
+func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
+	filenames, err := glob.CollectFilenames(s.file, s.repoRootDir(), s.rel, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +175,8 @@ func (s *scalaPackage) ParseScalaRule(r *rule.Rule) (*ScalaRule, error) {
 		return nil, err
 	}
 
-	return NewScalaRule(
+	return newScalaRule(
+		s.cfg,
 		resolver.NewKnownImportRegistryTrie(),
 		s.importResolver,
 		r, from, files,
@@ -216,7 +207,7 @@ func (s *scalaPackage) Empty() []*rule.Rule {
 	return empty
 }
 
-func (s *scalaPackage) getProvidedRules(providers []RuleProvider, shouldResolve bool) []*rule.Rule {
+func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shouldResolve bool) []*rule.Rule {
 	rules := make([]*rule.Rule, 0)
 	for _, p := range providers {
 		r := p.Rule()

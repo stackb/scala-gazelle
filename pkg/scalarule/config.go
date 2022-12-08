@@ -1,4 +1,4 @@
-package scala
+package scalarule
 
 import (
 	"fmt"
@@ -7,10 +7,12 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+
+	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
-// RuleConfig carries metadata about a rule and its dependencies.
-type RuleConfig struct {
+// Config carries metadata about a rule and its dependencies.
+type Config struct {
 	// Rel is the relative directory of this rule config
 	Rel string
 	// Config is the parent gazelle Config
@@ -25,18 +27,18 @@ type RuleConfig struct {
 	Options map[string]bool
 	// Enabled is a flag that marks language generation as enabled or not
 	Enabled bool
-	// Implementation is the registry identifier for the Rule
+	// Implementation is the registry identifier for the provider
 	Implementation string
-	// Impl is the actual implementation
-	Impl RuleInfo
+	// Provider is the actual implementation
+	Provider Provider
 	// Name is the name of the Rule config
 	Name string
 }
 
-// NewRuleConfig returns a pointer to a new RuleConfig config with the
+// NewConfig returns a pointer to a new Config config with the
 // 'Enabled' bit set to true.
-func NewRuleConfig(config *config.Config, name string) *RuleConfig {
-	return &RuleConfig{
+func NewConfig(config *config.Config, name string) *Config {
+	return &Config{
 		Config:  config,
 		Name:    name,
 		Enabled: true,
@@ -47,7 +49,7 @@ func NewRuleConfig(config *config.Config, name string) *RuleConfig {
 }
 
 // GetDeps returns the sorted list of dependencies
-func (c *RuleConfig) GetDeps() []string {
+func (c *Config) GetDeps() []string {
 	deps := make([]string, 0)
 	for dep, want := range c.Deps {
 		if !want {
@@ -60,7 +62,7 @@ func (c *RuleConfig) GetDeps() []string {
 }
 
 // GetOptions returns the rule options.
-func (c *RuleConfig) GetOptions() []string {
+func (c *Config) GetOptions() []string {
 	opts := make([]string, 0)
 	for opt, want := range c.Options {
 		if !want {
@@ -73,7 +75,7 @@ func (c *RuleConfig) GetOptions() []string {
 }
 
 // GetAttr returns the positive-intent attr values under the given key.
-func (c *RuleConfig) GetAttr(name string) []string {
+func (c *Config) GetAttr(name string) []string {
 	vals := make([]string, 0)
 	for val, want := range c.Attrs[name] {
 		if !want {
@@ -85,9 +87,9 @@ func (c *RuleConfig) GetAttr(name string) []string {
 	return vals
 }
 
-// clone copies this config to a new one
-func (c *RuleConfig) clone() *RuleConfig {
-	clone := NewRuleConfig(c.Config, c.Name)
+// Clone copies this config to a new one
+func (c *Config) Clone() *Config {
+	clone := NewConfig(c.Config, c.Name)
 	clone.Enabled = c.Enabled
 	clone.Implementation = c.Implementation
 	for name, vals := range c.Attrs {
@@ -105,9 +107,9 @@ func (c *RuleConfig) clone() *RuleConfig {
 	return clone
 }
 
-// parseDirective parses the directive string or returns error.
-func (c *RuleConfig) parseDirective(cfg *scalaConfig, d, param, value string) error {
-	intent := parseIntent(param)
+// ParseDirective parses the directive string or returns error.
+func (c *Config) ParseDirective(d, param, value string) error {
+	intent := collections.ParseIntent(param)
 	switch intent.Value {
 	case "dep", "deps":
 		if intent.Want {
@@ -126,7 +128,7 @@ func (c *RuleConfig) parseDirective(cfg *scalaConfig, d, param, value string) er
 		if len(kv) == 0 {
 			return fmt.Errorf("malformed attr (missing attr name and value) %q: expected form is 'gazelle:proto_rule {RULE_NAME} attr {ATTR_NAME} [+/-]{VALUE}'", value)
 		}
-		key := parseIntent(kv[0])
+		key := collections.ParseIntent(kv[0])
 
 		if len(kv) == 1 {
 			if intent.Want {

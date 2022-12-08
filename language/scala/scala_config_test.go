@@ -14,6 +14,7 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -25,7 +26,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 	}{
 		"degenerate": {
 			want: &scalaConfig{
-				rules:             map[string]*RuleConfig{},
+				rules:             map[string]*scalarule.Config{},
 				annotations:       map[annotation]any{},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
@@ -36,7 +37,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_annotate", Value: "imports"},
 			},
 			want: &scalaConfig{
-				rules: map[string]*RuleConfig{
+				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
 						Attrs:          map[string]map[string]bool{},
@@ -58,7 +59,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
 			},
 			want: &scalaConfig{
-				rules: map[string]*RuleConfig{
+				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
 						Attrs:          map[string]map[string]bool{},
@@ -84,7 +85,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(scalaConfig{}),
 				cmpopts.IgnoreFields(scalaConfig{}, "config", "resolver"),
-				cmpopts.IgnoreFields(RuleConfig{}, "Config"),
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -96,10 +97,10 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       map[string]*RuleConfig
+		want       map[string]*scalarule.Config
 	}{
 		"degenerate": {
-			want: map[string]*RuleConfig{},
+			want: map[string]*scalarule.Config{},
 		},
 		"bad format": {
 			directives: []rule.Directive{
@@ -117,7 +118,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 				{Key: ruleDirective, Value: "myrule option -fake_flag_name fake_flag_value"},
 				{Key: ruleDirective, Value: "myrule enabled false"},
 			},
-			want: map[string]*RuleConfig{
+			want: map[string]*scalarule.Config{
 				"myrule": {
 					Config:         config.New(),
 					Name:           "myrule",
