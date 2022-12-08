@@ -8,9 +8,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestScalaResolver(t *testing.T) {
@@ -30,19 +30,19 @@ func TestScalaResolver(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			var got string
-
-			mockResolver := mocks.NewKnownImportResolver(t)
-			mockResolver.On("ResolveKnownImport",
+			captureImport := func(imp string) bool {
+				got = imp
+				return true
+			}
+			importResolver := mocks.NewKnownImportResolver(t)
+			importResolver.On("ResolveKnownImport",
 				mock.Anything,
 				mock.Anything,
 				mock.Anything,
 				mock.AnythingOfType("string"),
-				mock.MatchedBy(func(imp string) bool {
-					got = imp
-					return true
-				}),
+				mock.MatchedBy(captureImport),
 			)
-			rslv := NewScalaResolver(mockResolver)
+			rslv := NewScalaResolver(importResolver)
 			c := config.New()
 
 			mrslv := func(r *rule.Rule, pkgRel string) resolve.Resolver { return nil }

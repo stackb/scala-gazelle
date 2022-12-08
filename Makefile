@@ -22,7 +22,7 @@ scalacache_protos:
 	rm -rf build/stack/gazelle/scala/cache/build
 
 .PHONY: protos
-protos: jarindex_protos scalaparse_protos scalacache_protos
+protos: jarindex_protos scalaparse_protos scalacache_protosgit 
 	echo "Done."
 
 .PHONY: tidy
@@ -40,7 +40,7 @@ tools:
 
 .PHONY: mocks
 mocks:
-	mockery --output pkg/resolver/mocks --name=ImportResolver --dir=pkg/resolver
-	mockery --output pkg/resolver/mocks --name=KnownImportProvider --dir=pkg/resolver
-	mockery --output pkg/resolver/mocks --name=KnownImportRegistry --dir=pkg/resolver
-	mockery --output pkg/resolver/mocks --name=KnownImportResolver --dir=pkg/resolver
+	mockery --testonly --output pkg/resolver/mocks --dir=pkg/resolver --name=ImportResolver 
+	mockery --testonly --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportProvider
+	mockery --testonly --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportRegistry
+	mockery --testonly --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportResolver

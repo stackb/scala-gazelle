@@ -6,6 +6,6 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
 scala_binary(
     name = "app",
     srcs =
-    # java.util.Map<INTERFACE> ✅ NO-LABEL<jarindex> (DIRECT of Main.scala)
+    # ✅ java.util.Map<INTERFACE> NO-LABEL<jarindex> (DIRECT of Main.scala)
     ["Main.scala"],
 )

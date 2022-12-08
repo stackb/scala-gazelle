@@ -8,7 +8,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/stackb/rules_proto/pkg/protoc"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
@@ -108,27 +107,7 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 	if s.isBinaryRule {
 		return nil
 	}
-	if len(s.scalaRule.Files) == 0 {
-		return nil
-	}
-
-	provides := make([]string, 0)
-	for _, file := range s.scalaRule.Files {
-		provides = append(provides, file.Packages...)
-		provides = append(provides, file.Classes...)
-		provides = append(provides, file.Objects...)
-		provides = append(provides, file.Traits...)
-		provides = append(provides, file.Types...)
-		provides = append(provides, file.Vals...)
-	}
-	provides = protoc.DeduplicateAndSort(provides)
-
-	specs := make([]resolve.ImportSpec, len(provides))
-	for i, imp := range provides {
-		specs[i] = resolve.ImportSpec{Lang: scalaLangName, Imp: imp}
-	}
-
-	return specs
+	return s.scalaRule.Exports()
 }
 
 // Resolve implements part of the RuleProvider interface.
@@ -167,8 +146,6 @@ func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIn
 			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
 		}
 	}
-
-	// r.Attr("name").(*build.StringExpr).Comments.Before = []build.Comment{sc.Comment()}
 }
 
 func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantImports, wantUnresolved bool) {

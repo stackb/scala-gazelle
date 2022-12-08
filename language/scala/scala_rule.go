@@ -2,6 +2,7 @@ package scala
 
 import (
 	"log"
+	"sort"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -14,17 +15,25 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+// ScalaRule abstracts the
 type ScalaRule struct {
+	// Rule is an embedded struct (FIXME: why embed this?).
 	*rule.Rule
-	From  label.Label
+	// From is the label for the rule.
+	From label.Label
+	// Files that are included in the rule.
 	Files []*sppb.File
 
-	next     resolver.KnownImportResolver
+	// the import resolver to which we chain to when self-imports are not matched.
+	next resolver.KnownImportResolver
+	// the registry implementation to which we provide known imports.
 	registry resolver.KnownImportRegistry
-	// requiredTypes is a mapping from the required type to the symbol that needs
-	// it. for example, if 'class Foo requiredTypes Bar', "Bar" is the map key and
-	// "Foo" will be the value.
+	// requiredTypes is a mapping from the required type to the symbol that
+	// needs it. for example, if 'class Foo requiredTypes Bar', "Bar" is the map
+	// key and "Foo" will be the value.
 	requiredTypes map[string][]string
+	// exports represent symbols that are importable by other rules.
+	exports map[string]resolve.ImportSpec
 }
 
 func NewScalaRule(registry resolver.KnownImportRegistry, next resolver.KnownImportResolver, r *rule.Rule, from label.Label, files []*sppb.File) *ScalaRule {
@@ -35,6 +44,7 @@ func NewScalaRule(registry resolver.KnownImportRegistry, next resolver.KnownImpo
 		next:          next,
 		registry:      registry,
 		requiredTypes: make(map[string][]string),
+		exports:       make(map[string]resolve.ImportSpec),
 	}
 	scalaRule.addFiles(files...)
 	return scalaRule
@@ -49,22 +59,25 @@ func (r *ScalaRule) addFiles(files ...*sppb.File) {
 func (r *ScalaRule) addFromFile(file *sppb.File) {
 	for _, imp := range file.Classes {
 		r.putKnownImport(imp, sppb.ImportType_CLASS)
+		r.putExport(imp)
 	}
 	for _, imp := range file.Objects {
 		r.putKnownImport(imp, sppb.ImportType_OBJECT)
+		r.putExport(imp)
 	}
 	for _, imp := range file.Traits {
 		r.putKnownImport(imp, sppb.ImportType_TRAIT)
+		r.putExport(imp)
 	}
 	for _, imp := range file.Types {
 		r.putKnownImport(imp, sppb.ImportType_TYPE)
+		r.putExport(imp)
 	}
 	for _, imp := range file.Vals {
 		r.putKnownImport(imp, sppb.ImportType_VALUE)
+		r.putExport(imp)
 	}
-	// for _, imp := range file.Packages {
-	// 	r.putKnownImport(imp, sppb.ImportType_PACKAGE)
-	// }
+
 	for token, extends := range file.Extends {
 		r.putExtends(token, extends)
 	}
@@ -75,6 +88,10 @@ func (r *ScalaRule) addFromFile(file *sppb.File) {
 
 func (r *ScalaRule) putFileImport(imp string) {
 	// r.imports.Put(imp)
+}
+
+func (r *ScalaRule) putExport(imp string) {
+	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
 }
 
 func (r *ScalaRule) putKnownImport(imp string, impType sppb.ImportType) {
@@ -137,6 +154,22 @@ func (r *ScalaRule) putRequiredType(src, dst string) {
 	r.requiredTypes[dst] = append(r.requiredTypes[dst], src)
 }
 
+// Exports returns the list of symbols that are importable by other rules.
+func (r *ScalaRule) Exports() []resolve.ImportSpec {
+	exports := make([]resolve.ImportSpec, 0, len(r.exports))
+	for _, v := range r.exports {
+		exports = append(exports, v)
+	}
+
+	sort.Slice(exports, func(i, j int) bool {
+		a := exports[i]
+		b := exports[j]
+		return a.Imp < b.Imp
+	})
+
+	return exports
+}
+
 func (r *ScalaRule) Imports(sc *scalaConfig) resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
@@ -158,18 +191,19 @@ func (r *ScalaRule) Imports(sc *scalaConfig) resolver.ImportMap {
 		imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
 	}
 
-	// gather implicit imports
-	transitive := make(collections.StringStack, 0)
-	for src := range imports {
-		for _, dst := range sc.getImplicitImports(impLang, src) {
-			transitive.Push(dst)
-			imports.Put(resolver.NewImplicitImport(dst, src))
-		}
+	// Initialize a list of symbols to find implicits for from all known
+	// imports. Include all symbols that are defined in the rule too; a
+	// gazelle:resolve_with directive should apply to them too.
+	required := collections.StringStack(imports.Keys())
+	for _, e := range r.Exports() {
+		required = append(required, e.Imp)
 	}
-	for !transitive.IsEmpty() {
-		src, _ := transitive.Pop()
+
+	// Gather implicit imports transitively.
+	for !required.IsEmpty() {
+		src, _ := required.Pop()
 		for _, dst := range sc.getImplicitImports(impLang, src) {
-			transitive.Push(dst)
+			required.Push(dst)
 			imports.Put(resolver.NewImplicitImport(dst, src))
 		}
 	}

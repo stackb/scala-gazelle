@@ -349,17 +349,16 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 			importResolver := mocks.NewImportResolver(t)
 
 			var got label.Label
-
-			if tc.wantTimes > 0 {
-				capture := func(from label.Label) bool {
-					got = from
-					return true
-				}
-				importResolver.
-					On("GetKnownRule", mock.MatchedBy(capture)).
-					Times(tc.wantTimes).
-					Return(nil, false)
+			capture := func(from label.Label) bool {
+				got = from
+				return true
 			}
+			importResolver.
+				On("GetKnownRule", mock.MatchedBy(capture)).
+				Maybe().
+				Times(tc.wantTimes).
+				Return(nil, false)
+
 			sc := newScalaConfig(c, tc.rel, importResolver)
 
 			sc.GetKnownRule(tc.from)
