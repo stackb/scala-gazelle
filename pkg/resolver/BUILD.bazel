@@ -44,10 +44,8 @@ go_test(
         "known_import_registry_trie_test.go",
         "scala_resolver_test.go",
     ],
-    embed = [
-        ":resolver",
-    ],
     deps = [
+        ":resolver",
         "//build/stack/gazelle/scala/parse",
         "//pkg/resolver/mocks",
         "@bazel_gazelle//config:go_default_library",
