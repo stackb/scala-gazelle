@@ -5,7 +5,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "provider",
     srcs = [
-        "jarindex_provider.go",
+        "java_provider.go",
         "maven_provider.go",
         "protobuf_provider.go",
         "source_provider.go",
@@ -30,7 +30,7 @@ go_test(
     name = "provider_test",
     size = "small",
     srcs = [
-        "jarindex_provider_test.go",
+        "java_provider_test.go",
         "maven_provider_test.go",
         "protobuf_provider_test.go",
         "scala_source_provider_test.go",
