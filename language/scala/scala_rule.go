@@ -147,7 +147,6 @@ func (r *scalaRule) putRequiredTypes(imp string, types *sppb.ClassList) {
 	for _, dst := range types.Classes {
 		r.putRequiredType(imp, dst)
 	}
-
 }
 
 // ResolveKnownImport implements the resolver.KnownImportResolver interface

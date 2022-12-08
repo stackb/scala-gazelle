@@ -2,28 +2,42 @@ package resolver
 
 import (
 	"log"
+	"sort"
 	"strings"
 
-	"github.com/dghubble/trie"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
 // KnownImportRegistryTrie implements KnownImportRegistry using a trie.
 type KnownImportRegistryTrie struct {
-	known *trie.PathTrie
+	known *collections.PathTrie
 }
 
 // KnownImportRegistryTrie constructs a new KnownImportRegistryTrie.
 func NewKnownImportRegistryTrie() *KnownImportRegistryTrie {
 	return &KnownImportRegistryTrie{
-		known: trie.NewPathTrieWithConfig(&trie.PathTrieConfig{
+		known: collections.NewPathTrieWithConfig(&collections.PathTrieConfig{
 			Segmenter: importSegmenter,
 		}),
 	}
 }
 
 // GetKnownImports implements part of the resolver.KnownImportRegistry interface.
-func (r *KnownImportRegistryTrie) GetKnownImports(prefix string) []*KnownImport {
-	return nil
+func (r *KnownImportRegistryTrie) GetKnownImports(prefix string) (known []*KnownImport) {
+	node := r.known.Get(prefix)
+	if node == nil {
+		return
+	}
+	node.Walk(func(key string, value interface{}) error {
+		known = append(known, value.(*KnownImport))
+		return nil
+	})
+	sort.Slice(known, func(i, j int) bool {
+		a := known[i]
+		b := known[j]
+		return a.Import < b.Import
+	})
+	return
 }
 
 // GetKnownImport implements part of the resolver.KnownImportRegistry interface.
