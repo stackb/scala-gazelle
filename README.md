@@ -1,6 +1,5 @@
 
-[![CI](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml)
-
+[![CI](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml) [![Go Reference](https://pkg.go.dev/badge/github.com/stackb/scala-gazelle.svg)](https://pkg.go.dev/github.com/stackb/scala-gazelle)
 
 <table border="0">
   <tr>
