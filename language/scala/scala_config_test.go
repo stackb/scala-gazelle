@@ -104,13 +104,13 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 		"bad format": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule scala_existing_rule"},
+				{Key: ruleDirective, Value: "myrule existing_scala_rule"},
 			},
-			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule scala_existing_rule": expected three or more fields, got 2`),
+			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule existing_scala_rule": expected three or more fields, got 2`),
 		},
 		"example": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule implementation scala_existing_rule"},
+				{Key: ruleDirective, Value: "myrule implementation existing_scala_rule"},
 				{Key: ruleDirective, Value: "myrule deps @maven//:a"},
 				{Key: ruleDirective, Value: "myrule +deps @maven//:b"},
 				{Key: ruleDirective, Value: "myrule -deps @maven//:c"},
@@ -122,7 +122,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 				"myrule": {
 					Config:         config.New(),
 					Name:           "myrule",
-					Implementation: "scala_existing_rule",
+					Implementation: "existing_scala_rule",
 					Deps: map[string]bool{
 						"@maven//:a": true,
 						"@maven//:b": true,

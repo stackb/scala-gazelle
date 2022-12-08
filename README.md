@@ -9,11 +9,19 @@
   - [Gazelle Rule](#gazelle-rule)
 - [Configuration](#configuration)
   - [Rule Providers](#rule-providers)
+    - [Built-in Existing Rule Providers](#built-in-existing-rule-providers)
+    - [Custom Existing Rule Providers](#custom-existing-rule-providers)
+    - [Custom Rule Provider](#custom-rule-provider)
+  - [Known Import Providers](#known-import-providers)
+    - [`scalaparse` known import provider](#scalaparse-known-import-provider)
+    - [`maven` known import provider](#maven-known-import-provider)
+    - [`jarindex`](#jarindex)
+  - [Extension Cache File](#extension-cache-file)
   - [Flags](#flags)
   - [Directives](#directives)
-  - [Known Import Providers](#known-import-providers)
+  - [Known Import Providers](#known-import-providers-1)
     - [`scalaparse`](#scalaparse)
-    - [`jarindex`](#jarindex)
+    - [`jarindex`](#jarindex-1)
     - [`github.com/stackb/rules_proto`](#githubcomstackbrules_proto)
     - [`github.com/bazelbuild/rules_jvm_external`](#githubcombazelbuildrules_jvm_external)
 - [Usage](#usage)
@@ -106,7 +114,19 @@ The `args` and `data` for this rule are discussed below.
 
 ## Rule Providers
 
-The extension needs to know which rules it should manage (parse imports/resolve deps).  This is done using `gazelle:scala_rule` directives.  Example:
+The extension needs to know which rules it should manage (parse imports/resolve
+deps).  This is done using `gazelle:scala_rule` directives.
+
+### Built-in Existing Rule Providers
+
+A preset catalog of providers are available out-of-the-box:
+
+- `@io_bazel_rules_scala//scala:scala.bzl%scala_binary`
+- `@io_bazel_rules_scala//scala:scala.bzl%scala_library`
+- `@io_bazel_rules_scala//scala:scala.bzl%scala_macro_library`
+- `@io_bazel_rules_scala//scala:scala.bzl%scala_test`
+
+To enable a provider, instantiate a "rule provider config":
 
 ```bazel
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
@@ -114,16 +134,19 @@ The extension needs to know which rules it should manage (parse imports/resolve 
 
 > This reads as "create a rule provider configuration named 'scala_library' whose provider implementation is registered under the name '@io_bazel_rules_scala//scala:scala.bzl%scala_library'
 
-There is a registry of implementations; a preset catalog of  [builtin implementations](https://github.com/stackb/scala-gazelle/blob/7a74c78c24e4a4a1877fea854865be8687c87f2c/language/scala/scala_existing_rule.go#L21-L24) is available out-of-the-box.
+### Custom Existing Rule Providers
 
-You may have your own scala rule macros that look like a `scala_library` or `scala_binary`, but have their own rule kind names and loads.  To register these rules/macros as  `scalaExistingRule` provider implementations, use the `-scala_existing_rule=LOAD%KIND` flag.  For example:
+You may have your own scala rule macros that look like a `scala_library` or
+`scala_binary`, but have their own rule kinds and loads.  To register these
+rules/macros as provider implementations, use the
+`-existing_scala_rule=LOAD%KIND` flag.  For example:
 
 ```bazel
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_existing_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
-        "-scala_existing_rule=//bazel_tools:scala.bzl%scala_app",
+        "-existing_scala_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
+        "-existing_scala_rule=//bazel_tools:scala.bzl%scala_app",
         ...
     ],
     ...
@@ -134,7 +157,7 @@ This can then be instatiated as:
 
 ```bazel
 # gazelle:scala_rule scala_app implementation //bazel_tools:scala.bzl%scala_app
-# gazelle:scala_rule scala_app enabled false
+# gazelle:scala_rule scala_app enabled false # optional if you wanted to disable it in the root
 ```
 
 This rule could then be selectively enabled/disabled in subpackages as follows:
@@ -143,10 +166,92 @@ This rule could then be selectively enabled/disabled in subpackages as follows:
 # gazelle:scala_rule scala_app enabled true
 ```
 
-An advanced use-case would involve creating your own `Rule
+### Custom Rule Provider
 
-Configure the scala rules you want dependencies to be resolved for.  Often this 
-is done in the root `BUILD.bazel` file, but it can be elsewhere:
+An advanced use-case would involve writing your own `scalarule.Provider`
+implementation.
+
+To register it:
+
+```go
+import "github.com/stackb/scala-gazelle/pkg/scalarule"
+
+func init() {
+  scalarule.GlobalProviderRegistry().RegisterProvider(
+    "@foo//rules/scala.bzl:foo_scala_library",
+    newFooScalaLibrary(),
+  )
+}
+```
+
+Enable the rule provider configuration:
+
+```bazel
+# gazelle:scala_rule foo_scala_library implementation @foo//rules/scala.bzl:foo_scala_library
+```
+
+## Known Import Providers
+
+At the core of the import resolution process is a trie structure where the keys
+of the trie are parts of an import statement and the values are
+`*resolver.KnownImport` structs.
+
+For example, for the import `io.grpc.Status`, the trie would contain the following:
+
+- `io`: (`nil`)
+  - `grpc`: type `PACKAGE`, from `@maven//:io_grpc_grpc_api`
+    - `Status`: type `CLASS`, from `@maven//:io_grpc_grpc_api`
+
+When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
+match would find the `CLASS io.grpc.Status` and the label
+`@maven//:io_grpc_grpc_api` would be added to the rule `deps`.
+
+The trie is populated by `resolver.KnownImportProvider` implementations. Each
+implementation provides known imports from a different source.
+
+Known import providers:
+
+- Have a canonical name.
+- Must be enabled with the `-scala_import_provider` flag.
+- Manage their own flags; check the provider source code for details.
+
+### `scalaparse` known import provider
+
+The `scalaparse` provider is responsible for indexing importable symbols from
+`.scala` source files during the rule generation phase.
+
+Source files that are listed in the `srcs` of existing scala rules are parsed.
+The discovered `object`, `class`, `trait` types are provided to the known import
+trie such that they can be resolved by other rules.
+
+The `scala-gazelle` extension would not do much without this provider, but it still needs to be enabled in `args`:
+
+```bazel
+-scala_import_provider=scalasource
+```
+
+### `maven` known import provider
+
+This provider reads `maven_install.json` files that are produced from pinned `maven_install` repository rules.
+
+As of https://github.com/bazelbuild/rules_jvm_external/pull/716 (`Add index of
+packages in jar files when pinning`), `@rules_jvm_external` indexes the package
+names that jars provide.
+
+The `maven` provider reads these package names and populates the trie accordingly.  Note that since only package names are known, maven dependency resolution via this mechanism alone is more "coarse-grained".
+
+Issues can occur when more than one jar provides the same package name.  This situation is known as a "split package".  The `io.grpc` namespace is a classic example (see [discussion](https://github.com/grpc/grpc-java/issues/3522)).  The `io.grpc.Context` is in `@maven//:io_grpc_grpc_context`, but other classes like `io.grpc.Status` are in `@maven//:io_grpc_grpc_core`.  Both advertise the package `io.grpc`.
+
+To help avoid issues with split packages:
+
+- Use the `jarindex` provider to supply fine-grained deps for selected artifacts.
+- Avoid wildcard imports that involve split packages.
+
+### `jarindex` 
+
+## Extension Cache File
+
+If the extension cache file feature is enabled, 
 
 ## Flags
 
@@ -180,7 +285,7 @@ Various `resolver.KnownImportProvider` implementations can be configured to
 populate the known import trie.  Each import provider has a canonical name and
 are enabled via the `-scala_import_provider=NAME` flag.  
 
-The order of `-scala_import_provider` determines the resolution ordering, so put more fine-grained providers (e.g `jarindex`) before more coarse-grained ones (e.g. `github.com/bazelbuild/rules_jvm_external`, which only provides package-level imports).
+The order of `-scala_import_provider` determines the resolution ordering, so put more fine-grained providers (e.g `jarindex`) before more coarse-grained ones (e.g. `maven`, which only provides package-level imports).
 
 Provider implementations manage their own flags, so please check the source file for the most up-to-date documentation on the flags used by different import providers.
 

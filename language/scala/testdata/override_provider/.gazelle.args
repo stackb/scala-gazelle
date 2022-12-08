@@ -1,1 +1,1 @@
--scala_import_provider=scalaparse
+-scala_import_provider=scalasource

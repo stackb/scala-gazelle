@@ -21,9 +21,9 @@ import (
 
 const scalaName = "scala"
 
-func ExampleRulesJvmExternalProvider_RegisterFlags_printdefaults() {
+func ExampleMavenProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	cr := provider.NewRulesJvmExternalProvider(scalaName)
+	cr := provider.NewMavenProvider(scalaName)
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
@@ -33,7 +33,7 @@ func ExampleRulesJvmExternalProvider_RegisterFlags_printdefaults() {
 	//     	path to maven_install.json file
 }
 
-func TestRulesJvmExternalProviderFlags(t *testing.T) {
+func TestMavenProviderFlags(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args  []string
 		files []testtools.FileSpec
@@ -98,7 +98,7 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			p := provider.NewRulesJvmExternalProvider(scalaName)
+			p := provider.NewMavenProvider(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -131,7 +131,7 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 	}
 }
 
-func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
+func TestMavenProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		lang string
 		from label.Label
@@ -164,7 +164,7 @@ func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 			})
 			defer cleanup()
 
-			p := provider.NewRulesJvmExternalProvider(scalaName)
+			p := provider.NewMavenProvider(scalaName)
 
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{WorkDir: tmpDir}

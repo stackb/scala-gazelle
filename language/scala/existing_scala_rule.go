@@ -18,7 +18,7 @@ func init() {
 		fqn := load + "%" + kind
 		if err := scalarule.
 			GlobalProviderRegistry().
-			RegisterProvider(fqn, &existingRuleProvider{load, kind, isBinaryRule}); err != nil {
+			RegisterProvider(fqn, &existingScalaRuleProvider{load, kind, isBinaryRule}); err != nil {
 			log.Fatalf("registering scala_rule providers: %v", err)
 		}
 	}
@@ -29,28 +29,28 @@ func init() {
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test", true)
 }
 
-// existingRuleProvider implements RuleResolver for scala-like rules that are
+// existingScalaRuleProvider implements RuleResolver for scala-like rules that are
 // already in the build file.  It does not create any new rules.  This rule
 // implementation is used to parse files named in 'srcs' and update 'deps'.
-type existingRuleProvider struct {
+type existingScalaRuleProvider struct {
 	load, name   string
 	isBinaryRule bool
 }
 
 // Name implements part of the scalarule.Provider interface.
-func (s *existingRuleProvider) Name() string {
+func (s *existingScalaRuleProvider) Name() string {
 	return s.name
 }
 
 // KindInfo implements part of the scalarule.Provider interface.
-func (s *existingRuleProvider) KindInfo() rule.KindInfo {
+func (s *existingScalaRuleProvider) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
 		ResolveAttrs: map[string]bool{"deps": true},
 	}
 }
 
 // LoadInfo implements part of the scalarule.Provider interface.
-func (s *existingRuleProvider) LoadInfo() rule.LoadInfo {
+func (s *existingScalaRuleProvider) LoadInfo() rule.LoadInfo {
 	return rule.LoadInfo{
 		Name:    s.load,
 		Symbols: []string{s.name},
@@ -59,12 +59,12 @@ func (s *existingRuleProvider) LoadInfo() rule.LoadInfo {
 
 // ProvideRule implements part of the scalarule.Provider interface.  It always returns
 // nil.  The ResolveRule interface is the intended use case.
-func (s *existingRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
+func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
 	return nil
 }
 
 // ResolveRule implements the RuleResolver interface.
-func (s *existingRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
+func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
 	scalaRule, err := pkg.ParseRule(r, "srcs")
 	if err != nil {
 		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
@@ -76,11 +76,11 @@ func (s *existingRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 
-	return &scalaExistingRuleProvider{cfg, pkg, r, scalaRule, s.isBinaryRule}
+	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinaryRule}
 }
 
-// scalaExistingRuleProvider implements scalarule.RuleProvider for existing scala rules.
-type scalaExistingRuleProvider struct {
+// existingScalaRule implements scalarule.RuleProvider for existing scala rules.
+type existingScalaRule struct {
 	cfg          *scalarule.Config
 	pkg          scalarule.Package
 	rule         *rule.Rule
@@ -89,22 +89,22 @@ type scalaExistingRuleProvider struct {
 }
 
 // Kind implements part of the ruleProvider interface.
-func (s *scalaExistingRuleProvider) Kind() string {
+func (s *existingScalaRule) Kind() string {
 	return s.rule.Kind()
 }
 
 // Name implements part of the ruleProvider interface.
-func (s *scalaExistingRuleProvider) Name() string {
+func (s *existingScalaRule) Name() string {
 	return s.rule.Name()
 }
 
 // Rule implements part of the ruleProvider interface.
-func (s *scalaExistingRuleProvider) Rule() *rule.Rule {
+func (s *existingScalaRule) Rule() *rule.Rule {
 	return s.rule
 }
 
 // Imports implements part of the scalarule.RuleProvider interface.
-func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
+func (s *existingScalaRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
 	// binary rules should not be deps of anything else, so we don't advertise
 	// any imports. TODO(pcj): this is too simplisitic: test helpers can be used
 	// by other test rules.  So we should probably use the 'impLang' to differentiate
@@ -116,7 +116,7 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
-func (s *scalaExistingRuleProvider) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
+func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
 	scalaRule, ok := importsRaw.(*scalaRule)
 	if !ok {
 		return

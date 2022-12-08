@@ -53,7 +53,7 @@ func TestScalaSourceProvider(t *testing.T) {
 
 			known := mocks.NewKnownImportsCapturer(t)
 
-			p := provider.NewScalaparseProvider(func(msg string) {})
+			p := provider.NewScalaSourceProvider(func(msg string) {})
 
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{

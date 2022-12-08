@@ -22,12 +22,12 @@ func TestFlags(t *testing.T) {
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scalaparse_import_provider": {
+		"scalasource_import_provider": {
 			args: []string{
-				"-scala_import_provider=scalaparse",
+				"-scala_import_provider=scalasource",
 				"-scala_import_provider=jarindex",
 				"-scala_import_provider=github.com/stackb/rules_proto",
-				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
+				"-scala_import_provider=maven",
 			},
 		},
 		"scala_gazelle_cache_file": {
@@ -98,7 +98,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 		"degenerate": {},
 		"invalid flag value": {
 			providerNames: []string{"@io_bazel_rules_scala//scala:scala.bzl#scala_binary"},
-			wantErr:       fmt.Errorf(`invalid -scala_existing_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
+			wantErr:       fmt.Errorf(`invalid -existing_scala_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
 		},
 		"valid flag value": {
 			providerNames: []string{"//custom/scala:scala.bzl%scala_binary"},
@@ -113,7 +113,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			lang := NewLanguage().(*scalaLang)
-			if testutil.ExpectError(t, tc.wantErr, lang.setupScalaExistingRules(tc.providerNames)) {
+			if testutil.ExpectError(t, tc.wantErr, lang.setupExistingScalaRules(tc.providerNames)) {
 				return
 			}
 			if tc.check != nil {

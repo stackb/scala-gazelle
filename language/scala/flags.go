@@ -18,7 +18,7 @@ import (
 
 const (
 	scalaImportProviderFlagName   = "scala_import_provider"
-	scalaExistingRulesFlagName    = "scala_existing_rule"
+	existingScalaRulesFlagName    = "existing_scala_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 	cpuprofileFileFlagName        = "cpuprofile_file"
 	memprofileFileFlagName        = "memprofile_file"
@@ -30,7 +30,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProviderFlagName, "name of a known import provider implementation to enable")
-	flags.Var(&sl.scalaExistingRulesFlagValue, scalaExistingRulesFlagName, "LOAD%NAME mapping for a custom scala_existing_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
+	flags.Var(&sl.existingScalaRulesFlagValue, existingScalaRulesFlagName, "LOAD%NAME mapping for a custom existing_scala_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	sl.registerKnownImportProviders(flags, cmd, c)
 }
@@ -49,7 +49,7 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if err := sl.setupKnownImportProviders(flags, c, sl.importProviderNamesFlagValue); err != nil {
 		return err
 	}
-	if err := sl.setupScalaExistingRules(sl.scalaExistingRulesFlagValue); err != nil {
+	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
 		return err
 	}
 	if err := sl.setupCache(); err != nil {
@@ -79,20 +79,22 @@ func (sl *scalaLang) setupKnownImportProviders(flags *flag.FlagSet, c *config.Co
 	return nil
 }
 
-func (sl *scalaLang) setupScalaExistingRules(rules []string) error {
+func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
-			return fmt.Errorf("invalid -scala_existing_rule flag value: wanted '%%' separated string, got %q", fqn)
+			return fmt.Errorf("invalid -existing_scala_rule flag value: wanted '%%' separated string, got %q", fqn)
 		}
-		load := parts[0]
-		kind := parts[1]
-		isBinaryRule := strings.Contains(kind, "binary") || strings.Contains(kind, "test")
-		if err := sl.ruleProviderRegistry.RegisterProvider(fqn, &existingRuleProvider{load, kind, isBinaryRule}); err != nil {
+		if err := sl.setupExistingScalaRule(fqn, parts[0], parts[1]); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (sl *scalaLang) setupExistingScalaRule(fqn, load, kind string) error {
+	provider := &existingScalaRuleProvider{load, kind, isBinaryRule(kind)}
+	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
 }
 
 func (sl *scalaLang) setupCache() error {
@@ -149,4 +151,8 @@ func (sl *scalaLang) stopMemoryProfiling() {
 
 		log.Println("Wrote memprofile to", sl.memprofileFlagValue)
 	}
+}
+
+func isBinaryRule(kind string) bool {
+	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
 }
