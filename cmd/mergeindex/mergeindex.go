@@ -116,8 +116,6 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 		predefined = strings.Split(predefinedLabels, ",")
 	}
 
-	log.Println("predefined:", predefined)
-
 	index, err := jarindex.MergeJarFiles(func(format string, args ...interface{}) {
 		log.Printf("warning: "+format, args...)
 	}, predefined, jars)

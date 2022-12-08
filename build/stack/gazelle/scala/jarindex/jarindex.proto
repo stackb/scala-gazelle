@@ -60,7 +60,7 @@ message ClassFile {
     repeated ClassField fields = 6;
     // methods is a list of methods in this class.
     repeated ClassMethod methods = 7;
-    // interface
+    // is_interface marks if this class is an interface.
     bool is_interface = 8;
 }
 
