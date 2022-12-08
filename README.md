@@ -1,6 +1,20 @@
 
 [![CI](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/scala-gazelle/actions/workflows/ci.yaml)
 
+
+<table border="0">
+  <tr>
+    <td><img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Bazel_logo.svg/1920px-Bazel_logo.svg.png" height="120"/></td>
+    <td><img src="https://www.scala-lang.org/resources/img/frontpage/scala-spiral.png" height="120"/></td>
+    <td><img src="https://user-images.githubusercontent.com/50580/141892423-5205bbfd-8487-442b-81c7-f56fa3d1f69e.jpeg" height="120"/></td>
+  </tr>
+  <tr>
+    <td>bazel</td>
+    <td>scala</td>
+    <td>gazelle</td>
+  </tr>
+</table>
+
 - [Overview](#overview)
 - [Installation](#installation)
   - [Primary Dependency](#primary-dependency)
