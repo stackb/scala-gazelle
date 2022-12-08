@@ -1,6 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@bazel_gazelle//:def.bzl", "gazelle_binary")
-load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
+# load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
 # gazelle:exclude oldtestdata
@@ -115,19 +115,21 @@ go_test(
     ],
 )
 
-gazelle_testdata_example(
-    name = "maven_resolver",
-    size = "large",  # test timeout 900s (15m) for go_bazel_test
-    srcs = glob(["testdata/maven_resolver/*"]),
-    workspace_template = "scala.WORKSPACE",
-)
+# gazelle_testdata_example(
+#     name = "maven_resolver",
+#     size = "large",  # test timeout 900s (15m) for go_bazel_test
+#     srcs = glob(["testdata/maven_resolver/*"]),
+#     tags = ["manual"],
+#     workspace_template = "scala.WORKSPACE",
+# )
 
-gazelle_testdata_example(
-    name = "platform_resolver",
-    size = "large",  # test timeout 900s (15m) for go_bazel_test
-    srcs = glob(["testdata/platform_resolver/*"]),
-    workspace_template = "scala.WORKSPACE",
-)
+# gazelle_testdata_example(
+#     name = "platform_resolver",
+#     size = "large",  # test timeout 900s (15m) for go_bazel_test
+#     srcs = glob(["testdata/platform_resolver/*"]),
+#     tags = ["manual"],
+#     workspace_template = "scala.WORKSPACE",
+# )
 
 filegroup(
     name = "all_files",

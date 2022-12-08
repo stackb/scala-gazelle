@@ -1,7 +1,11 @@
 
 .PHONY: test
 test:
-	bazel test //pkg/... //language/scala:scala_test
+	bazel test \
+		//cmd/jarindexer/... \
+		//cmd/mergeindex/... \
+		//language/scala/... \
+		//pkg/... \
 
 .PHONY: jarindex_protos
 jarindex_protos:
