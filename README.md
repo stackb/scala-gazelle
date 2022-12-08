@@ -16,11 +16,11 @@
   - [Known Import Providers](#known-import-providers)
     - [`source`](#source)
     - [`maven`](#maven)
-      - [Split Packages](#split-packages)
     - [`java`](#java)
     - [`protobuf`](#protobuf)
     - [Custom Known Import Provider](#custom-known-import-provider)
     - [CanProvide](#canprovide)
+    - [Split Packages](#split-packages)
   - [Cache](#cache)
   - [Profiling](#profiling)
     - [CPU](#cpu)
@@ -29,34 +29,33 @@
     - [`gazelle:scala_rule`](#gazellescala_rule)
     - [`gazelle:resolve`](#gazelleresolve)
     - [`gazelle:resolve_with`](#gazelleresolve_with)
-    - [`gazelle:resolve_glob`](#gazelleresolve_glob)
     - [`gazelle:resolve_kind_rewrite_name`](#gazelleresolve_kind_rewrite_name)
     - [`gazelle:annotate`](#gazelleannotate)
+      - [`imports`](#imports)
+      - [`unresolved_deps`](#unresolved_deps)
 - [Import Resolution Procedure](#import-resolution-procedure)
+  - [How Required Imports are Calculated](#how-required-imports-are-calculated)
+  - [How Required Imports are Resolved](#how-required-imports-are-resolved)
+- [Help](#help)
 
 # Overview
 
 This is an experimental gazelle extension for scala.  It has the following design characteristics:
 
-- It only manages scala dependencies.  You are responsible for manually creating
-  `scala_library`, `scala_binary`, and `scala_test` targets in their respective packages.
-- Existing scala rules are evaluated for the contents of their `srcs`.  
-  Globs are interpreted the same as bazel starlark (unless a bug exists).
+- It only works on scala rules that already exist in a `BUILD` file.  You are
+  responsible for manually creating `scala_library`, `scala_binary`, and
+  `scala_test` targets in their respective packages.
+- It only manages compile-time scala `deps`; you are responsible for `runtime_deps`.
+- Existing scala rules are evaluated for the contents of their `srcs`. Globs are interpreted the same as bazel starlark (unless there is a a bug 😱).
 - Source files named in the `srcs` are parsed for their import statements and exportable symbols (classes, traits, objects, ...).
-- Dependencies are resolved be matching required imports against their providing rule labels.  The resolution procedure is configurable.
-
-
-    1. override directives (e.g. `gazelle:resolve scala com.typesafe.scalalogging.LazyLogging @maven_@maven//:com_typesafe_scala_logging_scala_logging_2_12`)
-    2. so-called "import providers".  See below for details.
-    3. cross-resolution for language `scala`.  This is only relevant if you have
-       a custom extension that implement a custom CrossResolver for scala
-       imports. 
+- Dependencies are resolved by matching required imports against their providing
+  rule labels.  The resolution procedure is configurable.
 
 # Installation
 
-Add the `build_stack_scala_gazelle` as an external workspace For example:
-
 ## Primary Dependency
+
+Add the `build_stack_scala_gazelle` as an external workspace:
 
 ```bazel
 # Branch: master
@@ -73,6 +72,8 @@ http_archive(
     urls = ["https://github.com/stackb/scala-gazelle/archive/7a74c78c24e4a4a1877fea854865be8687c87f2c.tar.gz"],
 )
 ```
+
+> Update to latest, the version in the readme is probably out-of-date!
 
 ## Transitive Dependencies
 
@@ -279,21 +280,6 @@ gazelle(
 )
 ```
 
-#### Split Packages
-
-Issues can occur when more than one jar provides the same package name.  This
-situation is known as a "split package".  The `io.grpc` namespace is a classic
-example (see [discussion](https://github.com/grpc/grpc-java/issues/3522)).  The
-`io.grpc.Context` is in `@maven//:io_grpc_grpc_context`, but other classes like
-`io.grpc.Status` are in `@maven//:io_grpc_grpc_core`.  Both advertise the
-package `io.grpc`.
-
-To help avoid issues with split packages:
-
-- Use the `java` provider to supply fine-grained deps for selected
-  artifacts.
-- Avoid wildcard imports that involve split packages.
-
 ### `java`
 
 The `java` provider indexes symbols from java-related dependencies in the bazel
@@ -492,6 +478,21 @@ So, if the scala-gazelle extension is not confident that a label can be
 re-resolved, it will leave the dependency alone, even without `# keep`
 directives.
 
+### Split Packages
+
+Issues can occur when more than one jar provides the same package name.  This
+situation is known as a "split package".  The `io.grpc` namespace is a classic
+example (see [discussion](https://github.com/grpc/grpc-java/issues/3522)).  The
+`io.grpc.Context` is in `@maven//:io_grpc_grpc_context`, but other classes like
+`io.grpc.Status` are in `@maven//:io_grpc_grpc_core`.  Both advertise the
+package `io.grpc`.
+
+To help avoid issues with split packages:
+
+- Use the `java` provider to supply fine-grained deps for selected
+  artifacts.
+- Avoid wildcard imports that involve split packages.
+
 ## Cache
 
 Parsing scala source files for a large repository is expensive.  A cache can be
@@ -547,28 +548,128 @@ This extension supports the following directives:
 
 ### `gazelle:scala_rule`
 
-Instantiates a named rule provider configuration.
+Instantiates a named rule provider configuration (enabled by default once instantiated):
+
+```bazel
+# gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
+```
+
+To enable/disable the configuration in a subpackage:
+
+```bazel
+# gazelle:scala_rule scala_library enabled false
+# gazelle:scala_rule scala_library enabled true
+```
 
 ### `gazelle:resolve`
 
-This is core gazelle extension, but is applicable to this one.
+This is core gazelle extension not implemented here but is applicable to this
+one.
+
+Use something like the following to override dependency resolution to a hard-coded source:
+
+```bazel
+# gazelle:resolve scala scala.util @maven//:org_scala_lang_scala_library
+```
 
 ### `gazelle:resolve_with`
 
-TODO
+Use this directive to co-resolve dependencies that, while not explicitly stated in the source file, are needed for compilation.  Example:
 
-### `gazelle:resolve_glob`
+```bazel
+# gazelle:resolve_with scala com.typesafe.scalalogging.LazyLogging org.slf4j.Logger
+```
 
-TODO
+> This is referred to as an "implicit" dependency internally.
+
+These are included transitively.
 
 ### `gazelle:resolve_kind_rewrite_name`
 
-TODO
+The `resolve_kind_rewrite_name` is required for the following scenario:
+
+1. You have a custom existing rule implemented as a macro, for example `my_scala_app`.
+2. The `my_scala_app` macro declares a "real" `scala_library` using a name like `%{name}_lib`.
+
+In this case the extension would parse a `my_scala_app` rule at
+`//src/main/scala/com/foo:scala`; other rules that import symbols from this rule
+would resolve to `//src/main/scala/com/foo:scala`.  However, there is no such
+actual `scala_library` at `:scala`, it really should be
+`//src/main/scala/com/foo:scala_lib`.
+
+This can be dealt with as follows:
+
+```bazel
+# gazelle:resolve_kind_rewrite_name my_scala_app %{name}_lib
+```
+
+This tells the extension _"if you find a rule with kind `my_scala_app`, rewrite
+the label name to name + `"_lib"`, using the magic token `%{name}` as a
+placeholder."_
+
 
 ### `gazelle:annotate`
 
-TODO
+The `annotate` directive is a debugging aid that adds comments to the generated
+rules detailing what the known imports are and how they resolved.
+
+#### `imports`
+
+This adds a list of comments to the `srcs` attribute detailing the required imports and how they resolved.  For example:
+
+```
+# gazelle:annotate imports
+```
+
+Generates:
+
+```bazel
+scala_binary(
+    name = "app",
+    srcs =
+    # ❌ AbstractServiceBase<ERROR> import not found (EXTENDS of foo.allocation.Main)
+    # ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
+    # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<jarindex> (DIRECT of RequestHandler.scala)
+    # ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
+    glob(["src/main/**/*.scala"]),
+    main_class = "foo.allocation.Main",
+)
+```
+
+#### `unresolved_deps`
+
+Similar to above, but only the `import not found` would be included.
 
 # Import Resolution Procedure
 
-If the extension cache file feature is enabled, 
+## How Required Imports are Calculated
+
+The imports are calculated as a union of the following for all `.scala` source
+files in the rule:
+
+1. All imports explicitly named in an import statement (`DIRECT` import).  Nested imports are included and resolved in a best-effort basis.
+1. The `main_class`, if the rule has that attribute (`MAIN_CLASS` import).
+1. All symbols named in an `extends` clause (`EXTENDS` import).
+1. Any additional imports matching a `gazelle:resolve_with` directive (`IMPLICIT` import).
+
+## How Required Imports are Resolved
+
+The resolution procedure works as follows:
+
+1. Is the import provided by the containing rule?  If yes, `NoLabel` is required.  Stop ✅.
+2. Is the import named in a `gazelle:resolve` override?  If yes, stop ✅.
+3. Does the import satisfy a longest prefix match in the known import trie?  If
+   yes, stop ✅.
+4. Does the gazelle "rule index" and "cross-resolve" mechanism find a result for
+   the import?  If yes, stop ✅.
+5. No label was found.  Mark as `import not found` and move on ❌. 
+
+# Help
+
+For general help, please raise an [github
+issue](https://github.com/stackb/scala-gazelle/issues) or ask on the bazel slack
+in the `#gazelle` channel.
+
+If you need dedicated help integrating `scala-gazelle` into your repository or
+want additional features, please reach out to `pcj@stack.build` to assist on a
+part-time contractual basis.
