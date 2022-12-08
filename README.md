@@ -53,14 +53,18 @@
 
 # Overview
 
-This is an experimental gazelle extension for scala.  It has the following design characteristics:
+This is an experimental gazelle extension for scala.  It has the following
+design characteristics:
 
 - It only works on scala rules that already exist in a `BUILD` file.  You are
   responsible for manually creating `scala_library`, `scala_binary`, and
   `scala_test` targets in their respective packages.
-- It only manages compile-time scala `deps`; you are responsible for `runtime_deps`.
-- Existing scala rules are evaluated for the contents of their `srcs`. Globs are interpreted the same as bazel starlark (unless there is a a bug 😱).
-- Source files named in the `srcs` are parsed for their import statements and exportable symbols (classes, traits, objects, ...).
+- It only manages compile-time scala `deps`; you are responsible for
+  `runtime_deps`.
+- Existing scala rules are evaluated for the contents of their `srcs`. Globs are
+  interpreted the same as bazel starlark (unless there is a a bug 😱).
+- Source files named in the `srcs` are parsed for their import statements and
+  exportable symbols (classes, traits, objects, ...).
 - Dependencies are resolved by matching required imports against their providing
   rule labels.  The resolution procedure is configurable.
 
@@ -72,17 +76,17 @@ Add the `build_stack_scala_gazelle` as an external workspace:
 
 ```bazel
 # Branch: master
-# Commit: 7a74c78c24e4a4a1877fea854865be8687c87f2c
-# Date: 2022-12-08 05:32:02 +0000 UTC
-# URL: https://github.com/stackb/scala-gazelle/commit/7a74c78c24e4a4a1877fea854865be8687c87f2c
+# Commit: 476615560157f22919e5c936dc84b7ddf3278ca4
+# Date: 2022-12-08 20:23:01 +0000 UTC
+# URL: https://github.com/stackb/scala-gazelle/commit/476615560157f22919e5c936dc84b7ddf3278ca4
 # 
-# Redesign resolution strategy with `resolver.ImportResolver` (#51)
-# Size: 160362 (160 kB)
+# Add license (#53)
+# Size: 149692 (150 kB)
 http_archive(
     name = "build_stack_scala_gazelle",
-    sha256 = "8229a7e5bc94fa07ef8700b1c89e4afe312d9608ff17523f044b274ea07b6233",
-    strip_prefix = "scala-gazelle-7a74c78c24e4a4a1877fea854865be8687c87f2c",
-    urls = ["https://github.com/stackb/scala-gazelle/archive/7a74c78c24e4a4a1877fea854865be8687c87f2c.tar.gz"],
+    sha256 = "e903f248ba5921b5f6891ada8134760984749478ee350b11c64302205b04001a",
+    strip_prefix = "scala-gazelle-476615560157f22919e5c936dc84b7ddf3278ca4",
+    urls = ["https://github.com/stackb/scala-gazelle/archive/476615560157f22919e5c936dc84b7ddf3278ca4.tar.gz"],
 )
 ```
 
@@ -104,7 +108,8 @@ build_stack_scala_gazelle_gazelle_extension_deps()
 
 ## Gazelle Binary
 
-Include the language/scala extension in your `gazelle_binary` rule.  For example:
+Include the language/scala extension in your `gazelle_binary` rule.  For
+example:
 
 ```bazel
 gazelle_binary(
@@ -162,7 +167,9 @@ To enable a provider, instantiate a "rule provider config":
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
 ```
 
-> This reads as "create a rule provider configuration named 'scala_library' whose provider implementation is registered under the name '@io_bazel_rules_scala//scala:scala.bzl%scala_library'
+> This reads as "create a rule provider configuration named 'scala_library'
+> whose provider implementation is registered under the name
+> '@io_bazel_rules_scala//scala:scala.bzl%scala_library'
 
 ### Custom Existing Rule Providers
 
@@ -226,15 +233,16 @@ At the core of the import resolution process is a trie structure where the keys
 of the trie are parts of an import statement and the values are
 `*resolver.KnownImport` structs.
 
-For example, for the import `io.grpc.Status`, the trie would contain the following:
+For example, for the import `io.grpc.Status`, the trie would contain the
+following:
 
 - `io`: (`nil`)
-  - `grpc`: type `PACKAGE`, from `@maven//:io_grpc_grpc_api`
-    - `Status`: type `CLASS`, from `@maven//:io_grpc_grpc_api`
+  - `grpc`: type `PACKAGE`, from `@maven//:io_grpc_grpc_core`
+    - `Status`: type `CLASS`, from `@maven//:io_grpc_grpc_core`
 
 When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
 match would find the `CLASS io.grpc.Status` and the label
-`@maven//:io_grpc_grpc_api` would be added to the rule `deps`.
+`@maven//:io_grpc_grpc_core` would be added to the rule `deps`.
 
 The trie is populated by `resolver.KnownImportProvider` implementations. Each
 implementation provides known imports from a different source.
@@ -254,11 +262,16 @@ Source files that are listed in the `srcs` of existing scala rules are parsed.
 The discovered `object`, `class`, `trait` types are provided to the known import
 trie such that they can be resolved by other rules.
 
-The `scala-gazelle` extension would not do much without this provider, but it
-still needs to be enabled in `args`:
+The extension wouldn'tt do much without this provider, but it still needs to be
+enabled in `args`:
 
 ```bazel
--scala_import_provider=source
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_import_provider=source",
+    ],
+)
 ```
 
 ### `maven`
@@ -296,10 +309,7 @@ gazelle(
 ### `java`
 
 The `java` provider indexes symbols from java-related dependencies in the bazel
-graph.
-
-The `java` provider relies on an index file that is produced using the
-`java_index` rule:
+graph.  It relies on an index file produced by the `java_index` rule:
 
 ```bazel
 load("@build_stack_scala_gazelle//rules:java_index.bzl", "java_index")
@@ -355,10 +365,10 @@ gazelle(
 The `protobuf` providers works in conjuction with the
 [stackb/rules_proto](https://github.com/stackb/rules_proto) gazelle extension.
 
-That extension parses proto files and supplies imports for proto `message`,
-`enum`, and `service` classes.
+That extension parses proto files and supplies scala imports for proto
+`message`, `enum`, and `service` classes.
 
-To resolve scala dependencies to proto rules, enable as follows:
+To resolve scala dependencies to protobuf rules, enable as follows:
 
 ```bazel
 gazelle(
@@ -471,9 +481,9 @@ scala_library(
 )
 ```
 
-The configured providers are checked to see which labels can be re-resolved.
-So, the intermediate state of the rule before deps resolution actually happens
-looks like:
+The configured providers are checked to see which labels can be re-resolved. So,
+the intermediate state of the rule before deps resolution actually happens looks
+like:
 
 ```diff
 scala_library(
@@ -502,14 +512,13 @@ package `io.grpc`.
 
 To help avoid issues with split packages:
 
-- Use the `java` provider to supply fine-grained deps for selected
-  artifacts.
+- Use the `java` provider to supply fine-grained deps for selected artifacts.
 - Avoid wildcard imports that involve split packages.
 
 ## Cache
 
 Parsing scala source files for a large repository is expensive.  A cache can be
-enabled via the `-scala_gazelle_cache_file` flag.  If present, the extension 
+enabled via the `-scala_gazelle_cache_file` flag.  If present, the extension
 will read and write to this file.
 
 ```bazel
@@ -521,14 +530,14 @@ gazelle(
 )
 ```
 
-> Environment variables are expanded.
-> To use a JSON cache (for example, to inspect it, change the extension to `.json`)
-
 The cache stores a sha256 hash of each source file; it will use cached state if
 the hash matches the source file.
 
-> Bonus: the cache also records the total number of packages and enables a nice
-> progress bar.
+> - Environment variables are expanded.
+> - To use a JSON cache (for example, to inspect it, change the extension to
+> `.json`)
+> - Bonus: the cache also records the total number of packages and enables a
+> nice progress bar.
 
 ## Profiling
 
@@ -561,7 +570,8 @@ This extension supports the following directives:
 
 ### `gazelle:scala_rule`
 
-Instantiates a named rule provider configuration (enabled by default once instantiated):
+Instantiates a named rule provider configuration (enabled by default once
+instantiated):
 
 ```bazel
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
@@ -576,10 +586,11 @@ To enable/disable the configuration in a subpackage:
 
 ### `gazelle:resolve`
 
-This is core gazelle extension not implemented here but is applicable to this
-one.
+This is the core gazelle directive not implemented here but is applicable to
+this one.
 
-Use something like the following to override dependency resolution to a hard-coded source:
+Use something like the following to override dependency resolution to a
+hard-coded label:
 
 ```bazel
 # gazelle:resolve scala scala.util @maven//:org_scala_lang_scala_library
@@ -587,7 +598,8 @@ Use something like the following to override dependency resolution to a hard-cod
 
 ### `gazelle:resolve_with`
 
-Use this directive to co-resolve dependencies that, while not explicitly stated in the source file, are needed for compilation.  Example:
+Use this directive to co-resolve dependencies that, while not explicitly stated
+in the source file, are needed for compilation.  Example:
 
 ```bazel
 # gazelle:resolve_with scala com.typesafe.scalalogging.LazyLogging org.slf4j.Logger
@@ -601,8 +613,10 @@ These are included transitively.
 
 The `resolve_kind_rewrite_name` is required for the following scenario:
 
-1. You have a custom existing rule implemented as a macro, for example `my_scala_app`.
-2. The `my_scala_app` macro declares a "real" `scala_library` using a name like `%{name}_lib`.
+1. You have a custom existing rule implemented as a macro, for example
+   `my_scala_app`.
+2. The `my_scala_app` macro declares a "real" `scala_library` using a name like
+   `%{name}_lib`.
 
 In this case the extension would parse a `my_scala_app` rule at
 `//src/main/scala/com/foo:scala`; other rules that import symbols from this rule
@@ -628,7 +642,8 @@ rules detailing what the known imports are and how they resolved.
 
 #### `imports`
 
-This adds a list of comments to the `srcs` attribute detailing the required imports and how they resolved.  For example:
+This adds a list of comments to the `srcs` attribute detailing the required
+imports and how they resolved.  For example:
 
 ```
 # gazelle:annotate imports
@@ -642,7 +657,7 @@ scala_binary(
     srcs =
     # ❌ AbstractServiceBase<ERROR> import not found (EXTENDS of foo.allocation.Main)
     # ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
-    # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<jarindex> (DIRECT of RequestHandler.scala)
+    # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
     # ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
     glob(["src/main/**/*.scala"]),
     main_class = "foo.allocation.Main",
@@ -660,16 +675,19 @@ Similar to above, but only the `import not found` would be included.
 The imports are calculated as a union of the following for all `.scala` source
 files in the rule:
 
-1. All imports explicitly named in an import statement (`DIRECT` import).  Nested imports are included and resolved in a best-effort basis.
+1. All imports explicitly named in an import statement (`DIRECT` import). Nested
+   imports are included and resolved in a best-effort basis.
 1. The `main_class`, if the rule has that attribute (`MAIN_CLASS` import).
 1. All symbols named in an `extends` clause (`EXTENDS` import).
-1. Any additional imports matching a `gazelle:resolve_with` directive (`IMPLICIT` import).
+1. Any additional imports matching a `gazelle:resolve_with` directive
+   (`IMPLICIT` import).
 
 ## How Required Imports are Resolved
 
 The resolution procedure works as follows:
 
-1. Is the import provided by the containing rule?  If yes, `NoLabel` is required.  Stop ✅.
+1. Is the import provided by the containing rule?  If yes, `NoLabel` is
+   required.  Stop ✅.
 2. Is the import named in a `gazelle:resolve` override?  If yes, stop ✅.
 3. Does the import satisfy a longest prefix match in the known import trie?  If
    yes, stop ✅.
