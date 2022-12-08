@@ -14,10 +14,25 @@
     - [Custom Existing Rule Providers](#custom-existing-rule-providers)
     - [Custom Rule Provider](#custom-rule-provider)
   - [Known Import Providers](#known-import-providers)
-    - [`scalaparse` known import provider](#scalaparse-known-import-provider)
-    - [`maven` known import provider](#maven-known-import-provider)
-    - [`jarindex`](#jarindex)
-  - [Extension Cache File](#extension-cache-file)
+    - [`source`](#source)
+    - [`maven`](#maven)
+      - [Split Packages](#split-packages)
+    - [`java`](#java)
+    - [`protobuf`](#protobuf)
+    - [Custom Known Import Provider](#custom-known-import-provider)
+    - [CanProvide](#canprovide)
+  - [Cache](#cache)
+  - [Profiling](#profiling)
+    - [CPU](#cpu)
+    - [Memory](#memory)
+  - [Directives](#directives)
+    - [`gazelle:scala_rule`](#gazellescala_rule)
+    - [`gazelle:resolve`](#gazelleresolve)
+    - [`gazelle:resolve_with`](#gazelleresolve_with)
+    - [`gazelle:resolve_glob`](#gazelleresolve_glob)
+    - [`gazelle:resolve_kind_rewrite_name`](#gazelleresolve_kind_rewrite_name)
+    - [`gazelle:annotate`](#gazelleannotate)
+- [Import Resolution Procedure](#import-resolution-procedure)
 
 # Overview
 
@@ -216,42 +231,344 @@ Known import providers:
 - Must be enabled with the `-scala_import_provider` flag.
 - Manage their own flags; check the provider source code for details.
 
-### `scalaparse` known import provider
+### `source`
 
-The `scalaparse` provider is responsible for indexing importable symbols from
+The `source` provider is responsible for indexing importable symbols from
 `.scala` source files during the rule generation phase.
 
 Source files that are listed in the `srcs` of existing scala rules are parsed.
 The discovered `object`, `class`, `trait` types are provided to the known import
 trie such that they can be resolved by other rules.
 
-The `scala-gazelle` extension would not do much without this provider, but it still needs to be enabled in `args`:
+The `scala-gazelle` extension would not do much without this provider, but it
+still needs to be enabled in `args`:
 
 ```bazel
 -scala_import_provider=source
 ```
 
-### `maven` known import provider
+### `maven`
 
-This provider reads `maven_install.json` files that are produced from pinned `maven_install` repository rules.
+This provider reads `maven_install.json` files that are produced from pinned
+`maven_install` repository rules.
 
 As of https://github.com/bazelbuild/rules_jvm_external/pull/716 (`Add index of
 packages in jar files when pinning`), `@rules_jvm_external` indexes the package
 names that jars provide.
 
-The `maven` provider reads these package names and populates the trie accordingly.  Note that since only package names are known, maven dependency resolution via this mechanism alone is more "coarse-grained".
+The `maven` provider reads these package names and populates the trie
+accordingly.  Note that since only package names are known, maven dependency
+resolution via this mechanism alone is more "coarse-grained".
 
-Issues can occur when more than one jar provides the same package name.  This situation is known as a "split package".  The `io.grpc` namespace is a classic example (see [discussion](https://github.com/grpc/grpc-java/issues/3522)).  The `io.grpc.Context` is in `@maven//:io_grpc_grpc_context`, but other classes like `io.grpc.Status` are in `@maven//:io_grpc_grpc_core`.  Both advertise the package `io.grpc`.
+To configure the `maven` provider, use the `-maven_install_json_file` flag (can
+be repeated if you have more than one `maven_install` rule):
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_import_provider=source",
+        "-scala_import_provider=maven",
+        "-maven_install_json_file=$(location //:maven_install.json)",
+        "-maven_install_json_file=$(location //:artifactory_install.json)",
+    ],
+    data = [
+        "//:maven_install.json",
+        "//:artifactory_install.json",
+    ],
+)
+```
+
+#### Split Packages
+
+Issues can occur when more than one jar provides the same package name.  This
+situation is known as a "split package".  The `io.grpc` namespace is a classic
+example (see [discussion](https://github.com/grpc/grpc-java/issues/3522)).  The
+`io.grpc.Context` is in `@maven//:io_grpc_grpc_context`, but other classes like
+`io.grpc.Status` are in `@maven//:io_grpc_grpc_core`.  Both advertise the
+package `io.grpc`.
 
 To help avoid issues with split packages:
 
-- Use the `jarindex` provider to supply fine-grained deps for selected artifacts.
+- Use the `java` provider to supply fine-grained deps for selected
+  artifacts.
 - Avoid wildcard imports that involve split packages.
 
-### `jarindex` 
+### `java`
 
-## Extension Cache File
+The `java` provider indexes symbols from java-related dependencies in the bazel
+graph.
+
+The `java` provider relies on an index file that is produced using the
+`java_index` rule:
+
+```bazel
+load("@build_stack_scala_gazelle//rules:java_index.bzl", "java_index")
+
+java_index(
+    name = "java_index",
+    jars = [
+        "@maven//:io_grpc_grpc_context",
+        "@maven//:io_grpc_grpc_core",
+    ],
+    out_json = "java_index.json",
+    out_proto = "java_index.pb",
+    platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
+)
+```
+
+> NOTE: Use `bazel build //:java_index --output_groups=json` to produce the JSON
+> file if you want to inspect it.
+
+The `jars` attribute names dependencies that you want indexed at a fine-grained
+level.  Any label that provides `JavaInfo` will satisfy.
+
+The `platform_jars` is special: it indexes jars that are provided by the
+platform and do not need to be resolved to a label in rule `deps`.  For example,
+if you import `java.util.Map`, no additional bazel label is required to use it.
+The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that supplies
+these symbols.  You can also add things like
+`@maven//:org_scala_lang_scala_library` or other toolchain-provided jars that
+never need to be explicitly stated in `deps`.
+
+To enable it:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_import_provider=source",
+        "-scala_import_provider=java",
+        "-java_index_file=$(location //:java_index.pb)",
+        # the flag order is significant: put fine-grained providers (java)
+        # before coarse-grained ones (maven)
+        "-scala_import_provider=maven",
+        ...
+    ],
+    data = [
+        "//:java_index.pb",
+    ],
+)
+```
+
+### `protobuf`
+
+The `protobuf` providers works in conjuction with the
+[stackb/rules_proto](https://github.com/stackb/rules_proto) gazelle extension.
+
+That extension parses proto files and supplies imports for proto `message`,
+`enum`, and `service` classes.
+
+To resolve scala dependencies to proto rules, enable as follows:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_import_provider=source",
+        "-scala_import_provider=protobuf",
+        ...
+    ],
+)
+```
+
+> TODO: provide an example repo showing the full configuration of these two
+> extensions.
+
+### Custom Known Import Provider
+
+If your organization has an additional database or mechanism for import
+tracking, you can implement the `resolver.KnownImportProvider` interface and
+register it with the global registry.
+
+For example, if your organization uses https://github.com/johnynek/bazel-deps,
+you might implement something like:
+
+```go
+package provider
+
+import (
+	"flag"
+	"fmt"
+
+	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/rule"
+
+	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
+)
+
+func init() {
+  resolver.
+    GlobalKnownImportProviderRegistry().
+    AddKnownImportProvider(newBazelDepsProvider())
+}
+
+// bazelDepsProvider is a provider of known imports for the
+// johnynek/bazel-deps.
+type bazelDepsProvider struct {
+	bazelDepsYAMLFiles collections.StringSlice
+}
+
+// newBazelDepsProvider constructs a new provider.
+func newBazelDepsProvider() *bazelDepsProvider {
+	return &bazelDepsProvider{}
+}
+
+// Name implements part of the resolver.KnownImportRegistry interface.
+func (p *bazelDepsProvider) Name() string {
+	return "bazel-deps"
+}
+
+// RegisterFlags implements part of the resolver.KnownImportRegistry interface.
+func (p *bazelDepsProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+	fs.Var(&p.bazelDepsYAMLFiles, "bazel_deps_yaml_file", "path to bazel_deps.yaml")
+}
+
+// CheckFlags implements part of the resolver.KnownImportRegistry interface.
+func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
+	for _, filename := range p.bazelDepsYAMLFiles {
+		if err := p.loadFile(c.WorkDir, filename, importRegistry); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *bazelDepsProvider) loadFile(dir string, filename string, importRegistry resolver.KnownImportRegistry) error {
+	return fmt.Errorf("Implement me; Supply known imports to the given importRegistry!")
+}
+
+// CanProvide implements part of the resolver.KnownImportRegistry interface.
+func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+	if dep.Repo == "bazel_deps" {
+		return true
+	}
+	return false
+}
+
+// OnResolve implements part of the resolver.KnownImportRegistry interface.
+func (p *bazelDepsProvider) OnResolve() {
+}
+```
+
+### CanProvide
+
+The `resolver.KnownImportRegistry.CanProvide` function is used to determine if
+this provider is capable of providing a given dependency label.  When rule deps
+are resolved, the existing deps list is cleared of those labels it can find a
+provider for.  For example, given the rule:
+
+```bazel
+scala_library(
+  name = "lib",
+  srcs = glob(["*.scala"]),
+  deps = [
+    "//src/main/scala:scala",
+    "@foo//:scala",
+    "@maven//:com_google_gson_gson",
+  ],
+)
+```
+
+The configured providers are checked to see which labels can be re-resolved.
+So, the intermediate state of the rule before deps resolution actually happens
+looks like:
+
+```diff
+scala_library(
+  name = "lib",
+  srcs = glob(["*.scala"]),
+  deps = [
+-    "//src/main/scala:scala",  # can be resolved to a source rule - delete it!
+    "@foo//:scala",  # don't know anything about @foo - leave it alone!
+-    "@maven//:com_google_gson_gson",  # can be resolved by maven provider - delete it!
+  ],
+)
+```
+
+So, if the scala-gazelle extension is not confident that a label can be
+re-resolved, it will leave the dependency alone, even without `# keep`
+directives.
+
+## Cache
+
+Parsing scala source files for a large repository is expensive.  A cache can be
+enabled via the `-scala_gazelle_cache_file` flag.  If present, the extension 
+will read and write to this file.
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_gazelle_cache_file=${BUILD_WORKING_DIRECTORY}/.scala-gazelle-cache.pb",
+    ],
+)
+```
+
+> Environment variables are expanded.
+> To use a JSON cache (for example, to inspect it, change the extension to `.json`)
+
+The cache stores a sha256 hash of each source file; it will use cached state if
+the hash matches the source file.
+
+> Bonus: the cache also records the total number of packages and enables a nice
+> progress bar.
+
+## Profiling
+
+Gazelle can be slow for large repositories.  To get a better sense of what's
+going on, cpu and memory profiling can be enabled:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-cpuprofile_file=./gazelle.cprof",
+        "-memprofile_file=./gazelle.mprof",
+    ],
+)
+```
+
+### CPU
+
+Use `bazel run @go_sdk//:bin/go -- tool pprof ./gazelle.cprof` to analyze it
+(try the  commands `top10` or `web`).
+
+### Memory
+
+Use `bazel run @go_sdk//:bin/go -- tool mprof ./gazelle.mprof` to analyze it
+(try commands `top10` or `web`)
+
+## Directives
+
+This extension supports the following directives:
+
+### `gazelle:scala_rule`
+
+Instantiates a named rule provider configuration.
+
+### `gazelle:resolve`
+
+This is core gazelle extension, but is applicable to this one.
+
+### `gazelle:resolve_with`
+
+TODO
+
+### `gazelle:resolve_glob`
+
+TODO
+
+### `gazelle:resolve_kind_rewrite_name`
+
+TODO
+
+### `gazelle:annotate`
+
+TODO
+
+# Import Resolution Procedure
 
 If the extension cache file feature is enabled, 
-
-
