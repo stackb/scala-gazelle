@@ -68,13 +68,16 @@ func (imp *Import) Comment() build.Comment {
 
 func (imp *Import) String() string {
 	var impType string
+	emoji := "✅"
+
 	if imp.Known != nil {
 		impType = fmt.Sprintf("%v", imp.Known.Type)
 	} else if imp.Error != nil {
 		impType = "ERROR"
+		emoji = "❌"
 	}
 	parts := []string{
-		fmt.Sprintf("%s<%s>", imp.Imp, impType),
+		fmt.Sprintf("%s %s<%s>", emoji, imp.Imp, impType),
 	}
 
 	if imp.Known != nil {
@@ -82,9 +85,9 @@ func (imp *Import) String() string {
 		if to == "//:" {
 			to = "NO-LABEL"
 		}
-		parts = append(parts, fmt.Sprintf("✅ %s<%s>", to, imp.Known.Provider))
+		parts = append(parts, fmt.Sprintf("%s<%s>", to, imp.Known.Provider))
 	} else if imp.Error != nil {
-		parts = append(parts, fmt.Sprintf("❌ %v", imp.Error))
+		parts = append(parts, fmt.Sprintf("%v", imp.Error))
 	}
 
 	if imp.Source != nil {

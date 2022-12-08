@@ -346,20 +346,25 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			fake := mocks.NewImportResolver(t)
+			importResolver := mocks.NewImportResolver(t)
 
 			var got label.Label
+
 			if tc.wantTimes > 0 {
-				fake.On("GetKnownRule", mock.MatchedBy(func(from label.Label) bool {
+				capture := func(from label.Label) bool {
 					got = from
 					return true
-				})).Times(tc.wantTimes).Return(nil, false)
+				}
+				importResolver.
+					On("GetKnownRule", mock.MatchedBy(capture)).
+					Times(tc.wantTimes).
+					Return(nil, false)
 			}
-			sc := newScalaConfig(c, tc.rel, fake)
+			sc := newScalaConfig(c, tc.rel, importResolver)
 
 			sc.GetKnownRule(tc.from)
 
-			fake.AssertExpectations(t)
+			importResolver.AssertExpectations(t)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

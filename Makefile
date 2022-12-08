@@ -40,6 +40,7 @@ tools:
 
 .PHONY: mocks
 mocks:
-	mockery --output pkg/resolver/mocks --name=KnownImportResolver --dir=pkg/resolver
-	mockery --output pkg/resolver/mocks --name=KnownImportProvider --dir=pkg/resolver
 	mockery --output pkg/resolver/mocks --name=ImportResolver --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=KnownImportProvider --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=KnownImportRegistry --dir=pkg/resolver
+	mockery --output pkg/resolver/mocks --name=KnownImportResolver --dir=pkg/resolver

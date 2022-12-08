@@ -94,10 +94,12 @@ go_test(
         "loads_test.go",
         "scala_config_test.go",
         "scala_existing_rule_test.go",
+        "scala_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
+        "//build/stack/gazelle/scala/parse",
         "//pkg/resolver",
         "//pkg/resolver/mocks",
         "//pkg/testutil",

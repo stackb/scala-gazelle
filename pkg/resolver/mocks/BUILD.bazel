@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "ImportResolver.go",
         "KnownImportProvider.go",
+        "KnownImportRegistry.go",
         "KnownImportResolver.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver/mocks",

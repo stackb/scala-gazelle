@@ -66,6 +66,9 @@ func (s *scalaExistingRule) ResolveRule(cfg *RuleConfig, pkg ScalaPackage, r *ru
 		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
 		return nil
 	}
+	if scalaRule == nil {
+		log.Panicln("scalaRule should not be nil!")
+	}
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 
@@ -105,18 +108,8 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 	if s.isBinaryRule {
 		return nil
 	}
-
-	// set the impLang to a default value.  If there is a map_kind_import_name
-	// associated with this kind, return that instead.  This should force the
-	// ruleIndex to miss on the impLang, allowing us to override in the source
-	// CrossResolver.
-	sc := getScalaConfig(c)
-
-	// FIXME(pcj): huh?  why are we rewriting the scalaLangName using a
-	// rewrite??? this is so wrong.
-	lang := scalaLangName
-	if _, ok := sc.labelNameRewrites[r.Kind()]; ok {
-		lang = r.Kind()
+	if len(s.scalaRule.Files) == 0 {
+		return nil
 	}
 
 	provides := make([]string, 0)
@@ -132,8 +125,7 @@ func (s *scalaExistingRuleProvider) Imports(c *config.Config, r *rule.Rule, file
 
 	specs := make([]resolve.ImportSpec, len(provides))
 	for i, imp := range provides {
-		specs[i] = resolve.ImportSpec{Lang: lang, Imp: imp}
-		// log.Println("scalaExistingRule.Imports()", lang, r.Kind(), r.Name(), i, imp)
+		specs[i] = resolve.ImportSpec{Lang: scalaLangName, Imp: imp}
 	}
 
 	return specs

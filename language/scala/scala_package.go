@@ -178,10 +178,6 @@ func (s *scalaPackage) ParseScalaRule(r *rule.Rule) (*ScalaRule, error) {
 		return nil, err
 	}
 
-	if len(filenames) == 0 {
-		return nil, err
-	}
-
 	from := label.New("", s.rel, r.Name())
 
 	files, err := parseScalaFiles(s.repoRootDir(), from, r.Kind(), filenames, s.parser)
@@ -189,7 +185,11 @@ func (s *scalaPackage) ParseScalaRule(r *rule.Rule) (*ScalaRule, error) {
 		return nil, err
 	}
 
-	return NewScalaRule(s.importResolver, r, from, files), nil
+	return NewScalaRule(
+		resolver.NewKnownImportRegistryTrie(),
+		s.importResolver,
+		r, from, files,
+	), nil
 }
 
 // repoRootDir return the root directory of the repo.

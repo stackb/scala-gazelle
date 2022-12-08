@@ -27,13 +27,13 @@ type ScalaRule struct {
 	requiredTypes map[string][]string
 }
 
-func NewScalaRule(next resolver.KnownImportResolver, r *rule.Rule, from label.Label, files []*sppb.File) *ScalaRule {
+func NewScalaRule(registry resolver.KnownImportRegistry, next resolver.KnownImportResolver, r *rule.Rule, from label.Label, files []*sppb.File) *ScalaRule {
 	scalaRule := &ScalaRule{
 		Rule:          r,
 		From:          from,
 		Files:         files,
 		next:          next,
-		registry:      resolver.NewKnownImportRegistryTrie(),
+		registry:      registry,
 		requiredTypes: make(map[string][]string),
 	}
 	scalaRule.addFiles(files...)
@@ -55,6 +55,9 @@ func (r *ScalaRule) addFromFile(file *sppb.File) {
 	}
 	for _, imp := range file.Traits {
 		r.putKnownImport(imp, sppb.ImportType_TRAIT)
+	}
+	for _, imp := range file.Types {
+		r.putKnownImport(imp, sppb.ImportType_TYPE)
 	}
 	for _, imp := range file.Vals {
 		r.putKnownImport(imp, sppb.ImportType_VALUE)
