@@ -279,14 +279,13 @@ func TestScalaRuleImports(t *testing.T) {
 				Maybe().
 				Return(nil)
 
-			c := config.New()
-			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
-
-			scalaRule := newScalaRule(sc, knownImportRegistry, importResolver, tc.rule, tc.from, tc.files)
-			scalaConfig := newScalaConfig(c, tc.from.Pkg, importResolver)
-			if err := scalaConfig.parseDirectives(makeDirectives(tc.directives)); err != nil {
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), tc.from.Pkg, makeDirectives(tc.directives)...)
+			if err != nil {
 				t.Fatal(err)
 			}
+
+			scalaRule := newScalaRule(sc, knownImportRegistry, importResolver, tc.rule, tc.from, tc.files)
+
 			imports := scalaRule.Imports()
 			got := make([]string, len(imports))
 			for i, imp := range imports.Values() {

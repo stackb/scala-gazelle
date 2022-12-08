@@ -18,12 +18,12 @@ import (
 type scalaRule struct {
 	// Rule is an embedded struct (FIXME: why embed this?).
 	*rule.Rule
+	// the parent config
+	scalaConfig *scalaConfig
 	// from is the label for the rule.
 	from label.Label
 	// files that are included in the rule.
 	files []*sppb.File
-	// the parent config
-	scalaConfig *scalaConfig
 	// the import resolver to which we chain to when self-imports are not matched.
 	next resolver.KnownImportResolver
 	// the registry implementation to which we provide known imports.
@@ -56,10 +56,6 @@ func newScalaRule(
 	}
 	scalaRule.addFiles(files...)
 	return scalaRule
-}
-
-func (r *scalaRule) Files() []*sppb.File {
-	return r.files
 }
 
 func (r *scalaRule) addFiles(files ...*sppb.File) {
@@ -166,7 +162,7 @@ func (r *scalaRule) putRequiredType(src, dst string) {
 	r.requiredTypes[dst] = append(r.requiredTypes[dst], src)
 }
 
-// Exports returns the list of symbols that are importable by other rules.
+// Exports implements part of the scalarule.Rule interface.
 func (r *scalaRule) Exports() []resolve.ImportSpec {
 	exports := make([]resolve.ImportSpec, 0, len(r.exports))
 	for _, v := range r.exports {
@@ -182,6 +178,7 @@ func (r *scalaRule) Exports() []resolve.ImportSpec {
 	return exports
 }
 
+// Imports implements part of the scalarule.Rule interface.
 func (r *scalaRule) Imports() resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
@@ -204,11 +201,11 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	}
 
 	// Initialize a list of symbols to find implicits for from all known
-	// imports. Include all symbols that are defined in the rule too; a
-	// gazelle:resolve_with directive should apply to them too.
+	// imports. Include all symbols that are defined in the rule too (a
+	// gazelle:resolve_with directive should apply to them too).
 	required := collections.StringStack(imports.Keys())
-	for _, e := range r.Exports() {
-		required = append(required, e.Imp)
+	for _, export := range r.Exports() {
+		required = append(required, export.Imp)
 	}
 
 	// Gather implicit imports transitively.
@@ -221,4 +218,9 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	}
 
 	return imports
+}
+
+// Files implements part of the scalarule.Rule interface.
+func (r *scalaRule) Files() []*sppb.File {
+	return r.files
 }

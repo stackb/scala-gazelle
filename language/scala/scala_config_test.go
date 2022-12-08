@@ -77,7 +77,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -137,7 +137,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -182,7 +182,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -227,7 +227,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -258,7 +258,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -289,7 +289,7 @@ func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -424,9 +424,9 @@ func TestIsSameImport(t *testing.T) {
 	}
 }
 
-func parseTestDirectives(t *testing.T, rel string, dd ...rule.Directive) (*scalaConfig, error) {
+func newTestScalaConfig(t *testing.T, importResolver resolver.ImportResolver, rel string, dd ...rule.Directive) (*scalaConfig, error) {
 	c := config.New()
-	sc := newScalaConfig(c, rel, mocks.NewImportResolver(t))
+	sc := newScalaConfig(c, rel, importResolver)
 	err := sc.parseDirectives(dd)
 	return sc, err
 }
