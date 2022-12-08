@@ -57,6 +57,22 @@ func (_m *ImportResolver) GetKnownImport(imp string) (*resolver.KnownImport, boo
 	return r0, r1
 }
 
+// GetKnownImports provides a mock function with given fields: prefix
+func (_m *ImportResolver) GetKnownImports(prefix string) []*resolver.KnownImport {
+	ret := _m.Called(prefix)
+
+	var r0 []*resolver.KnownImport
+	if rf, ok := ret.Get(0).(func(string) []*resolver.KnownImport); ok {
+		r0 = rf(prefix)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*resolver.KnownImport)
+		}
+	}
+
+	return r0
+}
+
 // GetKnownRule provides a mock function with given fields: from
 func (_m *ImportResolver) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	ret := _m.Called(from)
