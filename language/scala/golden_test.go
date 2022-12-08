@@ -10,10 +10,10 @@ func TestScala(t *testing.T) {
 	goldentest.FromDir("language/scala",
 		goldentest.WithOnlyTests(
 			"maven_provider",
-			"stackb_rules_proto_provider",
-			"scalasource_provider",
+			"protobuf_provider",
+			"source_provider",
 			"override_provider",
-			"jarindex_provider",
+			"java_provider",
 		),
 	).Run(t, "gazelle")
 }

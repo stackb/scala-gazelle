@@ -1,0 +1,3 @@
+-scala_import_provider=source
+-scala_import_provider=java
+-jarindex_file=./jarindex.json

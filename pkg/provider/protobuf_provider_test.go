@@ -40,13 +40,13 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 					Type:     sppb.ImportType_OBJECT,
 					Import:   "com.foo.bar.proto.Enum",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
-					Provider: "github.com/stackb/rules_proto",
+					Provider: "protobuf",
 				},
 				{
 					Type:     sppb.ImportType_CLASS,
 					Import:   "com.foo.bar.proto.Message",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
-					Provider: "github.com/stackb/rules_proto",
+					Provider: "protobuf",
 				},
 			},
 		},
@@ -54,7 +54,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			known := mocks.NewKnownImportsCapturer(t)
 
-			p := provider.NewStackbRulesProtoProvider(scalaName, scalaName, func(lang, impLang string) map[label.Label][]string {
+			p := provider.NewProtobufProvider(scalaName, scalaName, func(lang, impLang string) map[label.Label][]string {
 				return tc.imports[impLang]
 			})
 
@@ -99,7 +99,7 @@ func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			knownImportRegistry := mocks.NewKnownImportRegistry(t)
 
-			p := provider.NewStackbRulesProtoProvider(tc.lang, tc.lang, func(lang, impLang string) map[label.Label][]string {
+			p := provider.NewProtobufProvider(tc.lang, tc.lang, func(lang, impLang string) map[label.Label][]string {
 				return tc.imports[lang]
 			})
 			c := config.New()

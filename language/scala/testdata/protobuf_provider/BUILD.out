@@ -16,10 +16,10 @@ scala_library(
     name = "app",
     srcs =
     # ❌ not.Exists<ERROR> import not found (DIRECT of Main.scala)
-    # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<github.com/stackb/rules_proto> (DIRECT of Main.scala)
+    # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
     ["Main.scala"],
     deps = [
-        # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<github.com/stackb/rules_proto> (DIRECT of Main.scala)
+        # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
         "//proto:proto_proto_scala_library",
     ],
 )

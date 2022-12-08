@@ -35,7 +35,7 @@ type scalaLang struct {
 	// rules configured via gazelle directives by the user.
 	ruleProviderRegistry scalarule.ProviderRegistry
 	// sourceProvider is the source resolver implementation.
-	sourceProvider *provider.ScalaSourceProvider
+	sourceProvider *provider.SourceProvider
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -86,14 +86,14 @@ func NewLanguage() language.Language {
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
-	lang.sourceProvider = provider.NewScalaSourceProvider(func(msg string) {
+	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
 
 	lang.AddKnownImportProvider(lang.sourceProvider)
 	lang.AddKnownImportProvider(provider.NewJarIndexProvider())
 	lang.AddKnownImportProvider(provider.NewMavenProvider(scalaLangName))
-	lang.AddKnownImportProvider(provider.NewStackbRulesProtoProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
+	lang.AddKnownImportProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 
 	return lang
 }

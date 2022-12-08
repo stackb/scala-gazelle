@@ -7,6 +7,7 @@
   - [Transitive Dependencies](#transitive-dependencies)
   - [Gazelle Binary](#gazelle-binary)
   - [Gazelle Rule](#gazelle-rule)
+- [Usage](#usage)
 - [Configuration](#configuration)
   - [Rule Providers](#rule-providers)
     - [Built-in Existing Rule Providers](#built-in-existing-rule-providers)
@@ -17,14 +18,6 @@
     - [`maven` known import provider](#maven-known-import-provider)
     - [`jarindex`](#jarindex)
   - [Extension Cache File](#extension-cache-file)
-  - [Flags](#flags)
-  - [Directives](#directives)
-  - [Known Import Providers](#known-import-providers-1)
-    - [`scalaparse`](#scalaparse)
-    - [`jarindex`](#jarindex-1)
-    - [`github.com/stackb/rules_proto`](#githubcomstackbrules_proto)
-    - [`github.com/bazelbuild/rules_jvm_external`](#githubcombazelbuildrules_jvm_external)
-- [Usage](#usage)
 
 # Overview
 
@@ -109,6 +102,14 @@ gazelle(
 ```
 
 The `args` and `data` for this rule are discussed below. 
+
+# Usage
+
+Invoke gazelle as per typical usage:
+
+```sh
+$ bazel run //:gazelle
+```
 
 # Configuration
 
@@ -227,7 +228,7 @@ trie such that they can be resolved by other rules.
 The `scala-gazelle` extension would not do much without this provider, but it still needs to be enabled in `args`:
 
 ```bazel
--scala_import_provider=scalasource
+-scala_import_provider=source
 ```
 
 ### `maven` known import provider
@@ -253,63 +254,4 @@ To help avoid issues with split packages:
 
 If the extension cache file feature is enabled, 
 
-## Flags
-
-## Directives
-
-```bazel
-# --- gazelle language "scala" ---
-# gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
-# gazelle:scala_rule scala_library enabled true
-# gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
-# gazelle:scala_rule scala_binary enabled true
-# gazelle:scala_rule scala_test implementation @io_bazel_rules_scala//scala:scala.bzl%scala_test
-# gazelle:scala_rule scala_test enabled true
-# gazelle:scala_rule scala_macro_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_macro_library
-# gazelle:scala_rule scala_macro_library enabled true
-```
-
-## Known Import Providers
-
-The scala-gazelle extension maintains a trie of "known imports".  For example, the
-trie may know that `com.google.gson.Gson` resolves to a `CLASS` provided by
-`@maven//:com_google_code_gson_gson`, and that the import `com.google.gson._`
-resolves to the `PACKAGE` `com.google.gson`, also from
-`@maven//:com_google_code_gson_gson`.  
-
-Similarly, the import
-`io.grpc.Status.UNIMPLEMENTED` would resolve to the longest trie prefix as
-`io.grpc.Status`.
-
-Various `resolver.KnownImportProvider` implementations can be configured to
-populate the known import trie.  Each import provider has a canonical name and
-are enabled via the `-scala_import_provider=NAME` flag.  
-
-The order of `-scala_import_provider` determines the resolution ordering, so put more fine-grained providers (e.g `jarindex`) before more coarse-grained ones (e.g. `maven`, which only provides package-level imports).
-
-Provider implementations manage their own flags, so please check the source file for the most up-to-date documentation on the flags used by different import providers.
-
-### `scalaparse`
-
-A provider that parses scala source files and populates the trie with classes, objects, traits, etc that are discovered during the rule generation phase.
-
-### `jarindex`
-
-A provider that reads jar index files and populates the trie with classes, objects, traits, etc that are listed in the file.  An index is produced by  the `@build_stack_scala_gazelle//rules:jar_class_index.bzl%jar_class_index` build rule.
-
-### `github.com/stackb/rules_proto`
-
-A provider that gathers imports from `proto_scala_library` and `grpc_scala_library`.
-
-### `github.com/bazelbuild/rules_jvm_external`
-
-A provider that reads pinned `maven_install.json` files produced by the `@rules_jvm_external//:defs.bzl%maven_install` repository rule.
-
-# Usage
-
-Invoke gazelle as per typical usage:
-
-```sh
-$ bazel run //:gazelle
-```
 

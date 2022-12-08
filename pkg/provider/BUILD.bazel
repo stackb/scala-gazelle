@@ -6,9 +6,9 @@ go_library(
     name = "provider",
     srcs = [
         "jarindex_provider.go",
-        "rules_jvm_external_provider.go",
-        "scalaparse_provider.go",
-        "stackb_rules_proto_provider.go",
+        "maven_provider.go",
+        "protobuf_provider.go",
+        "source_provider.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/provider",
     visibility = ["//visibility:public"],
@@ -31,9 +31,9 @@ go_test(
     size = "small",
     srcs = [
         "jarindex_provider_test.go",
-        "rules_jvm_external_provider_test.go",
-        "scalaparse_provider_test.go",
-        "stackb_rules_proto_provider_test.go",
+        "maven_provider_test.go",
+        "protobuf_provider_test.go",
+        "scala_source_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),
     deps = [

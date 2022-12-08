@@ -24,9 +24,9 @@ func TestFlags(t *testing.T) {
 	}{
 		"scalasource_import_provider": {
 			args: []string{
-				"-scala_import_provider=scalasource",
-				"-scala_import_provider=jarindex",
-				"-scala_import_provider=github.com/stackb/rules_proto",
+				"-scala_import_provider=source",
+				"-scala_import_provider=java",
+				"-scala_import_provider=protobuf",
 				"-scala_import_provider=maven",
 			},
 		},
