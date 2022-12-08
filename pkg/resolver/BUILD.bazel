@@ -3,6 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "resolver",
     srcs = [
+        "chain_known_import_registry.go",
         "chain_resolver.go",
         "cross_resolver.go",
         "global_known_import_provider_registry.go",
@@ -16,6 +17,7 @@ go_library(
         "known_import_registry.go",
         "known_import_registry_trie.go",
         "known_import_resolver.go",
+        "known_import_scope.go",
         "known_resolver.go",
         "known_rule_registry.go",
         "label_name_rewrite_spec.go",

@@ -46,18 +46,18 @@ func TestScalaRuleRequiredTypes(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
-			knownImportResolver := mocks.NewKnownImportResolver(t)
+			global := mocks.NewImportResolver(t)
+			local := mocks.NewKnownImportRegistry(t)
 
-			knownImportRegistry.
+			local.
 				On("PutKnownImport", mock.Anything).
 				Maybe().
 				Return(nil)
 
 			c := config.New()
-			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+			sc := newScalaConfig(c, "", global)
 
-			scalaRule := newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, global, local, global, tc.rule, tc.from, tc.files)
 
 			got := scalaRule.requiredTypes
 			if diff := cmp.Diff(tc.want, got); diff != "" {

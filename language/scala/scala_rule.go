@@ -26,19 +26,26 @@ type scalaRule struct {
 	files []*sppb.File
 	// the import resolver to which we chain to when self-imports are not matched.
 	next resolver.KnownImportResolver
-	// the registry implementation to which we provide known imports.
-	registry resolver.KnownImportRegistry
+	// the localRegistry implementation to which we provide known imports.
+	localRegistry resolver.KnownImportRegistry
+	// the registry from which we lookup both local and global imports.
+	scopeRegistry resolver.KnownImportRegistry
 	// requiredTypes is a mapping from the required type to the symbol that
 	// needs it. for example, if 'class Foo requiredTypes Bar', "Bar" is the map
 	// key and "Foo" will be the value.
 	requiredTypes map[string][]string
 	// exports represent symbols that are importable by other rules.
 	exports map[string]resolve.ImportSpec
+	// scope is a map of symbols that are in scope.  For the import
+	// 'com.foo.Bar', the map key is 'Bar' and the map value is the known import
+	// for it.
+	scope resolver.KnownImportScope
 }
 
 func newScalaRule(
 	scalaConfig *scalaConfig,
-	registry resolver.KnownImportRegistry,
+	globalRegistry resolver.KnownImportRegistry,
+	localRegistry resolver.KnownImportRegistry,
 	next resolver.KnownImportResolver,
 	r *rule.Rule,
 	from label.Label,
@@ -50,131 +57,23 @@ func newScalaRule(
 		from:          from,
 		files:         files,
 		next:          next,
-		registry:      registry,
+		localRegistry: localRegistry,
 		requiredTypes: make(map[string][]string),
 		exports:       make(map[string]resolve.ImportSpec),
+		scope:         make(resolver.KnownImportScope),
+		scopeRegistry: resolver.NewChainKnownImportRegistry(localRegistry, globalRegistry),
 	}
-	scalaRule.addFiles(files...)
+	scalaRule.visitFiles(files)
+	scalaRule.visitAllExtends(files)
 	return scalaRule
-}
-
-func (r *scalaRule) addFiles(files ...*sppb.File) {
-	for _, file := range files {
-		r.addFromFile(file)
-	}
-}
-
-func (r *scalaRule) addFromFile(file *sppb.File) {
-	for _, imp := range file.Classes {
-		r.putKnownImport(imp, sppb.ImportType_CLASS)
-		r.putExport(imp)
-	}
-	for _, imp := range file.Objects {
-		r.putKnownImport(imp, sppb.ImportType_OBJECT)
-		r.putExport(imp)
-	}
-	for _, imp := range file.Traits {
-		r.putKnownImport(imp, sppb.ImportType_TRAIT)
-		r.putExport(imp)
-	}
-	for _, imp := range file.Types {
-		r.putKnownImport(imp, sppb.ImportType_TYPE)
-		r.putExport(imp)
-	}
-	for _, imp := range file.Vals {
-		r.putKnownImport(imp, sppb.ImportType_VALUE)
-		r.putExport(imp)
-	}
-
-	for token, extends := range file.Extends {
-		r.putExtends(token, extends)
-	}
-	for _, imp := range file.Imports {
-		r.putFileImport(imp)
-	}
-}
-
-func (r *scalaRule) putFileImport(imp string) {
-	// r.imports.Put(imp)
-}
-
-func (r *scalaRule) putExport(imp string) {
-	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
-}
-
-func (r *scalaRule) putKnownImport(imp string, impType sppb.ImportType) {
-	// since we don't need to resolve same-rule symbols to a different label,
-	// record all imports as label.NoLabel!
-	r.registry.PutKnownImport(resolver.NewKnownImport(impType, imp, "self-import", label.NoLabel))
-}
-
-func (r *scalaRule) putExtends(token string, types *sppb.ClassList) {
-	parts := strings.SplitN(token, " ", 2)
-	if len(parts) != 2 {
-		log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
-	}
-
-	kind := parts[0]
-	symbol := parts[1]
-
-	r.putKindExtends(kind, symbol, types)
-}
-
-func (r *scalaRule) putKindExtends(kind, symbol string, types *sppb.ClassList) {
-	switch kind {
-	case "class":
-		r.putClassExtends(symbol, types)
-	case "interface":
-		r.putInterfaceExtends(symbol, types)
-	case "object":
-		r.putObjectExtends(symbol, types)
-	}
-}
-
-func (r *scalaRule) putClassExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
-}
-
-func (r *scalaRule) putInterfaceExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
-}
-
-func (r *scalaRule) putObjectExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
-}
-
-func (r *scalaRule) putRequiredTypes(imp string, types *sppb.ClassList) {
-	for _, dst := range types.Classes {
-		r.putRequiredType(imp, dst)
-	}
 }
 
 // ResolveKnownImport implements the resolver.KnownImportResolver interface
 func (r *scalaRule) ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.KnownImport, error) {
-	if known, ok := r.registry.GetKnownImport(imp); ok {
+	if known, ok := r.localRegistry.GetKnownImport(imp); ok {
 		return known, nil
 	}
 	return r.next.ResolveKnownImport(c, ix, from, lang, imp)
-}
-
-func (r *scalaRule) putRequiredType(src, dst string) {
-	r.requiredTypes[dst] = append(r.requiredTypes[dst], src)
-}
-
-// Exports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Exports() []resolve.ImportSpec {
-	exports := make([]resolve.ImportSpec, 0, len(r.exports))
-	for _, v := range r.exports {
-		exports = append(exports, v)
-	}
-
-	sort.Slice(exports, func(i, j int) bool {
-		a := exports[i]
-		b := exports[j]
-		return a.Imp < b.Imp
-	})
-
-	return exports
 }
 
 // Imports implements part of the scalarule.Rule interface.
@@ -196,6 +95,11 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 	// add import required from extends clauses
 	for imp, src := range r.requiredTypes {
+		// check if the import is actually a symbol in scope.  If yes, use the
+		// fully-qualified import name.
+		if known, ok := r.scope.Get(imp); ok {
+			imp = known.Import
+		}
 		imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
 	}
 
@@ -219,7 +123,149 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	return imports
 }
 
+// Exports implements part of the scalarule.Rule interface.
+func (r *scalaRule) Exports() []resolve.ImportSpec {
+	exports := make([]resolve.ImportSpec, 0, len(r.exports))
+	for _, v := range r.exports {
+		exports = append(exports, v)
+	}
+
+	sort.Slice(exports, func(i, j int) bool {
+		a := exports[i]
+		b := exports[j]
+		return a.Imp < b.Imp
+	})
+
+	return exports
+}
+
 // Files implements part of the scalarule.Rule interface.
 func (r *scalaRule) Files() []*sppb.File {
 	return r.files
+}
+
+func (r *scalaRule) visitFiles(files []*sppb.File) {
+	for _, file := range files {
+		r.visitFile(file)
+	}
+}
+
+func (r *scalaRule) visitAllExtends(files []*sppb.File) {
+	for _, file := range files {
+		for token, extends := range file.Extends {
+			r.visitExtends(token, extends)
+		}
+	}
+}
+
+func (r *scalaRule) visitFile(file *sppb.File) {
+	for _, imp := range file.Classes {
+		r.putKnownImport(imp, sppb.ImportType_CLASS)
+		r.putExport(imp)
+	}
+	for _, imp := range file.Objects {
+		r.putKnownImport(imp, sppb.ImportType_OBJECT)
+		r.putExport(imp)
+	}
+	for _, imp := range file.Traits {
+		r.putKnownImport(imp, sppb.ImportType_TRAIT)
+		r.putExport(imp)
+	}
+	for _, imp := range file.Types {
+		r.putKnownImport(imp, sppb.ImportType_TYPE)
+		r.putExport(imp)
+	}
+	for _, imp := range file.Vals {
+		r.putKnownImport(imp, sppb.ImportType_VALUE)
+		r.putExport(imp)
+	}
+	for _, imp := range file.Imports {
+		r.visitImport(imp)
+	}
+}
+
+func (r *scalaRule) visitImport(imp string) {
+	if prefix, ok := isWildcardImport(imp); ok {
+		r.visitWildcardImport(prefix)
+	} else {
+		r.visitExplicitImport(imp)
+	}
+}
+
+func (r *scalaRule) visitExplicitImport(imp string) {
+	if known, ok := r.scopeRegistry.GetKnownImport(imp); ok {
+		r.putSymbolInScope(known)
+	}
+}
+
+func (r *scalaRule) visitWildcardImport(prefix string) {
+	for _, known := range r.scopeRegistry.GetKnownImports(prefix) {
+		r.putSymbolInScope(known)
+	}
+}
+
+func (r *scalaRule) visitExtends(token string, types *sppb.ClassList) {
+	parts := strings.SplitN(token, " ", 2)
+	if len(parts) != 2 {
+		log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
+	}
+
+	kind := parts[0]
+	symbol := parts[1]
+
+	r.visitKindExtends(kind, symbol, types)
+}
+
+func (r *scalaRule) visitKindExtends(kind, symbol string, types *sppb.ClassList) {
+	switch kind {
+	case "class":
+		r.visitClassExtends(symbol, types)
+	case "interface":
+		r.visitInterfaceExtends(symbol, types)
+	case "object":
+		r.visitObjectExtends(symbol, types)
+	}
+}
+
+func (r *scalaRule) visitClassExtends(imp string, types *sppb.ClassList) {
+	r.putRequiredTypes(imp, types)
+}
+
+func (r *scalaRule) visitInterfaceExtends(imp string, types *sppb.ClassList) {
+	r.putRequiredTypes(imp, types)
+}
+
+func (r *scalaRule) visitObjectExtends(imp string, types *sppb.ClassList) {
+	r.putRequiredTypes(imp, types)
+}
+
+func (r *scalaRule) putRequiredTypes(imp string, types *sppb.ClassList) {
+	for _, dst := range types.Classes {
+		r.putRequiredType(imp, dst)
+	}
+}
+
+func (r *scalaRule) putRequiredType(src, dst string) {
+	r.requiredTypes[dst] = append(r.requiredTypes[dst], src)
+}
+
+func (r *scalaRule) putSymbolInScope(known *resolver.KnownImport) {
+	r.scope.Add(known)
+}
+
+func (r *scalaRule) putExport(imp string) {
+	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
+}
+
+func (r *scalaRule) putKnownImport(imp string, impType sppb.ImportType) {
+	// since we don't need to resolve same-rule symbols to a different label,
+	// record all imports as label.NoLabel!
+	r.localRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, "self-import", label.NoLabel))
+}
+
+func isWildcardImport(imp string) (string, bool) {
+	if !strings.HasSuffix(imp, "._") {
+		return "", false
+	}
+	return imp[:len(imp)-len("._")], true
 }
