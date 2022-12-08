@@ -267,7 +267,7 @@ def collect_targets_from_attrs(rule_attrs, attrs):
 def build_jar_index(ctx, target, jar):
     """Builds the java package manifest for the given source files."""
 
-    output_file = ctx.actions.declare_file(target.label.name + ".jarindex.json")
+    output_file = ctx.actions.declare_file(target.label.name + ".javaindex.json")
 
     ctx.actions.run(
         mnemonic = "JarIndexer",

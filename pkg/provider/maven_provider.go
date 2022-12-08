@@ -27,8 +27,8 @@ type MavenProvider struct {
 	resolvers []maven.Resolver
 }
 
-// NewMavenProvider constructs a new provider having the
-// given resolving lang/impLang as well as the importRegistry instance.
+// NewMavenProvider constructs a new provider having the given resolving
+// lang/impLang as well as the importRegistry instance.
 func NewMavenProvider(lang string) *MavenProvider {
 	return &MavenProvider{
 		lang: lang,

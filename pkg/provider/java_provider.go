@@ -17,36 +17,36 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// JarIndexProvider is a provider of known imports for a set of jar index
+// JavaProvider is a provider of known imports for a set of jar index
 // protos.
-type JarIndexProvider struct {
+type JavaProvider struct {
 	jarindexFiles collections.StringSlice
 
 	knownImportRegistry resolver.KnownImportRegistry
 	byLabel             map[label.Label]*jipb.JarFile
 }
 
-// NewJarIndexProvider constructs a new provider.  The lang/impLang arguments
+// NewJavaProvider constructs a new provider.  The lang/impLang arguments
 // are used to fetch the provided imports in the given importProvider struct.
-func NewJarIndexProvider() *JarIndexProvider {
-	return &JarIndexProvider{
+func NewJavaProvider() *JavaProvider {
+	return &JavaProvider{
 		byLabel:       make(map[label.Label]*jipb.JarFile),
 		jarindexFiles: make(collections.StringSlice, 0),
 	}
 }
 
 // Name implements part of the resolver.KnownImportProvider interface.
-func (p *JarIndexProvider) Name() string {
-	return "jarindex"
+func (p *JavaProvider) Name() string {
+	return "java"
 }
 
 // RegisterFlags implements part of the resolver.KnownImportProvider interface.
-func (p *JarIndexProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
-	fs.Var(&p.jarindexFiles, "jarindex_file", "path to jarindex.pb or jarindex.json file")
+func (p *JavaProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+	fs.Var(&p.jarindexFiles, "javaindex_file", "path to javaindex.pb or javaindex.json file")
 }
 
 // CheckFlags implements part of the resolver.KnownImportProvider interface.
-func (p *JarIndexProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.KnownImportRegistry) error {
+func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.KnownImportRegistry) error {
 	p.knownImportRegistry = registry
 
 	for _, filename := range p.jarindexFiles {
@@ -62,18 +62,18 @@ func (p *JarIndexProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, regist
 }
 
 // OnResolve implements part of the resolver.KnownImportProvider interface.
-func (p *JarIndexProvider) OnResolve() {
+func (p *JavaProvider) OnResolve() {
 }
 
 // CanProvide implements part of the resolver.KnownImportProvider interface.
-func (p *JarIndexProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *JavaProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	if _, ok := p.byLabel[dep]; ok {
 		return true
 	}
 	return false
 }
 
-func (p *JarIndexProvider) readJarIndex(filename string) error {
+func (p *JavaProvider) readJarIndex(filename string) error {
 	index, err := jarindex.ReadJarIndexFile(filename)
 	if err != nil {
 		return fmt.Errorf("reading %s: %v", filename, err)
@@ -97,7 +97,7 @@ func (p *JarIndexProvider) readJarIndex(filename string) error {
 	return nil
 }
 
-func (p *JarIndexProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label.Label]bool) error {
+func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label.Label]bool) error {
 	if jarFile.Filename == "" {
 		log.Panicf("jarFile must have a name: %+v", jarFile)
 	}
@@ -132,7 +132,7 @@ func (p *JarIndexProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[l
 	return nil
 }
 
-func (p *JarIndexProvider) readClassFile(classFile *jipb.ClassFile, from label.Label) {
+func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label) {
 	impType := sppb.ImportType_CLASS
 	if classFile.IsInterface {
 		impType = sppb.ImportType_INTERFACE
@@ -140,6 +140,6 @@ func (p *JarIndexProvider) readClassFile(classFile *jipb.ClassFile, from label.L
 	p.putKnownImport(impType, classFile.Name, from)
 }
 
-func (p *JarIndexProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
+func (p *JavaProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
 	p.knownImportRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, p.Name(), from))
 }

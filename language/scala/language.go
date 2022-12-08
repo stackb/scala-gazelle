@@ -91,7 +91,7 @@ func NewLanguage() language.Language {
 	})
 
 	lang.AddKnownImportProvider(lang.sourceProvider)
-	lang.AddKnownImportProvider(provider.NewJarIndexProvider())
+	lang.AddKnownImportProvider(provider.NewJavaProvider())
 	lang.AddKnownImportProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddKnownImportProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 

@@ -14,19 +14,19 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
-func ExampleJarIndexProvider_RegisterFlags_printdefaults() {
+func ExampleJavaProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	cr := provider.NewJarIndexProvider()
+	cr := provider.NewJavaProvider()
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
 	got.PrintDefaults()
 	// output:
-	//	-jarindex_file value
-	//     	path to jarindex.pb or jarindex.json file
+	//	-javaindex_file value
+	//     	path to javaindex.pb or javaindex.json file
 }
 
-func TestJarIndexProvider(t *testing.T) {
+func TestJavaProvider(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args  []string
 		files []testtools.FileSpec
@@ -34,11 +34,11 @@ func TestJarIndexProvider(t *testing.T) {
 	}{
 		"empty file": {
 			args: []string{
-				"-jarindex_file=./jarindex.json",
+				"-javaindex_file=./javaindex.json",
 			},
 			files: []testtools.FileSpec{
 				{
-					Path:    "jarindex.json",
+					Path:    "javaindex.json",
 					Content: "{}",
 				},
 			},
@@ -46,11 +46,11 @@ func TestJarIndexProvider(t *testing.T) {
 		},
 		"example jarindex file": {
 			args: []string{
-				"-jarindex_file=./testdata/jarindex.json",
+				"-javaindex_file=./testdata/javaindex.json",
 			},
 			files: []testtools.FileSpec{
 				{
-					Path: "testdata/jarindex.json",
+					Path: "testdata/javaindex.json",
 				},
 			},
 			want: []string{
@@ -187,7 +187,7 @@ func TestJarIndexProvider(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			p := provider.NewJarIndexProvider()
+			p := provider.NewJavaProvider()
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -215,7 +215,7 @@ func TestJarIndexProvider(t *testing.T) {
 	}
 }
 
-// func TestJarIndexProviderCanProvide(t *testing.T) {
+// func TestJavaProviderCanProvide(t *testing.T) {
 // 	for name, tc := range map[string]struct {
 // 		mavenInstallJsonContent string
 // 		lang                    string
@@ -250,18 +250,18 @@ func TestJarIndexProvider(t *testing.T) {
 // 		t.Run(name, func(t *testing.T) {
 // 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, []testtools.FileSpec{
 // 				{
-// 					Path:    "jarindex.json",
+// 					Path:    "javaindex.json",
 // 					Content: tc.mavenInstallJsonContent,
 // 				},
 // 			})
 // 			defer cleanup()
 
-// 			p := NewJarIndexProvider(scalaName)
+// 			p := NewJavaProvider(scalaName)
 // 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 // 			c := &config.Config{WorkDir: tmpDir}
 // 			p.RegisterFlags(fs, "update", c)
 // 			if err := fs.Parse([]string{
-// 				"-jarindex_file=./jarindex.json",
+// 				"-javaindex_file=./javaindex.json",
 // 			}); err != nil {
 // 				t.Fatal(err)
 // 			}

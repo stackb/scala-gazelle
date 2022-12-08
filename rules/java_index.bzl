@@ -48,13 +48,13 @@ def build_jarfile_index(ctx, label, basename, jar):
 
     return output_file
 
-def build_mergeindex(ctx, output_file, jarindex_files):
+def build_mergeindex(ctx, output_file, javaindex_files):
     """Builds the merged index for all jarindexes.
 
     Args:
         ctx: the context object
         output_file: the output File of the merged file.
-        jarindex_files: a sequence of File representing the jarindex files
+        javaindex_files: a sequence of File representing the jarindex files
     Returns:
     """
 
@@ -62,14 +62,14 @@ def build_mergeindex(ctx, output_file, jarindex_files):
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
     args.add_joined("--predefined", [target.label for target in ctx.attr.platform_jars], uniquify = True, join_with = ",")
-    args.add_all(jarindex_files)
+    args.add_all(javaindex_files)
 
     ctx.actions.run(
         mnemonic = "MergeIndex",
         progress_message = "Merging jarindex files: " + str(ctx.label),
         executable = ctx.executable._mergeindex,
         arguments = [args],
-        inputs = jarindex_files,
+        inputs = javaindex_files,
         outputs = [output_file],
     )
 
@@ -81,38 +81,38 @@ def jarindex_basename(ctx, label):
         label.name,
     ])
 
-def _jar_class_index_impl(ctx):
+def _java_index_impl(ctx):
     """Implementation that collects symbols from jars."""
 
     # List[File]
     direct_files = []
 
     # List[Depset[File]]
-    transitive_jarindex_files = []
+    transitive_javaindex_files = []
 
     # List[File]
-    jarindex_files = []
+    javaindex_files = []
 
     for dep in ctx.attr.deps:
         info = dep[JarIndexerAspectInfo]
-        jarindex_files.extend(info.jar_index_files.to_list())
-        transitive_jarindex_files += [info.info_file, info.jar_index_files]
+        javaindex_files.extend(info.jar_index_files.to_list())
+        transitive_javaindex_files += [info.info_file, info.jar_index_files]
 
     for i, jar in enumerate(ctx.files.jars):
         label = ctx.attr.jars[i].label
         basename = jarindex_basename(ctx, label)
-        jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+        javaindex_files.append(build_jarfile_index(ctx, label, basename, jar))
 
     for i, jar in enumerate(ctx.files.platform_jars):
         label = ctx.attr.platform_jars[i].label
         basename = jarindex_basename(ctx, label)
-        jarindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+        javaindex_files.append(build_jarfile_index(ctx, label, basename, jar))
 
     output_proto = ctx.outputs.out_proto
     output_json = ctx.outputs.out_json
 
-    build_mergeindex(ctx, output_proto, jarindex_files)
-    build_mergeindex(ctx, output_json, jarindex_files)
+    build_mergeindex(ctx, output_proto, javaindex_files)
+    build_mergeindex(ctx, output_json, javaindex_files)
 
     direct_files.append(output_proto)
 
@@ -121,11 +121,11 @@ def _jar_class_index_impl(ctx):
     ), OutputGroupInfo(
         proto = [output_proto],
         json = [output_json],
-        jarindex_files = depset(transitive = transitive_jarindex_files),
+        javaindex_files = depset(transitive = transitive_javaindex_files),
     )]
 
-jar_class_index = rule(
-    implementation = _jar_class_index_impl,
+java_index = rule(
+    implementation = _java_index_impl,
     attrs = {
         "deps": attr.label_list(
             # TODO(pcj): make JavaInfo a requirement here?  Currently the aspect looks for it if present.
