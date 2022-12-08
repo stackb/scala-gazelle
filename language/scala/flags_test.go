@@ -22,16 +22,12 @@ func TestFlags(t *testing.T) {
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scala_resolvers": {
-			files: []testtools.FileSpec{
-				{
-					Path:    "maven_install.json",
-					Content: "{}",
-				},
-			},
+		"scalaparse_import_provider": {
 			args: []string{
-				"-scala_resolvers=maven,proto,source",
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-scala_import_provider=scalaparse",
+				"-scala_import_provider=jarindex",
+				"-scala_import_provider=github.com/stackb/rules_proto",
+				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
 			},
 		},
 		"scala_gazelle_cache_file": {
@@ -46,11 +42,11 @@ func TestFlags(t *testing.T) {
 				},
 			},
 			args: []string{
-				"-pinned_maven_install_json_files=./maven_install.json",
+				"-maven_install_json_file=./maven_install.json",
 				"-scala_gazelle_cache_file=${TEST_TMPDIR}/cache.json",
 			},
 			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
-				cacheFile := strings.TrimPrefix(strings.TrimPrefix(lang.cacheFile, tmpDir), "/")
+				cacheFile := strings.TrimPrefix(strings.TrimPrefix(lang.cacheFileFlagValue, tmpDir), "/")
 				if diff := cmp.Diff("cache.json", cacheFile); diff != "" {
 					t.Errorf("cacheFile (-want got):\n%s", diff)
 				}
@@ -116,7 +112,8 @@ func TestParseScalaExistingRules(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			if testutil.ExpectError(t, tc.wantErr, parseScalaExistingRules(tc.rules)) {
+			lang := NewLanguage().(*scalaLang)
+			if testutil.ExpectError(t, tc.wantErr, lang.setupScalaExistingRules(tc.rules)) {
 				return
 			}
 			if tc.check != nil {

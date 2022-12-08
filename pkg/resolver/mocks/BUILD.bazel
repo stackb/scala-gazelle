@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "mocks",
+    testonly = True,
+    srcs = [
+        "ImportResolver.go",
+        "KnownImportProvider.go",
+        "KnownImportRegistry.go",
+        "KnownImportResolver.go",
+        "known_import_capturer.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/resolver/mocks",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/resolver",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@com_github_stretchr_testify//mock",
+    ],
+)

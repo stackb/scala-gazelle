@@ -1,0 +1,22 @@
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", "scala_test")
+
+scala_library(
+    name = "lib",
+    srcs = ["a/b/c/Lib.scala"],
+)
+
+scala_binary(
+    name = "app",
+    srcs =
+    # ✅ a.b.c.Lib<OBJECT> //src:lib<scala_library> (DIRECT of Main.scala)
+    # ✅ a.b.c.Main<OBJECT> NO-LABEL<self-import> (MAIN_CLASS)
+    ["a/b/c/Main.scala"],
+    main_class = "a.b.c.Main",
+    deps = [":lib"],
+)
+
+scala_test(
+    name = "test",
+    srcs = ["a/b/c/LibTest.scala"],
+    deps = [":lib"],
+)

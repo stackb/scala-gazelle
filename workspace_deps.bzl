@@ -112,16 +112,21 @@ def rules_proto():
     )
 
 def build_stack_rules_proto():
-    # Release: v2.0.1
-    # TargetCommitish: master
-    # Date: 2022-10-20 02:38:27 +0000 UTC
-    # URL: https://github.com/stackb/rules_proto/releases/tag/v2.0.1
-    # Size: 2071295 (2.1 MB)
+    # Branch: master
+    # Commit: aa380e4421057b35228544bc234f816bb6b72c1c
+    # Date: 2022-12-08 05:19:32 +0000 UTC
+    # URL: https://github.com/stackb/rules_proto/commit/aa380e4421057b35228544bc234f816bb6b72c1c
+    #
+    # use distinct impLang for scala proto exports (#304)
+    #
+    # * use distinct impLang for scala proto exports
+    # * fix test
+    # Size: 2074364 (2.1 MB)
     http_archive(
         name = "build_stack_rules_proto",
-        sha256 = "ac7e2966a78660e83e1ba84a06db6eda9a7659a841b6a7fd93028cd8757afbfb",
-        strip_prefix = "rules_proto-2.0.1",
-        urls = ["https://github.com/stackb/rules_proto/archive/v2.0.1.tar.gz"],
+        sha256 = "820dc71f2e265a50104671d323caba53790dfe20e9f7249a0e6beeaee39b4597",
+        strip_prefix = "rules_proto-aa380e4421057b35228544bc234f816bb6b72c1c",
+        urls = ["https://github.com/stackb/rules_proto/archive/aa380e4421057b35228544bc234f816bb6b72c1c.tar.gz"],
     )
 
 def rules_jvm_external():

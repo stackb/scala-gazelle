@@ -89,6 +89,7 @@ public class JarIndexer extends Object {
         ClassFile.Builder classFile = ClassFile.newBuilder();
         classFile.setName(classInfo.getName());
         classFile.addAllSymbols(collectSymbols(classInfo));
+        classFile.setIsInterface(classInfo.isInterface());
 
         for (ClassInfo cls : classInfo.getSuperclasses()) {
             classFile.addSuperclasses(cls.getName());

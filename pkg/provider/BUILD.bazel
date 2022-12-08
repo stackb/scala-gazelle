@@ -1,0 +1,52 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+# gazelle:exclude testdata
+
+go_library(
+    name = "provider",
+    srcs = [
+        "jarindex_provider.go",
+        "rules_jvm_external_provider.go",
+        "scalaparse_provider.go",
+        "stackb_rules_proto_provider.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/provider",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/jarindex",
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/jarindex",
+        "//pkg/maven",
+        "//pkg/resolver",
+        "//pkg/scalaparse",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+    ],
+)
+
+go_test(
+    name = "provider_test",
+    size = "small",
+    srcs = [
+        "jarindex_provider_test.go",
+        "rules_jvm_external_provider_test.go",
+        "scalaparse_provider_test.go",
+        "stackb_rules_proto_provider_test.go",
+    ],
+    data = glob(["testdata/**/*"]),
+    deps = [
+        ":provider",
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/resolver",
+        "//pkg/resolver/mocks",
+        "//pkg/testutil",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_stretchr_testify//mock",
+    ],
+)

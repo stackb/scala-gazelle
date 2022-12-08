@@ -114,7 +114,6 @@ func visitJarFile(
 		if !found {
 			providers = &jipb.ClassFileProvider{Class: classFile.Name}
 			providersByClass[classFile.Name] = providers
-			// log.Println(classFile.Name, "is provided by:", jar.Label)
 		}
 		providers.Label = append(providers.Label, jar.Label)
 	}

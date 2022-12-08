@@ -1,2 +1,0 @@
-# gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
-# gazelle:scala_explain_deps true

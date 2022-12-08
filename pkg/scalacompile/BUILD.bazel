@@ -1,11 +1,27 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "scalacompile",
     srcs = [
+        "compiler.go",
         "io.go",
         "types.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalacompile",
     visibility = ["//visibility:public"],
+    deps = [
+        "@bazel_gazelle//config:go_default_library",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
+)
+
+go_test(
+    name = "scalacompile_test",
+    srcs = ["compiler_test.go"],
+    embed = [":scalacompile"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
+    ],
 )

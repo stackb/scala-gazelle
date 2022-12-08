@@ -1,0 +1,3 @@
+-scala_import_provider=scalaparse
+-scala_import_provider=github.com/bazelbuild/rules_jvm_external
+-maven_install_json_file=./maven_install.json

@@ -1,2 +1,0 @@
--scala_resolvers=source,proto
--pinned_maven_install_json_files=./maven_install.json

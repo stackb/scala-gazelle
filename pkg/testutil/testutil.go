@@ -10,6 +10,19 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
+func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := range files {
+		if files[i].Content == "" {
+			files[i].Content = MustReadTestFile(t, cwd, files[i].Path)
+		}
+	}
+	return MustPrepareTestFiles(t, files)
+}
+
 func MustPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
 	tmpDir, err := bazel.NewTmpDir("")
 	if err != nil {
@@ -43,6 +56,15 @@ func MustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec)
 	return filenames
 }
 
+func MustReadTestFile(t *testing.T, dir string, filename string) string {
+	data, err := ioutil.ReadFile(filepath.Join(dir, filename))
+	if err != nil {
+		ListFiles(t, dir)
+		t.Fatal("reading", filename, ":", err)
+	}
+	return string(data)
+}
+
 // EqualError reports whether errors a and b are considered equal.
 // They're equal if both are nil, or both are not nil and a.Error() == b.Error().
 func EqualError(a, b error) bool {
@@ -56,4 +78,18 @@ func ExpectError(t *testing.T, want, got error) bool {
 		t.Fatal("errors: want:", want, "got:", got)
 	}
 	return want != nil
+}
+
+// ListFiles is a convenience debugging function to log the files under a given dir.
+func ListFiles(t *testing.T, dir string) {
+	t.Log("Listing files under:", dir)
+	if err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		t.Log(path)
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
 }

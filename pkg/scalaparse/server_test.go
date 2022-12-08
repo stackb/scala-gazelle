@@ -52,14 +52,166 @@ class Foo extends HashMap {
 						Names:    []string{"a", "java", "util"},
 						Extends: map[string]*sppb.ClassList{
 							"class a.Foo": {
-								Classes: []string{"HashMap"},
+								Classes: []string{"java.util.HashMap"},
 							},
 						},
 					},
 				},
 			},
 		},
+		"nested import": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Example.scala",
+					Content: `
+package example
+
+import com.typesafe.scalalogging.LazyLogging
+import corp.common.core.vm.utils.ArgProcessor
+
+object Main extends LazyLogging {
+	def main(args: Array[String]): Unit = {
+	import corp.common.core.reports.DotFormatReport
+	ArgProcessor.process(args)
+	logger.info(DotFormatReport(new BlendTestService).dotForm())
+	}
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Example.scala",
+						Packages: []string{"example"},
+						Objects:  []string{"example.Main"},
+						Imports: []string{
+							"com.typesafe.scalalogging.LazyLogging",
+							"corp.common.core.reports.DotFormatReport",
+							"corp.common.core.vm.utils.ArgProcessor",
+						},
+						Extends: map[string]*sppb.ClassList{
+							"object example.Main": {
+								Classes: []string{"com.typesafe.scalalogging.LazyLogging"},
+							},
+						},
+					},
+				},
+			},
+		},
+		"extends with": {
+			files: []testtools.FileSpec{
+				{
+					Path: "FooTest.scala",
+					Content: `
+package foo.test
+
+import org.scalatest.{FlatSpec, Matchers}
+import java.time.{LocalDate, LocalTime}
+
+class FooTest extends FlatSpec with Matchers {
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "FooTest.scala",
+						Packages: []string{"foo.test"},
+						Classes:  []string{"foo.test.FooTest"},
+						Imports: []string{
+							"java.time.LocalDate",
+							"java.time.LocalTime",
+							"org.scalatest.FlatSpec",
+							"org.scalatest.Matchers",
+						},
+						Extends: map[string]*sppb.ClassList{
+							"class foo.test.FooTest": {
+								Classes: []string{
+									"org.scalatest.FlatSpec",
+									"org.scalatest.Matchers",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		"nested import rename": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Palette.scala",
+					Content: `
+package color
+
+import java.awt.Color
+
+object Palette {
+  val random100: MandelPalette = {
+    import scala.util.Random.{nextInt => rint}
+    Palette(100, Seq.tabulate[Color](100)(_ => new Color(rint(255), rint(255), rint(255))).toArray)
+  }
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Palette.scala",
+						Packages: []string{"color"},
+						Objects:  []string{"color.Palette"},
+						Imports: []string{
+							"java.awt.Color",
+							"scala.util.Random.nextInt",
+						},
+					},
+				},
+			},
+		},
+		"nested import same package": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package example
+
+import akka.actor.ActorSystem
+
+object MainContext {
+	implicit var asys: ActorSystem = _
+}
+  
+object Main {
+	private def makeRequest(params: Map[String, String]): Unit = {
+		import MainContext._
+	}	
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Packages: []string{"example"},
+						Objects: []string{
+							"example.Main",
+							"example.MainContext",
+						},
+						Imports: []string{
+							"MainContext._", // FIXME(pcj): elide this?
+							"akka.actor.ActorSystem",
+						},
+					},
+				},
+			},
+		},
 	} {
+		// if name != "nested import" {
+		// 	continue
+		// }
 		t.Run(name, func(t *testing.T) {
 			tmpDir, err := bazel.NewTmpDir("")
 			if err != nil {
@@ -94,7 +246,7 @@ class Foo extends HashMap {
 				sppb.ParseResponse{},
 				sppb.File{},
 				sppb.ClassList{},
-			)); diff != "" {
+			), cmpopts.IgnoreFields(sppb.File{}, "Names")); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
 		})

@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "glob",
+    srcs = [
+        "collect.go",
+        "glob.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/glob",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@bazel_gazelle//rule:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_bmatcuk_doublestar_v4//:doublestar",
+        "@com_github_davecgh_go_spew//spew",
+    ],
+)
+
+go_test(
+    name = "glob_test",
+    srcs = ["glob_test.go"],
+    embed = [":glob"],
+    deps = [
+        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
+)

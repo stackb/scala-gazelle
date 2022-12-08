@@ -1,6 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@bazel_gazelle//:def.bzl", "gazelle_binary")
-load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
+# load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
 # gazelle:exclude oldtestdata
@@ -14,33 +14,26 @@ go_library(
         "fix.go",
         "flags.go",
         "generate.go",
-        "glob.go",
-        "import_origin.go",
-        "import_resolver.go",
         "intent.go",
         "kinds.go",
-        "label_import_map.go",
+        "known_import_provider_registry.go",
+        "known_import_registry.go",
+        "known_import_resolver.go",
+        "known_rule_registry.go",
         "language.go",
         "lifecycle.go",
         "loads.go",
-        "package.go",
         "progress.go",
         "resolve.go",
         "resolver.go",
         "rule_config.go",
-        "rule_index.go",
         "rule_info.go",
         "rule_provider.go",
         "rule_registry.go",
-        "scala_compiler.go",
         "scala_config.go",
         "scala_existing_rule.go",
-        "scala_library.go",
-        "symbol_table.go",
-    ],
-    data = [
-        ":scalacserver.jar",
-        ":sourceindexer",
+        "scala_package.go",
+        "scala_rule.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/language/scala",
     visibility = ["//visibility:public"],
@@ -48,11 +41,11 @@ go_library(
         "//build/stack/gazelle/scala/cache",
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
-        "//pkg/crossresolve",
+        "//pkg/glob",
         "//pkg/protobuf",
-        "//pkg/scalacompile",
+        "//pkg/provider",
+        "//pkg/resolver",
         "//pkg/scalaparse",
-        "//pkg/starlarkeval",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",
@@ -61,21 +54,8 @@ go_library(
         "@bazel_gazelle//rule:go_default_library",
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
-        "@com_github_bmatcuk_doublestar_v4//:doublestar",
-        "@com_github_davecgh_go_spew//spew",
         "@com_github_pcj_mobyprogress//:mobyprogress",
-        "@com_github_roaringbitmap_roaring//:roaring",
-        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
-        "@net_starlark_go//starlark",
     ],
-)
-
-genrule(
-    name = "sourceindexer_tool",
-    outs = ["sourceindexer"],
-    cmd = "cp $(location //pkg/scalaparse) $@",
-    executable = True,
-    tools = ["//pkg/scalaparse"],
 )
 
 genrule(
@@ -109,28 +89,19 @@ go_test(
     name = "scala_test",
     srcs = [
         "flags_test.go",
-        "glob_test.go",
-        "import_origin_test.go",
-        "label_import_map_test.go",
+        "golden_test.go",
         "language_test.go",
         "loads_test.go",
-        "resolver_test.go",
-        "rule_index_test.go",
-        "scala_compiler_test.go",
         "scala_config_test.go",
         "scala_existing_rule_test.go",
-        "scala_test.go",
+        "scala_rule_test.go",
     ],
-    data = [
-        ":gazelle",
-        ":sourceindexer",
-        ":scalacserver.jar",
-    ] + glob(["testdata/**"]),
+    data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],
     deps = [
         "//build/stack/gazelle/scala/parse",
-        "//pkg/crossresolve",
-        "//pkg/scalacompile",
+        "//pkg/resolver",
+        "//pkg/resolver/mocks",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
@@ -138,26 +109,27 @@ go_test(
         "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
         "@build_stack_rules_proto//pkg/goldentest",
-        "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
-        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+        "@com_github_stretchr_testify//mock",
     ],
 )
 
-gazelle_testdata_example(
-    name = "maven_resolver",
-    size = "large",  # test timeout 900s (15m) for go_bazel_test
-    srcs = glob(["testdata/maven_resolver/*"]),
-    workspace_template = "scala.WORKSPACE",
-)
+# gazelle_testdata_example(
+#     name = "maven_resolver",
+#     size = "large",  # test timeout 900s (15m) for go_bazel_test
+#     srcs = glob(["testdata/maven_resolver/*"]),
+#     tags = ["manual"],
+#     workspace_template = "scala.WORKSPACE",
+# )
 
-gazelle_testdata_example(
-    name = "platform_resolver",
-    size = "large",  # test timeout 900s (15m) for go_bazel_test
-    srcs = glob(["testdata/platform_resolver/*"]),
-    workspace_template = "scala.WORKSPACE",
-)
+# gazelle_testdata_example(
+#     name = "platform_resolver",
+#     size = "large",  # test timeout 900s (15m) for go_bazel_test
+#     srcs = glob(["testdata/platform_resolver/*"]),
+#     tags = ["manual"],
+#     workspace_template = "scala.WORKSPACE",
+# )
 
 filegroup(
     name = "all_files",

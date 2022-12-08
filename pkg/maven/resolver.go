@@ -3,39 +3,39 @@ package maven
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/stackb/scala-gazelle/pkg/bazel"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 type Resolver interface {
 	Name() string
 	Resolve(pkg string) (label.Label, error)
-	ResolveWithDirectDependencies(pkg string) (label.Label, []label.Label, error)
 }
 
-// resolver finds Maven provided packages by reading the maven_install.json
+// mavenResolver finds Maven provided packages by reading the maven_install.json
 // file from rules_jvm_external.
-type resolver struct {
-	lang               string
-	name               string
-	warn               warnFunc
-	data               *StringMultiSet
-	artifacts          map[string]label.Label
-	directDependencies map[label.Label][]label.Label
+type mavenResolver struct {
+	lang      string
+	name      string
+	warn      warnFunc
+	data      *StringMultiSet
+	artifacts map[string]label.Label
 }
 
 type warnFunc func(format string, args ...interface{})
+type putKnownImportFunc func(*resolver.KnownImport) error
 
-func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc) (Resolver, error) {
-	r := resolver{
-		lang:               lang,
-		name:               mavenWorkspaceName,
-		warn:               warn,
-		data:               NewStringMultiSet(),
-		artifacts:          make(map[string]label.Label),
-		directDependencies: make(map[label.Label][]label.Label),
+func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, putKnownImport putKnownImportFunc) (Resolver, error) {
+	r := mavenResolver{
+		lang:      lang,
+		name:      mavenWorkspaceName,
+		warn:      warn,
+		data:      NewStringMultiSet(),
+		artifacts: make(map[string]label.Label),
 	}
 
 	c, err := loadConfiguration(installFile)
@@ -48,32 +48,24 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc) (R
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse coordinate %v: %w", dep.Coord, err)
 		}
-		l := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
-		labelString := l.String()
-		r.artifacts[dep.Coord] = l
+		from := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
+		labelString := from.String()
+		r.artifacts[dep.Coord] = from
 
-		for _, directCoord := range dep.DirectDependencies {
-			dc, err := ParseCoordinate(directCoord)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse coordinate %v: %w", directCoord, err)
-			}
-			dl := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(dc.ArtifactString()))
-			r.directDependencies[l] = append(r.directDependencies[l], dl)
-		}
 		for _, pkg := range dep.Packages {
 			r.data.Add(pkg, labelString)
-			// log.Printf("maven: %v -> %v", pkg, l.String())
+			putKnownImport(resolver.NewKnownImport(sppb.ImportType_PACKAGE, pkg, mavenWorkspaceName, from))
 		}
 	}
 
 	return &r, nil
 }
 
-func (r *resolver) Name() string {
+func (r *mavenResolver) Name() string {
 	return r.name
 }
 
-func (r *resolver) Resolve(pkg string) (label.Label, error) {
+func (r *mavenResolver) Resolve(pkg string) (label.Label, error) {
 	v, found := r.data.Get(pkg)
 	if !found {
 		return label.NoLabel, fmt.Errorf("package not found: %s", pkg)
@@ -98,38 +90,5 @@ func (r *resolver) Resolve(pkg string) (label.Label, error) {
 		}
 
 		return label.NoLabel, errors.New("many possible imports")
-	}
-}
-
-func (r *resolver) ResolveWithDirectDependencies(pkg string) (label.Label, []label.Label, error) {
-	v, found := r.data.Get(pkg)
-	if !found {
-		return label.NoLabel, nil, fmt.Errorf("package not found: %s", pkg)
-	}
-
-	switch len(v) {
-	case 0:
-		return label.NoLabel, nil, errors.New("no external imports")
-
-	case 1:
-		var ret string
-		for r := range v {
-			ret = r
-			break
-		}
-		from, err := label.Parse(ret)
-		if err != nil {
-			return label.NoLabel, nil, err
-		}
-		directs := r.directDependencies[from]
-		return from, directs, nil
-
-	default:
-		log.Println("Append one of the following to BUILD.bazel:")
-		for k := range v {
-			log.Printf("# gazelle:resolve java %s %s", pkg, k)
-		}
-
-		return label.NoLabel, nil, errors.New("many possible imports")
 	}
 }
