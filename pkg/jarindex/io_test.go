@@ -16,10 +16,10 @@ func TestReadWriteJarIndexFile(t *testing.T) {
 		filename string
 	}{
 		"proto": {
-			filename: "test.jarindex.pb",
+			filename: "test.javaindex.pb",
 		},
 		"json": {
-			filename: "test.jarindex.json",
+			filename: "test.javaindex.json",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {

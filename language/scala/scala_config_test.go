@@ -14,6 +14,7 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -25,7 +26,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 	}{
 		"degenerate": {
 			want: &scalaConfig{
-				rules:             map[string]*RuleConfig{},
+				rules:             map[string]*scalarule.Config{},
 				annotations:       map[annotation]any{},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
@@ -36,7 +37,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_annotate", Value: "imports"},
 			},
 			want: &scalaConfig{
-				rules: map[string]*RuleConfig{
+				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
 						Attrs:          map[string]map[string]bool{},
@@ -58,7 +59,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
 			},
 			want: &scalaConfig{
-				rules: map[string]*RuleConfig{
+				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
 						Attrs:          map[string]map[string]bool{},
@@ -76,7 +77,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -84,7 +85,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(scalaConfig{}),
 				cmpopts.IgnoreFields(scalaConfig{}, "config", "resolver"),
-				cmpopts.IgnoreFields(RuleConfig{}, "Config"),
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -96,20 +97,20 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       map[string]*RuleConfig
+		want       map[string]*scalarule.Config
 	}{
 		"degenerate": {
-			want: map[string]*RuleConfig{},
+			want: map[string]*scalarule.Config{},
 		},
 		"bad format": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule scala_existing_rule"},
+				{Key: ruleDirective, Value: "myrule existing_scala_rule"},
 			},
-			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule scala_existing_rule": expected three or more fields, got 2`),
+			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule existing_scala_rule": expected three or more fields, got 2`),
 		},
 		"example": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule implementation scala_existing_rule"},
+				{Key: ruleDirective, Value: "myrule implementation existing_scala_rule"},
 				{Key: ruleDirective, Value: "myrule deps @maven//:a"},
 				{Key: ruleDirective, Value: "myrule +deps @maven//:b"},
 				{Key: ruleDirective, Value: "myrule -deps @maven//:c"},
@@ -117,11 +118,11 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 				{Key: ruleDirective, Value: "myrule option -fake_flag_name fake_flag_value"},
 				{Key: ruleDirective, Value: "myrule enabled false"},
 			},
-			want: map[string]*RuleConfig{
+			want: map[string]*scalarule.Config{
 				"myrule": {
 					Config:         config.New(),
 					Name:           "myrule",
-					Implementation: "scala_existing_rule",
+					Implementation: "existing_scala_rule",
 					Deps: map[string]bool{
 						"@maven//:a": true,
 						"@maven//:b": true,
@@ -136,7 +137,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -181,7 +182,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -226,7 +227,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -257,7 +258,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -288,7 +289,7 @@ func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := parseTestDirectives(t, "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -423,9 +424,9 @@ func TestIsSameImport(t *testing.T) {
 	}
 }
 
-func parseTestDirectives(t *testing.T, rel string, dd ...rule.Directive) (*scalaConfig, error) {
+func newTestScalaConfig(t *testing.T, importResolver resolver.ImportResolver, rel string, dd ...rule.Directive) (*scalaConfig, error) {
 	c := config.New()
-	sc := newScalaConfig(c, rel, mocks.NewImportResolver(t))
+	sc := newScalaConfig(c, rel, importResolver)
 	err := sc.parseDirectives(dd)
 	return sc, err
 }

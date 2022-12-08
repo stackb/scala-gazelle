@@ -12,12 +12,12 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 	// Merge symbols
 	symbolsByLoadName := make(map[string][]string)
 
-	for _, name := range sl.ruleRegistry.RuleNames() {
-		rule, err := sl.ruleRegistry.LookupRule(name)
-		if err != nil {
-			log.Fatal(err)
+	for _, name := range sl.ruleProviderRegistry.ProviderNames() {
+		provider, ok := sl.ruleProviderRegistry.LookupProvider(name)
+		if !ok {
+			log.Fatalf("provider unknown: %q", name)
 		}
-		load := rule.LoadInfo()
+		load := provider.LoadInfo()
 		symbolsByLoadName[load.Name] = append(symbolsByLoadName[load.Name], load.Symbols...)
 	}
 

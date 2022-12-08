@@ -13,6 +13,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 const scalaLangName = "scala"
@@ -24,17 +25,17 @@ type scalaLang struct {
 	cacheFileFlagValue string
 	// importProviderNamesFlagValue is a repeatable list of resolver to enable
 	importProviderNamesFlagValue collections.StringSlice
-	// scalaExistingRulesFlagValue is the value of the scala_existing_rule repeatable flag
-	scalaExistingRulesFlagValue collections.StringSlice
+	// existingScalaRulesFlagValue is the value of the existing_scala_rule repeatable flag
+	existingScalaRulesFlagValue collections.StringSlice
 	cpuprofileFlagValue         string
 	memprofileFlagValue         string
 	// cache is the loaded cache, if configured
 	cache *scpb.Cache
-	// ruleRegistry is the rule registry implementation.  This holds the rules
-	// configured via gazelle directives by the user.
-	ruleRegistry RuleRegistry
+	// ruleProviderRegistry is the rule registry implementation.  This holds the
+	// rules configured via gazelle directives by the user.
+	ruleProviderRegistry scalarule.ProviderRegistry
 	// sourceProvider is the source resolver implementation.
-	sourceProvider *provider.ScalaparseProvider
+	sourceProvider *provider.SourceProvider
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -77,22 +78,22 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 
 	lang := &scalaLang{
-		cache:        &scpb.Cache{},
-		knownImports: resolver.NewKnownImportRegistryTrie(),
-		knownRules:   make(map[label.Label]*rule.Rule),
-		packages:     packages,
-		progress:     mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
-		ruleRegistry: globalRuleRegistry,
+		cache:                &scpb.Cache{},
+		knownImports:         resolver.NewKnownImportRegistryTrie(),
+		knownRules:           make(map[label.Label]*rule.Rule),
+		packages:             packages,
+		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
+		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
-	lang.sourceProvider = provider.NewScalaparseProvider(func(msg string) {
+	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
 
 	lang.AddKnownImportProvider(lang.sourceProvider)
-	lang.AddKnownImportProvider(provider.NewJarIndexProvider())
-	lang.AddKnownImportProvider(provider.NewRulesJvmExternalProvider(scalaLangName))
-	lang.AddKnownImportProvider(provider.NewStackbRulesProtoProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
+	lang.AddKnownImportProvider(provider.NewJavaProvider())
+	lang.AddKnownImportProvider(provider.NewMavenProvider(scalaLangName))
+	lang.AddKnownImportProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 
 	return lang
 }

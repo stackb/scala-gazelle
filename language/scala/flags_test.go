@@ -22,12 +22,12 @@ func TestFlags(t *testing.T) {
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scalaparse_import_provider": {
+		"scalasource_import_provider": {
 			args: []string{
-				"-scala_import_provider=scalaparse",
-				"-scala_import_provider=jarindex",
-				"-scala_import_provider=github.com/stackb/rules_proto",
-				"-scala_import_provider=github.com/bazelbuild/rules_jvm_external",
+				"-scala_import_provider=source",
+				"-scala_import_provider=java",
+				"-scala_import_provider=protobuf",
+				"-scala_import_provider=maven",
 			},
 		},
 		"scala_gazelle_cache_file": {
@@ -89,19 +89,19 @@ func TestFlags(t *testing.T) {
 
 func TestParseScalaExistingRules(t *testing.T) {
 	for name, tc := range map[string]struct {
-		rules        []string
-		wantErr      error
-		wantLoadInfo rule.LoadInfo
-		wantKindInfo rule.KindInfo
-		check        func(t *testing.T)
+		providerNames []string
+		wantErr       error
+		wantLoadInfo  rule.LoadInfo
+		wantKindInfo  rule.KindInfo
+		check         func(t *testing.T)
 	}{
 		"degenerate": {},
 		"invalid flag value": {
-			rules:   []string{"@io_bazel_rules_scala//scala:scala.bzl#scala_binary"},
-			wantErr: fmt.Errorf(`invalid -scala_existing_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
+			providerNames: []string{"@io_bazel_rules_scala//scala:scala.bzl#scala_binary"},
+			wantErr:       fmt.Errorf(`invalid -existing_scala_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
 		},
 		"valid flag value": {
-			rules: []string{"//custom/scala:scala.bzl%scala_binary"},
+			providerNames: []string{"//custom/scala:scala.bzl%scala_binary"},
 			wantLoadInfo: rule.LoadInfo{
 				Name:    "//custom/scala:scala.bzl",
 				Symbols: []string{"scala_binary"},
@@ -113,22 +113,22 @@ func TestParseScalaExistingRules(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			lang := NewLanguage().(*scalaLang)
-			if testutil.ExpectError(t, tc.wantErr, lang.setupScalaExistingRules(tc.rules)) {
+			if testutil.ExpectError(t, tc.wantErr, lang.setupExistingScalaRules(tc.providerNames)) {
 				return
 			}
 			if tc.check != nil {
 				tc.check(t)
 			}
-			for _, ruleID := range tc.rules {
-				if info, err := Rules().LookupRule(ruleID); err != nil {
-					t.Fatal(err)
-				} else {
-					if diff := cmp.Diff(tc.wantLoadInfo, info.LoadInfo()); diff != "" {
+			for _, name := range tc.providerNames {
+				if provider, ok := lang.ruleProviderRegistry.LookupProvider(name); ok {
+					if diff := cmp.Diff(tc.wantLoadInfo, provider.LoadInfo()); diff != "" {
 						t.Errorf("loadInfo (-want +got):\n%s", diff)
 					}
-					if diff := cmp.Diff(tc.wantKindInfo, info.KindInfo()); diff != "" {
+					if diff := cmp.Diff(tc.wantKindInfo, provider.KindInfo()); diff != "" {
 						t.Errorf("kindInfo (-want +got):\n%s", diff)
 					}
+				} else {
+					t.Fatal("unexpected false value for ")
 				}
 			}
 		})

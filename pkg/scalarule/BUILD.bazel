@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "scalarule",
+    srcs = [
+        "config.go",
+        "global_provider_registry.go",
+        "package.go",
+        "provider.go",
+        "provider_registry.go",
+        "rule.go",
+        "rule_provider.go",
+        "rule_resolver.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/scalarule",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/resolver",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+    ],
+)

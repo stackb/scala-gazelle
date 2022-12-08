@@ -107,13 +107,6 @@ def go_repositories():
         sum = "h1:ViPR65vOrg74JKntAUFY6qZkheBKGB6to7wFd8gCRU4=",
         version = "v0.35.0",
     )
-    go_repository(
-        name = "com_github_bits_and_blooms_bitset",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/bits-and-blooms/bitset",
-        sum = "h1:Kn4yilvwNtMACtf1eYDlG8H77R07mZSPbMjLyS07ChA=",
-        version = "v1.2.0",
-    )
 
     go_repository(
         name = "com_github_bmatcuk_doublestar",
@@ -319,13 +312,6 @@ def go_repositories():
     )
 
     go_repository(
-        name = "com_github_mschoch_smat",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/mschoch/smat",
-        sum = "h1:8imxQsjDm8yFEAVBe7azKmKSgzSkZXDuKkSq9374khM=",
-        version = "v0.2.0",
-    )
-    go_repository(
         name = "com_github_pcj_mobyprogress",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/pcj/mobyprogress",
@@ -361,13 +347,6 @@ def go_repositories():
         importpath = "github.com/prometheus/client_model",
         sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
         version = "v0.0.0-20190812154241-14fe0d1b01d4",
-    )
-    go_repository(
-        name = "com_github_roaringbitmap_roaring",
-        build_file_proto_mode = "disable_global",
-        importpath = "github.com/RoaringBitmap/roaring",
-        sum = "h1:ckvZSX5gwCRaJYBNe7syNawCU5oruY9gQmjXlp4riwo=",
-        version = "v0.9.4",
     )
 
     go_repository(

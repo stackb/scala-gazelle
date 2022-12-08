@@ -12,7 +12,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 type annotation int
@@ -29,8 +31,6 @@ const (
 	scalaAnnotateDirective = "scala_annotate"
 	// ruleDirective is the directive for enabling rule generation.
 	ruleDirective = "scala_rule"
-	// resolveDirective is the well-known gazelle:resolve directive.
-	resolveDirective = "resolve"
 	// resolveGlobDirective implements override via globs.
 	resolveGlobDirective = "resolve_glob"
 	// resolveWithDirective adds additional imports for resolution
@@ -41,13 +41,12 @@ const (
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
-	config   *config.Config
-	rel      string
-	resolver resolver.ImportResolver
-
-	rules             map[string]*RuleConfig
+	config            *config.Config
+	rel               string
+	resolver          resolver.ImportResolver
 	overrides         []*overrideSpec
 	implicitImports   []*implicitImportSpec
+	rules             map[string]*scalarule.Config
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	annotations       map[annotation]interface{}
 }
@@ -55,13 +54,12 @@ type scalaConfig struct {
 // newScalaConfig initializes a new scalaConfig.
 func newScalaConfig(config *config.Config, rel string, rslv resolver.ImportResolver) *scalaConfig {
 	return &scalaConfig{
-		config:   config,
-		rel:      rel,
-		resolver: rslv,
-
+		config:            config,
+		rel:               rel,
+		resolver:          rslv,
 		annotations:       make(map[annotation]interface{}),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
-		rules:             make(map[string]*RuleConfig),
+		rules:             make(map[string]*scalarule.Config),
 	}
 }
 
@@ -94,7 +92,7 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 		clone.annotations[k] = v
 	}
 	for k, v := range c.rules {
-		clone.rules[k] = v.clone()
+		clone.rules[k] = v.Clone()
 	}
 	for k, v := range c.labelNameRewrites {
 		clone.labelNameRewrites[k] = v
@@ -163,11 +161,11 @@ func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
 		return fmt.Errorf("expected three or more fields, got %d", len(fields))
 	}
 	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
-	r, err := c.getOrCreateRuleConfig(c.config, name)
+	r, err := c.getOrCreateScalaRuleConfig(c.config, name)
 	if err != nil {
 		return err
 	}
-	return r.parseDirective(c, name, param, value)
+	return r.ParseDirective(name, param, value)
 }
 
 func (c *scalaConfig) parseResolveGlobDirective(d rule.Directive) {
@@ -223,7 +221,7 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 
 func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
-		intent := parseIntent(key)
+		intent := collections.ParseIntent(key)
 		annot := parseAnnotation(intent.Value)
 		if annot == AnnotateUnknown {
 			return fmt.Errorf("invalid directive gazelle:%s: unknown annotation value '%v'", d.Key, intent.Value)
@@ -238,10 +236,10 @@ func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
 	return nil
 }
 
-func (c *scalaConfig) getOrCreateRuleConfig(config *config.Config, name string) (*RuleConfig, error) {
+func (c *scalaConfig) getOrCreateScalaRuleConfig(config *config.Config, name string) (*scalarule.Config, error) {
 	r, ok := c.rules[name]
 	if !ok {
-		r = NewRuleConfig(config, name)
+		r = scalarule.NewConfig(config, name)
 		r.Implementation = name
 		c.rules[name] = r
 	}
@@ -262,14 +260,14 @@ func (c *scalaConfig) getImplicitImports(lang, imp string) (deps []string) {
 }
 
 // configuredRules returns an ordered list of configured rules
-func (c *scalaConfig) configuredRules() []*RuleConfig {
+func (c *scalaConfig) configuredRules() []*scalarule.Config {
 
 	names := make([]string, 0)
 	for name := range c.rules {
 		names = append(names, name)
 	}
 	sort.Strings(names)
-	rules := make([]*RuleConfig, len(names))
+	rules := make([]*scalarule.Config, len(names))
 	for i, name := range names {
 		rules[i] = c.rules[name]
 	}

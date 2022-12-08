@@ -54,7 +54,10 @@ func TestScalaRuleRequiredTypes(t *testing.T) {
 				Maybe().
 				Return(nil)
 
-			scalaRule := NewScalaRule(knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			c := config.New()
+			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+
+			scalaRule := newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
 
 			got := scalaRule.requiredTypes
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -116,7 +119,10 @@ func TestScalaRuleExports(t *testing.T) {
 				Maybe().
 				Return(nil)
 
-			scalaRule := NewScalaRule(knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			c := config.New()
+			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+
+			scalaRule := newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
 			got := scalaRule.Exports()
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -183,7 +189,10 @@ func TestScalaRulePutKnownImport(t *testing.T) {
 				Times(len(tc.want)).
 				Return(nil)
 
-			NewScalaRule(knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			c := config.New()
+			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+
+			newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -270,13 +279,14 @@ func TestScalaRuleImports(t *testing.T) {
 				Maybe().
 				Return(nil)
 
-			scalaRule := NewScalaRule(knownImportRegistry, importResolver, tc.rule, tc.from, tc.files)
-			c := config.New()
-			scalaConfig := newScalaConfig(c, tc.from.Pkg, importResolver)
-			if err := scalaConfig.parseDirectives(makeDirectives(tc.directives)); err != nil {
+			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), tc.from.Pkg, makeDirectives(tc.directives)...)
+			if err != nil {
 				t.Fatal(err)
 			}
-			imports := scalaRule.Imports(scalaConfig)
+
+			scalaRule := newScalaRule(sc, knownImportRegistry, importResolver, tc.rule, tc.from, tc.files)
+
+			imports := scalaRule.Imports()
 			got := make([]string, len(imports))
 			for i, imp := range imports.Values() {
 				got[i] = imp.String()
