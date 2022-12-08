@@ -15,8 +15,6 @@ func newKnownImportResolver(known resolver.KnownImportRegistry) resolver.KnownIm
 		resolver.NewMemoResolver(resolver.NewOverrideResolver(scalaLangName)),
 		resolver.NewKnownResolver(known),
 		resolver.NewCrossResolver(scalaLangName),
-		// resolver.NewMemoResolver(resolver.NewOverrideResolver("java")),
-		// resolver.NewMemoResolver(resolver.NewCrossResolver("java")),
 	)
 	scala := resolver.NewScalaResolver(chain)
 	return resolver.NewMemoResolver(scala)

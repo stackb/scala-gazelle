@@ -18,7 +18,6 @@ const debug = false
 var (
 	outputFile       string
 	predefinedLabels string
-	preferredLabels  string
 )
 
 func main() {
@@ -74,7 +73,6 @@ func readParamsFile(filename string) ([]string, error) {
 func parseFlags(args []string) (files []string, err error) {
 	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError) // flag.ContinueOnError
 	fs.StringVar(&predefinedLabels, "predefined", "", "a comma-separated list of labels to be considered predefined")
-	fs.StringVar(&preferredLabels, "preferred", "", "a comma-separated list of labels to be considered preferred")
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "usage: mergeindex @PARAMS_FILE | mergeindex OPTIONS FILES")

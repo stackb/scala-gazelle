@@ -28,6 +28,18 @@ func TestScalaResolver(t *testing.T) {
 			imp:  "com.foo.bar",
 			want: "com.foo.bar",
 		},
+		"strips ^_root_.": {
+			lang: "scala",
+			from: label.Label{Pkg: "src", Name: "scala"},
+			imp:  "_root_.scala.util.Try",
+			want: "scala.util.Try",
+		},
+		"strips ._$": {
+			lang: "scala",
+			from: label.Label{Pkg: "src", Name: "scala"},
+			imp:  "scala.util._",
+			want: "scala.util",
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			var got string

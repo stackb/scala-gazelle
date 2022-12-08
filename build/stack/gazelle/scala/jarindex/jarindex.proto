@@ -12,10 +12,9 @@ message JarIndex {
     // jar_file is a list of jars in the index
     repeated JarFile jar_file = 2 [json_name = "jarFiles"];
     repeated string predefined = 3;
-    repeated string preferred = 4;
     // providers is a summary set of the classes in the index and the labels
     // that provide it.
-    repeated ClassFileProvider providers = 5;
+    repeated ClassFileProvider providers = 4;
 }
 
 // ClassFileProvider records the relationship between a jvm class and 

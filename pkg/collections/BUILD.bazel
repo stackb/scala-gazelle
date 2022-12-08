@@ -6,13 +6,9 @@ go_library(
         "path_trie.go",
         "string_slice.go",
         "string_stack.go",
-        "symbol_table.go",
         "uint32stack.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/collections",
     visibility = ["//visibility:public"],
-    deps = [
-        "@com_github_dghubble_trie//:trie",
-        "@com_github_roaringbitmap_roaring//:roaring",
-    ],
+    deps = ["@com_github_dghubble_trie//:trie"],
 )
