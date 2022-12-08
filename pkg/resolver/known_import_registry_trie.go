@@ -21,6 +21,11 @@ func NewKnownImportRegistryTrie() *KnownImportRegistryTrie {
 	}
 }
 
+// GetKnownImports implements part of the resolver.KnownImportRegistry interface.
+func (r *KnownImportRegistryTrie) GetKnownImports(prefix string) []*KnownImport {
+	return nil
+}
+
 // GetKnownImport implements part of the resolver.KnownImportRegistry interface.
 func (r *KnownImportRegistryTrie) GetKnownImport(imp string) (*KnownImport, bool) {
 	var last interface{}
