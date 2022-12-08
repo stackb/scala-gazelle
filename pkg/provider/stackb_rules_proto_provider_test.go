@@ -1,4 +1,4 @@
-package provider
+package provider_test
 
 import (
 	"flag"
@@ -8,21 +8,21 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 )
 
 func TestProtoKnownImportProviderOnResolve(t *testing.T) {
+
 	for name, tc := range map[string]struct {
-		lang    string
-		impLang string
 		imports map[string]map[label.Label][]string
 		want    []*resolver.KnownImport
 	}{
 		"degenerate": {},
 		"hit": {
-			lang:    "scala",
-			impLang: "scala",
 			imports: map[string]map[label.Label][]string{
 				"message": {
 					label.New("", "com/foo/bar/proto", "proto_scala_library"): {
@@ -37,32 +37,34 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 			},
 			want: []*resolver.KnownImport{
 				{
-					Type:   sppb.ImportType_OBJECT,
-					Import: "com.foo.bar.proto.Enum",
-					Label:  label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
+					Type:     sppb.ImportType_OBJECT,
+					Import:   "com.foo.bar.proto.Enum",
+					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
+					Provider: "github.com/stackb/rules_proto",
 				},
 				{
-					Type:   sppb.ImportType_CLASS,
-					Import: "com.foo.bar.proto.Message",
-					Label:  label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
+					Type:     sppb.ImportType_CLASS,
+					Import:   "com.foo.bar.proto.Message",
+					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
+					Provider: "github.com/stackb/rules_proto",
 				},
 			},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			importProvider := &mockImportProvider{imports: tc.imports}
-			importRegistry := &mockKnownImportRegistry{}
+			known := mocks.NewKnownImportsCapturer(t)
 
-			p := NewStackbRulesProtoProvider(
-				tc.lang, tc.impLang,
-				importProvider)
+			p := provider.NewStackbRulesProtoProvider(scalaName, scalaName, func(lang, impLang string) map[label.Label][]string {
+				return tc.imports[impLang]
+			})
+
 			c := config.New()
 			flags := flag.NewFlagSet(scalaName, flag.ExitOnError)
-			p.CheckFlags(flags, c, importRegistry)
+			p.CheckFlags(flags, c, known.Registry)
 
 			p.OnResolve()
 
-			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
+			if diff := cmp.Diff(tc.want, known.Got); diff != "" {
 				t.Errorf(".OnResolve (-want +got):\n%s", diff)
 			}
 		})
@@ -95,13 +97,14 @@ func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			importProvider := &mockImportProvider{imports: tc.imports}
-			importRegistry := &mockKnownImportRegistry{}
+			knownImportRegistry := mocks.NewKnownImportRegistry(t)
 
-			p := NewStackbRulesProtoProvider(tc.lang, tc.lang, importProvider)
+			p := provider.NewStackbRulesProtoProvider(tc.lang, tc.lang, func(lang, impLang string) map[label.Label][]string {
+				return tc.imports[lang]
+			})
 			c := config.New()
 			flags := flag.NewFlagSet(scalaName, flag.ExitOnError)
-			p.CheckFlags(flags, c, importRegistry)
+			p.CheckFlags(flags, c, knownImportRegistry)
 			p.OnResolve()
 
 			got := p.CanProvide(tc.from, tc.indexFunc)

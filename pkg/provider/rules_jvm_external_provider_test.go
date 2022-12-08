@@ -1,4 +1,4 @@
-package provider
+package provider_test
 
 import (
 	"flag"
@@ -11,15 +11,18 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
+	"github.com/stretchr/testify/mock"
 )
 
 const scalaName = "scala"
 
 func ExampleRulesJvmExternalProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	cr := NewRulesJvmExternalProvider(scalaName)
+	cr := provider.NewRulesJvmExternalProvider(scalaName)
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
@@ -58,29 +61,34 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 			},
 			want: []*resolver.KnownImport{
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "javax.xml",
-					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "javax.xml",
+					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Provider: "maven",
 				},
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "javax.xml.datatype",
-					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "javax.xml.datatype",
+					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Provider: "maven",
 				},
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "javax.xml.namespace",
-					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "javax.xml.namespace",
+					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Provider: "maven",
 				},
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "javax.xml.parsers",
-					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "javax.xml.parsers",
+					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Provider: "maven",
 				},
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "javax.xml.stream",
-					Label:  label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "javax.xml.stream",
+					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
+					Provider: "maven",
 				},
 			},
 		},
@@ -89,7 +97,7 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			p := NewRulesJvmExternalProvider(scalaName)
+			p := provider.NewRulesJvmExternalProvider(scalaName)
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -99,13 +107,23 @@ func TestRulesJvmExternalProviderFlags(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := &mockKnownImportRegistry{}
+			knownImportRegistry := mocks.NewKnownImportRegistry(t)
+			var got []*resolver.KnownImport
+			capture := func(known *resolver.KnownImport) bool {
+				got = append(got, known)
+				return true
+			}
+			knownImportRegistry.
+				On("PutKnownImport", mock.MatchedBy(capture)).
+				Maybe().
+				Times(len(tc.want)).
+				Return(nil)
 
-			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, knownImportRegistry); err != nil {
 				t.Fatal(err)
 			}
 
-			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
+			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf(".mavenInstallFile (-want +got):\n%s", diff)
 			}
 		})
@@ -145,7 +163,8 @@ func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 			})
 			defer cleanup()
 
-			p := NewRulesJvmExternalProvider(scalaName)
+			p := provider.NewRulesJvmExternalProvider(scalaName)
+
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{WorkDir: tmpDir}
 			p.RegisterFlags(fs, "update", c)
@@ -155,7 +174,8 @@ func TestRulesJvmExternalProviderCanProvide(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := &mockKnownImportRegistry{}
+			importRegistry := mocks.NewKnownImportRegistry(t)
+			importRegistry.On("PutKnownImport", mock.Anything).Maybe().Return(nil)
 
 			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
 				t.Fatal(err)

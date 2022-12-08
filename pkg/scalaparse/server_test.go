@@ -201,6 +201,7 @@ object Main {
 							"example.MainContext",
 						},
 						Imports: []string{
+							"MainContext._", // FIXME(pcj): elide this?
 							"akka.actor.ActorSystem",
 						},
 					},

@@ -5,7 +5,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "provider",
     srcs = [
-        "jar_index_provider.go",
+        "jarindex_provider.go",
         "rules_jvm_external_provider.go",
         "scalaparse_provider.go",
         "stackb_rules_proto_provider.go",
@@ -23,7 +23,6 @@ go_library(
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
-        "@build_stack_rules_proto//pkg/protoc",
     ],
 )
 
@@ -31,23 +30,23 @@ go_test(
     name = "provider_test",
     size = "small",
     srcs = [
-        "jar_index_provider_test.go",
-        "mock_import_provider_test.go",
-        "mock_known_import_registry_test.go",
+        "jarindex_provider_test.go",
         "rules_jvm_external_provider_test.go",
         "scalaparse_provider_test.go",
         "stackb_rules_proto_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),
-    embed = [":provider"],
     deps = [
+        ":provider",
         "//build/stack/gazelle/scala/parse",
         "//pkg/resolver",
+        "//pkg/resolver/mocks",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
         "@com_github_google_go_cmp//cmp",
+        "@com_github_stretchr_testify//mock",
     ],
 )

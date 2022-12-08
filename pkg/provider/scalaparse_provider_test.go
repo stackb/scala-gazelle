@@ -1,4 +1,4 @@
-package provider
+package provider_test
 
 import (
 	"flag"
@@ -8,8 +8,11 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/google/go-cmp/cmp"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -27,14 +30,16 @@ func TestScalaSourceProvider(t *testing.T) {
 			testfiles: []string{"testdata/GreeterClient.scala"},
 			want: []*resolver.KnownImport{
 				{
-					Type:   sppb.ImportType_OBJECT,
-					Import: "examples.helloworld.greeter.GreeterClient",
-					Label:  label.Label{Name: "greeter_lib"},
+					Type:     sppb.ImportType_OBJECT,
+					Import:   "examples.helloworld.greeter.GreeterClient",
+					Label:    label.Label{Name: "greeter_lib"},
+					Provider: "scala_library",
 				},
 				{
-					Type:   sppb.ImportType_PACKAGE,
-					Import: "examples.helloworld.greeter",
-					Label:  label.Label{Name: "greeter_lib"},
+					Type:     sppb.ImportType_PACKAGE,
+					Import:   "examples.helloworld.greeter",
+					Label:    label.Label{Name: "greeter_lib"},
+					Provider: "scala_library",
 				},
 			},
 		},
@@ -46,7 +51,9 @@ func TestScalaSourceProvider(t *testing.T) {
 			}
 			testutil.ListFiles(t, dir)
 
-			p := NewScalaparseProvider()
+			known := mocks.NewKnownImportsCapturer(t)
+
+			p := provider.NewScalaparseProvider(func(msg string) {})
 
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
@@ -57,9 +64,7 @@ func TestScalaSourceProvider(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := &mockKnownImportRegistry{}
-
-			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, known.Registry); err != nil {
 				t.Fatal(err)
 			}
 
@@ -78,7 +83,7 @@ func TestScalaSourceProvider(t *testing.T) {
 				}
 			}
 
-			if diff := cmp.Diff(tc.want, importRegistry.got); diff != "" {
+			if diff := cmp.Diff(tc.want, known.Got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})

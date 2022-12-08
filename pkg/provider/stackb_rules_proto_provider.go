@@ -7,11 +7,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/rules_proto/pkg/protoc"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
+
+// ProvidedImports is the protoc.ImportProvider interface func.
+type ProvidedImports func(lang, impLang string) map[label.Label][]string
 
 // StackbRulesProtoProvider is a provider of known imports for the
 // stackb/rules_proto gazelle extension.
@@ -19,13 +21,13 @@ type StackbRulesProtoProvider struct {
 	lang                string
 	impLang             string
 	knownImportRegistry resolver.KnownImportRegistry
-	importProvider      protoc.ImportProvider
+	importProvider      ProvidedImports
 }
 
 // NewStackbRulesProtoProvider constructs a new provider.  The lang/impLang
 // arguments are used to fetch the provided imports in the given importProvider
 // struct.
-func NewStackbRulesProtoProvider(lang, impLang string, importProvider protoc.ImportProvider) *StackbRulesProtoProvider {
+func NewStackbRulesProtoProvider(lang, impLang string, importProvider ProvidedImports) *StackbRulesProtoProvider {
 	return &StackbRulesProtoProvider{
 		lang:           lang,
 		impLang:        impLang,
@@ -50,27 +52,27 @@ func (p *StackbRulesProtoProvider) CheckFlags(fs *flag.FlagSet, c *config.Config
 
 // OnResolve implements part of the resolver.KnownImportProvider interface.
 func (p *StackbRulesProtoProvider) OnResolve() {
-	for from, symbols := range p.importProvider.Provided(p.lang, "package") {
+	for from, symbols := range p.importProvider(p.lang, "package") {
 		for _, symbol := range symbols {
 			p.putKnownImport(sppb.ImportType_PACKAGE, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider.Provided(p.lang, "enum") {
+	for from, symbols := range p.importProvider(p.lang, "enum") {
 		for _, symbol := range symbols {
 			p.putKnownImport(sppb.ImportType_OBJECT, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider.Provided(p.lang, "message") {
+	for from, symbols := range p.importProvider(p.lang, "message") {
 		for _, symbol := range symbols {
 			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider.Provided(p.lang, "service") {
+	for from, symbols := range p.importProvider(p.lang, "service") {
 		for _, symbol := range symbols {
 			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider.Provided(p.lang, p.impLang) {
+	for from, symbols := range p.importProvider(p.lang, p.impLang) {
 		for _, symbol := range symbols {
 			p.putKnownImport(sppb.ImportType_CLASS, symbol, from)
 		}

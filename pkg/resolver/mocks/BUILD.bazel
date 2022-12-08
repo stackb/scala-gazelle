@@ -8,6 +8,7 @@ go_library(
         "KnownImportProvider.go",
         "KnownImportRegistry.go",
         "KnownImportResolver.go",
+        "known_import_capturer.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver/mocks",
     visibility = ["//visibility:public"],

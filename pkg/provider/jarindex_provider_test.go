@@ -1,4 +1,4 @@
-package provider
+package provider_test
 
 import (
 	"flag"
@@ -8,12 +8,15 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/stackb/scala-gazelle/pkg/provider"
+	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func ExampleJarIndexProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
-	cr := NewJarIndexProvider()
+	cr := provider.NewJarIndexProvider()
 	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
@@ -184,7 +187,7 @@ func TestJarIndexProvider(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, tc.files)
 			defer cleanup()
 
-			p := NewJarIndexProvider()
+			p := provider.NewJarIndexProvider()
 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
@@ -194,16 +197,17 @@ func TestJarIndexProvider(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := &mockKnownImportRegistry{}
+			known := mocks.NewKnownImportsCapturer(t)
 
-			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, known.Registry); err != nil {
 				t.Fatal(err)
 			}
 
-			got := make([]string, len(importRegistry.got))
-			for i, known := range importRegistry.got {
+			got := make([]string, len(known.Got))
+			for i, known := range known.Got {
 				got[i] = known.String()
 			}
+
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
