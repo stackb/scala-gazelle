@@ -7,8 +7,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
-
 	"github.com/stackb/rules_proto/pkg/protoc"
+
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
@@ -16,6 +16,7 @@ import (
 )
 
 const scalaLangName = "scala"
+const debug = false
 
 // scalaLang implements language.Language.
 type scalaLang struct {

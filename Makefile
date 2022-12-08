@@ -2,6 +2,7 @@
 .PHONY: test
 test:
 	bazel test \
+		--keep_going \
 		//cmd/jarindexer/... \
 		//cmd/mergeindex/... \
 		//language/scala/... \

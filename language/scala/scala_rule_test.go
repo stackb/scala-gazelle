@@ -9,11 +9,11 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/mock"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestScalaRuleRequiredTypes(t *testing.T) {

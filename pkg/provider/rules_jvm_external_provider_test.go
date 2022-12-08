@@ -10,12 +10,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/mock"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
-	"github.com/stretchr/testify/mock"
 )
 
 const scalaName = "scala"

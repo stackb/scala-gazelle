@@ -6,6 +6,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
+
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 

@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -114,8 +115,9 @@ func (sl *scalaLang) setupCpuProfiling(workDir string) error {
 		if err != nil {
 			return err
 		}
-		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
 		pprof.StartCPUProfile(f)
+
+		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
 	}
 	return nil
 }
@@ -141,7 +143,8 @@ func (sl *scalaLang) stopMemoryProfiling() {
 		if err != nil {
 			log.Fatalf("creating memprofile: %v", err)
 		}
-		log.Println("Writing memprofile to", sl.memprofileFlagValue)
 		pprof.WriteHeapProfile(f)
+
+		log.Println("Wrote memprofile to", sl.memprofileFlagValue)
 	}
 }

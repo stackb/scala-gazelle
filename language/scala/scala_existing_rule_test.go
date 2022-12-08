@@ -4,10 +4,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/google/go-cmp/cmp"
 )
 
 // func TestMakeLabeledListExpr(t *testing.T) {

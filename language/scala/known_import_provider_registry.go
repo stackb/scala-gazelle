@@ -1,8 +1,6 @@
 package scala
 
-import (
-	"github.com/stackb/scala-gazelle/pkg/resolver"
-)
+import "github.com/stackb/scala-gazelle/pkg/resolver"
 
 // KnownImportProviders implements part of the
 // resolver.KnownImportProviderRegistry interface.

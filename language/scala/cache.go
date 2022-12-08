@@ -21,13 +21,18 @@ func (sl *scalaLang) readCacheFile() error {
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
 
-	log.Printf("Read cache %s (%d rules) %v", sl.cacheFileFlagValue, len(sl.cache.Rules), t2)
+	if debug {
+		log.Printf("Read cache %s (%d rules) %v", sl.cacheFileFlagValue, len(sl.cache.Rules), t2)
+	}
 	return nil
 }
 
 func (sl *scalaLang) writeCacheFile() error {
 	sl.cache.PackageCount = int32(len(sl.packages))
 	sl.cache.Rules = sl.sourceProvider.ProvidedRules()
-	log.Printf("Wrote cache %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))
+
+	if debug {
+		log.Printf("Wrote cache %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))
+	}
 	return protobuf.WriteFile(sl.cacheFileFlagValue, sl.cache)
 }

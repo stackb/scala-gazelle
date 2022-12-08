@@ -14,6 +14,7 @@ type ScalaResolver struct {
 	next KnownImportResolver
 }
 
+// NewScalaResolver constructs a new resolver that chains to the given resolver.
 func NewScalaResolver(next KnownImportResolver) *ScalaResolver {
 	return &ScalaResolver{next}
 }

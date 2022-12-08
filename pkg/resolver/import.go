@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/buildtools/build"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 

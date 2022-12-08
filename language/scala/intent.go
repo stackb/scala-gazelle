@@ -1,8 +1,6 @@
 package scala
 
-import (
-	"strings"
-)
+import "strings"
 
 // intent represents an action for an attribute name or "value" optionally
 // prefixed by a '+' or '-'.  If the prefix is missing, the intent is not
