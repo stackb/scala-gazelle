@@ -51,11 +51,11 @@ type scalaLang struct {
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
 	// knownImports is a map of all known generated import providers
-	knownImports resolver.KnownImportRegistry
+	knownImports resolver.Scope
 	// knownImportProviders is a list of providers
-	knownImportProviders []resolver.KnownImportProvider
+	knownImportProviders []resolver.SymbolProvider
 	// knownImportResolver is our top-level known import resolver implementation
-	knownImportResolver resolver.KnownImportResolver
+	knownImportResolver resolver.SymbolResolver
 }
 
 // Name implements part of the language.Language interface
@@ -79,7 +79,7 @@ func NewLanguage() language.Language {
 
 	lang := &scalaLang{
 		cache:                &scpb.Cache{},
-		knownImports:         resolver.NewKnownImportRegistryTrie(),
+		knownImports:         resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
@@ -90,10 +90,10 @@ func NewLanguage() language.Language {
 		writeParseProgress(lang.progress, msg)
 	})
 
-	lang.AddKnownImportProvider(lang.sourceProvider)
-	lang.AddKnownImportProvider(provider.NewJavaProvider())
-	lang.AddKnownImportProvider(provider.NewMavenProvider(scalaLangName))
-	lang.AddKnownImportProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
+	lang.AddSymbolProvider(lang.sourceProvider)
+	lang.AddSymbolProvider(provider.NewJavaProvider())
+	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
+	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 
 	return lang
 }

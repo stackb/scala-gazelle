@@ -15,11 +15,11 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 )
 
-func TestProtoKnownImportProviderOnResolve(t *testing.T) {
+func TestProtoSymbolProviderOnResolve(t *testing.T) {
 
 	for name, tc := range map[string]struct {
 		imports map[string]map[label.Label][]string
-		want    []*resolver.KnownImport
+		want    []*resolver.Symbol
 	}{
 		"degenerate": {},
 		"hit": {
@@ -35,16 +35,16 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 					},
 				},
 			},
-			want: []*resolver.KnownImport{
+			want: []*resolver.Symbol{
 				{
 					Type:     sppb.ImportType_OBJECT,
-					Import:   "com.foo.bar.proto.Enum",
+					Name:     "com.foo.bar.proto.Enum",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 					Provider: "protobuf",
 				},
 				{
 					Type:     sppb.ImportType_CLASS,
-					Import:   "com.foo.bar.proto.Message",
+					Name:     "com.foo.bar.proto.Message",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 					Provider: "protobuf",
 				},
@@ -52,7 +52,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			known := mocks.NewKnownImportsCapturer(t)
+			known := mocks.NewSymbolsCapturer(t)
 
 			p := provider.NewProtobufProvider(scalaName, scalaName, func(lang, impLang string) map[label.Label][]string {
 				return tc.imports[impLang]
@@ -71,7 +71,7 @@ func TestProtoKnownImportProviderOnResolve(t *testing.T) {
 	}
 }
 
-func TestProtoKnownImportProviderCanProvide(t *testing.T) {
+func TestProtoSymbolProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		lang      string
 		imports   map[string]map[label.Label][]string
@@ -97,7 +97,7 @@ func TestProtoKnownImportProviderCanProvide(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
+			knownImportRegistry := mocks.NewScope(t)
 
 			p := provider.NewProtobufProvider(tc.lang, tc.lang, func(lang, impLang string) map[label.Label][]string {
 				return tc.imports[lang]

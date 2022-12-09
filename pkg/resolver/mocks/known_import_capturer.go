@@ -7,23 +7,23 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-type PutKnownImportsCapturer struct {
-	Registry *KnownImportRegistry
-	Got      []*resolver.KnownImport
+type PutSymbolsCapturer struct {
+	Registry *Scope
+	Got      []*resolver.Symbol
 }
 
-func (k *PutKnownImportsCapturer) capture(known *resolver.KnownImport) bool {
+func (k *PutSymbolsCapturer) capture(known *resolver.Symbol) bool {
 	k.Got = append(k.Got, known)
 	return true
 }
 
-func NewKnownImportsCapturer(t *testing.T) *PutKnownImportsCapturer {
-	c := &PutKnownImportsCapturer{
-		Registry: NewKnownImportRegistry(t),
+func NewSymbolsCapturer(t *testing.T) *PutSymbolsCapturer {
+	c := &PutSymbolsCapturer{
+		Registry: NewScope(t),
 	}
 
 	c.Registry.
-		On("PutKnownImport", mock.MatchedBy(c.capture)).
+		On("PutSymbol", mock.MatchedBy(c.capture)).
 		Maybe().
 		Return(nil)
 

@@ -127,7 +127,7 @@ func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {
-			if known, err := scalaRule.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
+			if known, err := scalaRule.ResolveSymbol(c, ix, from, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
 				imp.Known = known

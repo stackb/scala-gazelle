@@ -221,7 +221,7 @@ Enable the rule provider configuration:
 
 At the core of the import resolution process is a trie structure where the keys
 of the trie are parts of an import statement and the values are
-`*resolver.KnownImport` structs.
+`*resolver.Symbol` structs.
 
 For example, for the import `io.grpc.Status`, the trie would contain the
 following:
@@ -234,8 +234,8 @@ When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
 match would find the `io.grpc.Status` `CLASS` and the label
 `@maven//:io_grpc_grpc_core` would be added to the rule `deps`.
 
-The trie is populated by `resolver.KnownImportProvider` implementations. Each
-implementation provides known imports from a different data source.
+The trie is populated by `resolver.SymbolProvider` implementations. Each
+implementation provides symbols from a different data source.
 
 Known import providers:
 
@@ -377,7 +377,7 @@ gazelle(
 ### Custom Known Import Provider
 
 If your organization has an additional database or mechanism for import
-tracking, you can implement the `resolver.KnownImportProvider` interface and
+tracking, you can implement the `resolver.SymbolProvider` interface and
 register it with the global registry.
 
 For example, if your organization uses https://github.com/johnynek/bazel-deps,
@@ -400,11 +400,11 @@ import (
 
 func init() {
   resolver.
-    GlobalKnownImportProviderRegistry().
-    AddKnownImportProvider(newBazelDepsProvider())
+    GlobalSymbolProviderRegistry().
+    AddSymbolProvider(newBazelDepsProvider())
 }
 
-// bazelDepsProvider is a provider of known imports for the
+// bazelDepsProvider is a provider of symbols for the
 // johnynek/bazel-deps.
 type bazelDepsProvider struct {
 	bazelDepsYAMLFiles collections.StringSlice
@@ -415,18 +415,18 @@ func newBazelDepsProvider() *bazelDepsProvider {
 	return &bazelDepsProvider{}
 }
 
-// Name implements part of the resolver.KnownImportRegistry interface.
+// Name implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) Name() string {
 	return "bazel-deps"
 }
 
-// RegisterFlags implements part of the resolver.KnownImportRegistry interface.
+// RegisterFlags implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.bazelDepsYAMLFiles, "bazel_deps_yaml_file", "path to bazel_deps.yaml")
 }
 
-// CheckFlags implements part of the resolver.KnownImportRegistry interface.
-func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
+// CheckFlags implements part of the resolver.Scope interface.
+func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.Scope) error {
 	for _, filename := range p.bazelDepsYAMLFiles {
 		if err := p.loadFile(c.WorkDir, filename, importRegistry); err != nil {
 			return err
@@ -435,11 +435,11 @@ func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, impor
 	return nil
 }
 
-func (p *bazelDepsProvider) loadFile(dir string, filename string, importRegistry resolver.KnownImportRegistry) error {
-	return fmt.Errorf("Implement me; Supply known imports to the given importRegistry!")
+func (p *bazelDepsProvider) loadFile(dir string, filename string, importRegistry resolver.Scope) error {
+	return fmt.Errorf("Implement me; Supply symbols to the given importRegistry!")
 }
 
-// CanProvide implements part of the resolver.KnownImportRegistry interface.
+// CanProvide implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	if dep.Repo == "bazel_deps" {
 		return true
@@ -447,14 +447,14 @@ func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from labe
 	return false
 }
 
-// OnResolve implements part of the resolver.KnownImportRegistry interface.
+// OnResolve implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) OnResolve() {
 }
 ```
 
 ### CanProvide
 
-The `resolver.KnownImportRegistry.CanProvide` function is used to determine if
+The `resolver.Scope.CanProvide` function is used to determine if
 this provider is capable of providing a given dependency label.  When rule deps
 are resolved, the existing deps list is cleared of those labels it can find a
 provider for.  For example, given the rule:
@@ -628,7 +628,7 @@ placeholder."_
 ### `gazelle:annotate`
 
 The `annotate` directive is a debugging aid that adds comments to the generated
-rules detailing what the known imports are and how they resolved.
+rules detailing what the symbols are and how they resolved.
 
 #### `imports`
 

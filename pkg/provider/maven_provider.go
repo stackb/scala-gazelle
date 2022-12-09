@@ -16,7 +16,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// MavenProvider is a provider of known imports for the
+// MavenProvider is a provider of symbols for the
 // bazelbuild/rules_jvm_external gazelle extension.
 type MavenProvider struct {
 	// the cross resolve language name to match
@@ -35,18 +35,18 @@ func NewMavenProvider(lang string) *MavenProvider {
 	}
 }
 
-// Name implements part of the resolver.KnownImportRegistry interface.
+// Name implements part of the resolver.Scope interface.
 func (p *MavenProvider) Name() string {
 	return "maven"
 }
 
-// RegisterFlags implements part of the resolver.KnownImportRegistry interface.
+// RegisterFlags implements part of the resolver.Scope interface.
 func (p *MavenProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.mavenInstallJSONFiles, "maven_install_json_file", "path to maven_install.json file")
 }
 
-// CheckFlags implements part of the resolver.KnownImportRegistry interface.
-func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
+// CheckFlags implements part of the resolver.Scope interface.
+func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.Scope) error {
 	p.resolvers = make([]maven.Resolver, len(p.mavenInstallJSONFiles))
 
 	for i, filename := range p.mavenInstallJSONFiles {
@@ -60,7 +60,7 @@ func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importReg
 	return nil
 }
 
-func (p *MavenProvider) loadFile(dir string, filename string, importRegistry resolver.KnownImportRegistry) (maven.Resolver, error) {
+func (p *MavenProvider) loadFile(dir string, filename string, importRegistry resolver.Scope) (maven.Resolver, error) {
 	basename := filepath.Base(filename)
 	if !strings.HasSuffix(basename, "_install.json") {
 		return nil, fmt.Errorf("maven cross resolver: -maven_install_json_file base name must match the pattern {name}_install.json (got %s)", basename)
@@ -71,14 +71,14 @@ func (p *MavenProvider) loadFile(dir string, filename string, importRegistry res
 	}
 	resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
 		log.Printf(format, args...)
-	}, importRegistry.PutKnownImport)
+	}, importRegistry.PutSymbol)
 	if err != nil {
 		return nil, fmt.Errorf("initializing maven resolver: %w", err)
 	}
 	return resolver, nil
 }
 
-// CanProvide implements part of the resolver.KnownImportRegistry interface.
+// CanProvide implements part of the resolver.Scope interface.
 func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
@@ -96,6 +96,6 @@ func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.La
 	return false
 }
 
-// OnResolve implements part of the resolver.KnownImportRegistry interface.
+// OnResolve implements part of the resolver.Scope interface.
 func (p *MavenProvider) OnResolve() {
 }

@@ -23,7 +23,7 @@ type Import struct {
 	// Source is the resolved parent import (when this is an implicit import).
 	Parent *Import
 	// Known is the known provider of the import, after resolution.
-	Known *KnownImport
+	Known *Symbol
 	// Error is assiged if there is a resolution error.
 	Error error
 }

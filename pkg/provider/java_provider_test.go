@@ -197,7 +197,7 @@ func TestJavaProvider(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			known := mocks.NewKnownImportsCapturer(t)
+			known := mocks.NewSymbolsCapturer(t)
 
 			if err := p.CheckFlags(fs, c, known.Registry); err != nil {
 				t.Fatal(err)
@@ -266,7 +266,7 @@ func TestJavaProvider(t *testing.T) {
 // 				t.Fatal(err)
 // 			}
 
-// 			importRegistry := &mockKnownImportRegistry{}
+// 			importRegistry := &mockScope{}
 
 // 			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
 // 				t.Fatal(err)

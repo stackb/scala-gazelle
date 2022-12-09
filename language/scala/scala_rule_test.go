@@ -46,18 +46,18 @@ func TestScalaRuleRequiredTypes(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 
-			global := mocks.NewImportResolver(t)
-			local := mocks.NewKnownImportRegistry(t)
+			universe := mocks.NewUniverse(t)
+			scope := mocks.NewScope(t)
 
-			local.
-				On("PutKnownImport", mock.Anything).
+			scope.
+				On("PutSymbol", mock.Anything).
 				Maybe().
 				Return(nil)
 
 			c := config.New()
-			sc := newScalaConfig(c, "", global)
+			sc := newScalaConfig(universe, c, "")
 
-			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, universe, universe, scope, tc.rule, tc.from, tc.files)
 
 			got := scalaRule.extendedTypes
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -111,18 +111,18 @@ func TestScalaRuleExports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			global := mocks.NewImportResolver(t)
-			local := mocks.NewKnownImportRegistry(t)
+			universe := mocks.NewUniverse(t)
+			scope := mocks.NewScope(t)
 
-			local.
-				On("PutKnownImport", mock.Anything).
+			scope.
+				On("PutSymbol", mock.Anything).
 				Maybe().
 				Return(nil)
 
 			c := config.New()
-			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+			sc := newScalaConfig(universe, c, "")
 
-			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, universe, universe, scope, tc.rule, tc.from, tc.files)
 			got := scalaRule.Exports()
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -132,19 +132,19 @@ func TestScalaRuleExports(t *testing.T) {
 	}
 }
 
-func TestScalaRulePutKnownImport(t *testing.T) {
-	makeSelfImport := func(typ sppb.ImportType, imp string) *resolver.KnownImport {
-		return &resolver.KnownImport{Type: typ, Import: imp, Label: label.NoLabel, Provider: "self-import"}
+func TestScalaRulePutSymbol(t *testing.T) {
+	makeSelfImport := func(typ sppb.ImportType, imp string) *resolver.Symbol {
+		return &resolver.Symbol{Type: typ, Name: imp, Label: label.NoLabel, Provider: "self-import"}
 	}
 
 	for name, tc := range map[string]struct {
 		rule  *rule.Rule
 		from  label.Label
 		files []*sppb.File
-		want  []*resolver.KnownImport
+		want  []*resolver.Symbol
 	}{
 		"degenerate": {},
-		"known imports": {
+		"symbols": {
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
 			files: []*sppb.File{
@@ -160,7 +160,7 @@ func TestScalaRulePutKnownImport(t *testing.T) {
 					Names:    []string{"com", "foo"}, // names aren't used
 				},
 			},
-			want: []*resolver.KnownImport{
+			want: []*resolver.Symbol{
 				makeSelfImport(sppb.ImportType_CLASS, "com.foo.ClassA"),
 				makeSelfImport(sppb.ImportType_CLASS, "com.foo.ClassB"),
 				makeSelfImport(sppb.ImportType_OBJECT, "com.foo.ObjectA"),
@@ -175,24 +175,24 @@ func TestScalaRulePutKnownImport(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			global := mocks.NewImportResolver(t)
-			local := mocks.NewKnownImportRegistry(t)
+			universe := mocks.NewUniverse(t)
+			scope := mocks.NewScope(t)
 
-			var got []*resolver.KnownImport
-			capture := func(known *resolver.KnownImport) bool {
+			var got []*resolver.Symbol
+			capture := func(known *resolver.Symbol) bool {
 				got = append(got, known)
 				return true
 			}
-			local.
-				On("PutKnownImport", mock.MatchedBy(capture)).
+			scope.
+				On("PutSymbol", mock.MatchedBy(capture)).
 				Maybe().
 				Times(len(tc.want)).
 				Return(nil)
 
 			c := config.New()
-			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+			sc := newScalaConfig(universe, c, "")
 
-			newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
+			newScalaRule(sc, universe, universe, scope, tc.rule, tc.from, tc.files)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -207,7 +207,7 @@ func TestScalaRuleImports(t *testing.T) {
 		rule       *rule.Rule
 		from       label.Label
 		files      []*sppb.File
-		known      []*resolver.KnownImport
+		known      []*resolver.Symbol
 		want       []string
 	}{
 		"degenerate": {
@@ -237,9 +237,9 @@ func TestScalaRuleImports(t *testing.T) {
 		"extends symbol completed by wildcard import": {
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
-			known: []*resolver.KnownImport{
+			known: []*resolver.Symbol{
 				{
-					Import:   "akka.actor.Actor",
+					Name:     "akka.actor.Actor",
 					Label:    label.Label{Repo: "maven", Name: "akka_actor"},
 					Provider: "maven",
 				},
@@ -297,19 +297,20 @@ func TestScalaRuleImports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			mockImportResolver := mocks.NewImportResolver(t)
-			local := resolver.NewKnownImportRegistryTrie()
-			global := resolver.NewKnownImportRegistryTrie()
+			universe := mocks.NewUniverse(t)
+
+			local := resolver.NewTrieScope()
+			global := resolver.NewTrieScope()
 			for _, known := range tc.known {
-				global.PutKnownImport(known)
+				global.PutSymbol(known)
 			}
 
-			sc, err := newTestScalaConfig(t, mockImportResolver, tc.from.Pkg, makeDirectives(tc.directives)...)
+			sc, err := newTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			scalaRule := newScalaRule(sc, mockImportResolver, global, local, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, universe, global, local, tc.rule, tc.from, tc.files)
 
 			imports := scalaRule.Imports()
 			got := make([]string, len(imports))

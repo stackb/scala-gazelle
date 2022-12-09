@@ -45,7 +45,7 @@ tools:
 
 .PHONY: mocks
 mocks:
-	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ImportResolver 
-	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportProvider
-	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportRegistry
-	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=KnownImportResolver
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=Universe 
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=Scope
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolProvider
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolResolver

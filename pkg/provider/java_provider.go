@@ -17,17 +17,15 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// JavaProvider is a provider of known imports for a set of jar index
-// protos.
+// JavaProvider is a provider of symbols for a set of jarindex protos.
 type JavaProvider struct {
 	jarindexFiles collections.StringSlice
 
-	knownImportRegistry resolver.KnownImportRegistry
-	byLabel             map[label.Label]*jipb.JarFile
+	symbolRegistry resolver.Scope
+	byLabel        map[label.Label]*jipb.JarFile
 }
 
-// NewJavaProvider constructs a new provider.  The lang/impLang arguments
-// are used to fetch the provided imports in the given importProvider struct.
+// NewJavaProvider constructs a new provider.
 func NewJavaProvider() *JavaProvider {
 	return &JavaProvider{
 		byLabel:       make(map[label.Label]*jipb.JarFile),
@@ -35,19 +33,19 @@ func NewJavaProvider() *JavaProvider {
 	}
 }
 
-// Name implements part of the resolver.KnownImportProvider interface.
+// Name implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) Name() string {
 	return "java"
 }
 
-// RegisterFlags implements part of the resolver.KnownImportProvider interface.
+// RegisterFlags implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.jarindexFiles, "javaindex_file", "path to javaindex.pb or javaindex.json file")
 }
 
-// CheckFlags implements part of the resolver.KnownImportProvider interface.
-func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.KnownImportRegistry) error {
-	p.knownImportRegistry = registry
+// CheckFlags implements part of the resolver.SymbolProvider interface.
+func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.Scope) error {
+	p.symbolRegistry = registry
 
 	for _, filename := range p.jarindexFiles {
 		if !filepath.IsAbs(filename) {
@@ -61,11 +59,11 @@ func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry r
 	return nil
 }
 
-// OnResolve implements part of the resolver.KnownImportProvider interface.
+// OnResolve implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) OnResolve() {
 }
 
-// CanProvide implements part of the resolver.KnownImportProvider interface.
+// CanProvide implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	if _, ok := p.byLabel[dep]; ok {
 		return true
@@ -118,11 +116,11 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 	}
 
 	for _, pkg := range jarFile.PackageName {
-		p.putKnownImport(sppb.ImportType_PACKAGE, pkg, from)
+		p.putSymbol(sppb.ImportType_PACKAGE, pkg, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {
-		p.putKnownImport(sppb.ImportType_CLASS, classFile.Name, from)
+		p.putSymbol(sppb.ImportType_CLASS, classFile.Name, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {
@@ -137,9 +135,9 @@ func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label
 	if classFile.IsInterface {
 		impType = sppb.ImportType_INTERFACE
 	}
-	p.putKnownImport(impType, classFile.Name, from)
+	p.putSymbol(impType, classFile.Name, from)
 }
 
-func (p *JavaProvider) putKnownImport(impType sppb.ImportType, imp string, from label.Label) {
-	p.knownImportRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, p.Name(), from))
+func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) {
+	p.symbolRegistry.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
 }
