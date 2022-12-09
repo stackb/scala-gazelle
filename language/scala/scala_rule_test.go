@@ -207,6 +207,7 @@ func TestScalaRuleImports(t *testing.T) {
 		rule       *rule.Rule
 		from       label.Label
 		files      []*sppb.File
+		known      []*resolver.KnownImport
 		want       []string
 	}{
 		"degenerate": {
@@ -231,6 +232,31 @@ func TestScalaRuleImports(t *testing.T) {
 				"✅ akka.actor.Actor<> (EXTENDS of com.foo.ClassA)",
 				"✅ com.foo.Bar<> (DIRECT of A.scala)",
 				"✅ com.foo.ClassA<> (EXTENDS of com.foo.ClassB)",
+			},
+		},
+		"extends symbol completed by wildcard import": {
+			rule: rule.NewRule("scala_library", "somelib"),
+			from: label.Label{Pkg: "com/foo", Name: "somelib"},
+			known: []*resolver.KnownImport{
+				{
+					Import:   "akka.actor.Actor",
+					Label:    label.Label{Repo: "maven", Name: "akka_actor"},
+					Provider: "maven",
+				},
+			},
+			files: []*sppb.File{
+				{
+					Filename: "A.scala",
+					Imports:  []string{"akka.actor._"},
+					Classes:  []string{"com.foo.ClassA"},
+					Extends: map[string]*sppb.ClassList{
+						"class com.foo.ClassA": {Classes: []string{"Actor"}},
+					},
+				},
+			},
+			want: []string{
+				"✅ akka.actor.Actor<> (EXTENDS of com.foo.ClassA)",
+				"✅ akka.actor._<> (DIRECT of A.scala)",
 			},
 		},
 		"resolve_with via extends": {
@@ -271,21 +297,19 @@ func TestScalaRuleImports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			global := mocks.NewImportResolver(t)
-			global.On("GetKnownImports", mock.Anything).Maybe().Return(nil)
-			global.On("GetKnownImport", mock.Anything).Maybe().Return(nil, false)
+			mockImportResolver := mocks.NewImportResolver(t)
+			local := resolver.NewKnownImportRegistryTrie()
+			global := resolver.NewKnownImportRegistryTrie()
+			for _, known := range tc.known {
+				global.PutKnownImport(known)
+			}
 
-			local := mocks.NewKnownImportRegistry(t)
-			local.On("GetKnownImports", mock.Anything).Maybe().Return(nil)
-			local.On("GetKnownImport", mock.Anything).Maybe().Return(nil, false)
-			local.On("PutKnownImport", mock.Anything).Maybe().Return(nil)
-
-			sc, err := newTestScalaConfig(t, global, tc.from.Pkg, makeDirectives(tc.directives)...)
+			sc, err := newTestScalaConfig(t, mockImportResolver, tc.from.Pkg, makeDirectives(tc.directives)...)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, mockImportResolver, global, local, tc.rule, tc.from, tc.files)
 
 			imports := scalaRule.Imports()
 			got := make([]string, len(imports))
