@@ -57,9 +57,9 @@ func TestScalaRuleRequiredTypes(t *testing.T) {
 			c := config.New()
 			sc := newScalaConfig(c, "", global)
 
-			scalaRule := newScalaRule(sc, global, local, global, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
 
-			got := scalaRule.requiredTypes
+			got := scalaRule.extendedTypes
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -111,10 +111,10 @@ func TestScalaRuleExports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
-			knownImportResolver := mocks.NewKnownImportResolver(t)
+			global := mocks.NewImportResolver(t)
+			local := mocks.NewKnownImportRegistry(t)
 
-			knownImportRegistry.
+			local.
 				On("PutKnownImport", mock.Anything).
 				Maybe().
 				Return(nil)
@@ -122,7 +122,7 @@ func TestScalaRuleExports(t *testing.T) {
 			c := config.New()
 			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
 
-			scalaRule := newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
 			got := scalaRule.Exports()
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -175,15 +175,15 @@ func TestScalaRulePutKnownImport(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
-			knownImportResolver := mocks.NewKnownImportResolver(t)
+			global := mocks.NewImportResolver(t)
+			local := mocks.NewKnownImportRegistry(t)
 
 			var got []*resolver.KnownImport
 			capture := func(known *resolver.KnownImport) bool {
 				got = append(got, known)
 				return true
 			}
-			knownImportRegistry.
+			local.
 				On("PutKnownImport", mock.MatchedBy(capture)).
 				Maybe().
 				Times(len(tc.want)).
@@ -192,7 +192,7 @@ func TestScalaRulePutKnownImport(t *testing.T) {
 			c := config.New()
 			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
 
-			newScalaRule(sc, knownImportRegistry, knownImportResolver, tc.rule, tc.from, tc.files)
+			newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -271,20 +271,21 @@ func TestScalaRuleImports(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
-			importResolver := mocks.NewImportResolver(t)
+			global := mocks.NewImportResolver(t)
+			global.On("GetKnownImports", mock.Anything).Maybe().Return(nil)
+			global.On("GetKnownImport", mock.Anything).Maybe().Return(nil, false)
 
-			knownImportRegistry.
-				On("PutKnownImport", mock.Anything).
-				Maybe().
-				Return(nil)
+			local := mocks.NewKnownImportRegistry(t)
+			local.On("GetKnownImports", mock.Anything).Maybe().Return(nil)
+			local.On("GetKnownImport", mock.Anything).Maybe().Return(nil, false)
+			local.On("PutKnownImport", mock.Anything).Maybe().Return(nil)
 
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), tc.from.Pkg, makeDirectives(tc.directives)...)
+			sc, err := newTestScalaConfig(t, global, tc.from.Pkg, makeDirectives(tc.directives)...)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			scalaRule := newScalaRule(sc, knownImportRegistry, importResolver, tc.rule, tc.from, tc.files)
+			scalaRule := newScalaRule(sc, global, global, local, tc.rule, tc.from, tc.files)
 
 			imports := scalaRule.Imports()
 			got := make([]string, len(imports))

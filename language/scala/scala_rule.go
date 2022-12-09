@@ -30,10 +30,10 @@ type scalaRule struct {
 	localRegistry resolver.KnownImportRegistry
 	// the registry from which we lookup both local and global imports.
 	scopeRegistry resolver.KnownImportRegistry
-	// requiredTypes is a mapping from the required type to the symbol that
-	// needs it. for example, if 'class Foo requiredTypes Bar', "Bar" is the map
+	// extendedTypes is a mapping from the required type to the symbol that
+	// needs it. for example, if 'class Foo extendedTypes Bar', "Bar" is the map
 	// key and "Foo" will be the value.
-	requiredTypes map[string][]string
+	extendedTypes map[string][]string
 	// exports represent symbols that are importable by other rules.
 	exports map[string]resolve.ImportSpec
 	// scope is a map of symbols that are in scope.  For the import
@@ -44,9 +44,9 @@ type scalaRule struct {
 
 func newScalaRule(
 	scalaConfig *scalaConfig,
+	next resolver.KnownImportResolver,
 	globalRegistry resolver.KnownImportRegistry,
 	localRegistry resolver.KnownImportRegistry,
-	next resolver.KnownImportResolver,
 	r *rule.Rule,
 	from label.Label,
 	files []*sppb.File,
@@ -58,13 +58,11 @@ func newScalaRule(
 		files:         files,
 		next:          next,
 		localRegistry: localRegistry,
-		requiredTypes: make(map[string][]string),
-		exports:       make(map[string]resolve.ImportSpec),
-		scope:         make(resolver.KnownImportScope),
 		scopeRegistry: resolver.NewChainKnownImportRegistry(localRegistry, globalRegistry),
+		extendedTypes: make(map[string][]string),
+		exports:       make(map[string]resolve.ImportSpec),
 	}
-	scalaRule.visitFiles(files)
-	scalaRule.visitAllExtends(files)
+	scalaRule.visitFiles()
 	return scalaRule
 }
 
@@ -94,10 +92,11 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	}
 
 	// add import required from extends clauses
-	for imp, src := range r.requiredTypes {
+	scope := r.getOrCreateKnownImportScope()
+	for imp, src := range r.extendedTypes {
 		// check if the import is actually a symbol in scope.  If yes, use the
 		// fully-qualified import name.
-		if known, ok := r.scope.Get(imp); ok {
+		if known, ok := scope.Get(imp); ok {
 			imp = known.Import
 		}
 		imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
@@ -144,17 +143,9 @@ func (r *scalaRule) Files() []*sppb.File {
 	return r.files
 }
 
-func (r *scalaRule) visitFiles(files []*sppb.File) {
-	for _, file := range files {
+func (r *scalaRule) visitFiles() {
+	for _, file := range r.files {
 		r.visitFile(file)
-	}
-}
-
-func (r *scalaRule) visitAllExtends(files []*sppb.File) {
-	for _, file := range files {
-		for token, extends := range file.Extends {
-			r.visitExtends(token, extends)
-		}
 	}
 }
 
@@ -179,28 +170,8 @@ func (r *scalaRule) visitFile(file *sppb.File) {
 		r.putKnownImport(imp, sppb.ImportType_VALUE)
 		r.putExport(imp)
 	}
-	for _, imp := range file.Imports {
-		r.visitImport(imp)
-	}
-}
-
-func (r *scalaRule) visitImport(imp string) {
-	if prefix, ok := isWildcardImport(imp); ok {
-		r.visitWildcardImport(prefix)
-	} else {
-		r.visitExplicitImport(imp)
-	}
-}
-
-func (r *scalaRule) visitExplicitImport(imp string) {
-	if known, ok := r.scopeRegistry.GetKnownImport(imp); ok {
-		r.putSymbolInScope(known)
-	}
-}
-
-func (r *scalaRule) visitWildcardImport(prefix string) {
-	for _, known := range r.scopeRegistry.GetKnownImports(prefix) {
-		r.putSymbolInScope(known)
+	for token, extends := range file.Extends {
+		r.visitExtends(token, extends)
 	}
 }
 
@@ -228,29 +199,25 @@ func (r *scalaRule) visitKindExtends(kind, symbol string, types *sppb.ClassList)
 }
 
 func (r *scalaRule) visitClassExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
+	r.putExtendedTypes(imp, types)
 }
 
 func (r *scalaRule) visitInterfaceExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
+	r.putExtendedTypes(imp, types)
 }
 
 func (r *scalaRule) visitObjectExtends(imp string, types *sppb.ClassList) {
-	r.putRequiredTypes(imp, types)
+	r.putExtendedTypes(imp, types)
 }
 
-func (r *scalaRule) putRequiredTypes(imp string, types *sppb.ClassList) {
+func (r *scalaRule) putExtendedTypes(imp string, types *sppb.ClassList) {
 	for _, dst := range types.Classes {
-		r.putRequiredType(imp, dst)
+		r.putExtendedType(imp, dst)
 	}
 }
 
-func (r *scalaRule) putRequiredType(src, dst string) {
-	r.requiredTypes[dst] = append(r.requiredTypes[dst], src)
-}
-
-func (r *scalaRule) putSymbolInScope(known *resolver.KnownImport) {
-	r.scope.Add(known)
+func (r *scalaRule) putExtendedType(src, dst string) {
+	r.extendedTypes[dst] = append(r.extendedTypes[dst], src)
 }
 
 func (r *scalaRule) putExport(imp string) {
@@ -261,6 +228,46 @@ func (r *scalaRule) putKnownImport(imp string, impType sppb.ImportType) {
 	// since we don't need to resolve same-rule symbols to a different label,
 	// record all imports as label.NoLabel!
 	r.localRegistry.PutKnownImport(resolver.NewKnownImport(impType, imp, "self-import", label.NoLabel))
+}
+
+func (r *scalaRule) getOrCreateKnownImportScope() resolver.KnownImportScope {
+	if r.scope == nil {
+		r.scope = make(resolver.KnownImportScope)
+		r.visitImports()
+	}
+	return r.scope
+}
+
+func (r *scalaRule) visitImports() {
+	for _, file := range r.files {
+		for _, imp := range file.Imports {
+			r.visitImport(imp)
+		}
+	}
+}
+
+func (r *scalaRule) visitImport(imp string) {
+	if prefix, ok := isWildcardImport(imp); ok {
+		r.visitWildcardImport(prefix)
+	} else {
+		r.visitExplicitImport(imp)
+	}
+}
+
+func (r *scalaRule) visitExplicitImport(imp string) {
+	if known, ok := r.scopeRegistry.GetKnownImport(imp); ok {
+		r.putSymbolInScope(known)
+	}
+}
+
+func (r *scalaRule) visitWildcardImport(prefix string) {
+	for _, known := range r.scopeRegistry.GetKnownImports(prefix) {
+		r.putSymbolInScope(known)
+	}
+}
+
+func (r *scalaRule) putSymbolInScope(known *resolver.KnownImport) {
+	r.scope.Add(known)
 }
 
 func isWildcardImport(imp string) (string, bool) {

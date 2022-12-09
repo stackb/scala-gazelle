@@ -149,8 +149,8 @@ $ bazel run //:gazelle
 
 ## Rule Providers
 
-The extension needs to know which rules it should manage (parse imports/resolve
-deps).  This is done using `gazelle:scala_rule` directives.
+The extension needs to know which rules it should manage (parse `srcs`/resolve
+`deps`).  This is done using `gazelle:scala_rule` directives.
 
 ### Built-in Existing Rule Providers
 

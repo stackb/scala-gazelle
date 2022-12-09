@@ -15,7 +15,6 @@ import "github.com/dghubble/trie"
 type PathTrie struct {
 	segmenter trie.StringSegmenter // key segmenter, must not cause heap allocs
 	value     interface{}
-	parent    *PathTrie
 	children  map[string]*PathTrie
 }
 
@@ -47,13 +46,7 @@ func NewPathTrieWithConfig(config *PathTrieConfig) *PathTrie {
 func (trie *PathTrie) newPathTrie() *PathTrie {
 	return &PathTrie{
 		segmenter: trie.segmenter,
-		parent:    trie,
 	}
-}
-
-// Parent returns the parent trie node, or nil if this is the root.
-func (trie *PathTrie) Parent() *PathTrie {
-	return trie.parent
 }
 
 // Get returns the value stored at the given key. Returns nil for internal
@@ -109,8 +102,6 @@ func (trie *PathTrie) Delete(key string) bool {
 	}
 	// delete the node value
 	node.value = nil
-	// delete the node parent
-	node.parent = nil
 	// if leaf, remove it from its parent's children map. Repeat for ancestor path.
 	if node.isLeaf() {
 		// iterate backwards over path

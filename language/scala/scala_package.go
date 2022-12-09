@@ -178,8 +178,8 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 	return newScalaRule(
 		s.cfg,
 		s.importResolver,
-		resolver.NewKnownImportRegistryTrie(),
 		s.importResolver,
+		resolver.NewKnownImportRegistryTrie(),
 		r, from, files,
 	), nil
 }
