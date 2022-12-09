@@ -35,7 +35,7 @@ func (_m *SymbolProvider) CanProvide(dep label.Label, knownRule func(label.Label
 	return r0
 }
 
-// CheckFlags provides a mock function with given fields: fs, c, registry
+// CheckFlags provides a mock function with given fields: fs, c, scope
 func (_m *SymbolProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	ret := _m.Called(fs, c, scope)
 

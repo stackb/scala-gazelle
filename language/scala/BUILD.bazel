@@ -10,6 +10,7 @@ go_library(
     srcs = [
         "cache.go",
         "configure.go",
+        "conflict_resolver_registry.go",
         "cross_resolve.go",
         "existing_scala_rule.go",
         "fix.go",

@@ -49,6 +49,18 @@ func (imports ImportMap) HasErrors() bool {
 	return false
 }
 
+func (imports ImportMap) HasConflicts() bool {
+	for _, imp := range imports {
+		if imp.Symbol == nil {
+			continue
+		}
+		if len(imp.Symbol.Conflicts) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func (imports ImportMap) Annotate(comments *build.Comments, accept func(imp *Import) bool) {
 	for _, key := range imports.Keys() {
 		imp := imports[key]

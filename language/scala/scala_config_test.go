@@ -104,19 +104,19 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 		"bad format": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule existing_scala_rule"},
+				{Key: scalaRuleDirective, Value: "myrule existing_scala_rule"},
 			},
 			wantErr: fmt.Errorf(`invalid directive: "gazelle:scala_rule myrule existing_scala_rule": expected three or more fields, got 2`),
 		},
 		"example": {
 			directives: []rule.Directive{
-				{Key: ruleDirective, Value: "myrule implementation existing_scala_rule"},
-				{Key: ruleDirective, Value: "myrule deps @maven//:a"},
-				{Key: ruleDirective, Value: "myrule +deps @maven//:b"},
-				{Key: ruleDirective, Value: "myrule -deps @maven//:c"},
-				{Key: ruleDirective, Value: "myrule attr exports @maven//:a"},
-				{Key: ruleDirective, Value: "myrule option -fake_flag_name fake_flag_value"},
-				{Key: ruleDirective, Value: "myrule enabled false"},
+				{Key: scalaRuleDirective, Value: "myrule implementation existing_scala_rule"},
+				{Key: scalaRuleDirective, Value: "myrule deps @maven//:a"},
+				{Key: scalaRuleDirective, Value: "myrule +deps @maven//:b"},
+				{Key: scalaRuleDirective, Value: "myrule -deps @maven//:c"},
+				{Key: scalaRuleDirective, Value: "myrule attr exports @maven//:a"},
+				{Key: scalaRuleDirective, Value: "myrule option -fake_flag_name fake_flag_value"},
+				{Key: scalaRuleDirective, Value: "myrule enabled false"},
 			},
 			want: map[string]*scalarule.Config{
 				"myrule": {
@@ -281,7 +281,7 @@ func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 		},
 		"anatomic example": {
 			directives: []rule.Directive{
-				{Key: resolveKindRewriteName, Value: "kind src dst"},
+				{Key: resolveKindRewriteNameDirective, Value: "kind src dst"},
 			},
 			want: map[string]resolver.LabelNameRewriteSpec{
 				"kind": {Src: "src", Dst: "dst"},

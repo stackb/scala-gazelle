@@ -130,6 +130,14 @@ func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *
 			if symbol, err := scalaRule.ResolveSymbol(c, ix, from, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
+				if len(symbol.Conflicts) > 0 {
+					log.Printf("conflicting symbol resolution for %v %q:", symbol.Type, imp.Imp)
+					log.Println(" - choose one of the following to suppress this message:")
+					log.Printf("    # gazelle:resolve scala %s %s", imp.Imp, symbol.Label)
+					for _, conflict := range symbol.Conflicts {
+						log.Printf("# gazelle:resolve scala %s %s", imp.Imp, conflict.Label)
+					}
+				}
 				imp.Symbol = symbol
 			}
 		}

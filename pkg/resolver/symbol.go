@@ -11,10 +11,11 @@ import (
 // Symbol associates a name with the label that provides it, along with a type
 // classifier that says what kind of symbol it is.
 type Symbol struct {
-	Type     sppb.ImportType
-	Name     string
-	Label    label.Label
-	Provider string
+	Type      sppb.ImportType
+	Name      string
+	Label     label.Label
+	Provider  string
+	Conflicts []*Symbol
 }
 
 func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label) *Symbol {

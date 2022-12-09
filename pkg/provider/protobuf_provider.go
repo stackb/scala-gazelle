@@ -62,6 +62,11 @@ func (p *ProtobufProvider) OnResolve() {
 			p.putSymbol(sppb.ImportType_OBJECT, symbol, from)
 		}
 	}
+	for from, symbols := range p.importProvider(p.lang, "enumfield") {
+		for _, symbol := range symbols {
+			p.putSymbol(sppb.ImportType_OBJECT, symbol, from)
+		}
+	}
 	for from, symbols := range p.importProvider(p.lang, "message") {
 		for _, symbol := range symbols {
 			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
@@ -72,7 +77,7 @@ func (p *ProtobufProvider) OnResolve() {
 			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider(p.lang, p.impLang) {
+	for from, symbols := range p.importProvider(p.lang, "class") {
 		for _, symbol := range symbols {
 			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
 		}

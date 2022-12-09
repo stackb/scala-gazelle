@@ -27,16 +27,12 @@ const (
 )
 
 const (
-	// scalaAnnotate is the name of a directive.
-	scalaAnnotateDirective = "scala_annotate"
-	// ruleDirective is the directive for enabling rule generation.
-	ruleDirective = "scala_rule"
-	// resolveGlobDirective implements override via globs.
-	resolveGlobDirective = "resolve_glob"
-	// resolveWithDirective adds additional imports for resolution
-	resolveWithDirective = "resolve_with"
-	// resolveKindRewriteName allows renaming of resolved labels.
-	resolveKindRewriteName = "resolve_kind_rewrite_name"
+	scalaAnnotateDirective          = "scala_annotate"
+	scalaRuleDirective              = "scala_rule"
+	resolveGlobDirective            = "resolve_glob"
+	resolveConflictDirective        = "resolve_conflict"
+	resolveWithDirective            = "resolve_with"
+	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -49,6 +45,7 @@ type scalaConfig struct {
 	rules             map[string]*scalarule.Config
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	annotations       map[annotation]interface{}
+	conflictResolvers map[string]resolver.ConflictResolver
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -60,6 +57,7 @@ func newScalaConfig(universe resolver.Universe, config *config.Config, rel strin
 		annotations:       make(map[annotation]interface{}),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
 		rules:             make(map[string]*scalarule.Config),
+		conflictResolvers: make(map[string]resolver.ConflictResolver),
 	}
 }
 
@@ -93,6 +91,9 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	}
 	for k, v := range c.rules {
 		clone.rules[k] = v.Clone()
+	}
+	for k, v := range c.conflictResolvers {
+		clone.conflictResolvers[k] = v
 	}
 	for k, v := range c.labelNameRewrites {
 		clone.labelNameRewrites[k] = v
@@ -135,8 +136,8 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	for _, d := range directives {
 		switch d.Key {
-		case ruleDirective:
-			err = c.parseRuleDirective(d)
+		case scalaRuleDirective:
+			err = c.parseScalaRuleDirective(d)
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
@@ -144,8 +145,12 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
 			c.parseResolveWithDirective(d)
-		case resolveKindRewriteName:
+		case resolveKindRewriteNameDirective:
 			c.parseResolveKindRewriteNameDirective(d)
+		case resolveConflictDirective:
+			if err := c.parseResolveConflictDirective(d); err != nil {
+				return err
+			}
 		case scalaAnnotateDirective:
 			if err := c.parseScalaAnnotation(d); err != nil {
 				return err
@@ -155,7 +160,7 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	return
 }
 
-func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
+func (c *scalaConfig) parseScalaRuleDirective(d rule.Directive) error {
 	fields := strings.Fields(d.Value)
 	if len(fields) < 3 {
 		return fmt.Errorf("expected three or more fields, got %d", len(fields))
@@ -209,7 +214,7 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 3 {
-		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteName, parts)
+		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteNameDirective, parts)
 		return
 	}
 	kind := parts[0]
@@ -217,6 +222,22 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	dst := parts[2]
 
 	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
+}
+
+func (c *scalaConfig) parseResolveConflictDirective(d rule.Directive) error {
+	for _, key := range strings.Fields(d.Value) {
+		intent := collections.ParseIntent(key)
+		if intent.Want {
+			resolver, ok := c.universe.GetConflictResolver(intent.Value)
+			if !ok {
+				return fmt.Errorf("invalid directive gazelle:%s: unknown conflict resolver %q", d.Key, intent.Value)
+			}
+			c.conflictResolvers[intent.Value] = resolver
+		} else {
+			delete(c.conflictResolvers, intent.Value)
+		}
+	}
+	return nil
 }
 
 func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {

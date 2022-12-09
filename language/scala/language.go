@@ -25,7 +25,11 @@ type scalaLang struct {
 	cacheFileFlagValue string
 	// symbolProviderNamesFlagValue is a repeatable list of resolver to enable
 	symbolProviderNamesFlagValue collections.StringSlice
-	// existingScalaRulesFlagValue is the value of the existing_scala_rule repeatable flag
+	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
+	// to enable
+	conflictResolverNamesFlagValue collections.StringSlice
+	// existingScalaRulesFlagValue is the value of the existing_scala_rule
+	// repeatable flag
 	existingScalaRulesFlagValue collections.StringSlice
 	cpuprofileFlagValue         string
 	memprofileFlagValue         string
@@ -44,12 +48,15 @@ type scalaLang struct {
 	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
-	// remainingPackages is a counter that tracks when all packages have been resolved.
+	// remainingPackages is a counter that tracks when all packages have been
+	// resolved.
 	remainingPackages int
 	// progress is the progress interface
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
+	// conflictResolvers is a map of all known generated rules
+	conflictResolvers map[string]resolver.ConflictResolver
 	// globalScope includes all known symbols in the universe
 	globalScope resolver.Scope
 	// symbolProviders is a list of providers
@@ -64,11 +71,11 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
-		ruleDirective,
+		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveWithDirective,
 		scalaAnnotateDirective,
-		resolveKindRewriteName,
+		resolveKindRewriteNameDirective,
 	}
 }
 
@@ -81,6 +88,7 @@ func NewLanguage() language.Language {
 		cache:                &scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
+		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),

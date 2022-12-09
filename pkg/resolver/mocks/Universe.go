@@ -34,6 +34,29 @@ func (_m *Universe) AddSymbolProvider(provider resolver.SymbolProvider) error {
 	return r0
 }
 
+// GetConflictResolver provides a mock function with given fields: name
+func (_m *Universe) GetConflictResolver(name string) (resolver.ConflictResolver, bool) {
+	ret := _m.Called(name)
+
+	var r0 resolver.ConflictResolver
+	if rf, ok := ret.Get(0).(func(string) resolver.ConflictResolver); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(resolver.ConflictResolver)
+		}
+	}
+
+	var r1 bool
+	if rf, ok := ret.Get(1).(func(string) bool); ok {
+		r1 = rf(name)
+	} else {
+		r1 = ret.Get(1).(bool)
+	}
+
+	return r0, r1
+}
+
 // GetKnownRule provides a mock function with given fields: from
 func (_m *Universe) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	ret := _m.Called(from)
@@ -91,6 +114,20 @@ func (_m *Universe) GetSymbols(prefix string) []*resolver.Symbol {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*resolver.Symbol)
 		}
+	}
+
+	return r0
+}
+
+// PutConflictResolver provides a mock function with given fields: name, r
+func (_m *Universe) PutConflictResolver(name string, r resolver.ConflictResolver) error {
+	ret := _m.Called(name, r)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, resolver.ConflictResolver) error); ok {
+		r0 = rf(name, r)
+	} else {
+		r0 = ret.Error(0)
 	}
 
 	return r0

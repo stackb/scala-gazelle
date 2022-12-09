@@ -49,3 +49,4 @@ mocks:
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=Scope
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolProvider
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolResolver
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ConflictResolver
