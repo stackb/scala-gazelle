@@ -27,7 +27,7 @@ type scalaPackage struct {
 	// parser is the file parser
 	parser scalaparse.Parser
 	// importResolver is the parent importResolver
-	importResolver resolver.KnownImportResolver
+	importResolver resolver.ImportResolver
 	// the registry to use
 	providerRegistry scalarule.ProviderRegistry
 	// the build file
@@ -41,7 +41,7 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.KnownImportResolver) *scalaPackage {
+func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.ImportResolver) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
 		parser:           parser,
@@ -177,8 +177,9 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 
 	return newScalaRule(
 		s.cfg,
-		resolver.NewKnownImportRegistryTrie(),
 		s.importResolver,
+		s.importResolver,
+		resolver.NewKnownImportRegistryTrie(),
 		r, from, files,
 	), nil
 }

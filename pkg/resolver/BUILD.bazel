@@ -3,6 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "resolver",
     srcs = [
+        "chain_known_import_registry.go",
         "chain_resolver.go",
         "cross_resolver.go",
         "global_known_import_provider_registry.go",
@@ -16,6 +17,7 @@ go_library(
         "known_import_registry.go",
         "known_import_registry_trie.go",
         "known_import_resolver.go",
+        "known_import_scope.go",
         "known_resolver.go",
         "known_rule_registry.go",
         "label_name_rewrite_spec.go",
@@ -27,12 +29,12 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
-        "@com_github_dghubble_trie//:trie",
     ],
 )
 
@@ -40,10 +42,11 @@ go_test(
     name = "resolver_test",
     srcs = [
         "known_import_registry_trie_test.go",
+        "known_import_scope_test.go",
         "scala_resolver_test.go",
     ],
+    embed = [":resolver"],
     deps = [
-        ":resolver",
         "//build/stack/gazelle/scala/parse",
         "//pkg/resolver/mocks",
         "@bazel_gazelle//config:go_default_library",

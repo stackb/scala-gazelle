@@ -72,7 +72,7 @@ design characteristics:
 
 ## Primary Dependency
 
-Add the `build_stack_scala_gazelle` as an external workspace:
+Add `build_stack_scala_gazelle` as an external workspace:
 
 ```bazel
 # Branch: master
@@ -149,8 +149,8 @@ $ bazel run //:gazelle
 
 ## Rule Providers
 
-The extension needs to know which rules it should manage (parse imports/resolve
-deps).  This is done using `gazelle:scala_rule` directives.
+The extension needs to know which rules it should manage (parse `srcs`/resolve
+`deps`).  This is done using `gazelle:scala_rule` directives.
 
 ### Built-in Existing Rule Providers
 
@@ -182,7 +182,6 @@ rules/macros as provider implementations, use the
 gazelle(
     name = "gazelle",
     args = [
-        "-existing_scala_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
         "-existing_scala_rule=//bazel_tools:scala.bzl%scala_app",
         ...
     ],
@@ -190,17 +189,8 @@ gazelle(
 )
 ```
 
-This can then be instatiated as:
-
 ```bazel
 # gazelle:scala_rule scala_app implementation //bazel_tools:scala.bzl%scala_app
-# gazelle:scala_rule scala_app enabled false # optional if you wanted to disable it in the root
-```
-
-This rule could then be selectively enabled/disabled in subpackages as follows:
-
-```bazel
-# gazelle:scala_rule scala_app enabled true
 ```
 
 ### Custom Rule Provider
@@ -215,8 +205,8 @@ import "github.com/stackb/scala-gazelle/pkg/scalarule"
 
 func init() {
   scalarule.GlobalProviderRegistry().RegisterProvider(
-    "@foo//rules/scala.bzl:foo_scala_library",
-    newFooScalaLibrary(),
+    "@foo//rules/scala.bzl:my_scala_library",
+    newMyScalaLibrary(),
   )
 }
 ```
@@ -224,7 +214,7 @@ func init() {
 Enable the rule provider configuration:
 
 ```bazel
-# gazelle:scala_rule foo_scala_library implementation @foo//rules/scala.bzl:foo_scala_library
+# gazelle:scala_rule my_scala_library implementation @foo//rules/scala.bzl:my_scala_library
 ```
 
 ## Known Import Providers
@@ -237,15 +227,15 @@ For example, for the import `io.grpc.Status`, the trie would contain the
 following:
 
 - `io`: (`nil`)
-  - `grpc`: type `PACKAGE`, from `@maven//:io_grpc_grpc_core`
-    - `Status`: type `CLASS`, from `@maven//:io_grpc_grpc_core`
+  - `grpc` (type `PACKAGE`, from `@maven//:io_grpc_grpc_core`)
+    - `Status` (type `CLASS`, from `@maven//:io_grpc_grpc_core`)
 
 When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
-match would find the `CLASS io.grpc.Status` and the label
+match would find the `io.grpc.Status` `CLASS` and the label
 `@maven//:io_grpc_grpc_core` would be added to the rule `deps`.
 
 The trie is populated by `resolver.KnownImportProvider` implementations. Each
-implementation provides known imports from a different source.
+implementation provides known imports from a different data source.
 
 Known import providers:
 
@@ -262,7 +252,7 @@ Source files that are listed in the `srcs` of existing scala rules are parsed.
 The discovered `object`, `class`, `trait` types are provided to the known import
 trie such that they can be resolved by other rules.
 
-The extension wouldn'tt do much without this provider, but it still needs to be
+The extension wouldn't do much without this provider, but it still needs to be
 enabled in `args`:
 
 ```bazel
@@ -285,7 +275,7 @@ names that jars provide.
 
 The `maven` provider reads these package names and populates the trie
 accordingly.  Note that since only package names are known, maven dependency
-resolution via this mechanism alone is more "coarse-grained".
+resolution via this mechanism alone is _coarse-grained_.
 
 To configure the `maven` provider, use the `-maven_install_json_file` flag (can
 be repeated if you have more than one `maven_install` rule):
@@ -329,7 +319,7 @@ java_index(
 > NOTE: Use `bazel build //:java_index --output_groups=json` to produce the JSON
 > file if you want to inspect it.
 
-The `jars` attribute names dependencies that you want indexed at a fine-grained
+The `jars` attribute names dependencies that you want indexed at a _fine-grained_
 level.  Any label that provides `JavaInfo` will satisfy.
 
 The `platform_jars` is special: it indexes jars that are provided by the
