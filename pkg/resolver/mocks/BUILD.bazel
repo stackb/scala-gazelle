@@ -8,7 +8,7 @@ go_library(
         "SymbolProvider.go",
         "SymbolResolver.go",
         "Universe.go",
-        "known_import_capturer.go",
+        "symbol_capturer.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver/mocks",
     visibility = ["//visibility:public"],

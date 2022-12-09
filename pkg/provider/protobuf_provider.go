@@ -18,10 +18,10 @@ type ProvidedImports func(lang, impLang string) map[label.Label][]string
 // ProtobufProvider is a provider of symbols for the
 // stackb/rules_proto gazelle extension.
 type ProtobufProvider struct {
-	lang                string
-	impLang             string
-	knownImportRegistry resolver.Scope
-	importProvider      ProvidedImports
+	lang           string
+	impLang        string
+	scope          resolver.Scope
+	importProvider ProvidedImports
 }
 
 // NewProtobufProvider constructs a new provider.  The lang/impLang
@@ -46,7 +46,7 @@ func (p *ProtobufProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.Scope) error {
-	p.knownImportRegistry = registry
+	p.scope = registry
 	return nil
 }
 
@@ -86,5 +86,5 @@ func (p *ProtobufProvider) CanProvide(dep label.Label, knownRule func(from label
 }
 
 func (p *ProtobufProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) {
-	p.knownImportRegistry.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
+	p.scope.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
 }

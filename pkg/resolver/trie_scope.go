@@ -25,18 +25,18 @@ func NewTrieScope() *TrieScope {
 }
 
 // GetSymbols implements part of the resolver.Scope interface.
-func (r *TrieScope) GetSymbols(prefix string) (known []*Symbol) {
+func (r *TrieScope) GetSymbols(prefix string) (symbols []*Symbol) {
 	node := r.trie.Get(prefix)
 	if node == nil {
 		return
 	}
 	node.Walk(func(key string, value interface{}) error {
-		known = append(known, value.(*Symbol))
+		symbols = append(symbols, value.(*Symbol))
 		return nil
 	})
-	sort.Slice(known, func(i, j int) bool {
-		a := known[i]
-		b := known[j]
+	sort.Slice(symbols, func(i, j int) bool {
+		a := symbols[i]
+		b := symbols[j]
 		return a.Name < b.Name
 	})
 	return

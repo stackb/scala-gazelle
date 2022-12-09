@@ -108,19 +108,19 @@ func TestMavenProviderFlags(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			knownImportRegistry := mocks.NewScope(t)
+			scope := mocks.NewScope(t)
 			var got []*resolver.Symbol
 			capture := func(known *resolver.Symbol) bool {
 				got = append(got, known)
 				return true
 			}
-			knownImportRegistry.
+			scope.
 				On("PutSymbol", mock.MatchedBy(capture)).
 				Maybe().
 				Times(len(tc.want)).
 				Return(nil)
 
-			if err := p.CheckFlags(fs, c, knownImportRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)
 			}
 

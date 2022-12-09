@@ -37,8 +37,8 @@ type scalaRule struct {
 	// exports represent symbols that are importable by other rules.
 	exports map[string]resolve.ImportSpec
 	// scope is a map of symbols that are in scope.  For the import
-	// 'com.foo.Bar', the map key is 'Bar' and the map value is the known import
-	// for it.
+	// 'com.foo.Bar', the map key is 'Bar' and the map value is the symbol for
+	// it.
 	scope resolver.SymbolMap
 }
 
@@ -68,8 +68,8 @@ func newScalaRule(
 
 // ResolveSymbol implements the resolver.SymbolResolver interface
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	if known, ok := r.localRegistry.GetSymbol(imp); ok {
-		return known, nil
+	if symbol, ok := r.localRegistry.GetSymbol(imp); ok {
+		return symbol, nil
 	}
 	return r.next.ResolveSymbol(c, ix, from, lang, imp)
 }
@@ -96,8 +96,8 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	for imp, src := range r.extendedTypes {
 		// check if the import is actually a symbol in scope.  If yes, use the
 		// fully-qualified import name.
-		if known, ok := scope.Get(imp); ok {
-			imp = known.Name
+		if symbol, ok := scope.Get(imp); ok {
+			imp = symbol.Name
 		}
 		imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
 	}
@@ -255,19 +255,19 @@ func (r *scalaRule) visitImport(imp string) {
 }
 
 func (r *scalaRule) visitExplicitImport(imp string) {
-	if known, ok := r.scopeRegistry.GetSymbol(imp); ok {
-		r.putSymbolInScope(known)
+	if symbol, ok := r.scopeRegistry.GetSymbol(imp); ok {
+		r.putSymbolInScope(symbol)
 	}
 }
 
 func (r *scalaRule) visitWildcardImport(prefix string) {
-	for _, known := range r.scopeRegistry.GetSymbols(prefix) {
-		r.putSymbolInScope(known)
+	for _, symbol := range r.scopeRegistry.GetSymbols(prefix) {
+		r.putSymbolInScope(symbol)
 	}
 }
 
-func (r *scalaRule) putSymbolInScope(known *resolver.Symbol) {
-	r.scope.Add(known)
+func (r *scalaRule) putSymbolInScope(symbol *resolver.Symbol) {
+	r.scope.Add(symbol)
 }
 
 func isWildcardImport(imp string) (string, bool) {

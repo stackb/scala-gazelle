@@ -97,14 +97,14 @@ func TestProtoSymbolProviderCanProvide(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			knownImportRegistry := mocks.NewScope(t)
+			scope := mocks.NewScope(t)
 
 			p := provider.NewProtobufProvider(tc.lang, tc.lang, func(lang, impLang string) map[label.Label][]string {
 				return tc.imports[lang]
 			})
 			c := config.New()
 			flags := flag.NewFlagSet(scalaName, flag.ExitOnError)
-			p.CheckFlags(flags, c, knownImportRegistry)
+			p.CheckFlags(flags, c, scope)
 			p.OnResolve()
 
 			got := p.CanProvide(tc.from, tc.indexFunc)

@@ -15,7 +15,7 @@ func (sl *scalaLang) Loads() []rule.LoadInfo {
 	for _, name := range sl.ruleProviderRegistry.ProviderNames() {
 		provider, ok := sl.ruleProviderRegistry.LookupProvider(name)
 		if !ok {
-			log.Fatalf("provider unknown: %q", name)
+			log.Fatalf("unknown rule provider: %q", name)
 		}
 		load := provider.LoadInfo()
 		symbolsByLoadName[load.Name] = append(symbolsByLoadName[load.Name], load.Symbols...)

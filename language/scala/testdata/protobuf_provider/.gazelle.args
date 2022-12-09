@@ -1,3 +1,3 @@
--scala_import_provider=source
--scala_import_provider=protobuf
+-scala_symbol_provider=source
+-scala_symbol_provider=protobuf
 -maven_install_json_file=./maven_install.json

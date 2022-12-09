@@ -24,10 +24,10 @@ func TestFlags(t *testing.T) {
 	}{
 		"scalasource_import_provider": {
 			args: []string{
-				"-scala_import_provider=source",
-				"-scala_import_provider=java",
-				"-scala_import_provider=protobuf",
-				"-scala_import_provider=maven",
+				"-scala_symbol_provider=source",
+				"-scala_symbol_provider=java",
+				"-scala_symbol_provider=protobuf",
+				"-scala_symbol_provider=maven",
 			},
 		},
 		"scala_gazelle_cache_file": {

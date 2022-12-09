@@ -151,7 +151,7 @@ func TestScalaRulePutSymbol(t *testing.T) {
 				{
 					Filename: "A.scala",
 					Imports:  []string{"com.foo.Bar"},
-					Packages: []string{"com.foo"}, // NOTE: the package does not get advertised as a known import
+					Packages: []string{"com.foo"}, // NOTE: the package does not get advertised as a known symbol
 					Classes:  []string{"com.foo.ClassA", "com.foo.ClassB"},
 					Objects:  []string{"com.foo.ObjectA", "com.foo.ObjectB"},
 					Traits:   []string{"com.foo.TraitA", "com.foo.TraitB"},
@@ -179,8 +179,8 @@ func TestScalaRulePutSymbol(t *testing.T) {
 			scope := mocks.NewScope(t)
 
 			var got []*resolver.Symbol
-			capture := func(known *resolver.Symbol) bool {
-				got = append(got, known)
+			capture := func(symbol *resolver.Symbol) bool {
+				got = append(got, symbol)
 				return true
 			}
 			scope.
@@ -203,12 +203,12 @@ func TestScalaRulePutSymbol(t *testing.T) {
 
 func TestScalaRuleImports(t *testing.T) {
 	for name, tc := range map[string]struct {
-		directives []string
-		rule       *rule.Rule
-		from       label.Label
-		files      []*sppb.File
-		known      []*resolver.Symbol
-		want       []string
+		directives    []string
+		rule          *rule.Rule
+		from          label.Label
+		files         []*sppb.File
+		globalSymbols []*resolver.Symbol
+		want          []string
 	}{
 		"degenerate": {
 			rule: rule.NewRule("scala_library", "somelib"), // rule must not be nil
@@ -237,7 +237,7 @@ func TestScalaRuleImports(t *testing.T) {
 		"extends symbol completed by wildcard import": {
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
-			known: []*resolver.Symbol{
+			globalSymbols: []*resolver.Symbol{
 				{
 					Name:     "akka.actor.Actor",
 					Label:    label.Label{Repo: "maven", Name: "akka_actor"},
@@ -301,8 +301,8 @@ func TestScalaRuleImports(t *testing.T) {
 
 			local := resolver.NewTrieScope()
 			global := resolver.NewTrieScope()
-			for _, known := range tc.known {
-				global.PutSymbol(known)
+			for _, symbol := range tc.globalSymbols {
+				global.PutSymbol(symbol)
 			}
 
 			sc, err := newTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)

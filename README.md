@@ -26,12 +26,12 @@
     - [Built-in Existing Rule Providers](#built-in-existing-rule-providers)
     - [Custom Existing Rule Providers](#custom-existing-rule-providers)
     - [Custom Rule Provider](#custom-rule-provider)
-  - [Known Import Providers](#known-import-providers)
+  - [Symbol Providers](#symbol-providers)
     - [`source`](#source)
     - [`maven`](#maven)
     - [`java`](#java)
     - [`protobuf`](#protobuf)
-    - [Custom Known Import Provider](#custom-known-import-provider)
+    - [Custom Symbol Provider](#custom-symbol-provider)
     - [CanProvide](#canprovide)
     - [Split Packages](#split-packages)
   - [Cache](#cache)
@@ -94,7 +94,7 @@ http_archive(
 
 ## Transitive Dependencies
 
-Load corresponding transitive dependencies in your `WORKSPACE` as follows:
+Declare transitive dependencies in your `WORKSPACE` as follows:
 
 ```bazel
 load("@build_stack_scala_gazelle//:workspace_deps.bzl", "language_scala_deps")
@@ -135,7 +135,7 @@ gazelle(
 )
 ```
 
-The `args` and `data` for this rule are discussed below. 
+The `args` and `data` are discussed below. 
 
 # Usage
 
@@ -217,7 +217,7 @@ Enable the rule provider configuration:
 # gazelle:scala_rule my_scala_library implementation @foo//rules/scala.bzl:my_scala_library
 ```
 
-## Known Import Providers
+## Symbol Providers
 
 At the core of the import resolution process is a trie structure where the keys
 of the trie are parts of an import statement and the values are
@@ -231,17 +231,17 @@ following:
     - `Status` (type `CLASS`, from `@maven//:io_grpc_grpc_core`)
 
 When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
-match would find the `io.grpc.Status` `CLASS` and the label
+match would find the symbol `io.grpc.Status` `CLASS` and the label
 `@maven//:io_grpc_grpc_core` would be added to the rule `deps`.
 
 The trie is populated by `resolver.SymbolProvider` implementations. Each
 implementation provides symbols from a different data source.
 
-Known import providers:
+A symbol provider:
 
 - Have a canonical name.
-- Must be enabled with the `-scala_import_provider` flag.
-- Manage their own flags; check the provider source code for details.
+- Must be enabled with the `-scala_symbol_provider` flag.
+- Manage its own flags; check the provider source code for complete details.
 
 ### `source`
 
@@ -249,8 +249,8 @@ The `source` provider is responsible for indexing importable symbols from
 `.scala` source files during the rule generation phase.
 
 Source files that are listed in the `srcs` of existing scala rules are parsed.
-The discovered `object`, `class`, `trait` types are provided to the known import
-trie such that they can be resolved by other rules.
+The discovered `object`, `class`, `trait` types are provided to the symbol trie
+such that they can be resolved by other rules.
 
 The extension wouldn't do much without this provider, but it still needs to be
 enabled in `args`:
@@ -259,7 +259,7 @@ enabled in `args`:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
+        "-scala_symbol_provider=source",
     ],
 )
 ```
@@ -284,8 +284,8 @@ be repeated if you have more than one `maven_install` rule):
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=maven",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=maven",
         "-maven_install_json_file=$(location //:maven_install.json)",
         "-maven_install_json_file=$(location //:artifactory_install.json)",
     ],
@@ -336,12 +336,12 @@ To enable it:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=java",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=java",
         "-java_index_file=$(location //:java_index.pb)",
         # the flag order is significant: put fine-grained providers (java)
         # before coarse-grained ones (maven)
-        "-scala_import_provider=maven",
+        "-scala_symbol_provider=maven",
         ...
     ],
     data = [
@@ -364,8 +364,8 @@ To resolve scala dependencies to protobuf rules, enable as follows:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=protobuf",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=protobuf",
         ...
     ],
 )
@@ -374,7 +374,7 @@ gazelle(
 > TODO: provide an example repo showing the full configuration of these two
 > extensions.
 
-### Custom Known Import Provider
+### Custom Symbol Provider
 
 If your organization has an additional database or mechanism for import
 tracking, you can implement the `resolver.SymbolProvider` interface and

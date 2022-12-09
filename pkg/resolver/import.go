@@ -20,10 +20,8 @@ type Import struct {
 	Source *sppb.File
 	// Src is the name of the parent import (when this is an implicit import)
 	Src string
-	// Source is the resolved parent import (when this is an implicit import).
-	Parent *Import
-	// Known is the known provider of the import, after resolution.
-	Known *Symbol
+	// Symbol is the resolved symbol of the import, or nil if not resolved.
+	Symbol *Symbol
 	// Error is assiged if there is a resolution error.
 	Error error
 }
@@ -71,8 +69,8 @@ func (imp *Import) String() string {
 	var impType string
 	emoji := "✅"
 
-	if imp.Known != nil {
-		impType = fmt.Sprintf("%v", imp.Known.Type)
+	if imp.Symbol != nil {
+		impType = fmt.Sprintf("%v", imp.Symbol.Type)
 	} else if imp.Error != nil {
 		impType = "ERROR"
 		emoji = "❌"
@@ -81,12 +79,12 @@ func (imp *Import) String() string {
 		fmt.Sprintf("%s %s<%s>", emoji, imp.Imp, impType),
 	}
 
-	if imp.Known != nil {
-		to := imp.Known.Label.String()
+	if imp.Symbol != nil {
+		to := imp.Symbol.Label.String()
 		if to == "//:" {
 			to = "NO-LABEL"
 		}
-		parts = append(parts, fmt.Sprintf("%s<%s>", to, imp.Known.Provider))
+		parts = append(parts, fmt.Sprintf("%s<%s>", to, imp.Symbol.Provider))
 	} else if imp.Error != nil {
 		parts = append(parts, fmt.Sprintf("%v", imp.Error))
 	}

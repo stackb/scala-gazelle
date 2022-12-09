@@ -8,8 +8,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// newSymbolResolver constructs the top-level known import resolver.
-func newSymbolResolver(scope resolver.Scope) resolver.SymbolResolver {
+// newUniverseResolver constructs the top-level symbol resolver.
+func newUniverseResolver(scope resolver.Scope) resolver.SymbolResolver {
 	chain := resolver.NewChainSymbolResolver(
 		// override resolver is the least performant!
 		resolver.NewMemoSymbolResolver(resolver.NewOverrideSymbolResolver(scalaLangName)),
@@ -22,5 +22,5 @@ func newSymbolResolver(scope resolver.Scope) resolver.SymbolResolver {
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
 func (sl *scalaLang) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	return sl.knownImportResolver.ResolveSymbol(c, ix, from, lang, imp)
+	return sl.symbolResolver.ResolveSymbol(c, ix, from, lang, imp)
 }

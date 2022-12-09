@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	scalaImportProviderFlagName   = "scala_import_provider"
+	scalaSymbolProviderFlagName   = "scala_symbol_provider"
 	existingScalaRulesFlagName    = "existing_scala_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 	cpuprofileFileFlagName        = "cpuprofile_file"
@@ -29,7 +29,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
-	flags.Var(&sl.importProviderNamesFlagValue, scalaImportProviderFlagName, "name of a known import provider implementation to enable")
+	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")
 	flags.Var(&sl.existingScalaRulesFlagValue, existingScalaRulesFlagName, "LOAD%NAME mapping for a custom existing_scala_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	sl.registerSymbolProviders(flags, cmd, c)
@@ -44,9 +44,9 @@ func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	sl.knownImportResolver = newSymbolResolver(sl)
+	sl.symbolResolver = newUniverseResolver(sl)
 
-	if err := sl.setupSymbolProviders(flags, c, sl.importProviderNamesFlagValue); err != nil {
+	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {
 		return err
 	}
 	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
@@ -66,7 +66,7 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 }
 
 func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config, names []string) error {
-	providers, err := resolver.GetNamedSymbolProviders(sl.importProviderNamesFlagValue)
+	providers, err := resolver.GetNamedSymbolProviders(sl.symbolProviderNamesFlagValue)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config,
 			return err
 		}
 	}
-	sl.knownImportProviders = providers
+	sl.symbolProviders = providers
 	return nil
 }
 

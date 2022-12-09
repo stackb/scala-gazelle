@@ -7,18 +7,18 @@ import (
 	mock "github.com/stretchr/testify/mock"
 )
 
-type PutSymbolsCapturer struct {
+type SymbolCapturer struct {
 	Registry *Scope
 	Got      []*resolver.Symbol
 }
 
-func (k *PutSymbolsCapturer) capture(known *resolver.Symbol) bool {
-	k.Got = append(k.Got, known)
+func (k *SymbolCapturer) capture(symbol *resolver.Symbol) bool {
+	k.Got = append(k.Got, symbol)
 	return true
 }
 
-func NewSymbolsCapturer(t *testing.T) *PutSymbolsCapturer {
-	c := &PutSymbolsCapturer{
+func NewSymbolsCapturer(t *testing.T) *SymbolCapturer {
+	c := &SymbolCapturer{
 		Registry: NewScope(t),
 	}
 
