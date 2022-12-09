@@ -56,7 +56,7 @@ func TestScalaCompileResponse(t *testing.T) {
 			}
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("importRegistry.completions (-want +got):\n%s", diff)
+				t.Errorf("completions (-want +got):\n%s", diff)
 			}
 		})
 	}

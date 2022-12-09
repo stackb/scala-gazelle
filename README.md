@@ -319,14 +319,14 @@ java_index(
 > NOTE: Use `bazel build //:java_index --output_groups=json` to produce the JSON
 > file if you want to inspect it.
 
-The `jars` attribute names dependencies that you want indexed at a _fine-grained_
-level.  Any label that provides `JavaInfo` will satisfy.
+The `jars` attribute names dependencies that you want indexed at a
+_fine-grained_ level.  Any label that provides `JavaInfo` will satisfy.
 
-The `platform_jars` is special: it indexes jars that are provided by the
-platform and do not need to be resolved to a label in rule `deps`.  For example,
-if you import `java.util.Map`, no additional bazel label is required to use it.
-The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that supplies
-these symbols.  You can also add things like
+The `platform_jars` attribute is special: it indexes jars that are provided by
+the platform and do not need to be resolved to a label in rule `deps`.  For
+example, if you import `java.util.Map`, no additional bazel label is required to
+use it. The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that
+supplies these symbols.  You can also add things like
 `@maven//:org_scala_lang_scala_library` or other toolchain-provided jars that
 never need to be explicitly stated in `deps`.
 
@@ -426,17 +426,17 @@ func (p *bazelDepsProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *confi
 }
 
 // CheckFlags implements part of the resolver.Scope interface.
-func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.Scope) error {
+func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	for _, filename := range p.bazelDepsYAMLFiles {
-		if err := p.loadFile(c.WorkDir, filename, importRegistry); err != nil {
+		if err := p.loadFile(c.WorkDir, filename, scope); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (p *bazelDepsProvider) loadFile(dir string, filename string, importRegistry resolver.Scope) error {
-	return fmt.Errorf("Implement me; Supply symbols to the given importRegistry!")
+func (p *bazelDepsProvider) loadFile(dir string, filename string, scope resolver.Scope) error {
+	return fmt.Errorf("Implement me; Supply symbols to the given scope!")
 }
 
 // CanProvide implements part of the resolver.Scope interface.
@@ -454,10 +454,10 @@ func (p *bazelDepsProvider) OnResolve() {
 
 ### CanProvide
 
-The `resolver.Scope.CanProvide` function is used to determine if
-this provider is capable of providing a given dependency label.  When rule deps
-are resolved, the existing deps list is cleared of those labels it can find a
-provider for.  For example, given the rule:
+The `resolver.Scope.CanProvide` function is used to determine if this provider
+is capable of providing a given dependency label.  When rule deps are resolved,
+the existing deps list is cleared of those labels it can find a provider for.
+For example, given the rule:
 
 ```bazel
 scala_library(

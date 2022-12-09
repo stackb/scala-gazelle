@@ -27,8 +27,7 @@ type MavenProvider struct {
 	resolvers []maven.Resolver
 }
 
-// NewMavenProvider constructs a new provider having the given resolving
-// lang/impLang as well as the importRegistry instance.
+// NewMavenProvider constructs a new provider having the given resolving lang.
 func NewMavenProvider(lang string) *MavenProvider {
 	return &MavenProvider{
 		lang: lang,
@@ -46,11 +45,11 @@ func (p *MavenProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Co
 }
 
 // CheckFlags implements part of the resolver.Scope interface.
-func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.Scope) error {
+func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	p.resolvers = make([]maven.Resolver, len(p.mavenInstallJSONFiles))
 
 	for i, filename := range p.mavenInstallJSONFiles {
-		resolver, err := p.loadFile(c.WorkDir, filename, importRegistry)
+		resolver, err := p.loadFile(c.WorkDir, filename, scope)
 		if err != nil {
 			return err
 		}
@@ -60,7 +59,7 @@ func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importReg
 	return nil
 }
 
-func (p *MavenProvider) loadFile(dir string, filename string, importRegistry resolver.Scope) (maven.Resolver, error) {
+func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Scope) (maven.Resolver, error) {
 	basename := filepath.Base(filename)
 	if !strings.HasSuffix(basename, "_install.json") {
 		return nil, fmt.Errorf("maven cross resolver: -maven_install_json_file base name must match the pattern {name}_install.json (got %s)", basename)
@@ -71,7 +70,7 @@ func (p *MavenProvider) loadFile(dir string, filename string, importRegistry res
 	}
 	resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
 		log.Printf(format, args...)
-	}, importRegistry.PutSymbol)
+	}, scope.PutSymbol)
 	if err != nil {
 		return nil, fmt.Errorf("initializing maven resolver: %w", err)
 	}

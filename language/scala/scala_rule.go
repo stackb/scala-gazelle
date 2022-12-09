@@ -26,10 +26,10 @@ type scalaRule struct {
 	files []*sppb.File
 	// the import resolver to which we chain to when self-imports are not matched.
 	next resolver.SymbolResolver
-	// the localRegistry implementation to which we provide symbols.
-	localRegistry resolver.Scope
-	// the registry from which we lookup both local and global imports.
-	scopeRegistry resolver.Scope
+	// the ruleScope implementation to which we provide symbols.
+	ruleScope resolver.Scope
+	// the scope from which we lookup both local and global imports.
+	importScope resolver.Scope
 	// extendedTypes is a mapping from the required type to the symbol that
 	// needs it. for example, if 'class Foo extendedTypes Bar', "Bar" is the map
 	// key and "Foo" will be the value.
@@ -45,8 +45,8 @@ type scalaRule struct {
 func newScalaRule(
 	scalaConfig *scalaConfig,
 	next resolver.SymbolResolver,
-	globalRegistry resolver.Scope,
-	localRegistry resolver.Scope,
+	parentScope resolver.Scope,
+	localScope resolver.Scope,
 	r *rule.Rule,
 	from label.Label,
 	files []*sppb.File,
@@ -57,8 +57,8 @@ func newScalaRule(
 		from:          from,
 		files:         files,
 		next:          next,
-		localRegistry: localRegistry,
-		scopeRegistry: resolver.NewChainScope(localRegistry, globalRegistry),
+		ruleScope:     localScope,
+		importScope:   resolver.NewChainScope(localScope, parentScope),
 		extendedTypes: make(map[string][]string),
 		exports:       make(map[string]resolve.ImportSpec),
 	}
@@ -68,7 +68,7 @@ func newScalaRule(
 
 // ResolveSymbol implements the resolver.SymbolResolver interface
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	if symbol, ok := r.localRegistry.GetSymbol(imp); ok {
+	if symbol, ok := r.ruleScope.GetSymbol(imp); ok {
 		return symbol, nil
 	}
 	return r.next.ResolveSymbol(c, ix, from, lang, imp)
@@ -92,7 +92,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	}
 
 	// add import required from extends clauses
-	scope := r.getOrCreateSymbolScope()
+	scope := r.getOrCreateImportScope()
 	for imp, src := range r.extendedTypes {
 		// check if the import is actually a symbol in scope.  If yes, use the
 		// fully-qualified import name.
@@ -227,10 +227,10 @@ func (r *scalaRule) putExport(imp string) {
 func (r *scalaRule) putSymbol(imp string, impType sppb.ImportType) {
 	// since we don't need to resolve same-rule symbols to a different label,
 	// record all imports as label.NoLabel!
-	r.localRegistry.PutSymbol(resolver.NewSymbol(impType, imp, "self-import", label.NoLabel))
+	r.ruleScope.PutSymbol(resolver.NewSymbol(impType, imp, "self-import", label.NoLabel))
 }
 
-func (r *scalaRule) getOrCreateSymbolScope() resolver.SymbolMap {
+func (r *scalaRule) getOrCreateImportScope() resolver.SymbolMap {
 	if r.scope == nil {
 		r.scope = make(resolver.SymbolMap)
 		r.visitImports()
@@ -255,13 +255,13 @@ func (r *scalaRule) visitImport(imp string) {
 }
 
 func (r *scalaRule) visitExplicitImport(imp string) {
-	if symbol, ok := r.scopeRegistry.GetSymbol(imp); ok {
+	if symbol, ok := r.importScope.GetSymbol(imp); ok {
 		r.putSymbolInScope(symbol)
 	}
 }
 
 func (r *scalaRule) visitWildcardImport(prefix string) {
-	for _, symbol := range r.scopeRegistry.GetSymbols(prefix) {
+	for _, symbol := range r.importScope.GetSymbols(prefix) {
 		r.putSymbolInScope(symbol)
 	}
 }

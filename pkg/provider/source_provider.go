@@ -41,8 +41,8 @@ func NewSourceProvider(progress progressFunc) *SourceProvider {
 // sha256, the cache hit will be used.
 type SourceProvider struct {
 	progress progressFunc
-	// importRegistry is the interface we provide imports to
-	importRegistry resolver.Scope
+	// scope is the interface we provide imports to
+	scope resolver.Scope
 	// byFilename is a mapping of the scala file to the spec
 	byFilename map[string]*sppb.File
 	// byRule is a mapping of the scala rule to the spec
@@ -61,8 +61,8 @@ func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *confi
 }
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
-func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, importRegistry resolver.Scope) error {
-	r.importRegistry = importRegistry
+func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
+	r.scope = scope
 	return nil
 }
 
@@ -220,7 +220,7 @@ func (r *SourceProvider) provideFile(from label.Label, rule *sppb.Rule, file *sp
 }
 
 func (r *SourceProvider) putSymbol(rule *sppb.Rule, from label.Label, imp string, impType sppb.ImportType) {
-	r.importRegistry.PutSymbol(resolver.NewSymbol(impType, imp, rule.Kind, from))
+	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, rule.Kind, from))
 }
 
 // fileSha256 computes the sha256 hash of a file

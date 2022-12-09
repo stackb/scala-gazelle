@@ -175,10 +175,10 @@ func TestMavenProviderCanProvide(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := mocks.NewScope(t)
-			importRegistry.On("PutSymbol", mock.Anything).Maybe().Return(nil)
+			scope := mocks.NewScope(t)
+			scope.On("PutSymbol", mock.Anything).Maybe().Return(nil)
 
-			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)
 			}
 

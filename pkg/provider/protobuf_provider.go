@@ -45,8 +45,8 @@ func (p *ProtobufProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config
 }
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
-func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.Scope) error {
-	p.scope = registry
+func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
+	p.scope = scope
 	return nil
 }
 

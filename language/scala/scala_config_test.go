@@ -84,7 +84,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			got := sc
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(scalaConfig{}),
-				cmpopts.IgnoreFields(scalaConfig{}, "config", "resolver"),
+				cmpopts.IgnoreFields(scalaConfig{}, "config", "universe"),
 				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)

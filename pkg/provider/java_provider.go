@@ -21,8 +21,8 @@ import (
 type JavaProvider struct {
 	jarindexFiles collections.StringSlice
 
-	symbolRegistry resolver.Scope
-	byLabel        map[label.Label]*jipb.JarFile
+	scope   resolver.Scope
+	byLabel map[label.Label]*jipb.JarFile
 }
 
 // NewJavaProvider constructs a new provider.
@@ -44,8 +44,8 @@ func (p *JavaProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Con
 }
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
-func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, registry resolver.Scope) error {
-	p.symbolRegistry = registry
+func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
+	p.scope = scope
 
 	for _, filename := range p.jarindexFiles {
 		if !filepath.IsAbs(filename) {
@@ -139,5 +139,5 @@ func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label
 }
 
 func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) {
-	p.symbolRegistry.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
+	p.scope.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
 }
