@@ -22,22 +22,22 @@ func TestScalaSourceProvider(t *testing.T) {
 		kind      string
 		from      label.Label
 		testfiles []string // name(s) of files under testdata/
-		want      []*resolver.KnownImport
+		want      []*resolver.Symbol
 	}{
 		"GreeterClient.scala": {
 			kind:      "scala_library",
 			from:      label.Label{Name: "greeter_lib"},
 			testfiles: []string{"testdata/GreeterClient.scala"},
-			want: []*resolver.KnownImport{
+			want: []*resolver.Symbol{
 				{
 					Type:     sppb.ImportType_OBJECT,
-					Import:   "examples.helloworld.greeter.GreeterClient",
+					Name:     "examples.helloworld.greeter.GreeterClient",
 					Label:    label.Label{Name: "greeter_lib"},
 					Provider: "scala_library",
 				},
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "examples.helloworld.greeter",
+					Name:     "examples.helloworld.greeter",
 					Label:    label.Label{Name: "greeter_lib"},
 					Provider: "scala_library",
 				},
@@ -51,7 +51,7 @@ func TestScalaSourceProvider(t *testing.T) {
 			}
 			testutil.ListFiles(t, dir)
 
-			known := mocks.NewKnownImportsCapturer(t)
+			known := mocks.NewSymbolsCapturer(t)
 
 			p := provider.NewSourceProvider(func(msg string) {})
 

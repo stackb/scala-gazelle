@@ -22,12 +22,12 @@ const (
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
-	// rel is the package (args.Rel)
+	// rel is the package name (from args.Rel)
 	rel string
 	// parser is the file parser
 	parser scalaparse.Parser
-	// importResolver is the parent importResolver
-	importResolver resolver.ImportResolver
+	// universe is the parent universe
+	universe resolver.Universe
 	// the registry to use
 	providerRegistry scalarule.ProviderRegistry
 	// the build file
@@ -41,11 +41,11 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.ImportResolver) *scalaPackage {
+func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
 		parser:           parser,
-		importResolver:   importResolver,
+		universe:         importResolver,
 		providerRegistry: providerRegistry,
 		file:             file,
 		cfg:              cfg,
@@ -177,9 +177,9 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 
 	return newScalaRule(
 		s.cfg,
-		s.importResolver,
-		s.importResolver,
-		resolver.NewKnownImportRegistryTrie(),
+		s.universe,
+		s.universe,
+		resolver.NewTrieScope(),
 		r, from, files,
 	), nil
 }

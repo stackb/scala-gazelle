@@ -37,7 +37,7 @@ func TestMavenProviderFlags(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args  []string
 		files []testtools.FileSpec
-		want  []*resolver.KnownImport
+		want  []*resolver.Symbol
 	}{
 		"empty maven file": {
 			args: []string{
@@ -60,34 +60,34 @@ func TestMavenProviderFlags(t *testing.T) {
 					Path: "testdata/maven_install.json",
 				},
 			},
-			want: []*resolver.KnownImport{
+			want: []*resolver.Symbol{
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "javax.xml",
+					Name:     "javax.xml",
 					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
 					Provider: "maven",
 				},
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "javax.xml.datatype",
+					Name:     "javax.xml.datatype",
 					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
 					Provider: "maven",
 				},
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "javax.xml.namespace",
+					Name:     "javax.xml.namespace",
 					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
 					Provider: "maven",
 				},
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "javax.xml.parsers",
+					Name:     "javax.xml.parsers",
 					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
 					Provider: "maven",
 				},
 				{
 					Type:     sppb.ImportType_PACKAGE,
-					Import:   "javax.xml.stream",
+					Name:     "javax.xml.stream",
 					Label:    label.Label{Repo: "maven", Name: "xml_apis_xml_apis"},
 					Provider: "maven",
 				},
@@ -108,19 +108,19 @@ func TestMavenProviderFlags(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			knownImportRegistry := mocks.NewKnownImportRegistry(t)
-			var got []*resolver.KnownImport
-			capture := func(known *resolver.KnownImport) bool {
+			scope := mocks.NewScope(t)
+			var got []*resolver.Symbol
+			capture := func(known *resolver.Symbol) bool {
 				got = append(got, known)
 				return true
 			}
-			knownImportRegistry.
-				On("PutKnownImport", mock.MatchedBy(capture)).
+			scope.
+				On("PutSymbol", mock.MatchedBy(capture)).
 				Maybe().
 				Times(len(tc.want)).
 				Return(nil)
 
-			if err := p.CheckFlags(fs, c, knownImportRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)
 			}
 
@@ -175,10 +175,10 @@ func TestMavenProviderCanProvide(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			importRegistry := mocks.NewKnownImportRegistry(t)
-			importRegistry.On("PutKnownImport", mock.Anything).Maybe().Return(nil)
+			scope := mocks.NewScope(t)
+			scope.On("PutSymbol", mock.Anything).Maybe().Return(nil)
 
-			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
+			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)
 			}
 

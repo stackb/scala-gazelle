@@ -12,11 +12,11 @@ import (
 // could not be resolved.
 var ErrImportNotFound = fmt.Errorf("import not found")
 
-// KnownImportResolver knows how to resolve imports.
-type KnownImportResolver interface {
-	// ResolveKnownImport takes the given config, gazelle rule index, and an
+// SymbolResolver knows how to resolve imports.
+type SymbolResolver interface {
+	// ResolveSymbol takes the given config, gazelle rule index, and an
 	// import to resolve. Implementations should return ErrImportNotFound if
 	// unsuccessful.  If multiple matches are found, return
 	// ImportAmbiguousError.
-	ResolveKnownImport(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*KnownImport, error)
+	ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*Symbol, error)
 }

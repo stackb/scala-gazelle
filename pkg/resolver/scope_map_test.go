@@ -6,24 +6,24 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestKnownImportScopeAdd(t *testing.T) {
+func TestScopeMapAdd(t *testing.T) {
 	for name, tc := range map[string]struct {
-		known KnownImport
-		want  bool
+		symbol Symbol
+		want   bool
 	}{
 		"degenerate": {},
 		"not added": {
-			known: KnownImport{Import: "nope"},
-			want:  false,
+			symbol: Symbol{Name: "nope"},
+			want:   false,
 		},
 		"added": {
-			known: KnownImport{Import: "a.b"},
-			want:  true,
+			symbol: Symbol{Name: "a.b"},
+			want:   true,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			scope := make(KnownImportScope)
-			got := scope.Add(&tc.known)
+			scope := make(SymbolMap)
+			got := scope.Add(&tc.symbol)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -32,26 +32,26 @@ func TestKnownImportScopeAdd(t *testing.T) {
 	}
 }
 
-func TestImportBasename(t *testing.T) {
+func TestSymbolBasename(t *testing.T) {
 	type result struct {
 		Basename string
 		Ok       bool
 	}
 	for name, tc := range map[string]struct {
-		imp  string
+		name string
 		want result
 	}{
 		"degenerate": {},
 		"typical": {
-			imp:  "com.foo.Bar",
+			name: "com.foo.Bar",
 			want: result{"Bar", true},
 		},
 		"no dot": {
-			imp: "com_foo_Bar",
+			name: "com_foo_Bar",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			basename, ok := importBasename(tc.imp)
+			basename, ok := symbolBasename(tc.name)
 			got := result{basename, ok}
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {

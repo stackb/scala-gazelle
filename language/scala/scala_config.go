@@ -43,7 +43,7 @@ const (
 type scalaConfig struct {
 	config            *config.Config
 	rel               string
-	resolver          resolver.ImportResolver
+	universe          resolver.Universe
 	overrides         []*overrideSpec
 	implicitImports   []*implicitImportSpec
 	rules             map[string]*scalarule.Config
@@ -52,11 +52,11 @@ type scalaConfig struct {
 }
 
 // newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(config *config.Config, rel string, rslv resolver.ImportResolver) *scalaConfig {
+func newScalaConfig(universe resolver.Universe, config *config.Config, rel string) *scalaConfig {
 	return &scalaConfig{
 		config:            config,
 		rel:               rel,
-		resolver:          rslv,
+		universe:          universe,
 		annotations:       make(map[annotation]interface{}),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
 		rules:             make(map[string]*scalarule.Config),
@@ -74,12 +74,12 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver.ImportResolver) *scalaConfig {
+func getOrCreateScalaConfig(universe resolver.Universe, config *config.Config, rel string) *scalaConfig {
 	var cfg *scalaConfig
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*scalaConfig).clone(config, rel)
 	} else {
-		cfg = newScalaConfig(config, rel, resolver)
+		cfg = newScalaConfig(universe, config, rel)
 	}
 	config.Exts[scalaLangName] = cfg
 	return cfg
@@ -87,7 +87,7 @@ func getOrCreateScalaConfig(config *config.Config, rel string, resolver resolver
 
 // clone copies this config to a new one.
 func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
-	clone := newScalaConfig(config, rel, c.resolver)
+	clone := newScalaConfig(c.universe, config, rel)
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
@@ -107,8 +107,8 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 }
 
 func (c *scalaConfig) canProvide(from label.Label) bool {
-	for _, provider := range c.resolver.KnownImportProviders() {
-		if provider.CanProvide(from, c.resolver.GetKnownRule) {
+	for _, provider := range c.universe.SymbolProviders() {
+		if provider.CanProvide(from, c.universe.GetKnownRule) {
 			return true
 		}
 	}
@@ -126,7 +126,7 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	if from.Pkg == "" && from.Repo == c.config.RepoName {
 		from = label.New(from.Repo, c.rel, from.Name)
 	}
-	return c.resolver.GetKnownRule(from)
+	return c.universe.GetKnownRule(from)
 }
 
 // parseDirectives is called in each directory visited by gazelle.  The relative

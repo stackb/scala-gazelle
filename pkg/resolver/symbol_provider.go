@@ -8,15 +8,16 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
-// KnownImportProvider is a flag-configurable entity that supplies known imports
+// SymbolProvider is a flag-configurable entity that supplies symbols
 // to a registry.
-type KnownImportProvider interface {
+type SymbolProvider interface {
 	// Providers have canonical names
 	Name() string
 	// RegisterFlags configures the flags.
 	RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config)
-	// CheckFlags asserts that the flags are correct.
-	CheckFlags(fs *flag.FlagSet, c *config.Config, registry KnownImportRegistry) error
+	// CheckFlags asserts that the flags are correct and provides a scope to
+	// provide symbols to.
+	CheckFlags(fs *flag.FlagSet, c *config.Config, scope Scope) error
 	// Providers typically manage a particular sub-space of labels.  For example,
 	// the maven resolver may return true for labels like
 	// "@maven//:junit_junit". The rule Index can be used to consult what type

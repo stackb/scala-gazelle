@@ -16,7 +16,7 @@ func (sl *scalaLang) onGenerate() error {
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
-	for _, provider := range sl.knownImportProviders {
+	for _, provider := range sl.symbolProviders {
 		provider.OnResolve()
 	}
 

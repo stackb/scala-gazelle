@@ -26,12 +26,12 @@
     - [Built-in Existing Rule Providers](#built-in-existing-rule-providers)
     - [Custom Existing Rule Providers](#custom-existing-rule-providers)
     - [Custom Rule Provider](#custom-rule-provider)
-  - [Known Import Providers](#known-import-providers)
+  - [Symbol Providers](#symbol-providers)
     - [`source`](#source)
     - [`maven`](#maven)
     - [`java`](#java)
     - [`protobuf`](#protobuf)
-    - [Custom Known Import Provider](#custom-known-import-provider)
+    - [Custom Symbol Provider](#custom-symbol-provider)
     - [CanProvide](#canprovide)
     - [Split Packages](#split-packages)
   - [Cache](#cache)
@@ -94,7 +94,7 @@ http_archive(
 
 ## Transitive Dependencies
 
-Load corresponding transitive dependencies in your `WORKSPACE` as follows:
+Declare transitive dependencies in your `WORKSPACE` as follows:
 
 ```bazel
 load("@build_stack_scala_gazelle//:workspace_deps.bzl", "language_scala_deps")
@@ -135,7 +135,7 @@ gazelle(
 )
 ```
 
-The `args` and `data` for this rule are discussed below. 
+The `args` and `data` are discussed below. 
 
 # Usage
 
@@ -217,11 +217,11 @@ Enable the rule provider configuration:
 # gazelle:scala_rule my_scala_library implementation @foo//rules/scala.bzl:my_scala_library
 ```
 
-## Known Import Providers
+## Symbol Providers
 
 At the core of the import resolution process is a trie structure where the keys
 of the trie are parts of an import statement and the values are
-`*resolver.KnownImport` structs.
+`*resolver.Symbol` structs.
 
 For example, for the import `io.grpc.Status`, the trie would contain the
 following:
@@ -231,17 +231,17 @@ following:
     - `Status` (type `CLASS`, from `@maven//:io_grpc_grpc_core`)
 
 When resolving the import `io.grpc.Status.ALREADY_EXISTS`, the longest prefix
-match would find the `io.grpc.Status` `CLASS` and the label
+match would find the symbol `io.grpc.Status` `CLASS` and the label
 `@maven//:io_grpc_grpc_core` would be added to the rule `deps`.
 
-The trie is populated by `resolver.KnownImportProvider` implementations. Each
-implementation provides known imports from a different data source.
+The trie is populated by `resolver.SymbolProvider` implementations. Each
+implementation provides symbols from a different data source.
 
-Known import providers:
+A symbol provider:
 
 - Have a canonical name.
-- Must be enabled with the `-scala_import_provider` flag.
-- Manage their own flags; check the provider source code for details.
+- Must be enabled with the `-scala_symbol_provider` flag.
+- Manage its own flags; check the provider source code for complete details.
 
 ### `source`
 
@@ -249,8 +249,8 @@ The `source` provider is responsible for indexing importable symbols from
 `.scala` source files during the rule generation phase.
 
 Source files that are listed in the `srcs` of existing scala rules are parsed.
-The discovered `object`, `class`, `trait` types are provided to the known import
-trie such that they can be resolved by other rules.
+The discovered `object`, `class`, `trait` types are provided to the symbol trie
+such that they can be resolved by other rules.
 
 The extension wouldn't do much without this provider, but it still needs to be
 enabled in `args`:
@@ -259,7 +259,7 @@ enabled in `args`:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
+        "-scala_symbol_provider=source",
     ],
 )
 ```
@@ -284,8 +284,8 @@ be repeated if you have more than one `maven_install` rule):
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=maven",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=maven",
         "-maven_install_json_file=$(location //:maven_install.json)",
         "-maven_install_json_file=$(location //:artifactory_install.json)",
     ],
@@ -319,14 +319,14 @@ java_index(
 > NOTE: Use `bazel build //:java_index --output_groups=json` to produce the JSON
 > file if you want to inspect it.
 
-The `jars` attribute names dependencies that you want indexed at a _fine-grained_
-level.  Any label that provides `JavaInfo` will satisfy.
+The `jars` attribute names dependencies that you want indexed at a
+_fine-grained_ level.  Any label that provides `JavaInfo` will satisfy.
 
-The `platform_jars` is special: it indexes jars that are provided by the
-platform and do not need to be resolved to a label in rule `deps`.  For example,
-if you import `java.util.Map`, no additional bazel label is required to use it.
-The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that supplies
-these symbols.  You can also add things like
+The `platform_jars` attribute is special: it indexes jars that are provided by
+the platform and do not need to be resolved to a label in rule `deps`.  For
+example, if you import `java.util.Map`, no additional bazel label is required to
+use it. The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that
+supplies these symbols.  You can also add things like
 `@maven//:org_scala_lang_scala_library` or other toolchain-provided jars that
 never need to be explicitly stated in `deps`.
 
@@ -336,12 +336,12 @@ To enable it:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=java",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=java",
         "-java_index_file=$(location //:java_index.pb)",
         # the flag order is significant: put fine-grained providers (java)
         # before coarse-grained ones (maven)
-        "-scala_import_provider=maven",
+        "-scala_symbol_provider=maven",
         ...
     ],
     data = [
@@ -364,8 +364,8 @@ To resolve scala dependencies to protobuf rules, enable as follows:
 gazelle(
     name = "gazelle",
     args = [
-        "-scala_import_provider=source",
-        "-scala_import_provider=protobuf",
+        "-scala_symbol_provider=source",
+        "-scala_symbol_provider=protobuf",
         ...
     ],
 )
@@ -374,10 +374,10 @@ gazelle(
 > TODO: provide an example repo showing the full configuration of these two
 > extensions.
 
-### Custom Known Import Provider
+### Custom Symbol Provider
 
 If your organization has an additional database or mechanism for import
-tracking, you can implement the `resolver.KnownImportProvider` interface and
+tracking, you can implement the `resolver.SymbolProvider` interface and
 register it with the global registry.
 
 For example, if your organization uses https://github.com/johnynek/bazel-deps,
@@ -400,11 +400,11 @@ import (
 
 func init() {
   resolver.
-    GlobalKnownImportProviderRegistry().
-    AddKnownImportProvider(newBazelDepsProvider())
+    GlobalSymbolProviderRegistry().
+    AddSymbolProvider(newBazelDepsProvider())
 }
 
-// bazelDepsProvider is a provider of known imports for the
+// bazelDepsProvider is a provider of symbols for the
 // johnynek/bazel-deps.
 type bazelDepsProvider struct {
 	bazelDepsYAMLFiles collections.StringSlice
@@ -415,31 +415,31 @@ func newBazelDepsProvider() *bazelDepsProvider {
 	return &bazelDepsProvider{}
 }
 
-// Name implements part of the resolver.KnownImportRegistry interface.
+// Name implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) Name() string {
 	return "bazel-deps"
 }
 
-// RegisterFlags implements part of the resolver.KnownImportRegistry interface.
+// RegisterFlags implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.bazelDepsYAMLFiles, "bazel_deps_yaml_file", "path to bazel_deps.yaml")
 }
 
-// CheckFlags implements part of the resolver.KnownImportRegistry interface.
-func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, importRegistry resolver.KnownImportRegistry) error {
+// CheckFlags implements part of the resolver.Scope interface.
+func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	for _, filename := range p.bazelDepsYAMLFiles {
-		if err := p.loadFile(c.WorkDir, filename, importRegistry); err != nil {
+		if err := p.loadFile(c.WorkDir, filename, scope); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (p *bazelDepsProvider) loadFile(dir string, filename string, importRegistry resolver.KnownImportRegistry) error {
-	return fmt.Errorf("Implement me; Supply known imports to the given importRegistry!")
+func (p *bazelDepsProvider) loadFile(dir string, filename string, scope resolver.Scope) error {
+	return fmt.Errorf("Implement me; Supply symbols to the given scope!")
 }
 
-// CanProvide implements part of the resolver.KnownImportRegistry interface.
+// CanProvide implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	if dep.Repo == "bazel_deps" {
 		return true
@@ -447,17 +447,17 @@ func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from labe
 	return false
 }
 
-// OnResolve implements part of the resolver.KnownImportRegistry interface.
+// OnResolve implements part of the resolver.Scope interface.
 func (p *bazelDepsProvider) OnResolve() {
 }
 ```
 
 ### CanProvide
 
-The `resolver.KnownImportRegistry.CanProvide` function is used to determine if
-this provider is capable of providing a given dependency label.  When rule deps
-are resolved, the existing deps list is cleared of those labels it can find a
-provider for.  For example, given the rule:
+The `resolver.Scope.CanProvide` function is used to determine if this provider
+is capable of providing a given dependency label.  When rule deps are resolved,
+the existing deps list is cleared of those labels it can find a provider for.
+For example, given the rule:
 
 ```bazel
 scala_library(
@@ -628,7 +628,7 @@ placeholder."_
 ### `gazelle:annotate`
 
 The `annotate` directive is a debugging aid that adds comments to the generated
-rules detailing what the known imports are and how they resolved.
+rules detailing what the symbols are and how they resolved.
 
 #### `imports`
 

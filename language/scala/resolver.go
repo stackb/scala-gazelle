@@ -89,10 +89,10 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 	}
 
 	for _, imp := range imports {
-		if imp.Known == nil || imp.Error != nil {
+		if imp.Symbol == nil || imp.Error != nil {
 			continue
 		}
-		dep := imp.Known.Label
+		dep := imp.Symbol.Label
 		if seen[dep] {
 			// log.Println("addResolvedDeps seen!", dep)
 			continue
@@ -133,7 +133,7 @@ func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool, fr
 		str := &build.StringExpr{Value: dep}
 		if annotate {
 			deps[dep].Annotate(&str.Comments, func(imp *resolver.Import) bool {
-				return imp.Error == nil && imp.Known != nil
+				return imp.Error == nil && imp.Symbol != nil
 			})
 		}
 		exprs = append(exprs, str)

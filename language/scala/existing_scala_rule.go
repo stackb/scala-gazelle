@@ -127,10 +127,10 @@ func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {
-			if known, err := scalaRule.ResolveKnownImport(c, ix, from, scalaLangName, imp.Imp); err != nil {
+			if symbol, err := scalaRule.ResolveSymbol(c, ix, from, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
-				imp.Known = known
+				imp.Symbol = symbol
 			}
 		}
 
@@ -157,7 +157,7 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantI
 	comments.Before = nil
 	for _, key := range imports.Keys() {
 		imp := imports[key]
-		if !(wantImports || (wantUnresolved && imp.Known == nil)) {
+		if !(wantImports || (wantUnresolved && imp.Symbol == nil)) {
 			continue
 		}
 		comments.Before = append(comments.Before, imp.Comment())

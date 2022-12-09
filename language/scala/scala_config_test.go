@@ -77,14 +77,14 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(scalaConfig{}),
-				cmpopts.IgnoreFields(scalaConfig{}, "config", "resolver"),
+				cmpopts.IgnoreFields(scalaConfig{}, "config", "universe"),
 				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -137,7 +137,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -182,7 +182,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -227,7 +227,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -258,7 +258,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -289,7 +289,7 @@ func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewImportResolver(t), "", tc.directives...)
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -347,24 +347,24 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			importResolver := mocks.NewImportResolver(t)
+			universe := mocks.NewUniverse(t)
 
 			var got label.Label
 			capture := func(from label.Label) bool {
 				got = from
 				return true
 			}
-			importResolver.
+			universe.
 				On("GetKnownRule", mock.MatchedBy(capture)).
 				Maybe().
 				Times(tc.wantTimes).
 				Return(nil, false)
 
-			sc := newScalaConfig(c, tc.rel, importResolver)
+			sc := newScalaConfig(universe, c, tc.rel)
 
 			sc.GetKnownRule(tc.from)
 
-			importResolver.AssertExpectations(t)
+			universe.AssertExpectations(t)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -415,7 +415,7 @@ func TestIsSameImport(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			c := config.New()
 			c.RepoName = tc.repoName
-			sc := newScalaConfig(c, "", mocks.NewImportResolver(t))
+			sc := newScalaConfig(mocks.NewUniverse(t), c, "")
 			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -424,9 +424,9 @@ func TestIsSameImport(t *testing.T) {
 	}
 }
 
-func newTestScalaConfig(t *testing.T, importResolver resolver.ImportResolver, rel string, dd ...rule.Directive) (*scalaConfig, error) {
+func newTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*scalaConfig, error) {
 	c := config.New()
-	sc := newScalaConfig(c, rel, importResolver)
+	sc := newScalaConfig(universe, c, rel)
 	err := sc.parseDirectives(dd)
 	return sc, err
 }

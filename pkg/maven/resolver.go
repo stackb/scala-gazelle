@@ -27,9 +27,9 @@ type mavenResolver struct {
 }
 
 type warnFunc func(format string, args ...interface{})
-type putKnownImportFunc func(*resolver.KnownImport) error
+type putSymbolFunc func(*resolver.Symbol) error
 
-func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, putKnownImport putKnownImportFunc) (Resolver, error) {
+func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, putSymbol putSymbolFunc) (Resolver, error) {
 	r := mavenResolver{
 		lang:      lang,
 		name:      mavenWorkspaceName,
@@ -54,7 +54,7 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 
 		for _, pkg := range dep.Packages {
 			r.data.Add(pkg, labelString)
-			putKnownImport(resolver.NewKnownImport(sppb.ImportType_PACKAGE, pkg, mavenWorkspaceName, from))
+			putSymbol(resolver.NewSymbol(sppb.ImportType_PACKAGE, pkg, mavenWorkspaceName, from))
 		}
 	}
 

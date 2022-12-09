@@ -23,8 +23,8 @@ const debug = false
 type scalaLang struct {
 	// cacheFileFlagValue is the main cache file, if enabled
 	cacheFileFlagValue string
-	// importProviderNamesFlagValue is a repeatable list of resolver to enable
-	importProviderNamesFlagValue collections.StringSlice
+	// symbolProviderNamesFlagValue is a repeatable list of resolver to enable
+	symbolProviderNamesFlagValue collections.StringSlice
 	// existingScalaRulesFlagValue is the value of the existing_scala_rule repeatable flag
 	existingScalaRulesFlagValue collections.StringSlice
 	cpuprofileFlagValue         string
@@ -50,12 +50,12 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
-	// knownImports is a map of all known generated import providers
-	knownImports resolver.KnownImportRegistry
-	// knownImportProviders is a list of providers
-	knownImportProviders []resolver.KnownImportProvider
-	// knownImportResolver is our top-level known import resolver implementation
-	knownImportResolver resolver.KnownImportResolver
+	// globalScope includes all known symbols in the universe
+	globalScope resolver.Scope
+	// symbolProviders is a list of providers
+	symbolProviders []resolver.SymbolProvider
+	// symbolResolver is our top-level known import resolver implementation
+	symbolResolver resolver.SymbolResolver
 }
 
 // Name implements part of the language.Language interface
@@ -79,7 +79,7 @@ func NewLanguage() language.Language {
 
 	lang := &scalaLang{
 		cache:                &scpb.Cache{},
-		knownImports:         resolver.NewKnownImportRegistryTrie(),
+		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
@@ -90,10 +90,10 @@ func NewLanguage() language.Language {
 		writeParseProgress(lang.progress, msg)
 	})
 
-	lang.AddKnownImportProvider(lang.sourceProvider)
-	lang.AddKnownImportProvider(provider.NewJavaProvider())
-	lang.AddKnownImportProvider(provider.NewMavenProvider(scalaLangName))
-	lang.AddKnownImportProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
+	lang.AddSymbolProvider(lang.sourceProvider)
+	lang.AddSymbolProvider(provider.NewJavaProvider())
+	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
+	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 
 	return lang
 }
