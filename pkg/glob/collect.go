@@ -3,7 +3,6 @@ package glob
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
@@ -12,12 +11,12 @@ import (
 type collector struct {
 	file *rule.File
 	dir  string
-	rel  string
+	// rel  string
 	srcs []string
 }
 
-func CollectFilenames(file *rule.File, dir, rel string, expr build.Expr) ([]string, error) {
-	c := collector{file: file, dir: dir, rel: rel}
+func CollectFilenames(file *rule.File, dir string, expr build.Expr) ([]string, error) {
+	c := collector{file: file, dir: dir}
 	if err := c.fromExpr(expr); err != nil {
 		return nil, err
 	}
@@ -44,8 +43,7 @@ func (c *collector) fromExpr(expr build.Expr) (err error) {
 			switch ident.Name {
 			case "glob":
 				g := Parse(c.file, t)
-				dir := filepath.Join(c.dir, c.rel)
-				c.srcs = append(c.srcs, Apply(g, os.DirFS(dir))...)
+				c.srcs = append(c.srcs, Apply(g, os.DirFS(c.dir))...)
 			default:
 				err = fmt.Errorf("not attempting to resolve function call %v(): consider making this simpler", ident.Name)
 			}

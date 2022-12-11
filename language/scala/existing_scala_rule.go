@@ -56,8 +56,8 @@ func (s *existingScalaRuleProvider) LoadInfo() rule.LoadInfo {
 	}
 }
 
-// ProvideRule implements part of the scalarule.Provider interface.  It always returns
-// nil.  The ResolveRule interface is the intended use case.
+// ProvideRule implements part of the scalarule.Provider interface.  It always
+// returns nil.  The ResolveRule interface is the intended use case.
 func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
 	return nil
 }

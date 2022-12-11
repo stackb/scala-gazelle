@@ -54,7 +54,7 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 }
 
 func (sl *scalaLang) registerScalaCompilerServer(flags *flag.FlagSet, cmd string, c *config.Config) {
-	sl.scalaCompiler.RegisterFlags(flags, cmd, c)
+	sl.compiler.RegisterFlags(flags, cmd, c)
 }
 
 // CheckFlags implements part of the language.Language interface
@@ -115,7 +115,7 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 }
 
 func (sl *scalaLang) setupScalaCompiler(flags *flag.FlagSet, c *config.Config) error {
-	if err := sl.scalaCompiler.CheckFlags(flags, c); err != nil {
+	if err := sl.compiler.CheckFlags(flags, c); err != nil {
 		return err
 	}
 	return nil
@@ -178,8 +178,8 @@ func (sl *scalaLang) setupMemoryProfiling(workDir string) error {
 }
 
 func (sl *scalaLang) stopScalaCompiler() {
-	if err := sl.scalaCompiler.Stop(); err != nil {
-		log.Println("failed to cleanly stop compiler: %v", err)
+	if err := sl.compiler.Stop(); err != nil {
+		log.Printf("failed to cleanly stop compiler: %v", err)
 	}
 }
 

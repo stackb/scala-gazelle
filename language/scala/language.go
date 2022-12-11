@@ -14,6 +14,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalacompile"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -39,8 +40,8 @@ type scalaLang struct {
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
 	// rules configured via gazelle directives by the user.
 	ruleProviderRegistry scalarule.ProviderRegistry
-	// sourceProvider is the source resolver implementation.
-	sourceProvider *provider.SourceProvider
+	// parser is the source resolver implementation.
+	parser scalaparse.ParserService
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -64,8 +65,8 @@ type scalaLang struct {
 	symbolProviders []resolver.SymbolProvider
 	// symbolResolver is our top-level known import resolver implementation
 	symbolResolver resolver.SymbolResolver
-	// scalaCompiler is the compiler tool
-	scalaCompiler *scalacompile.Compiler
+	// compiler is the compiler tool
+	compiler *scalacompile.GRPCCompilerService
 }
 
 // Name implements part of the language.Language interface
@@ -95,14 +96,15 @@ func NewLanguage() language.Language {
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
-		scalaCompiler:        scalacompile.NewCompiler(),
+		compiler:             scalacompile.NewCompiler(),
 	}
 
-	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
+	sourceProvider := provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
+	lang.parser = scalaparse.NewMemoParserService(sourceProvider)
 
-	lang.AddSymbolProvider(lang.sourceProvider)
+	lang.AddSymbolProvider(sourceProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())
 	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))

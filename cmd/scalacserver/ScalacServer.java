@@ -50,8 +50,6 @@ public class ScalacServer {
     static final boolean DEBUG = false;
 
     public static void main(String[] args) throws IOException, InterruptedException, ParserConfigurationException {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder builder = factory.newDocumentBuilder();
 
         Integer port = Integer.getInteger(PORT_NAME, DEFAULT_PORT);
 

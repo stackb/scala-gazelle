@@ -43,6 +43,7 @@ go_library(
         "//pkg/provider",
         "//pkg/resolver",
         "//pkg/scalacompile",
+        "//pkg/scalaparse",
         "//pkg/scalarule",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

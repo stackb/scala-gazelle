@@ -5,8 +5,13 @@ go_library(
     srcs = [
         "assets.go",
         "exec.go",
+        "memo_parser_service.go",
         "options.go",
+        "parser.go",
+        "parser_service.go",
+        "reader.go",
         "server.go",
+        "service.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
@@ -17,6 +22,8 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
         "@org_golang_google_grpc//codes",

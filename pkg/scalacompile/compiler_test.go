@@ -45,7 +45,7 @@ func SkipTestScalaCompileResponse(t *testing.T) {
 				res.Write([]byte(tc.mockResponse))
 			}))
 			defer testServer.Close()
-			compiler := &Compiler{
+			compiler := &GRPCCompilerService{
 				backendUrl: testServer.URL,
 			}
 

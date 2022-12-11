@@ -72,7 +72,7 @@ func TestScalaSourceProvider(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			r, err := p.ParseScala(tc.from, tc.kind, dir, tc.testfiles...)
+			r, err := p.ParseScalaRule(tc.from, tc.kind, dir, tc.testfiles...)
 			p.OnResolve()
 			if err != nil {
 				t.Fatal(err)

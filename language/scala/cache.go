@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
@@ -14,7 +15,11 @@ func (sl *scalaLang) readCacheFile() error {
 		return err
 	}
 	for _, rule := range sl.cache.Rules {
-		if err := sl.sourceProvider.ProvideRule(rule); err != nil {
+		from, err := label.Parse(rule.Label)
+		if err != nil {
+			return err
+		}
+		if err := sl.parser.ReadScalaRule(from, rule); err != nil {
 			return err
 		}
 	}
@@ -29,7 +34,7 @@ func (sl *scalaLang) readCacheFile() error {
 
 func (sl *scalaLang) writeCacheFile() error {
 	sl.cache.PackageCount = int32(len(sl.packages))
-	sl.cache.Rules = sl.sourceProvider.ProvidedRules()
+	sl.cache.Rules = sl.parser.ScalaRules()
 
 	if debug {
 		log.Printf("Wrote cache %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))

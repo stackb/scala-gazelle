@@ -17,19 +17,28 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
-type scalaRule struct {
-	// Rule is an embedded struct (FIXME: why embed this?).
-	*rule.Rule
+type scalaRuleContext struct {
 	// the parent config
 	scalaConfig *scalaConfig
 	// from is the label for the rule.
 	from label.Label
-	// files that are included in the rule.
-	files []*sppb.File
+	// rule (lowercase) is the parent gazelle rule
+	rule *rule.Rule
+	// scope is a map of symbols that are in scope outside the rule.
+	scope resolver.Scope
+	// compiler is the available compiler
+	compiler scalarule.Compiler
 	// the import resolver to which we chain to when self-imports are not matched.
-	next resolver.SymbolResolver
-	// the ruleScope implementation to which we provide symbols.
-	ruleScope resolver.Scope
+	resolver resolver.SymbolResolver
+}
+
+type scalaRule struct {
+	// Rule is the pb representation
+	pb *sppb.Rule
+	// ctx is the rule context
+	ctx *scalaRuleContext
+	// the scope of symbols visible to this rule
+	scope resolver.Scope
 	// the scope from which we lookup both local and global imports.
 	importScope resolver.Scope
 	// extendedTypes is a mapping from the required type to the symbol that
@@ -38,32 +47,18 @@ type scalaRule struct {
 	extendedTypes map[string][]string
 	// exports represent symbols that are importable by other rules.
 	exports map[string]resolve.ImportSpec
-	// scope is a map of symbols that are in scope.  For the import
-	// 'com.foo.Bar', the map key is 'Bar' and the map value is the symbol for
-	// it.
-	scope    resolver.SymbolMap
-	compiler scalarule.Compiler
 }
 
 func newScalaRule(
-	scalaConfig *scalaConfig,
-	next resolver.SymbolResolver,
-	parentScope resolver.Scope,
-	localScope resolver.Scope,
-	compiler scalarule.Compiler,
-	r *rule.Rule,
-	from label.Label,
-	files []*sppb.File,
+	ctx *scalaRuleContext,
+	rule *sppb.Rule,
 ) *scalaRule {
+	local := resolver.NewTrieScope()
 	scalaRule := &scalaRule{
-		Rule:          r,
-		scalaConfig:   scalaConfig,
-		from:          from,
-		files:         files,
-		next:          next,
-		compiler:      compiler,
-		ruleScope:     localScope,
-		importScope:   resolver.NewChainScope(localScope, parentScope),
+		pb:            rule,
+		ctx:           ctx,
+		scope:         local,
+		importScope:   resolver.NewChainScope(local, ctx.scope),
 		extendedTypes: make(map[string][]string),
 		exports:       make(map[string]resolve.ImportSpec),
 	}
@@ -73,21 +68,21 @@ func newScalaRule(
 
 // ResolveSymbol implements the resolver.SymbolResolver interface
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	if symbol, ok := r.ruleScope.GetSymbol(imp); ok {
+	if symbol, ok := r.scope.GetSymbol(imp); ok {
 		return symbol, nil
 	}
-	return r.next.ResolveSymbol(c, ix, from, lang, imp)
+	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
 func (r *scalaRule) compile() error {
 	fileMap := make(map[string]*sppb.File)
-	filenames := make([]string, len(r.files))
-	for i, file := range r.files {
+	filenames := make([]string, len(r.pb.Files))
+	for i, file := range r.pb.Files {
 		filenames[i] = file.Filename
 		fileMap[file.Filename] = file
 	}
 
-	result, err := r.compiler.CompileScala(r.from, r.Kind(), r.scalaConfig.config.RepoRoot, filenames...)
+	result, err := r.ctx.compiler.CompileScala(r.ctx.from, r.pb.Kind, r.ctx.scalaConfig.config.RepoRoot, filenames...)
 	if err != nil {
 		return err
 	}
@@ -109,31 +104,31 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	impLang := scalaLangName
 
 	if err := r.compile(); err != nil {
-		log.Fatalf("%s | compile error: %v", r.from, err)
+		log.Fatalf("%s | compile error: %v", r.ctx.from, err)
 	}
 
 	// direct
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		for _, imp := range file.Imports {
 			imports.Put(resolver.NewDirectImport(imp, file))
 		}
 	}
 
 	// if this rule has a main_class
-	if mainClass := r.AttrString("main_class"); mainClass != "" {
+	if mainClass := r.ctx.rule.AttrString("main_class"); mainClass != "" {
 		imports.Put(resolver.NewMainClassImport(mainClass))
 	}
 
 	// add import required from extends clauses
-	scope := r.getOrCreateImportScope()
-	for imp, src := range r.extendedTypes {
-		// check if the import is actually a symbol in scope.  If yes, use the
-		// fully-qualified import name.
-		if symbol, ok := scope.Get(imp); ok {
-			imp = symbol.Name
-		}
-		imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
-	}
+	// scope := r.getOrCreateImportScope()
+	// for imp, src := range r.extendedTypes {
+	// 	// check if the import is actually a symbol in scope.  If yes, use the
+	// 	// fully-qualified import name.
+	// 	if symbol, ok := scope.Get(imp); ok {
+	// 		imp = symbol.Name
+	// 	}
+	// 	imports.Put(resolver.NewExtendsImport(imp, src[0])) // use first occurrence as source arg
+	// }
 
 	// Initialize a list of symbols to find implicits for from all known
 	// imports. Include all symbols that are defined in the rule too (a
@@ -146,13 +141,17 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	// Gather implicit imports transitively.
 	for !required.IsEmpty() {
 		src, _ := required.Pop()
-		for _, dst := range r.scalaConfig.getImplicitImports(impLang, src) {
+		for _, dst := range r.ctx.scalaConfig.getImplicitImports(impLang, src) {
 			required.Push(dst)
 			imports.Put(resolver.NewImplicitImport(dst, src))
 		}
 	}
 
 	return imports
+}
+
+func (r *scalaRule) Files() []*sppb.File {
+	return r.pb.Files
 }
 
 // Exports implements part of the scalarule.Rule interface.
@@ -171,13 +170,13 @@ func (r *scalaRule) Exports() []resolve.ImportSpec {
 	return exports
 }
 
-// Files implements part of the scalarule.Rule interface.
-func (r *scalaRule) Files() []*sppb.File {
-	return r.files
-}
+// // Files implements part of the scalarule.Rule interface.
+// func (r *scalaRule) Files() []*sppb.File {
+// 	return r.files
+// }
 
 func (r *scalaRule) visitFiles() {
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		r.visitFile(file)
 	}
 }
@@ -260,19 +259,19 @@ func (r *scalaRule) putExport(imp string) {
 func (r *scalaRule) putSymbol(imp string, impType sppb.ImportType) {
 	// since we don't need to resolve same-rule symbols to a different label,
 	// record all imports as label.NoLabel!
-	r.ruleScope.PutSymbol(resolver.NewSymbol(impType, imp, "self-import", label.NoLabel))
+	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, "self-import", label.NoLabel))
 }
 
-func (r *scalaRule) getOrCreateImportScope() resolver.SymbolMap {
-	if r.scope == nil {
-		r.scope = make(resolver.SymbolMap)
+func (r *scalaRule) getOrCreateImportScope() resolver.Scope {
+	if r.importScope == nil {
+		r.importScope = resolver.NewTrieScope()
 		r.visitImports()
 	}
-	return r.scope
+	return r.importScope
 }
 
 func (r *scalaRule) visitImports() {
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		for _, imp := range file.Imports {
 			r.visitImport(imp)
 		}
@@ -300,7 +299,7 @@ func (r *scalaRule) visitWildcardImport(prefix string) {
 }
 
 func (r *scalaRule) putSymbolInScope(symbol *resolver.Symbol) {
-	r.scope.Add(symbol)
+	r.scope.PutSymbol(symbol)
 }
 
 func isWildcardImport(imp string) (string, bool) {

@@ -1,11 +1,9 @@
 package scalacompile
 
 import (
-	"bytes"
-	"encoding/xml"
+	"context"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -20,6 +18,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -34,17 +33,16 @@ const NOT_FOUND = "not found: "
 
 var notPackageMemberRe = regexp.MustCompile(`^object ([^ ]+) is not a member of package (.*)$`)
 
-func NewCompiler() *Compiler {
-	return &Compiler{}
+func NewCompiler() *GRPCCompilerService {
+	return &GRPCCompilerService{}
 }
 
-// Compiler implements a scala compiler frontend that communicates with a
-// backend process over HTTP.
-type Compiler struct {
+// GRPCCompilerService implements a scala compiler frontend that communicates with a
+// backend process over gRPC.
+type GRPCCompilerService struct {
 	backendHost        string
 	backendPort        int
 	backendUrl         string
-	backendClient      *http.Client
 	backendDialTimeout time.Duration
 
 	// repoRoot is typically the config.Config.RepoRoot
@@ -56,12 +54,15 @@ type Compiler struct {
 	// javaBinPath is the path to the java interpreter
 	javaBinPath string
 
+	grpcConn *grpc.ClientConn
+	client   sppb.CompilerClient
+
 	// the process
 	cmd *exec.Cmd
 }
 
 // RegisterFlags implements part of the Configurer interface.
-func (p *Compiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (p *GRPCCompilerService) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&p.scalacserverJarPath, "scala_compiler_jar_path", "", "filesystem path to the scala compiler tool jar")
 	fs.StringVar(&p.javaBinPath, "scala_compiler_java_bin_path", "", "filesystem path to the java tool $(location @local_jdk//:bin/java)")
 	fs.StringVar(&p.backendHost, "scala_compiler_backend_host", "localhost", "bind host for the backend server")
@@ -71,7 +72,7 @@ func (p *Compiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config)
 }
 
 // CheckFlags implements part of the Configurer interface.
-func (p *Compiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (p *GRPCCompilerService) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	p.repoRoot = c.RepoRoot
 	p.javaBinPath = os.ExpandEnv(p.javaBinPath)
 	p.scalacserverJarPath = os.ExpandEnv(p.scalacserverJarPath)
@@ -84,10 +85,11 @@ func (p *Compiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 		}
 	}
 
-	return p.startHttpClient()
+	// return p.startHttpClient()
+	return p.startGrpcClient()
 }
 
-func (s *Compiler) start() error {
+func (s *GRPCCompilerService) start() error {
 	t1 := time.Now()
 
 	//
@@ -137,7 +139,7 @@ func (s *Compiler) start() error {
 	return nil
 }
 
-func (s *Compiler) startHttpClient() error {
+func (s *GRPCCompilerService) startHttpClient() error {
 	s.backendUrl = fmt.Sprintf("http://%s:%d", s.backendHost, s.backendPort)
 
 	if !waitForConnectionAvailable(s.backendHost, s.backendPort, s.backendDialTimeout) {
@@ -157,89 +159,53 @@ func (s *Compiler) startHttpClient() error {
 	return nil
 }
 
-func (s *Compiler) Stop() error {
+func (s *GRPCCompilerService) startGrpcClient() error {
+	// s.backendUrl = fmt.Sprintf("http://%s:%d", s.backendHost, s.backendPort)
+	target := fmt.Sprintf("%s:%d", s.backendHost, s.backendPort)
+	conn, err := grpc.Dial(target,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+	)
+	if err != nil {
+		return err
+	}
+	s.grpcConn = conn
+	s.client = sppb.NewCompilerClient(conn)
+	return nil
+}
+
+func (s *GRPCCompilerService) Stop() error {
 	if s.cmd != nil {
 		if err := s.cmd.Process.Kill(); err != nil {
 			return err
 		}
 		s.cmd = nil
 	}
+	// if s.grpcConn != nil {
+	// 	return s.grpcConn.Close()
+	// }
 	return nil
 }
 
-// Compile a Scala file and returns the index. An error is raised if
+// Compile a set of scala files. An error is raised if
 // communicating with the long-lived Scala compiler over stdin and stdout fails.
-func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ...string) (*sppb.Rule, error) {
+func (p *GRPCCompilerService) CompileScala(from label.Label, kind, dir string, filenames ...string) (*sppb.Rule, error) {
 	t1 := time.Now()
 
-	// if false {
-	// 	filename := filenames[0]
+	resp, err := p.client.Compile(context.Background(), &sppb.CompileRequest{
+		Dir:       dir,
+		Filenames: filenames,
+	})
 
-	// 	// log.Printf("--- COMPILE <%s> ---", filename)
-	// 	specFile := filepath.Join(p.cacheDir, filename+".json")
-
-	// 	if false && p.cacheDir != "" {
-	// 		if _, err := os.Stat(specFile); errors.Is(err, os.ErrNotExist) {
-	// 			log.Printf("Compile cache miss: <%s>", filename)
-	// 		} else {
-	// 			if spec, err := ReadScalaCompileSpec(specFile); err != nil {
-	// 				log.Printf("Compile cache error: <%s>: %v", filename, err)
-	// 			} else {
-	// 				// log.Printf("Compile cache hit: <%s>", filename)
-	// 				return spec, nil
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	compileRequest := &CompileRequest{Dir: dir, Files: filenames}
-
-	out, err := xml.Marshal(compileRequest)
 	if err != nil {
-		return nil, fmt.Errorf("request error %w", err)
-	}
-
-	resp, err := p.backendClient.Post(p.backendUrl, "text/xml", bytes.NewReader(out))
-	if err != nil {
-		return nil, fmt.Errorf("response error: %w", err)
-	}
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("compiler backend error: %v: %w", resp.Status, err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("compiler backend error: %v: %s", resp.Status, string(data))
-	}
-	if len(data) == 0 {
-		return nil, fmt.Errorf("compiler backend error: %v, but empty response", resp.Status)
-	}
-	// fmt.Printf("Response Body : %s", data)
-
-	// if false {
-	// 	if p.cacheDir != "" {
-	// 		outfile := filepath.Join(p.cacheDir, filename+".xml")
-	// 		outdir := filepath.Dir(outfile)
-	// 		if err := os.MkdirAll(outdir, os.ModePerm); err != nil {
-	// 			return nil, err
-	// 		}
-	// 		if err := ioutil.WriteFile(outfile, data, os.ModePerm); err != nil {
-	// 			return nil, err
-	// 		}
-	// 	}
-	// }
-
-	var compileResponse CompileResponse
-	if err := xml.Unmarshal(data, &compileResponse); err != nil {
-		return nil, fmt.Errorf("failed to compile %v: %w", filenames, err)
+		return nil, fmt.Errorf("compiler backend error: %w", err)
 	}
 
 	fileMap := make(map[string]*sppb.File)
 	seen := make(map[string]bool)
 
-	for _, d := range compileResponse.Diagnostics {
-		if d.Source == "" {
+	for _, d := range resp.Diagnostics {
+		if d.Source == "" || d.Source == "<no file>" {
 			if false {
 				log.Printf("skipping diagnostic: %v (no file)", d)
 			}
@@ -252,7 +218,7 @@ func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ..
 			file = &sppb.File{Filename: d.Source}
 			fileMap[d.Source] = file
 		}
-		processDiagnostic(&d, file, seen)
+		processDiagnostic(d, file, seen)
 	}
 
 	// TODO: dedup the ScalaCompileSpec?
@@ -291,16 +257,16 @@ func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ..
 	}, nil
 }
 
-func processDiagnostic(d *Diagnostic, file *sppb.File, seen map[string]bool) {
+func processDiagnostic(d *sppb.Diagnostic, file *sppb.File, seen map[string]bool) {
 	switch d.Severity {
-	case "ERROR":
+	case sppb.Severity_ERROR:
 		processErrorDiagnostic(d, file, seen)
 	default:
 		return
 	}
 }
 
-func processErrorDiagnostic(d *Diagnostic, file *sppb.File, seen map[string]bool) {
+func processErrorDiagnostic(d *sppb.Diagnostic, file *sppb.File, seen map[string]bool) {
 	if strings.HasPrefix(d.Message, NOT_FOUND) {
 		processNotFoundErrorDiagnostic(d.Message[len(NOT_FOUND):], file, seen)
 	} else if match := notPackageMemberRe.FindStringSubmatch(d.Message); match != nil {

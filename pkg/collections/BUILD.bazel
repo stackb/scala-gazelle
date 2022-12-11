@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "intent.go",
         "path_trie.go",
+        "sha256.go",
         "string_slice.go",
         "string_stack.go",
         "uint32stack.go",

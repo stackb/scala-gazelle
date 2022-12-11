@@ -76,8 +76,6 @@ go_repositories()
 load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
-print("artifact:", IO_GRPC_GRPC_JAVA_ARTIFACTS)
-
 maven_install(
     artifacts = IO_GRPC_GRPC_JAVA_ARTIFACTS + [
         "com.google.code.findbugs:jsr305:3.0.2",
@@ -89,6 +87,7 @@ maven_install(
         "io.grpc:grpc-services:1.40.0",
         "io.grpc:grpc-stub:1.40.0",
         "org.slf4j:slf4j-simple:1.7.32",
+        "javax.annotation:javax.annotation-api:1.3.2",
         # "com.google.caliper:caliper:1.0-beta-3",
         # "com.google.code.findbugs:jsr305:3.0.2",
         # "com.google.code.gson:gson:2.8.9",
@@ -149,15 +148,3 @@ scala_register_toolchains()
 #     java_version = "17",
 #     version = "22.1.0",
 # )
-
-# load("@build_stack_rules_proto//deps:protobuf_core_deps.bzl", "protobuf_core_deps")
-
-# protobuf_core_deps()
-
-# load("@build_stack_rules_proto//deps:grpc_core_deps.bzl", "grpc_core_deps")
-
-# grpc_core_deps()
-
-# load("@build_stack_rules_proto//deps:grpc_java_deps.bzl", "grpc_java_deps")
-
-# grpc_java_deps()

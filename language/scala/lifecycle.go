@@ -7,7 +7,7 @@ import (
 
 // onGenerate is called on the the first GenerateRules call.
 func (sl *scalaLang) onGenerate() error {
-	if err := sl.sourceProvider.Start(); err != nil {
+	if err := sl.parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}
 	return nil
@@ -16,6 +16,8 @@ func (sl *scalaLang) onGenerate() error {
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
+	sl.parser.Stop()
+
 	for _, provider := range sl.symbolProviders {
 		provider.OnResolve()
 	}

@@ -47,6 +47,9 @@ class Scope {
      * @param {?string} sym
      */
     addImport(imp, sym) {
+        if (!imp) {
+            return; // FIXME(pcj): why should this ever be null?
+        }
         this.imports.add(imp);
         if (sym) {
             this.addSymbol(sym, imp);

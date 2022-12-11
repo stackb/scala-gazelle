@@ -33,8 +33,6 @@ message File {
     repeated string names = 10;
     // extends is a mapping from the base type to a list of symbol names.
     map<string,ClassList> extends = 11;
-    // elapsed_millis is the time taken to parse the file
-    int64 elapsed_millis = 12;
     // error is a string assigned when a parse error occurs
     string error = 13;
     // list of symbols found in the file.

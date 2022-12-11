@@ -7,7 +7,6 @@ go_library(
         "config.go",
         "global_provider_registry.go",
         "package.go",
-        "parser.go",
         "provider.go",
         "provider_registry.go",
         "rule.go",

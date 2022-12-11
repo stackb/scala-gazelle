@@ -2,14 +2,21 @@ package scalacserver;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
+import build.stack.gazelle.scala.parse.CompileRequest;
+import build.stack.gazelle.scala.parse.CompileResponse;
+import build.stack.gazelle.scala.parse.Diagnostic;
+import build.stack.gazelle.scala.parse.CompilerGrpc;
+
 import com.google.common.collect.Iterables;
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.grpc.protobuf.services.ProtoReflectionService;
+// import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,8 +32,9 @@ import org.slf4j.LoggerFactory;
 
 public class GrpcServer {
     private static final Logger logger = LoggerFactory.getLogger(GrpcServer.class);
+    static final String PORT_NAME = "scalac.server.port";
+    static final int DEFAULT_PORT = 8040;
 
-    private final Path serverPortFilePath;
     private final TimeoutHandler timeoutHandler;
     private final Server server;
 
@@ -34,14 +42,15 @@ public class GrpcServer {
      * Create a BuildFileGenerator server using serverBuilder as a base and features
      * as data.
      */
-    public GrpcServer(Path serverPortFilePath, Path workspace, TimeoutHandler timeoutHandler) {
-        this.serverPortFilePath = serverPortFilePath;
+    public GrpcServer(TimeoutHandler timeoutHandler) {
         this.timeoutHandler = timeoutHandler;
-        ServerBuilder serverBuilder = ServerBuilder.forPort(0);
+        Integer port = Integer.getInteger(PORT_NAME, DEFAULT_PORT);
+
+        ServerBuilder serverBuilder = ServerBuilder.forPort(port);
         this.server = serverBuilder
-                // .addService(new GrpcService(workspace, timeoutHandler))
+                .addService(new GrpcService(timeoutHandler))
                 // .addService(new LifecycleService())
-                .addService(ProtoReflectionService.newInstance())
+                // .addService(ProtoReflectionService.newInstance())
                 .build();
     }
 
@@ -49,13 +58,7 @@ public class GrpcServer {
     public void start() throws IOException {
         server.start();
 
-        // Atomically write our server port to a file so that a reading process can't do
-        // a partial read.
-        Path tmpPath = serverPortFilePath.resolveSibling(serverPortFilePath.getFileName() + ".tmp");
-        Files.write(tmpPath, String.format("%d", server.getPort()).getBytes(StandardCharsets.UTF_8));
-        Files.move(tmpPath, serverPortFilePath, ATOMIC_MOVE);
-
-        logger.debug("Server started, listening on {}", server.getPort());
+        logger.info("Server started, listening on {}", server.getPort());
         Runtime.getRuntime()
                 .addShutdownHook(
                         new Thread() {
@@ -73,7 +76,7 @@ public class GrpcServer {
 
     /** Stop serving requests and shutdown resources. */
     public void stop() throws InterruptedException {
-        server.shutdownNow().awaitTermination(30, TimeUnit.SECONDS);
+        server.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
     }
 
     /**
@@ -84,15 +87,94 @@ public class GrpcServer {
         server.awaitTermination();
     }
 
-    // private static class GrpcService extends JavaParserGrpc.JavaParserImplBase {
+    private static class GrpcService extends CompilerGrpc.CompilerImplBase {
+        private final TimeoutHandler timeoutHandler;
+
+        GrpcService(TimeoutHandler timeoutHandler) {
+            this.timeoutHandler = timeoutHandler;
+        }
+
+        @Override
+        public void compile(CompileRequest request, StreamObserver<CompileResponse> responseObserver) {
+            timeoutHandler.startedRequest();
+
+            try {
+                responseObserver.onNext(compileInternal(request.getDir(), request.getFilenamesList()));
+                responseObserver.onCompleted();
+            } catch (Exception ex) {
+                logger.error(
+                        "Got Exception compiling {}: {}", request, ex.getMessage());
+                responseObserver.onError(ex);
+                responseObserver.onCompleted();
+            } finally {
+                timeoutHandler.finishedRequest();
+            }
+        }
+
+        private CompileResponse compileInternal(String dir, List<String> files) {
+            List<String> args = new ArrayList<>();
+            args.add("-usejavacp");
+            args.add("-Ystop-before:refcheck");
+
+            for (String file : files) {
+                if (dir.length() > 0) {
+                    file = dir + File.separatorChar + file;
+                }
+                args.add(file);
+            }
+
+            String[] result = new String[args.size()];
+            List<Diagnostic> diagnostics = compileArgs(args.toArray(result));
+
+            return CompileResponse.newBuilder()
+                    .addAllDiagnostics(diagnostics)
+                    .build();
+        }
+
+        private List<Diagnostic> compileArgs(String[] args) {
+            boolean debug = false;
+            DiagnosticReportableMainClass main = new DiagnosticReportableMainClass(debug);
+            boolean ok = main.process(args);
+            return main.reporter.getDiagnostics();
+        }
+
+        // private Diagnostic createDiagnostic(CompileResponse.Builder builder,
+        // List<XmlReporter.Diagnostic> diagnostics) {
+        // for (XmlReporter.Diagnostic diagnostic : diagnostics) {
+
+        // d.setAttribute("sev", diagnostic.sev.toString());
+        // if (!diagnostic.pos.source().path().equals("<no file>")) {
+        // d.setAttribute("source", diagnostic.pos.source().path());
+        // }
+        // if (diagnostic.pos.safeLine() != 0) {
+        // d.setAttribute("line", Integer.toString(diagnostic.pos.safeLine()));
+        // }
+        // d.setTextContent(diagnostic.msg);
+        // compileResponse.appendChild(d);
+        // }
+
+        // }
+
+        // private void writeDiagnostics(CompileResponse.Builder builder,
+        // List<XmlReporter.Diagnostic> diagnostics) {
+        // for (XmlReporter.Diagnostic diagnostic : diagnostics) {
+
+        // d.setAttribute("sev", diagnostic.sev.toString());
+        // if (!diagnostic.pos.source().path().equals("<no file>")) {
+        // d.setAttribute("source", diagnostic.pos.source().path());
+        // }
+        // if (diagnostic.pos.safeLine() != 0) {
+        // d.setAttribute("line", Integer.toString(diagnostic.pos.safeLine()));
+        // }
+        // d.setTextContent(diagnostic.msg);
+        // compileResponse.appendChild(d);
+        // }
+
+        // }
+
+    }
 
     // private final Path workspace;
-    // private final TimeoutHandler timeoutHandler;
-
-    // GrpcService(Path workspace, TimeoutHandler timeoutHandler) {
-    // this.workspace = workspace;
-    // this.timeoutHandler = timeoutHandler;
-    // }
 
     // @Override
     // public void parsePackage(

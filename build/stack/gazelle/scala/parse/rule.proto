@@ -16,5 +16,11 @@ message Rule {
     string kind = 2;
     // files is the list of files in the rule
     repeated build.stack.gazelle.scala.parse.File files = 3;
+    // sha256 is a combined hash of the files
+    string sha256 = 4;
+    // parse_time_millis is the time taken to collect filesnames and parse the files.
+    int64 parse_time_millis = 5;
+    // compile_time_millis is the time taken to compile the files and resolve symbols.
+    int64 compile_time_millis = 6;
 }
 

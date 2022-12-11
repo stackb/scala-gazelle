@@ -1,3 +1,6 @@
+load("@build_stack_rules_proto//rules/java:grpc_java_library.bzl", "grpc_java_library")
+load("@build_stack_rules_proto//rules/java:proto_java_library.bzl", "proto_java_library")
+load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
@@ -65,4 +68,43 @@ go_library(
         "@org_golang_google_protobuf//reflect/protoreflect",
         "@org_golang_google_protobuf//runtime/protoimpl",
     ],
+)
+
+grpc_java_library(
+    name = "parse_grpc_java_library",
+    srcs = ["parse_grpc.srcjar"],
+    visibility = ["//visibility:public"],
+    exports = [
+        ":parse_java_library",
+        "//java:grpc_java",
+    ],
+    deps = [
+        ":parse_java_library",
+        "//java:grpc_java",
+    ],
+)
+
+proto_compile(
+    name = "parse_java_compile",
+    outs = {
+        "@build_stack_rules_proto//plugin/builtin:java": "build/stack/gazelle/scala/parse/parse.srcjar",
+        "@build_stack_rules_proto//plugin/grpc/grpc-java:protoc-gen-grpc-java": "build/stack/gazelle/scala/parse/parse_grpc.srcjar",
+    },
+    outputs = [
+        "parse.srcjar",
+        "parse_grpc.srcjar",
+    ],
+    plugins = [
+        "@build_stack_rules_proto//plugin/builtin:java",
+        "@build_stack_rules_proto//plugin/grpc/grpc-java:protoc-gen-grpc-java",
+    ],
+    proto = "parse_proto",
+)
+
+proto_java_library(
+    name = "parse_java_library",
+    srcs = ["parse.srcjar"],
+    visibility = ["//visibility:public"],
+    exports = ["@maven//:com_google_protobuf_protobuf_java"],
+    deps = ["@maven//:com_google_protobuf_protobuf_java"],
 )
