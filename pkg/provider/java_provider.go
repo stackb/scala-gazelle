@@ -60,7 +60,13 @@ func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope reso
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (p *JavaProvider) OnResolve() {
+func (p *JavaProvider) OnResolve() error {
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (p *JavaProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.

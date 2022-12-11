@@ -24,7 +24,7 @@ type progressFunc func(msg string)
 func NewSourceProvider(progress progressFunc) *SourceProvider {
 	return &SourceProvider{
 		progress: progress,
-		parser:   scalaparse.NewScalaParseServer(),
+		parser:   scalaparse.NewScalametaParserService(),
 	}
 }
 
@@ -38,7 +38,7 @@ type SourceProvider struct {
 	// scope is the target we provide symbols to
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
-	parser *scalaparse.ScalaParseServer
+	parser *scalaparse.ScalametaParserService
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -57,7 +57,13 @@ func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (r *SourceProvider) OnResolve() {
+func (r *SourceProvider) OnResolve() error {
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (r *SourceProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements the resolver.SymbolProvider interface.
@@ -92,7 +98,7 @@ func (r *SourceProvider) ParseScalaFiles(from label.Label, kind, dir string, src
 	}
 
 	for _, file := range files {
-		if err := r.provideFile(from, kind, file); err != nil {
+		if err := r.loadScalaFile(from, kind, file); err != nil {
 			return nil, err
 		}
 	}
@@ -127,23 +133,17 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 	return response.Files, nil
 }
 
-// ScalaRules implements part of the scalarule.Reader interface.
-func (r *SourceProvider) ScalaRules() []*sppb.Rule {
-	log.Panicln("ScalaRules is an unsupported operation")
-	return nil
-}
-
-// ReadScalaRule implements part of the scalarule.Reader interface.
-func (r *SourceProvider) ReadScalaRule(from label.Label, rule *sppb.Rule) error {
+// LoadScalaRule loads the given state.
+func (r *SourceProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) error {
 	for _, file := range rule.Files {
-		if err := r.provideFile(from, rule.Kind, file); err != nil {
+		if err := r.loadScalaFile(from, rule.Kind, file); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (r *SourceProvider) provideFile(from label.Label, kind string, file *sppb.File) error {
+func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb.File) error {
 	for _, imp := range file.Classes {
 		r.putSymbol(from, kind, imp, sppb.ImportType_CLASS)
 	}

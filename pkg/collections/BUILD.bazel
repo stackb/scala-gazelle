@@ -3,7 +3,9 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "collections",
     srcs = [
+        "fs.go",
         "intent.go",
+        "net.go",
         "path_trie.go",
         "sha256.go",
         "string_slice.go",

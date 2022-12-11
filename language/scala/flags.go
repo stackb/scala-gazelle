@@ -36,7 +36,6 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 
 	sl.registerSymbolProviders(flags, cmd, c)
 	sl.registerConflictResolvers(flags, cmd, c)
-	sl.registerScalaCompilerServer(flags, cmd, c)
 }
 
 func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c *config.Config) {
@@ -53,10 +52,6 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 	}
 }
 
-func (sl *scalaLang) registerScalaCompilerServer(flags *flag.FlagSet, cmd string, c *config.Config) {
-	sl.compiler.RegisterFlags(flags, cmd, c)
-}
-
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	sl.symbolResolver = newUniverseResolver(sl)
@@ -68,9 +63,6 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
-		return err
-	}
-	if err := sl.setupScalaCompiler(flags, c); err != nil {
 		return err
 	}
 	if err := sl.setupCache(); err != nil {
@@ -114,13 +106,6 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 	return nil
 }
 
-func (sl *scalaLang) setupScalaCompiler(flags *flag.FlagSet, c *config.Config) error {
-	if err := sl.compiler.CheckFlags(flags, c); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
@@ -142,7 +127,7 @@ func (sl *scalaLang) setupExistingScalaRule(fqn, load, kind string) error {
 func (sl *scalaLang) setupCache() error {
 	if sl.cacheFileFlagValue != "" {
 		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
-		if err := sl.readCacheFile(); err != nil {
+		if err := sl.readScalaRuleCacheFile(); err != nil {
 			// don't report error if the file does not exist yet
 			if !errors.Is(err, fs.ErrNotExist) {
 				return fmt.Errorf("reading cache file: %w", err)
@@ -175,12 +160,6 @@ func (sl *scalaLang) setupMemoryProfiling(workDir string) error {
 		}
 	}
 	return nil
-}
-
-func (sl *scalaLang) stopScalaCompiler() {
-	if err := sl.compiler.Stop(); err != nil {
-		log.Printf("failed to cleanly stop compiler: %v", err)
-	}
 }
 
 func (sl *scalaLang) stopCpuProfiling() {

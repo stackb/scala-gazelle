@@ -5,12 +5,10 @@ go_library(
     srcs = [
         "assets.go",
         "exec.go",
-        "memo_parser_service.go",
+        "memo_parser.go",
         "options.go",
         "parser.go",
-        "parser_service.go",
-        "reader.go",
-        "server.go",
+        "scalameta_parser_service.go",
         "service.go",
     ],
     embedsrcs = [

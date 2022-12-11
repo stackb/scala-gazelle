@@ -14,6 +14,7 @@ go_library(
         "import.go",
         "import_map.go",
         "known_rule_registry.go",
+        "known_scala_rule_registry.go",
         "label_name_rewrite_spec.go",
         "memo_symbol_resolver.go",
         "override_symbol_resolver.go",

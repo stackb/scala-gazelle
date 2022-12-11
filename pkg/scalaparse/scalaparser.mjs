@@ -539,12 +539,10 @@ class ScalaFile {
  * @returns {!ScalaFile}
  */
 function parseFile(filename) {
-    const start = new Date().getTime();
     try {
         const src = new ScalaFile(filename);
         src.parse();
         const result = src.toObject();
-        result.elapsedMillis = new Date().getTime() - start;
         return result;
     } catch (e) {
         return {
@@ -591,16 +589,14 @@ async function processJSONRequest(request) {
         throw new Error(`bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`);
     }
 
-    const start = new Date().getTime();
     let files = [];
     if (process.env.PARALLEL_MODE) {
         files = await parseFilesParallel(request.filenames);
     } else {
         files = await parseFiles(request.filenames);
     }
-    const elapsedMillis = new Date().getTime() - start;
 
-    return { files, elapsedMillis };
+    return { files };
 }
 
 function processApplicationJSON(data) {

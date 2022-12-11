@@ -34,17 +34,17 @@ func NewMavenProvider(lang string) *MavenProvider {
 	}
 }
 
-// Name implements part of the resolver.Scope interface.
+// Name implements part of the provider.SymbolProvider interface.
 func (p *MavenProvider) Name() string {
 	return "maven"
 }
 
-// RegisterFlags implements part of the resolver.Scope interface.
+// RegisterFlags implements part of the provider.SymbolProvider interface.
 func (p *MavenProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.mavenInstallJSONFiles, "maven_install_json_file", "path to maven_install.json file")
 }
 
-// CheckFlags implements part of the resolver.Scope interface.
+// CheckFlags implements part of the provider.SymbolProvider interface.
 func (p *MavenProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	p.resolvers = make([]maven.Resolver, len(p.mavenInstallJSONFiles))
 
@@ -77,7 +77,7 @@ func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Sco
 	return resolver, nil
 }
 
-// CanProvide implements part of the resolver.Scope interface.
+// CanProvide implements part of the provider.SymbolProvider interface.
 func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
@@ -95,6 +95,12 @@ func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.La
 	return false
 }
 
-// OnResolve implements part of the resolver.Scope interface.
-func (p *MavenProvider) OnResolve() {
+// OnResolve implements part of the provider.SymbolProvider interface.
+func (p *MavenProvider) OnResolve() error {
+	return nil
+}
+
+// OnEnd implements part of the provider.SymbolProvider interface.
+func (p *MavenProvider) OnEnd() error {
+	return nil
 }

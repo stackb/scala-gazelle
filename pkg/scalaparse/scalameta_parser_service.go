@@ -23,6 +23,7 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
 const (
@@ -31,11 +32,13 @@ const (
 	debugParse = false
 )
 
-func NewScalaParseServer() *ScalaParseServer {
-	return &ScalaParseServer{}
+func NewScalametaParserService() *ScalametaParserService {
+	return &ScalametaParserService{}
 }
 
-type ScalaParseServer struct {
+// ScalametaParserService is a service that communicates to a scalameta-js
+// parser backend over HTTP.
+type ScalametaParserService struct {
 	sppb.UnimplementedParserServer
 
 	process    *memexec.Exec
@@ -48,7 +51,7 @@ type ScalaParseServer struct {
 	HttpPort int
 }
 
-func (s *ScalaParseServer) Stop() {
+func (s *ScalametaParserService) Stop() {
 	if s.httpClient != nil {
 		s.httpClient.CloseIdleConnections()
 		s.httpClient = nil
@@ -67,7 +70,7 @@ func (s *ScalaParseServer) Stop() {
 	}
 }
 
-func (s *ScalaParseServer) Start() error {
+func (s *ScalametaParserService) Start() error {
 	t1 := time.Now()
 
 	//
@@ -92,7 +95,7 @@ func (s *ScalaParseServer) Start() error {
 	}
 
 	if debugParse {
-		listFiles(".")
+		collections.ListFiles(".")
 	}
 
 	//
@@ -169,7 +172,7 @@ func (s *ScalaParseServer) Start() error {
 	return nil
 }
 
-func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+func (s *ScalametaParserService) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
 	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
@@ -281,17 +284,4 @@ func waitForConnectionAvailable(host string, port int, timeout time.Duration) bo
 	case <-time.After(timeout):
 		return false
 	}
-}
-
-// listFiles is a convenience debugging function to log the files under a given dir.
-func listFiles(dir string) error {
-	log.Println("Listing files under " + dir)
-	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			log.Printf("%v\n", err)
-			return err
-		}
-		log.Println(path)
-		return nil
-	})
 }

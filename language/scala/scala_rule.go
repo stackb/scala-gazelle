@@ -1,7 +1,6 @@
 package scala
 
 import (
-	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -14,7 +13,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
 
 type scalaRuleContext struct {
@@ -27,7 +26,7 @@ type scalaRuleContext struct {
 	// scope is a map of symbols that are in scope outside the rule.
 	scope resolver.Scope
 	// compiler is the available compiler
-	compiler scalarule.Compiler
+	compiler scalacompile.Compiler
 	// the import resolver to which we chain to when self-imports are not matched.
 	resolver resolver.SymbolResolver
 }
@@ -75,25 +74,8 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 }
 
 func (r *scalaRule) compile() error {
-	fileMap := make(map[string]*sppb.File)
-	filenames := make([]string, len(r.pb.Files))
-	for i, file := range r.pb.Files {
-		filenames[i] = file.Filename
-		fileMap[file.Filename] = file
-	}
-
-	result, err := r.ctx.compiler.CompileScala(r.ctx.from, r.pb.Kind, r.ctx.scalaConfig.config.RepoRoot, filenames...)
-	if err != nil {
+	if err := r.ctx.compiler.CompileScalaRule(r.ctx.from, r.ctx.scalaConfig.config.RepoRoot, r.pb); err != nil {
 		return err
-	}
-
-	for _, f := range result.Files {
-		file, ok := fileMap[f.Filename]
-		if !ok {
-			return fmt.Errorf("could not find rule file: %s", f.Filename)
-		}
-		// copy symbols over!
-		file.Symbols = f.Symbols
 	}
 	return nil
 }

@@ -45,7 +45,7 @@ func SkipTestScalaCompileResponse(t *testing.T) {
 				res.Write([]byte(tc.mockResponse))
 			}))
 			defer testServer.Close()
-			compiler := &GRPCCompilerService{
+			compiler := &ScalacCompilerService{
 				backendUrl: testServer.URL,
 			}
 
@@ -205,7 +205,7 @@ func TestCompiler(t *testing.T) {
 			}
 			// testutil.ListFiles(t, "../..")
 
-			compiler := NewCompiler()
+			compiler := NewScalacCompiler()
 
 			flags := flag.NewFlagSet("scala", flag.ExitOnError)
 			c := &config.Config{

@@ -1,8 +1,6 @@
 package scala
 
 import (
-	"log"
-
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -15,18 +13,12 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		return language.GenerateResult{}
 	}
 
-	if len(sl.packages) == 0 {
-		if err := sl.onGenerate(); err != nil {
-			log.Fatal(err)
-		}
-	}
-
 	if sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
 	sc := getScalaConfig(args.Config)
-	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl.compiler, sl)
+	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.sourceProvider, sl.compiler, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++
 

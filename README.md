@@ -415,17 +415,17 @@ func newBazelDepsProvider() *bazelDepsProvider {
 	return &bazelDepsProvider{}
 }
 
-// Name implements part of the resolver.Scope interface.
+// Name implements part of the provider.SymbolProvider interface.
 func (p *bazelDepsProvider) Name() string {
 	return "bazel-deps"
 }
 
-// RegisterFlags implements part of the resolver.Scope interface.
+// RegisterFlags implements part of the provider.SymbolProvider interface.
 func (p *bazelDepsProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.Var(&p.bazelDepsYAMLFiles, "bazel_deps_yaml_file", "path to bazel_deps.yaml")
 }
 
-// CheckFlags implements part of the resolver.Scope interface.
+// CheckFlags implements part of the provider.SymbolProvider interface.
 func (p *bazelDepsProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	for _, filename := range p.bazelDepsYAMLFiles {
 		if err := p.loadFile(c.WorkDir, filename, scope); err != nil {
@@ -439,7 +439,7 @@ func (p *bazelDepsProvider) loadFile(dir string, filename string, scope resolver
 	return fmt.Errorf("Implement me; Supply symbols to the given scope!")
 }
 
-// CanProvide implements part of the resolver.Scope interface.
+// CanProvide implements part of the provider.SymbolProvider interface.
 func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	if dep.Repo == "bazel_deps" {
 		return true
@@ -447,8 +447,14 @@ func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from labe
 	return false
 }
 
-// OnResolve implements part of the resolver.Scope interface.
-func (p *bazelDepsProvider) OnResolve() {
+// OnResolve implements part of the provider.SymbolProvider interface.
+func (p *bazelDepsProvider) OnResolve() error {
+  return nil
+}
+
+// OnEnd implements part of the provider.SymbolProvider interface.
+func (p *bazelDepsProvider) OnEnd() error {
+  return nil
 }
 ```
 

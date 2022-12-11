@@ -51,7 +51,7 @@ func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope 
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (p *ProtobufProvider) OnResolve() {
+func (p *ProtobufProvider) OnResolve() error {
 	for from, symbols := range p.importProvider(p.lang, "package") {
 		for _, symbol := range symbols {
 			p.putSymbol(sppb.ImportType_PROTO_PACKAGE, symbol, from)
@@ -82,6 +82,12 @@ func (p *ProtobufProvider) OnResolve() {
 			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (p *ProtobufProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.

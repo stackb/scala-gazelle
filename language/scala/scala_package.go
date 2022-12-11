@@ -14,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -29,7 +30,7 @@ type scalaPackage struct {
 	// parser is the file parser
 	parser scalaparse.Parser
 	// parser is the file parser
-	compiler scalarule.Compiler
+	compiler scalacompile.Compiler
 	// universe is the parent universe
 	universe resolver.Universe
 	// the registry to use
@@ -51,7 +52,7 @@ func newScalaPackage(
 	cfg *scalaConfig,
 	providerRegistry scalarule.ProviderRegistry,
 	parser scalaparse.Parser,
-	compiler scalarule.Compiler,
+	compiler scalacompile.Compiler,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
@@ -100,7 +101,6 @@ func (s *scalaPackage) Resolve(
 		RuleIndex: ix,
 		Rule:      r,
 		From:      from,
-		Compiler:  s.compiler,
 	}
 	provider.Resolve(ctx, importsRaw)
 	s.rules[r.Name()] = r // TODO(pcj): do we need this assignment here?
@@ -191,10 +191,21 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 	}
 
 	from := label.New("", s.rel, r.Name())
+	pb, ok := s.universe.GetKnownScalaRule(from)
+	if !ok {
+		pb = &sppb.Rule{
+			Label: from.String(),
+			Kind:  r.Kind(),
+		}
+		s.universe.PutKnownScalaRule(from, pb)
+	}
 	files, err := s.parser.ParseScalaFiles(from, r.Kind(), dir, srcs...)
 	if err != nil {
 		return nil, err
 	}
+
+	pb.Files = files
+	pb.ParseTimeMillis = time.Since(t1).Milliseconds()
 
 	ctx := &scalaRuleContext{
 		rule:        r,
@@ -202,13 +213,6 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scalaConfig: s.cfg,
 		resolver:    s.universe,
 		compiler:    s.compiler,
-	}
-
-	pb := &sppb.Rule{
-		Label:           from.String(),
-		Kind:            r.Kind(),
-		Files:           files,
-		ParseTimeMillis: time.Since(t1).Milliseconds(),
 	}
 
 	return newScalaRule(ctx, pb), nil

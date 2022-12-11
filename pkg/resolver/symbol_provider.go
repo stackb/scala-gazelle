@@ -22,7 +22,10 @@ type SymbolProvider interface {
 	CheckFlags(fs *flag.FlagSet, c *config.Config, scope Scope) error
 	// OnResolve is a lifecycle hook that gets called when the resolve phase has
 	// started.
-	OnResolve()
+	OnResolve() error
+	// OnEnd is a lifecycle hook that gets called when the resolve phase has
+	// ended.
+	OnEnd() error
 	// Providers typically manage a particular sub-space of labels.  For
 	// example, the maven resolver may return true for labels like
 	// "@maven//:junit_junit". The rule Index can be used to consult what type

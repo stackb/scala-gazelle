@@ -72,17 +72,16 @@ func TestScalaSourceProvider(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			r, err := p.ParseScalaRule(tc.from, tc.kind, dir, tc.testfiles...)
+			files, err := p.ParseScalaRule(tc.from, tc.kind, dir, tc.testfiles...)
 			p.OnResolve()
 			if err != nil {
 				t.Fatal(err)
 			}
-			for _, file := range r.Files {
+			for _, file := range files {
 				if file.Error != "" {
 					t.Fatal("parse rule file error:", file.Error)
 				}
 			}
-
 			if diff := cmp.Diff(tc.want, known.Got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
