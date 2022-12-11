@@ -13,6 +13,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -63,6 +64,8 @@ type scalaLang struct {
 	symbolProviders []resolver.SymbolProvider
 	// symbolResolver is our top-level known import resolver implementation
 	symbolResolver resolver.SymbolResolver
+	// scalaCompiler is the compiler tool
+	scalaCompiler *scalacompile.ScalaCompilerServer
 }
 
 // Name implements part of the language.Language interface
@@ -92,6 +95,7 @@ func NewLanguage() language.Language {
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
+		scalaCompiler:        scalacompile.NewScalaCompilerServer(),
 	}
 
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {

@@ -129,3 +129,11 @@ scala_repositories()
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
+
+load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
+
+graal_bindist_repository(
+    name = "graal",
+    java_version = "17",
+    version = "22.1.0",
+)

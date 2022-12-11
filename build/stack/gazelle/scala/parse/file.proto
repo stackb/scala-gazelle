@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package build.stack.gazelle.scala.parse;
 
+import "build/stack/gazelle/scala/parse/symbol.proto";
+
 option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
@@ -35,6 +37,8 @@ message File {
     int64 elapsed_millis = 12;
     // error is a string assigned when a parse error occurs
     string error = 13;
+    // list of symbols found in the file.
+    repeated build.stack.gazelle.scala.parse.Symbol symbols = 14;
 }
 
 // ClassList represents a set of files.

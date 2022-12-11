@@ -8,10 +8,17 @@ public class XmlReportableMainClass extends MainClass {
      */
     public XmlReporter reporter;
 
+    private final boolean verbose;
+
+    public XmlReportableMainClass(boolean verbose) {
+        super();
+        this.verbose = verbose;
+    }
+
     @Override
     public Global newCompiler() {
         Settings settings = super.settings();
-        reporter = new XmlReporter(settings);
+        reporter = new XmlReporter(settings, this.verbose);
         return new Global(settings, reporter);
     }
 

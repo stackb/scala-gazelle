@@ -7,6 +7,14 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
+type ResolveContext struct {
+	Config    *config.Config
+	RuleIndex *resolve.RuleIndex
+	Rule      *rule.Rule
+	From      label.Label
+	Compiler  Compiler
+}
+
 // RuleProvider implementations are capable of providing a rule and import list
 // to the gazelle GenerateArgs response.
 type RuleProvider interface {
@@ -18,7 +26,7 @@ type RuleProvider interface {
 	Rule() *rule.Rule
 	// Resolve performs deps resolution, similar to the gazelle Resolver
 	// interface.
-	Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label)
+	Resolve(ctx *ResolveContext, importsRaw interface{})
 	// Imports implements part of the resolve.Resolver interface.
 	Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec
 }

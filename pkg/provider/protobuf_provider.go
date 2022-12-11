@@ -54,27 +54,27 @@ func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope 
 func (p *ProtobufProvider) OnResolve() {
 	for from, symbols := range p.importProvider(p.lang, "package") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_PACKAGE, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_PACKAGE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "enum") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_OBJECT, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_ENUM, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "enumfield") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_OBJECT, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_ENUM_FIELD, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "message") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_MESSAGE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "service") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_SERVICE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "class") {

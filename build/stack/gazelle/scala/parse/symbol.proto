@@ -6,55 +6,47 @@ option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/p
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
 
-// ImportType describes the possible things that can be imported.
-enum ImportType {
-    IMPORT_TYPE_UNKNOWN = 0;
-    // Package type
-    PACKAGE = 1;
-    // JVM class type
-    CLASS = 2;
-    // JVM interface type
-    INTERFACE = 3;
-    // Scala trait type
-    TRAIT = 4;
-    // Scala object type
-    OBJECT = 5;
-    // Scala val type
-    VALUE = 7;
-    // OVERRIDE signals that the import was configured via a 'gazelle:resolve'
-    // override directive and hence we don't know the underlying type of thing.
-    OVERRIDE = 8;
-    // CROSS_RESOLVE signals that the import was resolved via gazelle's underlying
-    // cross resolver system.  We don't know the underlying type here either.
-    CROSS_RESOLVE = 9;
-    // PLATFORM imports include stdlib'ish things like java.lang.String.  We
-    // don't need a dep for them (and we don't know the underlying type).
-    PLATFORM = 10;
-    // Scala type type
-    TYPE = 11;
-    // Protobuf Enum
-    PROTO_ENUM = 12;
-    // Protobuf Enum Field
-    PROTO_ENUM_FIELD = 13;
-    // Protobuf Message
-    PROTO_MESSAGE = 14;
-    // Protobuf Service
-    PROTO_SERVICE = 15;
-    // Protobuf Package
-    PROTO_PACKAGE = 16;
+message Symbol {
+    // Type of the symbol
+    SymbolType type = 1;
+    // the name of the symbol.  Ideally the fully-qualified symbol name.
+    string name = 2;
 }
 
-// ImportKind describes the source of an import.
-enum ImportKind {
-    IMPORT_KIND_UNKNOWN = 0;
-    // An import named by an import statement in a source file.
-    DIRECT = 1;
-    // An import named in the main_class attibute of a rule.
-    MAIN_CLASS = 2;
-    // An import that is externally configured to be required when the source
-    // import is needed (e.g. com.typesafe.scalalogging.LazyLogging always needs
-    // org.slf4j.Logger, even if not named in the source).
-    IMPLICIT = 3;
-    // An import named in an extends clause. For example 'class Foo extends Bar'. 
-    EXTENDS = 4;
+// SymbolType describes the possible kinds of symbols.
+enum SymbolType {
+    SYMBOL_TYPE_UNKNOWN = 0;
+    // Package type
+    SYMBOL_PACKAGE = 1;
+    // JVM class type
+    SYMBOL_CLASS = 2;
+    // JVM interface type
+    SYMBOL_INTERFACE = 3;
+    // Scala trait type
+    SYMBOL_TRAIT = 4;
+    // Scala object type
+    SYMBOL_OBJECT = 5;
+    // Scala val type
+    SYMBOL_VALUE = 7;
+    // OVERRIDE signals that the import was configured via a 'gazelle:resolve'
+    // override directive and hence we don't know the underlying type of thing.
+    SYMBOL_OVERRIDE = 8;
+    // CROSS_RESOLVE signals that the import was resolved via gazelle's underlying
+    // cross resolver system.  We don't know the underlying type here either.
+    SYMBOL_CROSS_RESOLVE = 9;
+    // PLATFORM imports include stdlib'ish things like java.lang.String.  We
+    // don't need a dep for them (and we don't know the underlying type).
+    SYMBOL_PLATFORM = 10;
+    // Scala type type
+    SYMBOL_TYPE = 11;
+    // Protobuf Enum
+    SYMBOL_PROTO_ENUM = 12;
+    // Protobuf Enum Field
+    SYMBOL_PROTO_ENUM_FIELD = 13;
+    // Protobuf Message
+    SYMBOL_PROTO_MESSAGE = 14;
+    // Protobuf Service
+    SYMBOL_PROTO_SERVICE = 15;
+    // Protobuf Package
+    SYMBOL_PROTO_PACKAGE = 16;
 }

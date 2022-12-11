@@ -29,6 +29,7 @@ func (sl *scalaLang) onResolve() {
 
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
+	sl.stopScalaCompiler()
 	sl.stopCpuProfiling()
 	sl.stopMemoryProfiling()
 }

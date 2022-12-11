@@ -45,6 +45,7 @@ import scala.tools.nsc.Settings;
 public class ScalacServer {
     static final String PORT_NAME = "scalac.server.port";
     static final int DEFAULT_PORT = 8040;
+    static final boolean DEBUG = false;
 
     public static void main(String[] args) throws IOException, InterruptedException, ParserConfigurationException {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -57,12 +58,17 @@ public class ScalacServer {
         server.setExecutor(null);
         server.start();
 
-        System.out.format("Scalac server listening on port %d: hit any key to exit...\n", port);
+        if (DEBUG) {
+            System.out.format("Scalac server listening on port %d: hit any key to exit...\n", port);
+        }
         // Thread.currentThread().join();
 
         System.in.read();
         server.stop(0);
-        System.out.format("Scalac server stopped.\n");
+
+        if (DEBUG) {
+            System.out.format("Scalac server stopped.\n");
+        }
     }
 
     static class GlobalHandler implements HttpHandler {
@@ -82,25 +88,28 @@ public class ScalacServer {
                 args.add("-usejavacp");
                 args.add("-Ystop-before:refcheck");
                 // args.add("-Ystop-before:jvm");
-                fromCompileRequest(t.getRequestBody(), args);
+                readCompileRequest(t.getRequestBody(), args);
                 String[] result = new String[args.size()];
 
                 List<XmlReporter.Diagnostic> diagnostics = compile(args.toArray(result));
-                Document response = toCompileResponse(diagnostics);
+                Document response = writeCompileResponse(diagnostics);
 
                 responseBody = toXml(response);
-
                 responseCode = 200;
 
             } catch (DOMException | SAXException | IOException domex) {
-                responseCode = 400;
                 responseBody = domex.getMessage();
+                responseCode = 400;
             } catch (Exception ex) {
                 responseBody = ex.getMessage();
             }
 
-            System.out.println(responseBody);
+            if (DEBUG) {
+                System.out.println(responseBody);
+            }
+
             t.sendResponseHeaders(responseCode, responseBody.length());
+
             try (OutputStream os = t.getResponseBody()) {
                 os.write(responseBody.getBytes());
             } catch (IOException ioex) {
@@ -109,12 +118,12 @@ public class ScalacServer {
         }
 
         private List<XmlReporter.Diagnostic> compile(String[] args) {
-            XmlReportableMainClass main = new XmlReportableMainClass();
+            XmlReportableMainClass main = new XmlReportableMainClass(DEBUG);
             boolean ok = main.process(args);
             return main.reporter.getDiagnostics();
         }
 
-        private void fromCompileRequest(InputStream in, List<String> args)
+        private void readCompileRequest(InputStream in, List<String> args)
                 throws DOMException, SAXException, IOException {
             // Expecting <compileRequest><file>Foo.scala</file></compileRequest>
             Document doc = builder.parse(in);
@@ -141,7 +150,7 @@ public class ScalacServer {
             }
         }
 
-        private Document toCompileResponse(List<XmlReporter.Diagnostic> diagnostics) {
+        private Document writeCompileResponse(List<XmlReporter.Diagnostic> diagnostics) {
             Document doc = builder.newDocument();
             Element compileResponse = doc.createElement("compileResponse");
             doc.appendChild(compileResponse);

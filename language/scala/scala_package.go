@@ -12,7 +12,6 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -25,7 +24,9 @@ type scalaPackage struct {
 	// rel is the package name (from args.Rel)
 	rel string
 	// parser is the file parser
-	parser scalaparse.Parser
+	parser scalarule.Parser
+	// parser is the file parser
+	compiler scalarule.Compiler
 	// universe is the parent universe
 	universe resolver.Universe
 	// the registry to use
@@ -41,11 +42,19 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.Universe) *scalaPackage {
+func newScalaPackage(
+	rel string,
+	file *rule.File,
+	cfg *scalaConfig,
+	providerRegistry scalarule.ProviderRegistry,
+	parser scalarule.Parser,
+	compiler scalarule.Compiler,
+	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
 		parser:           parser,
-		universe:         importResolver,
+		compiler:         compiler,
+		universe:         universe,
 		providerRegistry: providerRegistry,
 		file:             file,
 		cfg:              cfg,
@@ -83,7 +92,14 @@ func (s *scalaPackage) Resolve(
 		log.Printf("no known rule provider for %v", from)
 		return
 	}
-	provider.Resolve(c, ix, r, importsRaw, from)
+	ctx := &scalarule.ResolveContext{
+		Config:    c,
+		RuleIndex: ix,
+		Rule:      r,
+		From:      from,
+		Compiler:  s.compiler,
+	}
+	provider.Resolve(ctx, importsRaw)
 	s.rules[r.Name()] = r // TODO(pcj): do we need this assignment here?
 }
 
@@ -175,13 +191,14 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		return nil, err
 	}
 
-	return newScalaRule(
+	scalaRule := newScalaRule(
 		s.cfg,
 		s.universe,
 		s.universe,
 		resolver.NewTrieScope(),
 		r, from, files,
-	), nil
+	)
+	return scalaRule, nil
 }
 
 // repoRootDir return the root directory of the repo.
@@ -226,8 +243,8 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 	return rules
 }
 
-func parseScalaFiles(dir string, from label.Label, kind string, srcs []string, parser scalaparse.Parser) ([]*sppb.File, error) {
-	if index, err := parser.ParseScalaFiles(from, kind, dir, srcs...); err != nil {
+func parseScalaFiles(dir string, from label.Label, kind string, srcs []string, parser scalarule.Parser) ([]*sppb.File, error) {
+	if index, err := parser.ParseScala(from, kind, dir, srcs...); err != nil {
 		return nil, err
 	} else {
 		return index.Files, nil

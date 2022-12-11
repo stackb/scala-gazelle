@@ -27,7 +27,7 @@ scalacache_protos:
 	rm -rf build/stack/gazelle/scala/cache/build
 
 .PHONY: protos
-protos: jarindex_protos scalaparse_protos scalacache_protosgit 
+protos: jarindex_protos scalaparse_protos scalacache_protos 
 	echo "Done."
 
 .PHONY: tidy

@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
@@ -42,7 +43,7 @@ func TestScalaCompileResponse(t *testing.T) {
 			}))
 			defer testServer.Close()
 
-			compiler := &scalaCompiler{
+			compiler := &ScalaCompilerServer{
 				backendRawURL: testServer.URL,
 			}
 
@@ -132,6 +133,48 @@ func TestParseScalaFileSpec(t *testing.T) {
 				sppb.ClassList{},
 			)); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+// TestScalaCompileResponse tests translation of an XML response from the
+// compiler to a CompileSpec.
+func TestScalaCompile(t *testing.T) {
+	for name, tc := range map[string]struct {
+		files    []testtools.FileSpec
+		dir      string
+		filename string
+		request  CompileRequest
+		want     CompileResponse
+	}{
+		"degenerate": {
+			dir:      "",
+			filename: "lib/App.scala",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				res.WriteHeader(http.StatusOK)
+				res.Write([]byte(tc.mockResponse))
+			}))
+			defer testServer.Close()
+
+			compiler := &ScalaCompilerServer{
+				backendRawURL: testServer.URL,
+			}
+
+			if err := compiler.initHTTPClient(); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := compiler.Compile(tc.dir, tc.filename)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("completions (-want +got):\n%s", diff)
 			}
 		})
 	}

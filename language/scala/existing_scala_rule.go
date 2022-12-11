@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
@@ -116,26 +115,47 @@ func (s *existingScalaRule) Imports(c *config.Config, r *rule.Rule, file *rule.F
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
-func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *rule.Rule, importsRaw interface{}, from label.Label) {
+func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw interface{}) {
 	scalaRule, ok := importsRaw.(*scalaRule)
 	if !ok {
 		return
 	}
 
-	sc := getScalaConfig(c)
+	r := ctx.Rule
+	sc := getScalaConfig(ctx.Config)
 	imports := scalaRule.Imports()
 
 	if len(imports) > 0 {
 		for _, imp := range imports.Values() {
-			if symbol, err := scalaRule.ResolveSymbol(c, ix, from, scalaLangName, imp.Imp); err != nil {
+			if symbol, err := scalaRule.ResolveSymbol(ctx.Config, ctx.RuleIndex, ctx.From, scalaLangName, imp.Imp); err != nil {
 				imp.Error = err
 			} else {
 				if len(symbol.Conflicts) > 0 {
-					log.Printf("conflicting symbol resolution for %v %q:", symbol.Type, imp.Imp)
-					log.Println(" - choose one of the following to suppress this message:")
-					log.Printf("    # gazelle:resolve scala %s %s", imp.Imp, symbol.Label)
-					for _, conflict := range symbol.Conflicts {
-						log.Printf("# gazelle:resolve scala %s %s", imp.Imp, conflict.Label)
+					files := scalaRule.Files()
+					filenames := make([]string, len(files))
+					for i, file := range files {
+						filenames[i] = file.Filename
+					}
+					if resp, err := ctx.Compiler.CompileScala(ctx.Config.RepoRoot, filenames); err != nil {
+						log.Println("scala compiler error:", err)
+					} else {
+						if false {
+							// log.Printf("scala compiler response: %+v", resp)
+							for _, nf := range resp.NotFound {
+								log.Println("not found: ", nf.Kind, nf.Name)
+							}
+							for _, nm := range resp.NotMember {
+								log.Println("not member: ", nm.Kind, nm.Name, nm.Package)
+							}
+						}
+					}
+					if false {
+						log.Printf("conflicting symbol resolution for %v %q:", symbol.Type, imp.Imp)
+						log.Println(" - choose one of the following to suppress this message:")
+						log.Printf("    # gazelle:resolve scala %s %s", imp.Imp, symbol.Label)
+						for _, conflict := range symbol.Conflicts {
+							log.Printf("# gazelle:resolve scala %s %s", imp.Imp, conflict.Label)
+						}
 					}
 				}
 				imp.Symbol = symbol
@@ -143,7 +163,7 @@ func (s *existingScalaRule) Resolve(c *config.Config, ix *resolve.RuleIndex, r *
 		}
 
 		deps := buildKeepDepsList(sc, r.Attr("deps"))
-		addResolvedDeps(deps, sc, r.Kind(), from, imports)
+		addResolvedDeps(deps, sc, r.Kind(), ctx.From, imports)
 
 		r.SetAttr("deps", deps)
 	}

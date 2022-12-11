@@ -42,7 +42,7 @@ go_library(
         "//pkg/protobuf",
         "//pkg/provider",
         "//pkg/resolver",
-        "//pkg/scalaparse",
+        "//pkg/scalacompile",
         "//pkg/scalarule",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

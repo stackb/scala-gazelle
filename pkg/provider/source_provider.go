@@ -88,8 +88,8 @@ func (r *SourceProvider) Start() error {
 	return nil
 }
 
-// ParseScalaFiles implements scalaparse.ScalaParser
-func (r *SourceProvider) ParseScalaFiles(from label.Label, kind string, dir string, srcs ...string) (*sppb.Rule, error) {
+// ParseScala implements scalarule.Parser
+func (r *SourceProvider) ParseScala(from label.Label, kind string, dir string, srcs ...string) (*sppb.Rule, error) {
 	rule := &sppb.Rule{
 		Label: from.String(),
 		Kind:  kind,

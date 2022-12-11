@@ -5,10 +5,12 @@ load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compil
 proto_library(
     name = "parse_proto",
     srcs = [
+        "compiler.proto",
         "file.proto",
         "import.proto",
         "parser.proto",
         "rule.proto",
+        "symbol.proto",
     ],
     visibility = ["//visibility:public"],
 )
@@ -16,11 +18,14 @@ proto_library(
 proto_compiled_sources(
     name = "parse_go_compiled_sources",
     srcs = [
+        "compiler.pb.go",
+        "compiler_grpc.pb.go",
         "file.pb.go",
         "import.pb.go",
         "parser.pb.go",
         "parser_grpc.pb.go",
         "rule.pb.go",
+        "symbol.pb.go",
     ],
     output_mappings = [
         "file.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/file.pb.go",
@@ -28,6 +33,9 @@ proto_compiled_sources(
         "parser.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/parser.pb.go",
         "parser_grpc.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/parser_grpc.pb.go",
         "import.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/import.pb.go",
+        "compiler.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/compiler.pb.go",
+        "compiler_grpc.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/compiler_grpc.pb.go",
+        "symbol.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse/symbol.pb.go",
     ],
     plugins = [
         "@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go",
@@ -39,11 +47,14 @@ proto_compiled_sources(
 go_library(
     name = "parse",
     srcs = [
+        "compiler.pb.go",
+        "compiler_grpc.pb.go",
         "file.pb.go",
         "import.pb.go",
         "parser.pb.go",
         "parser_grpc.pb.go",
         "rule.pb.go",
+        "symbol.pb.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse",
     visibility = ["//visibility:public"],

@@ -35,6 +35,8 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.Var(&sl.existingScalaRulesFlagValue, existingScalaRulesFlagName, "LOAD%NAME mapping for a custom existing_scala_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	sl.registerSymbolProviders(flags, cmd, c)
+	sl.registerConflictResolvers(flags, cmd, c)
+	sl.registerScalaCompilerServer(flags, cmd, c)
 }
 
 func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c *config.Config) {
@@ -42,6 +44,17 @@ func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c 
 	for _, provider := range providers {
 		provider.RegisterFlags(flags, cmd, c)
 	}
+}
+
+func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, c *config.Config) {
+	resolver := resolver.GlobalConflictResolvers()
+	for _, provider := range resolver {
+		provider.RegisterFlags(flags, cmd, c)
+	}
+}
+
+func (sl *scalaLang) registerScalaCompilerServer(flags *flag.FlagSet, cmd string, c *config.Config) {
+	sl.scalaCompiler.RegisterFlags(flags, cmd, c)
 }
 
 // CheckFlags implements part of the language.Language interface
@@ -55,6 +68,9 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
+		return err
+	}
+	if err := sl.setupScalaCompiler(flags, c); err != nil {
 		return err
 	}
 	if err := sl.setupCache(); err != nil {
@@ -85,12 +101,22 @@ func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config,
 }
 
 func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Config, names []string) error {
-	for _, name := range sl.symbolProviderNamesFlagValue {
+	for _, name := range sl.conflictResolverNamesFlagValue {
 		resolver, ok := resolver.GlobalConflictResolverRegistry().GetConflictResolver(name)
 		if !ok {
-			return fmt.Errorf("ConflictResolver not found: %q", name)
+			return fmt.Errorf("-%s not found: %q", scalaConflictResolverFlagName, name)
+		}
+		if err := resolver.CheckFlags(flags, c); err != nil {
+			return err
 		}
 		sl.conflictResolvers[name] = resolver
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupScalaCompiler(flags *flag.FlagSet, c *config.Config) error {
+	if err := sl.scalaCompiler.CheckFlags(flags, c); err != nil {
+		return err
 	}
 	return nil
 }
@@ -149,6 +175,12 @@ func (sl *scalaLang) setupMemoryProfiling(workDir string) error {
 		}
 	}
 	return nil
+}
+
+func (sl *scalaLang) stopScalaCompiler() {
+	if err := sl.scalaCompiler.Stop(); err != nil {
+		log.Println("failed to cleanly stop compiler: %v", err)
+	}
 }
 
 func (sl *scalaLang) stopCpuProfiling() {

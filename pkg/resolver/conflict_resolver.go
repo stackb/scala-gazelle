@@ -15,8 +15,8 @@ type ConflictResolver interface {
 	RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config)
 	// CheckFlags asserts that the flags are correct.  CheckFlags is only called
 	// if the resolver is enabled.
-	CheckFlags(fs *flag.FlagSet, c *config.Config, scope Scope) error
+	CheckFlags(fs *flag.FlagSet, c *config.Config) error
 	// ResolveConflict takes the context rule and imports, and the target symbol
 	// with conflicts to resolve.
-	ResolveConflict(r *rule.Rule, imports ImportMap, symbol *Symbol) (*Symbol, bool)
+	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool)
 }

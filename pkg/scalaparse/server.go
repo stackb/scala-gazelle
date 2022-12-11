@@ -68,6 +68,8 @@ func (s *ScalaParseServer) Stop() {
 }
 
 func (s *ScalaParseServer) Start() error {
+	t1 := time.Now()
+
 	//
 	// Setup temp process directory and write js files
 	//
@@ -160,6 +162,9 @@ func (s *ScalaParseServer) Start() error {
 			TLSHandshakeTimeout: 5 * time.Second,
 		},
 	}
+
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	log.Printf("parser started (%v)", t2)
 
 	return nil
 }
