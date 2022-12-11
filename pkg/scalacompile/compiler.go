@@ -2,16 +2,13 @@ package scalacompile
 
 import (
 	"bytes"
-	"context"
 	"encoding/xml"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -33,17 +30,15 @@ const NOT_FOUND = "not found: "
 
 var notPackageMemberRe = regexp.MustCompile(`^object ([^ ]+) is not a member of package (.*)$`)
 
-func NewScalaCompilerServer() *ScalaCompilerServer {
-	return &ScalaCompilerServer{}
+func NewCompiler() *Compiler {
+	return &Compiler{}
 }
 
-// ScalaCompilerServer implements a compiler frontend for scala files that extracts
+// Compiler implements a compiler frontend for scala files that extracts
 // the index information.  The compiler backend runs as a separate process.
-type ScalaCompilerServer struct {
+type Compiler struct {
 	backendRawURL string
-	// backendURL is the bind address for the compiler server
-	backendURL *url.URL
-	repoRoot   string
+	repoRoot      string
 	// cacheDir is the location where we can write cache files
 	cacheDir string
 	// scalacserverJarPath is the unresolved runfile
@@ -52,14 +47,7 @@ type ScalaCompilerServer struct {
 	javaBinPath string
 	// if we should start a subprocess for the compiler
 	startSubprocess bool
-	// maxCompileDialSeconds sets the timeout for the transport
-	maxCompileDialSeconds time.Duration
-	// maxCompileRequestSeconds sets the timeout for the transport
-	maxCompileRequestSeconds time.Duration
-	// process cancellation function
-	cancel func()
-
-	cmd *exec.Cmd
+	cmd             *exec.Cmd
 
 	httpClient *http.Client
 	httpUrl    string
@@ -68,18 +56,17 @@ type ScalaCompilerServer struct {
 }
 
 // RegisterFlags implements part of the Configurer interface.
-func (p *ScalaCompilerServer) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (p *Compiler) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	fs.StringVar(&p.scalacserverJarPath, "scala_compiler_jar_path", "", "filesystem path to the scala compiler tool jar")
 	fs.StringVar(&p.javaBinPath, "scala_compiler_java_bin_path", "", "filesystem path to the java tool $(location @local_jdk//:bin/java)")
 	fs.StringVar(&p.backendRawURL, "scala_compiler_url", "http://127.0.0.1:8040", "bind address for the server")
 	fs.StringVar(&p.cacheDir, "scala_compiler_cache_dir", "/tmp/scala_compiler", "Cache directory for scala compiler.  If unset, diables the cache")
 	fs.BoolVar(&p.startSubprocess, "scala_compiler_start_subprocess", true, "whether to start the compiler subprocess")
 	fs.DurationVar(&p.maxCompileDialSeconds, "scala_compiler_dial_timeout", time.Second*5, "compiler dial timeout")
-	fs.DurationVar(&p.maxCompileRequestSeconds, "scala_compiler_request_timeout", time.Second*60, "compiler request timeout")
 }
 
 // CheckFlags implements part of the Configurer interface.
-func (p *ScalaCompilerServer) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (p *Compiler) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	p.repoRoot = c.RepoRoot
 	p.javaBinPath = os.ExpandEnv(p.javaBinPath)
 	p.scalacserverJarPath = os.ExpandEnv(p.scalacserverJarPath)
@@ -98,7 +85,7 @@ func (p *ScalaCompilerServer) CheckFlags(fs *flag.FlagSet, c *config.Config) err
 	return nil
 }
 
-func (s *ScalaCompilerServer) Start() error {
+func (s *Compiler) Start() error {
 	t1 := time.Now()
 
 	//
@@ -173,7 +160,7 @@ func (s *ScalaCompilerServer) Start() error {
 	return nil
 }
 
-func (s *ScalaCompilerServer) Stop() error {
+func (s *Compiler) Stop() error {
 	if s.cmd != nil {
 		if err := s.cmd.Process.Kill(); err != nil {
 			return err
@@ -183,36 +170,9 @@ func (s *ScalaCompilerServer) Stop() error {
 	return nil
 }
 
-func (p *ScalaCompilerServer) startOld() error {
-	if _, err := os.Stat(p.javaBinPath); errors.Is(err, os.ErrNotExist) {
-		return err
-	}
-
-	ctx := context.Background()
-	ctx, cancel := context.WithTimeout(ctx, time.Second*1)
-	cmd := exec.CommandContext(ctx, "java", "-Dscalac.server.port="+p.backendURL.Port(), "-jar", p.javaBinPath)
-
-	p.cancel = cancel
-
-	log.Println("Starting compiler:", p.javaBinPath, p.backendURL)
-
-	if err := cmd.Start(); err != nil {
-		log.Printf("failed to run compiler: %v\n", err)
-		return err
-	}
-
-	return nil
-}
-
-func (p *ScalaCompilerServer) stopOld() {
-	if p.cancel != nil {
-		p.cancel()
-	}
-}
-
 // Compile a Scala file and returns the index. An error is raised if
 // communicating with the long-lived Scala compiler over stdin and stdout fails.
-func (p *ScalaCompilerServer) CompileScala(dir string, filenames []string) (*ScalaCompileSpec, error) {
+func (p *Compiler) CompileScala(dir string, filenames []string) (*ScalaCompileSpec, error) {
 	t1 := time.Now()
 
 	// if false {

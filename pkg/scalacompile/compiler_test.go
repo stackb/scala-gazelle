@@ -43,7 +43,7 @@ func TestScalaCompileResponse(t *testing.T) {
 			}))
 			defer testServer.Close()
 
-			compiler := &ScalaCompilerServer{
+			compiler := &Compiler{
 				backendRawURL: testServer.URL,
 			}
 
@@ -160,7 +160,7 @@ func TestScalaCompile(t *testing.T) {
 			}))
 			defer testServer.Close()
 
-			compiler := &ScalaCompilerServer{
+			compiler := &Compiler{
 				backendRawURL: testServer.URL,
 			}
 

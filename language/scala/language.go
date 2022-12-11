@@ -65,7 +65,7 @@ type scalaLang struct {
 	// symbolResolver is our top-level known import resolver implementation
 	symbolResolver resolver.SymbolResolver
 	// scalaCompiler is the compiler tool
-	scalaCompiler *scalacompile.ScalaCompilerServer
+	scalaCompiler *scalacompile.Compiler
 }
 
 // Name implements part of the language.Language interface
@@ -95,7 +95,7 @@ func NewLanguage() language.Language {
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
-		scalaCompiler:        scalacompile.NewScalaCompilerServer(),
+		scalaCompiler:        scalacompile.NewCompiler(),
 	}
 
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
