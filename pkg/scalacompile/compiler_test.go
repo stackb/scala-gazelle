@@ -179,7 +179,25 @@ func TestCompiler(t *testing.T) {
 				},
 			},
 		},
+		"FullyQualified.scala": {
+			kind:      "scala_library",
+			from:      label.Label{Name: "greeter_lib"},
+			testfiles: []string{"testdata/FullyQualified.scala"},
+			want: &sppb.Rule{
+				Label: "//:greeter_lib",
+				Kind:  "scala_library",
+				Files: []*sppb.File{
+					{
+						Filename: "testdata/FullyQualified.scala",
+						Symbols:  []*sppb.Symbol{},
+					},
+				},
+			},
+		},
 	} {
+		if name != "FullyQualified.scala" {
+			continue
+		}
 		t.Run(name, func(t *testing.T) {
 			dir, err := os.Getwd()
 			if err != nil {

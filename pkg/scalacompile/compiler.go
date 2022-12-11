@@ -91,6 +91,17 @@ func (s *Compiler) start() error {
 	t1 := time.Now()
 
 	//
+	// ensure we have a port
+	//
+	if s.backendPort == 0 {
+		port, err := getFreePort()
+		if err != nil {
+			return status.Errorf(codes.FailedPrecondition, "getting http port: %v", err)
+		}
+		s.backendPort = port
+	}
+
+	//
 	// Start the backend process
 	//
 	cmd := exec.Command(s.javaBinPath,
@@ -127,19 +138,7 @@ func (s *Compiler) start() error {
 }
 
 func (s *Compiler) startHttpClient() error {
-	//
-	// ensure we have a port
-	//
-	if s.backendUrl == "" {
-		if s.backendPort == 0 {
-			port, err := getFreePort()
-			if err != nil {
-				return status.Errorf(codes.FailedPrecondition, "getting http port: %v", err)
-			}
-			s.backendPort = port
-		}
-		s.backendUrl = fmt.Sprintf("http://%s:%d", s.backendHost, s.backendPort)
-	}
+	s.backendUrl = fmt.Sprintf("http://%s:%d", s.backendHost, s.backendPort)
 
 	if !waitForConnectionAvailable(s.backendHost, s.backendPort, s.backendDialTimeout) {
 		return fmt.Errorf("timed out waiting to connect to scalacserver http://%s:%d within %s", s.backendHost, s.backendPort, s.backendDialTimeout)
@@ -172,10 +171,6 @@ func (s *Compiler) Stop() error {
 // communicating with the long-lived Scala compiler over stdin and stdout fails.
 func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ...string) (*sppb.Rule, error) {
 	t1 := time.Now()
-
-	if !strings.HasSuffix(dir, "/") {
-		dir = dir + "/"
-	}
 
 	// if false {
 	// 	filename := filenames[0]
@@ -245,9 +240,13 @@ func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ..
 
 	for _, d := range compileResponse.Diagnostics {
 		if d.Source == "" {
-			log.Printf("skipping diagnostic: %v (no file)", d)
+			if false {
+				log.Printf("skipping diagnostic: %v (no file)", d)
+			}
 			continue
 		}
+		// log.Printf("diagnostic: %+v", d)
+
 		file, ok := fileMap[d.Source]
 		if !ok {
 			file = &sppb.File{Filename: d.Source}
@@ -269,9 +268,6 @@ func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ..
 	// 	log.Printf("Compile cache put: <%s>", filename)
 	// }
 
-	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	log.Printf("compiled %v (%v)", filenames, t2)
-
 	keys := make([]string, 0, len(fileMap))
 	for k := range fileMap {
 		keys = append(keys, k)
@@ -280,8 +276,14 @@ func (p *Compiler) CompileScala(from label.Label, kind, dir string, filenames ..
 	files := make([]*sppb.File, len(keys))
 	for i, k := range keys {
 		files[i] = fileMap[k]
-		files[i].Filename = strings.TrimPrefix(files[i].Filename, dir)
+		filename := strings.TrimPrefix(files[i].Filename, dir)
+		filename = strings.TrimPrefix(filename, "/")
+		files[i].Filename = filename
 	}
+
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	log.Printf("Compiled %s (%d files, %v)", from, len(files), t2)
+
 	return &sppb.Rule{
 		Label: from.String(),
 		Kind:  kind,

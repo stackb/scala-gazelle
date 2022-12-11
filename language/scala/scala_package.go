@@ -196,6 +196,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		s.universe,
 		s.universe,
 		resolver.NewTrieScope(),
+		s.compiler,
 		r, from, files,
 	)
 	return scalaRule, nil

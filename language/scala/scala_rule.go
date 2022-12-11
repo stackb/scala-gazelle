@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -13,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 type scalaRule struct {
@@ -39,7 +41,8 @@ type scalaRule struct {
 	// scope is a map of symbols that are in scope.  For the import
 	// 'com.foo.Bar', the map key is 'Bar' and the map value is the symbol for
 	// it.
-	scope resolver.SymbolMap
+	scope    resolver.SymbolMap
+	compiler scalarule.Compiler
 }
 
 func newScalaRule(
@@ -47,6 +50,7 @@ func newScalaRule(
 	next resolver.SymbolResolver,
 	parentScope resolver.Scope,
 	localScope resolver.Scope,
+	compiler scalarule.Compiler,
 	r *rule.Rule,
 	from label.Label,
 	files []*sppb.File,
@@ -57,6 +61,7 @@ func newScalaRule(
 		from:          from,
 		files:         files,
 		next:          next,
+		compiler:      compiler,
 		ruleScope:     localScope,
 		importScope:   resolver.NewChainScope(localScope, parentScope),
 		extendedTypes: make(map[string][]string),
@@ -74,10 +79,38 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 	return r.next.ResolveSymbol(c, ix, from, lang, imp)
 }
 
+func (r *scalaRule) compile() error {
+	fileMap := make(map[string]*sppb.File)
+	filenames := make([]string, len(r.files))
+	for i, file := range r.files {
+		filenames[i] = file.Filename
+		fileMap[file.Filename] = file
+	}
+
+	result, err := r.compiler.CompileScala(r.from, r.Kind(), r.scalaConfig.config.RepoRoot, filenames...)
+	if err != nil {
+		return err
+	}
+
+	for _, f := range result.Files {
+		file, ok := fileMap[f.Filename]
+		if !ok {
+			return fmt.Errorf("could not find rule file: %s", f.Filename)
+		}
+		// copy symbols over!
+		file.Symbols = f.Symbols
+	}
+	return nil
+}
+
 // Imports implements part of the scalarule.Rule interface.
 func (r *scalaRule) Imports() resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
+
+	if err := r.compile(); err != nil {
+		log.Fatalf("%s | compile error: %v", r.from, err)
+	}
 
 	// direct
 	for _, file := range r.files {

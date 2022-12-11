@@ -136,27 +136,27 @@ func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw in
 					for i, file := range files {
 						filenames[i] = file.Filename
 					}
-					if resp, err := ctx.Compiler.CompileScala(ctx.Config.RepoRoot, filenames); err != nil {
-						log.Println("scala compiler error:", err)
-					} else {
-						if false {
-							// log.Printf("scala compiler response: %+v", resp)
-							for _, nf := range resp.NotFound {
-								log.Println("not found: ", nf.Kind, nf.Name)
-							}
-							for _, nm := range resp.NotMember {
-								log.Println("not member: ", nm.Kind, nm.Name, nm.Package)
-							}
-						}
-					}
-					if false {
-						log.Printf("conflicting symbol resolution for %v %q:", symbol.Type, imp.Imp)
-						log.Println(" - choose one of the following to suppress this message:")
-						log.Printf("    # gazelle:resolve scala %s %s", imp.Imp, symbol.Label)
-						for _, conflict := range symbol.Conflicts {
-							log.Printf("# gazelle:resolve scala %s %s", imp.Imp, conflict.Label)
-						}
-					}
+					// if resp, err := ctx.Compiler.CompileScala(ctx.Config.RepoRoot, filenames); err != nil {
+					// 	log.Println("scala compiler error:", err)
+					// } else {
+					// 	if false {
+					// 		// log.Printf("scala compiler response: %+v", resp)
+					// 		for _, nf := range resp.NotFound {
+					// 			log.Println("not found: ", nf.Kind, nf.Name)
+					// 		}
+					// 		for _, nm := range resp.NotMember {
+					// 			log.Println("not member: ", nm.Kind, nm.Name, nm.Package)
+					// 		}
+					// 	}
+					// }
+					// if false {
+					// 	log.Printf("conflicting symbol resolution for %v %q:", symbol.Type, imp.Imp)
+					// 	log.Println(" - choose one of the following to suppress this message:")
+					// 	log.Printf("    # gazelle:resolve scala %s %s", imp.Imp, symbol.Label)
+					// 	for _, conflict := range symbol.Conflicts {
+					// 		log.Printf("# gazelle:resolve scala %s %s", imp.Imp, conflict.Label)
+					// 	}
+					// }
 				}
 				imp.Symbol = symbol
 			}

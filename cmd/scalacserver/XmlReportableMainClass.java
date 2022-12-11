@@ -1,3 +1,5 @@
+package scalacserver;
+
 import scala.tools.nsc.Global;
 import scala.tools.nsc.MainClass;
 import scala.tools.nsc.Settings;
