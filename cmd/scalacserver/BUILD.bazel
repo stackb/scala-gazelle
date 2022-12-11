@@ -2,6 +2,7 @@ java_library(
     name = "scalacserver_lib",
     srcs = [
         "ScalacServer.java",
+        "ScalacServerHandler.java",
         "XmlReportableMainClass.java",
         "XmlReporter.java",
     ],

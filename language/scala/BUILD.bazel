@@ -57,14 +57,6 @@ go_library(
 )
 
 genrule(
-    name = "scalacserver_jar",
-    outs = ["scalacserver.jar"],
-    cmd = "cp $(location //cmd/scalacserver:scalacserver_deploy.jar) $@",
-    executable = True,
-    tools = ["//cmd/scalacserver:scalacserver_deploy.jar"],
-)
-
-genrule(
     name = "gazelle_tool",
     outs = ["gazelle"],
     cmd = "cp $(location :gazelle-scala) $@",

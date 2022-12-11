@@ -54,7 +54,7 @@ public class ScalacServer {
         Integer port = Integer.getInteger(PORT_NAME, DEFAULT_PORT);
 
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new GlobalHandler(builder));
+        server.createContext("/", new ScalacServerHandler(builder));
         server.setExecutor(null);
         server.start();
 
@@ -68,114 +68,6 @@ public class ScalacServer {
 
         if (DEBUG) {
             System.out.format("Scalac server stopped.\n");
-        }
-    }
-
-    static class GlobalHandler implements HttpHandler {
-        final DocumentBuilder builder;
-
-        GlobalHandler(DocumentBuilder builder) {
-            this.builder = builder;
-        }
-
-        @Override
-        public void handle(HttpExchange t) throws IOException {
-            int responseCode = 500;
-            String responseBody = "unknown error";
-
-            try {
-                List<String> args = new ArrayList<>();
-                args.add("-usejavacp");
-                args.add("-Ystop-before:refcheck");
-                // args.add("-Ystop-before:jvm");
-                readCompileRequest(t.getRequestBody(), args);
-                String[] result = new String[args.size()];
-
-                List<XmlReporter.Diagnostic> diagnostics = compile(args.toArray(result));
-                Document response = writeCompileResponse(diagnostics);
-
-                responseBody = toXml(response);
-                responseCode = 200;
-
-            } catch (DOMException | SAXException | IOException domex) {
-                responseBody = domex.getMessage();
-                responseCode = 400;
-            } catch (Exception ex) {
-                responseBody = ex.getMessage();
-            }
-
-            if (DEBUG) {
-                System.out.println(responseBody);
-            }
-
-            t.sendResponseHeaders(responseCode, responseBody.length());
-
-            try (OutputStream os = t.getResponseBody()) {
-                os.write(responseBody.getBytes());
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
-            }
-        }
-
-        private List<XmlReporter.Diagnostic> compile(String[] args) {
-            XmlReportableMainClass main = new XmlReportableMainClass(DEBUG);
-            boolean ok = main.process(args);
-            return main.reporter.getDiagnostics();
-        }
-
-        private void readCompileRequest(InputStream in, List<String> args)
-                throws DOMException, SAXException, IOException {
-            // Expecting <compileRequest><file>Foo.scala</file></compileRequest>
-            Document doc = builder.parse(in);
-            Element root = doc.getDocumentElement();
-            if (!root.getTagName().equals("compileRequest")) {
-                throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR, "expected root element <compileRequest>");
-            }
-
-            NodeList nodeList = root.getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                if (node.getNodeType() != Node.ELEMENT_NODE) {
-                    continue;
-                }
-                Element elem = (Element) node;
-                switch (elem.getTagName()) {
-                    case "file":
-                        String name = elem.getTextContent();
-                        args.add(name);
-                        break;
-                    default:
-                        throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR, "unexpected element:" + elem);
-                }
-            }
-        }
-
-        private Document writeCompileResponse(List<XmlReporter.Diagnostic> diagnostics) {
-            Document doc = builder.newDocument();
-            Element compileResponse = doc.createElement("compileResponse");
-            doc.appendChild(compileResponse);
-            for (XmlReporter.Diagnostic diagnostic : diagnostics) {
-                Element d = doc.createElement("diagnostic");
-                d.setAttribute("sev", diagnostic.sev.toString());
-                if (!diagnostic.pos.source().path().equals("<no file>")) {
-                    d.setAttribute("source", diagnostic.pos.source().path());
-                }
-                if (diagnostic.pos.safeLine() != 0) {
-                    d.setAttribute("line", Integer.toString(diagnostic.pos.safeLine()));
-                }
-                d.setTextContent(diagnostic.msg);
-                compileResponse.appendChild(d);
-            }
-            return doc;
-        }
-
-        // write doc to output stream
-        private static String toXml(Document doc) throws TransformerException {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(doc), new StreamResult(writer));
-            return writer.getBuffer().toString();
         }
     }
 }

@@ -23,6 +23,7 @@ type NotMemberSymbol struct {
 
 type CompileRequest struct {
 	XMLName xml.Name `xml:"compileRequest"`
+	Dir     string   `xml:"dir"`
 	Files   []string `xml:"file"`
 }
 

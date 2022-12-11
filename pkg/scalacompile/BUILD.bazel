@@ -1,5 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
+# gazelle:exclude testdata
+
 go_library(
     name = "scalacompile",
     srcs = [
@@ -19,10 +21,18 @@ go_library(
 go_test(
     name = "scalacompile_test",
     srcs = ["compiler_test.go"],
+    data = glob(["testdata/**/*"]) + [
+        "@local_jdk//:bin/java",
+        "scalacserver.jar",
+    ],
     embed = [":scalacompile"],
+    tags = ["noblock-network"],
     deps = [
         "//build/stack/gazelle/scala/parse",
-        "@bazel_gazelle//testtools:go_default_library",
+        "//pkg/resolver",
+        "//pkg/testutil",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
     ],
