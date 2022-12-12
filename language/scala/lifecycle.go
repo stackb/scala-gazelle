@@ -7,8 +7,6 @@ import (
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
-	sl.sourceProvider.Stop()
-
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
@@ -27,12 +25,6 @@ func (sl *scalaLang) onEnd() {
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnEnd(); err != nil {
 			log.Fatalf("provider.OnEnd transition error %s: %v", provider.Name(), err)
-		}
-	}
-
-	if sl.cacheFileFlagValue != "" {
-		if err := sl.writeScalaRuleCacheFile(); err != nil {
-			log.Fatalf("failed to write cache: %v", err)
 		}
 	}
 

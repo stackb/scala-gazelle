@@ -1,6 +1,9 @@
 package scala
 
 import (
+	"log"
+	"time"
+
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -13,12 +16,14 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		return language.GenerateResult{}
 	}
 
+	t1 := time.Now()
+
 	if sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
 	sc := getScalaConfig(args.Config)
-	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.sourceProvider, sl.compiler, sl)
+	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.sourceProvider, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++
 
@@ -33,6 +38,11 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
+	}
+
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	if len(rules) > 1 {
+		log.Printf("Visited %q (%d rules, %v)", args.Rel, len(rules)-1, t2)
 	}
 
 	return language.GenerateResult{

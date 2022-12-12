@@ -15,14 +15,16 @@ import (
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 type progressFunc func(msg string)
 
 // NewSourceProvider constructs a new NewSourceProvider.
-func NewSourceProvider(progress progressFunc) *SourceProvider {
+func NewSourceProvider(compiler scalacompile.Compiler, progress progressFunc) *SourceProvider {
 	return &SourceProvider{
+		compiler: compiler,
 		progress: progress,
 		parser:   scalaparse.NewScalametaParserService(),
 	}
@@ -35,6 +37,8 @@ func NewSourceProvider(progress progressFunc) *SourceProvider {
 // sha256, the cache hit will be used.
 type SourceProvider struct {
 	progress progressFunc
+	// compiler to use for symbol resolution
+	compiler scalacompile.Compiler
 	// scope is the target we provide symbols to
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
@@ -53,11 +57,12 @@ func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *confi
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	r.scope = scope
-	return nil
+	return r.start()
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) OnResolve() error {
+	r.parser.Stop()
 	return nil
 }
 
@@ -75,24 +80,23 @@ func (cr *SourceProvider) CanProvide(from label.Label, ruleIndex func(from label
 	return false
 }
 
-// Start implements part of the scalaparse.Service interface.
-func (r *SourceProvider) Start() error {
+// start starts the parser process.
+func (r *SourceProvider) start() error {
 	if err := r.parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}
 	return nil
 }
 
-// Stop implements part of the scalaparse.Service interface.
-func (r *SourceProvider) Stop() {
-	r.parser.Stop()
-}
-
 // ParseScalaFiles implements scalarule.Parser
 func (r *SourceProvider) ParseScalaFiles(from label.Label, kind, dir string, srcs ...string) ([]*sppb.File, error) {
+	if len(srcs) == 0 {
+		return nil, nil
+	}
+
 	t1 := time.Now()
 
-	files, err := r.parseFiles(dir, srcs)
+	files, err := r.parseFiles(from, dir, srcs)
 	if err != nil {
 		return nil, err
 	}
@@ -104,12 +108,14 @@ func (r *SourceProvider) ParseScalaFiles(from label.Label, kind, dir string, src
 	}
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
+	if false {
+		log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
+	}
 
 	return files, nil
 }
 
-func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, error) {
+func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string) ([]*sppb.File, error) {
 	filenames := make([]string, len(srcs))
 	for i, src := range srcs {
 		filenames[i] = filepath.Join(dir, src)
@@ -128,6 +134,17 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 	// remove dir prefixes
 	for _, file := range response.Files {
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
+	}
+
+	files, err := r.compiler.CompileScalaFiles(from, dir, srcs...)
+	if err != nil {
+		return nil, err
+	}
+
+	// copy over file symbols from the compiler step.  The file order is
+	// expected to match the given srcs.
+	for i, file := range files {
+		response.Files[i].Symbols = file.Symbols
 	}
 
 	return response.Files, nil

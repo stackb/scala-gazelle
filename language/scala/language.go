@@ -65,8 +65,6 @@ type scalaLang struct {
 	symbolProviders []resolver.SymbolProvider
 	// symbolResolver is our top-level known import resolver implementation
 	symbolResolver resolver.SymbolResolver
-	// compiler is the compiler tool
-	compiler scalacompile.Compiler
 	// sourceProvider is the sourceProvider implementation.
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
@@ -103,13 +101,11 @@ func NewLanguage() language.Language {
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
-	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
+	scalac := scalacompile.NewScalacCompiler()
+	lang.sourceProvider = provider.NewSourceProvider(scalac, func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
 	lang.parser = scalaparse.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
-
-	scalac := scalacompile.NewScalacCompiler()
-	lang.compiler = scalacompile.NewMemoCompiler(scalac)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(scalac)

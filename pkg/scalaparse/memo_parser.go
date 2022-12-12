@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -29,6 +30,7 @@ func NewMemoParser(ruleRegistry lookupScalaRule, next Parser) *MemoParser {
 
 // ParseScalaFiles implements scalaparse.Parser
 func (p *MemoParser) ParseScalaFiles(from label.Label, kind, dir string, srcs ...string) ([]*sppb.File, error) {
+	sort.Strings(srcs)
 
 	var hash bytes.Buffer
 	for _, src := range srcs {
@@ -53,9 +55,10 @@ func (p *MemoParser) ParseScalaFiles(from label.Label, kind, dir string, srcs ..
 	}
 
 	if rule.Sha256 == sha256 {
+		log.Printf("rule cache hit: %s", from)
 		return rule.Files, nil
 	}
+	log.Printf("rule cache miss: %s (%s)", from, sha256)
 	rule.Sha256 = sha256
-
 	return p.next.ParseScalaFiles(from, kind, dir, srcs...)
 }

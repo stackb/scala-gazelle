@@ -6,7 +6,6 @@ go_library(
     name = "scalacompile",
     srcs = [
         "compiler.go",
-        "memo_compiler.go",
         "scalac_compiler.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalacompile",
@@ -26,7 +25,7 @@ go_library(
 
 go_test(
     name = "scalacompile_test",
-    srcs = ["compiler_test.go"],
+    srcs = ["scalac_compiler_test.go"],
     data = glob(["testdata/**/*"]) + [
         "@local_jdk//:bin/java",
         "scalacserver.jar",
@@ -35,6 +34,7 @@ go_test(
     tags = ["noblock-network"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/resolver/mocks",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_google_go_cmp//cmp",

@@ -63,9 +63,32 @@ func (_m *SymbolProvider) Name() string {
 	return r0
 }
 
+// OnEnd provides a mock function with given fields:
+func (_m *SymbolProvider) OnEnd() error {
+	ret := _m.Called()
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // OnResolve provides a mock function with given fields:
-func (_m *SymbolProvider) OnResolve() {
-	_m.Called()
+func (_m *SymbolProvider) OnResolve() error {
+	ret := _m.Called()
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // RegisterFlags provides a mock function with given fields: fs, cmd, c

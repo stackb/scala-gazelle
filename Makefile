@@ -50,3 +50,5 @@ mocks:
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolProvider
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolResolver
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ConflictResolver
+	mockery --output pkg/scalacompile/mocks --dir=pkg/scalacompile --name=Compiler
+	mockery --output pkg/scalaparse/mocks --dir=pkg/scalaparse --name=Parser

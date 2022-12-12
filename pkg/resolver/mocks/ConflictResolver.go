@@ -19,13 +19,13 @@ type ConflictResolver struct {
 	mock.Mock
 }
 
-// CheckFlags provides a mock function with given fields: fs, c, scope
-func (_m *ConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
-	ret := _m.Called(fs, c, scope)
+// CheckFlags provides a mock function with given fields: fs, c
+func (_m *ConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+	ret := _m.Called(fs, c)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*flag.FlagSet, *config.Config, resolver.Scope) error); ok {
-		r0 = rf(fs, c, scope)
+	if rf, ok := ret.Get(0).(func(*flag.FlagSet, *config.Config) error); ok {
+		r0 = rf(fs, c)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -38,13 +38,13 @@ func (_m *ConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *confi
 	_m.Called(fs, cmd, c)
 }
 
-// ResolveConflict provides a mock function with given fields: r, imports, symbol
-func (_m *ConflictResolver) ResolveConflict(r *rule.Rule, imports resolver.ImportMap, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
-	ret := _m.Called(r, imports, symbol)
+// ResolveConflict provides a mock function with given fields: universe, r, imports, imp, symbol
+func (_m *ConflictResolver) ResolveConflict(universe resolver.Universe, r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
+	ret := _m.Called(universe, r, imports, imp, symbol)
 
 	var r0 *resolver.Symbol
-	if rf, ok := ret.Get(0).(func(*rule.Rule, resolver.ImportMap, *resolver.Symbol) *resolver.Symbol); ok {
-		r0 = rf(r, imports, symbol)
+	if rf, ok := ret.Get(0).(func(resolver.Universe, *rule.Rule, resolver.ImportMap, *resolver.Import, *resolver.Symbol) *resolver.Symbol); ok {
+		r0 = rf(universe, r, imports, imp, symbol)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*resolver.Symbol)
@@ -52,8 +52,8 @@ func (_m *ConflictResolver) ResolveConflict(r *rule.Rule, imports resolver.Impor
 	}
 
 	var r1 bool
-	if rf, ok := ret.Get(1).(func(*rule.Rule, resolver.ImportMap, *resolver.Symbol) bool); ok {
-		r1 = rf(r, imports, symbol)
+	if rf, ok := ret.Get(1).(func(resolver.Universe, *rule.Rule, resolver.ImportMap, *resolver.Import, *resolver.Symbol) bool); ok {
+		r1 = rf(universe, r, imports, imp, symbol)
 	} else {
 		r1 = ret.Get(1).(bool)
 	}

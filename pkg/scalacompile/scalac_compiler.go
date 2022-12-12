@@ -100,9 +100,6 @@ func (p *ScalacCompilerService) CanProvide(from label.Label, ruleIndex func(from
 }
 
 func (s *ScalacCompilerService) OnResolve() error {
-	if !collections.WaitForConnectionAvailable(s.backendHost, s.backendPort, s.backendDialTimeout) {
-		return fmt.Errorf("failed to connect to scalac backend %s in %v", s.backendUrl, s.backendDialTimeout)
-	}
 	return nil
 }
 
@@ -168,29 +165,33 @@ func (s *ScalacCompilerService) startGrpcClient() error {
 	s.grpcConn = conn
 	s.client = sppb.NewCompilerClient(conn)
 
+	if !collections.WaitForConnectionAvailable(s.backendHost, s.backendPort, s.backendDialTimeout) {
+		return fmt.Errorf("failed to connect to scalac backend %s in %v", s.backendUrl, s.backendDialTimeout)
+	}
+
 	return nil
 }
 
-// CompileScalaRule implements scalacompile.Compiler
-func (p *ScalacCompilerService) CompileScalaRule(from label.Label, dir string, rule *sppb.Rule) error {
+// CompileScalaFiles implements scalacompile.Compiler
+func (p *ScalacCompilerService) CompileScalaFiles(from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
+	t1 := time.Now()
 
-	filenames := make([]string, len(rule.Files))
-	for i, file := range rule.Files {
-		filenames[i] = file.Filename
+	files := make([]*sppb.File, len(srcs))
+	fileMap := make(map[string]int)
+	for i, src := range srcs {
+		files[i] = &sppb.File{Filename: src}
+		fileMap[src] = i
 	}
 
 	resp, err := p.client.Compile(context.Background(), &sppb.CompileRequest{
 		Dir:       dir,
-		Filenames: filenames,
+		Filenames: srcs,
 	})
-
 	if err != nil {
-		return fmt.Errorf("compiler backend error: %w", err)
+		return nil, fmt.Errorf("compiler backend error: %w", err)
 	}
 
-	fileMap := make(map[string]*sppb.File)
 	seen := make(map[string]bool)
-
 	for _, d := range resp.Diagnostics {
 		if d.Source == "" || d.Source == "<no file>" {
 			if false {
@@ -201,58 +202,70 @@ func (p *ScalacCompilerService) CompileScalaRule(from label.Label, dir string, r
 		// FIXME(pcj): dedup in backend?
 		key := fmt.Sprintf("%s:%v:%s", d.Source, d.Severity, d.Message)
 		if seen[key] {
+			if false {
+				log.Printf("skipping diagnostic: %v (seen)", d)
+			}
 			continue
 		}
 		seen[key] = true
 
-		// log.Printf("diagnostic: %+v", d)
-
-		file, ok := fileMap[d.Source]
+		log.Printf("diagnostic: %+v", d)
+		symbol, ok := symbolFromDiagnostic(d)
 		if !ok {
-			file = &sppb.File{Filename: d.Source}
-			fileMap[d.Source] = file
-		} else {
-			file.Symbols = nil
+			log.Printf("symbol skipped (not ok): %+v", symbol)
+
+			continue
 		}
-		processDiagnostic(d, file)
+		log.Printf("symbol: %+v", symbol)
+		fileIndex, ok := fileMap[d.Source]
+		if !ok {
+			log.Panicln("cannot find file", d.Source, "in", srcs)
+		}
+		file := files[fileIndex]
+		file.Symbols = append(file.Symbols, symbol)
 	}
 
-	return nil
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	if false {
+		log.Printf("Compile %s (%d files, %v)", from, len(files), t2)
+	}
+	return files, nil
 }
 
-func processDiagnostic(d *sppb.Diagnostic, file *sppb.File) {
+func symbolFromDiagnostic(d *sppb.Diagnostic) (*sppb.Symbol, bool) {
 	switch d.Severity {
 	case sppb.Severity_ERROR:
-		processErrorDiagnostic(d, file)
+		return symbolFromErrorDiagnostic(d)
 	default:
-		return
+		return nil, false
 	}
 }
 
-func processErrorDiagnostic(d *sppb.Diagnostic, file *sppb.File) {
+func symbolFromErrorDiagnostic(d *sppb.Diagnostic) (*sppb.Symbol, bool) {
 	if strings.HasPrefix(d.Message, NOT_FOUND) {
-		processNotFoundErrorDiagnostic(d.Message[len(NOT_FOUND):], file)
+		return symbolFromNotFoundErrorDiagnostic(d.Message[len(NOT_FOUND):])
 	} else if match := notPackageMemberRe.FindStringSubmatch(d.Message); match != nil {
-		processNotPackageMemberErrorDiagnostic(match[1], match[2], file)
+		return symbolFromNotPackageMemberErrorDiagnostic(match[1], match[2])
 	}
+	return nil, false
 }
 
-func processNotFoundErrorDiagnostic(msg string, file *sppb.File) {
+func symbolFromNotFoundErrorDiagnostic(msg string) (*sppb.Symbol, bool) {
 	fields := strings.Fields(msg)
 	if len(fields) < 2 {
-		return
+		return nil, false
 	}
-	file.Symbols = append(file.Symbols, &sppb.Symbol{
+	return &sppb.Symbol{
 		Type: parseSymbolType(fields[0]),
 		Name: fields[1],
-	})
+	}, true
 }
 
-func processNotPackageMemberErrorDiagnostic(obj, pkg string, file *sppb.File) {
-	file.Symbols = append(file.Symbols, &sppb.Symbol{
+func symbolFromNotPackageMemberErrorDiagnostic(obj, pkg string) (*sppb.Symbol, bool) {
+	return &sppb.Symbol{
 		Type: sppb.SymbolType_SYMBOL_PACKAGE,
 		Name: pkg + "?" + obj,
-	})
+	}, true
 	// spec.NotMember = append(spec.NotMember, &NotMemberSymbol{Kind: "object", Name: obj, Package: pkg})
 }
 

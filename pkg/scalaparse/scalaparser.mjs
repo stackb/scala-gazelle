@@ -191,9 +191,9 @@ class ScalaFile {
                 if (!node) {
                     return false
                 }
-                if (node.type === 'Term.Name' && node.value) {
-                    this.names.add(node.value);
-                }
+                // if (node.type === 'Term.Name' && node.value) {
+                //     this.names.add(node.value);
+                // }
                 if (enableNestedImports) {
                     if (node.type === 'Import') {
                         this.visitImport(node);

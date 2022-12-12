@@ -52,12 +52,10 @@ func newScalaPackage(
 	cfg *scalaConfig,
 	providerRegistry scalarule.ProviderRegistry,
 	parser scalaparse.Parser,
-	compiler scalacompile.Compiler,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
 		parser:           parser,
-		compiler:         compiler,
 		universe:         universe,
 		providerRegistry: providerRegistry,
 		file:             file,
@@ -212,7 +210,6 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		from:        from,
 		scalaConfig: s.cfg,
 		resolver:    s.universe,
-		compiler:    s.compiler,
 	}
 
 	return newScalaRule(ctx, pb), nil

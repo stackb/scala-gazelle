@@ -58,7 +58,7 @@ public class GrpcServer {
     public void start() throws IOException {
         server.start();
 
-        logger.info("Server started, listening on {}", server.getPort());
+        logger.debug("Server started, listening on {}", server.getPort());
         Runtime.getRuntime()
                 .addShutdownHook(
                         new Thread() {
@@ -124,16 +124,15 @@ public class GrpcServer {
             }
 
             String[] result = new String[args.size()];
-            List<Diagnostic> diagnostics = compileArgs(args.toArray(result));
+            List<Diagnostic> diagnostics = compileArgs(dir, args.toArray(result));
 
             return CompileResponse.newBuilder()
                     .addAllDiagnostics(diagnostics)
                     .build();
         }
 
-        private List<Diagnostic> compileArgs(String[] args) {
-            boolean debug = false;
-            DiagnosticReportableMainClass main = new DiagnosticReportableMainClass(debug);
+        private List<Diagnostic> compileArgs(String dir, String[] args) {
+            DiagnosticReportableMainClass main = new DiagnosticReportableMainClass(dir);
             boolean ok = main.process(args);
             return main.reporter.getDiagnostics();
         }

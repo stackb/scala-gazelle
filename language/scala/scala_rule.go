@@ -13,7 +13,6 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 )
 
 type scalaRuleContext struct {
@@ -25,8 +24,6 @@ type scalaRuleContext struct {
 	rule *rule.Rule
 	// scope is a map of symbols that are in scope outside the rule.
 	scope resolver.Scope
-	// compiler is the available compiler
-	compiler scalacompile.Compiler
 	// the import resolver to which we chain to when self-imports are not matched.
 	resolver resolver.SymbolResolver
 }
@@ -73,21 +70,10 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
-func (r *scalaRule) compile() error {
-	if err := r.ctx.compiler.CompileScalaRule(r.ctx.from, r.ctx.scalaConfig.config.RepoRoot, r.pb); err != nil {
-		return err
-	}
-	return nil
-}
-
 // Imports implements part of the scalarule.Rule interface.
 func (r *scalaRule) Imports() resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
-
-	if err := r.compile(); err != nil {
-		log.Fatalf("%s | compile error: %v", r.ctx.from, err)
-	}
 
 	// direct
 	for _, file := range r.pb.Files {
