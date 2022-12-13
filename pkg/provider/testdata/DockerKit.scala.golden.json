@@ -1,0 +1,98 @@
+{
+  "label":  "//pkg/provider:testdata/DockerKit.scala",
+  "files":  [
+    {
+      "filename":  "testdata/DockerKit.scala",
+      "imports":  [
+        "com.github.dockerjava.api.DockerClient",
+        "com.github.dockerjava.api.async.ResultCallback",
+        "com.github.dockerjava.api.command.CreateContainerResponse",
+        "com.github.dockerjava.api.exception.NotFoundException",
+        "com.github.dockerjava.api.model.Frame",
+        "com.github.dockerjava.core.DefaultDockerClientConfig",
+        "com.github.dockerjava.core.DockerClientBuilder",
+        "com.typesafe.scalalogging.LazyLogging",
+        "scala.collection.JavaConverters._",
+        "scala.util.Try"
+      ],
+      "packages":  [
+        "container.testing"
+      ],
+      "classes":  [
+        "container.testing.LoggingCallback"
+      ],
+      "objects":  [
+        "container.testing.DockerKit"
+      ],
+      "traits":  [
+        "container.testing.DockerKit"
+      ],
+      "names":  [
+        "Boolean",
+        "CreateContainerResponse",
+        "DockerClient",
+        "DockerKit",
+        "DockerKit.dockerClient",
+        "LazyLogging",
+        "LoggingCallback",
+        "NotFoundException",
+        "ResultCallback.Adapter",
+        "String",
+        "StringBuffer",
+        "System.currentTimeMillis",
+        "TestConfig",
+        "Thread.sleep",
+        "Throwable",
+        "Try",
+        "Unit",
+        "cleanupContainer",
+        "container.getId",
+        "container.testing",
+        "containerId",
+        "containerLog",
+        "containerName",
+        "containers",
+        "createContainer",
+        "dockerClient",
+        "found",
+        "frame",
+        "frame.getPayload",
+        "id",
+        "isContainerRunning",
+        "kill",
+        "log.append",
+        "log.toString",
+        "logger.debug",
+        "logger.error",
+        "logger.info",
+        "logger.warn",
+        "onNext",
+        "restart",
+        "runContainer",
+        "stop",
+        "stringToWaitFor",
+        "toString",
+        "waitForStringInLogs"
+      ],
+      "extends":  {
+        "class container.testing.LoggingCallback":  {
+          "classes":  [
+            "ResultCallback.Adapter"
+          ]
+        },
+        "object container.testing.DockerKit":  {
+          "classes":  [
+            "TestConfig",
+            "com.typesafe.scalalogging.LazyLogging"
+          ]
+        },
+        "trait container.testing.DockerKit":  {
+          "classes":  [
+            "TestConfig",
+            "com.typesafe.scalalogging.LazyLogging"
+          ]
+        }
+      }
+    }
+  ]
+}
