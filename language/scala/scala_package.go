@@ -197,7 +197,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		}
 		s.universe.PutKnownScalaRule(from, pb)
 	}
-	files, err := s.parser.ParseScalaFiles(from, r.Kind(), dir, srcs...)
+	files, err := s.parser.ParseScalaFiles(r.Kind(), from, dir, srcs...)
 	if err != nil {
 		return nil, err
 	}

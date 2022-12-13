@@ -18,3 +18,21 @@ func ListFiles(dir string) error {
 		return nil
 	})
 }
+
+// CollectFiles is a convenience function to gather files under a directory.
+func CollectFiles(dir string) (files []string, err error) {
+	if err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+		files = append(files, rel)
+		return nil
+	}); err != nil {
+		return
+	}
+	return
+}

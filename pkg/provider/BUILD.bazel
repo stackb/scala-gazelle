@@ -29,17 +29,18 @@ go_library(
 
 go_test(
     name = "provider_test",
-    size = "small",
     srcs = [
-        "java_provider_test.go",
-        "maven_provider_test.go",
-        "protobuf_provider_test.go",
+        # "java_provider_test.go",
+        # "maven_provider_test.go",
+        # "protobuf_provider_test.go",
         "source_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),
     deps = [
         ":provider",
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/resolver/mocks",
         "//pkg/scalacompile/mocks",

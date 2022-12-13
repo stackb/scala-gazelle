@@ -14,20 +14,20 @@ type Parser struct {
 	mock.Mock
 }
 
-// ParseScalaFiles provides a mock function with given fields: from, kind, dir, srcs
-func (_m *Parser) ParseScalaFiles(from label.Label, kind string, dir string, srcs ...string) ([]*parse.File, error) {
+// ParseScalaFiles provides a mock function with given fields: kind, from, dir, srcs
+func (_m *Parser) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*parse.File, error) {
 	_va := make([]interface{}, len(srcs))
 	for _i := range srcs {
 		_va[_i] = srcs[_i]
 	}
 	var _ca []interface{}
-	_ca = append(_ca, from, kind, dir)
+	_ca = append(_ca, kind, from, dir)
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
 	var r0 []*parse.File
-	if rf, ok := ret.Get(0).(func(label.Label, string, string, ...string) []*parse.File); ok {
-		r0 = rf(from, kind, dir, srcs...)
+	if rf, ok := ret.Get(0).(func(string, label.Label, string, ...string) []*parse.File); ok {
+		r0 = rf(kind, from, dir, srcs...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*parse.File)
@@ -35,8 +35,8 @@ func (_m *Parser) ParseScalaFiles(from label.Label, kind string, dir string, src
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(label.Label, string, string, ...string) error); ok {
-		r1 = rf(from, kind, dir, srcs...)
+	if rf, ok := ret.Get(1).(func(string, label.Label, string, ...string) error); ok {
+		r1 = rf(kind, from, dir, srcs...)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -9,7 +9,8 @@ import { Console } from 'node:console';
 import { parseSource } from 'scalameta-parsers';
 
 const __filename = new URL('', import.meta.url).pathname;
-const debug = true;
+const debug = false;
+const wantNameTypes = false;
 
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
@@ -181,6 +182,10 @@ class ScalaFile {
             case "<=":
             case ">=":
             case "==":
+            case "!":
+            case "+":
+            case "+=":
+            case "-":
                 return;
         }
         if (name.startsWith(".")) {
@@ -206,10 +211,20 @@ class ScalaFile {
                 if (!node) {
                     return false
                 }
-                const name = this.parseName(node);
-                if (name) {
-                    this.addName(name);
-                    return false;
+                if (wantNameInContext(stack)) {
+                    let name = this.parseName(node);
+                    if (name) {
+                        // if (!(stack[stack.length - 1].type === 'Term.Apply'
+                        //     && node.value.match(/^[a-z]/))) {
+                        //     return false;
+                        // }
+                        if (wantNameTypes) {
+                            const type = this.stackTypeName(node, stack);
+                            name = `${name}<${type}>`;
+                        }
+                        this.addName(name);
+                        return false;
+                    }
                 }
                 if (enableNestedImports) {
                     if (node.type === 'Import') {
@@ -517,6 +532,19 @@ class ScalaFile {
         this.console.warn(JSON.stringify(node, null, 2));
     }
 
+    stackTypeName(node, stack) {
+        const names = [];
+        for (let i = 0; i < stack.length; i++) {
+            if (stack[i].type) {
+                names.push(stack[i].type);
+            }
+        }
+        if (node.type) {
+            names.push(node.type);
+        }
+        return names.join('/');
+    }
+
     /**
      * Parses a typed node to a string.
      * @param {Node} ref 
@@ -670,4 +698,38 @@ if (isMainThread) {
     const filename = workerData;
     const result = parseFile(filename);
     parentPort.postMessage(result);
+}
+
+/**
+ * Determine if we we should collect this name.
+ * @param {!Array<Node>} stack 
+ * @returns {boolean}
+ */
+function wantNameInContext(stack) {
+    if (stack.length == 0) {
+        return false;
+    }
+    // lowercase function applications, excluding those
+    // if (node.type === 'Term.Name'
+    //     && stack[stack.length - 1].type === 'Term.Apply'
+    //     && node.value.match(/^[a-z]/)) {
+    //     return false;
+    // }
+    for (let i = stack.length - 1; i >= 0; i--) {
+        switch (stack[i].type) {
+            // if the immediate parent is a parameter
+            case 'Term.Param':
+            case 'Term.Interpolate':
+            case 'Pat.Var':
+                if (i === stack.length - 1) {
+                    return false;
+                }
+                return false;
+            // any infix or unary context
+            case 'Term.ApplyUnary':
+            case 'Term.ApplyInfix':
+                return false;
+        }
+    }
+    return true;
 }

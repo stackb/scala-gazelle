@@ -89,7 +89,7 @@ func (r *SourceProvider) start() error {
 }
 
 // ParseScalaFiles implements scalarule.Parser
-func (r *SourceProvider) ParseScalaFiles(from label.Label, kind, dir string, srcs ...string) ([]*sppb.File, error) {
+func (r *SourceProvider) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
 	if len(srcs) == 0 {
 		return nil, nil
 	}
@@ -136,15 +136,17 @@ func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string)
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}
 
-	files, err := r.compiler.CompileScalaFiles(from, dir, srcs...)
-	if err != nil {
-		return nil, err
-	}
+	if false {
+		files, err := r.compiler.CompileScalaFiles(from, dir, srcs...)
+		if err != nil {
+			return nil, err
+		}
 
-	// copy over file symbols from the compiler step.  The file order is
-	// expected to match the given srcs.
-	for i, file := range files {
-		response.Files[i].Symbols = file.Symbols
+		// copy over file symbols from the compiler step.  The file order is
+		// expected to match the given srcs.
+		for i, file := range files {
+			response.Files[i].Symbols = file.Symbols
+		}
 	}
 
 	return response.Files, nil

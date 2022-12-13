@@ -26,6 +26,15 @@ func NewTrieScope() *TrieScope {
 	}
 }
 
+// GetScope implements part of the resolver.Scope interface.
+func (r *TrieScope) GetScope(name string) (Scope, bool) {
+	node := r.trie.Get(name)
+	if node == nil {
+		return nil, false
+	}
+	return &TrieScope{node}, true
+}
+
 // GetSymbols implements part of the resolver.Scope interface.
 func (r *TrieScope) GetSymbols(prefix string) (symbols []*Symbol) {
 	node := r.trie.Get(prefix)

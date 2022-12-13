@@ -86,7 +86,7 @@ go_test(
         "language_test.go",
         "loads_test.go",
         "scala_config_test.go",
-        "scala_rule_test.go",
+        # "scala_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),
     embed = [":scala"],

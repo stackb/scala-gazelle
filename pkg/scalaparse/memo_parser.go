@@ -29,7 +29,7 @@ func NewMemoParser(ruleRegistry lookupScalaRule, next Parser) *MemoParser {
 }
 
 // ParseScalaFiles implements scalaparse.Parser
-func (p *MemoParser) ParseScalaFiles(from label.Label, kind, dir string, srcs ...string) ([]*sppb.File, error) {
+func (p *MemoParser) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
 	sort.Strings(srcs)
 
 	var hash bytes.Buffer
@@ -60,5 +60,5 @@ func (p *MemoParser) ParseScalaFiles(from label.Label, kind, dir string, srcs ..
 	}
 	log.Printf("rule cache miss: %s (%s)", from, sha256)
 	rule.Sha256 = sha256
-	return p.next.ParseScalaFiles(from, kind, dir, srcs...)
+	return p.next.ParseScalaFiles(kind, from, dir, srcs...)
 }

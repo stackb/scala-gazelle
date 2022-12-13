@@ -9,5 +9,5 @@ import (
 type Parser interface {
 	// ParseScalaFiles is used to parse a list of source files.  The srcs list
 	// is expected to be relative to dir.
-	ParseScalaFiles(from label.Label, kind, dir string, srcs ...string) ([]*sppb.File, error)
+	ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error)
 }

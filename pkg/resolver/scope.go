@@ -2,9 +2,12 @@ package resolver
 
 // Scope is an index of known symbols.
 type Scope interface {
+	// GetScope returns a scope for th symbol under the given prefix.
+	GetScope(name string) (Scope, bool)
+
 	// GetSymbol does a lookup of the given import symbol and returns the
 	// known import.  If not known `(nil, false)` is returned.
-	GetSymbol(imp string) (*Symbol, bool)
+	GetSymbol(name string) (*Symbol, bool)
 
 	// GetSymbols does a lookup of the given prefix and returns the
 	// symbols.
