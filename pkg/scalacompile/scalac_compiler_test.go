@@ -60,7 +60,7 @@ import (
 // 	}
 // }
 
-func TestCompiler(t *testing.T) {
+func TestScalacCompiler(t *testing.T) {
 	for name, tc := range map[string]struct {
 		kind      string
 		from      label.Label

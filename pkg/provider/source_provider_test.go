@@ -79,6 +79,83 @@ func TestScalaSourceProvider(t *testing.T) {
 				},
 			},
 		},
+		"FullyQualified.scala": {
+			kind:      "scala_library",
+			from:      label.Label{Name: "greeter_lib"},
+			testfiles: []string{"testdata/FullyQualified.scala"},
+			mockCompiledFiles: []*sppb.File{
+				{
+					Symbols: []*sppb.Symbol{
+						{Type: sppb.SymbolType_SYMBOL_OBJECT, Name: "foo"},
+					},
+				},
+			},
+			wantPutSymbols: []*resolver.Symbol{},
+			wantFiles: []*sppb.File{
+				{
+					Filename: "testdata/FullyQualified.scala",
+					Imports:  []string{"sk.ygor.stackoverflow.q53326545.macros.ExampleMacro.methodName"},
+					Packages: []string{"foo"},
+					Objects:  []string{"foo.Main"},
+				},
+			},
+		},
+		"UserId.scala": {
+			kind:              "scala_library",
+			from:              label.Label{Name: "greeter_lib"},
+			testfiles:         []string{"testdata/UserId.scala"},
+			mockCompiledFiles: []*sppb.File{},
+			wantPutSymbols:    []*resolver.Symbol{},
+			wantFiles: []*sppb.File{
+				{
+					Filename: "testdata/UserId.scala",
+					Packages: []string{"common.types"},
+					Classes:  []string{"common.types.UserId"},
+					Objects:  []string{"common.types.UserId"},
+					Names: []string{
+						".value",
+						"AnyVal",
+						"Int",
+						"UserId",
+						"intTypeMapper",
+						"scalapb.TypeMapper",
+						"common.types",
+						"value",
+					},
+					Extends: map[string]*sppb.ClassList{
+						"class common.types.UserId": {Classes: []string{"AnyVal"}},
+					},
+				},
+			},
+		},
+		"PostgresAccess.scala": {
+			kind:              "scala_library",
+			from:              label.Label{Name: "greeter_lib"},
+			testfiles:         []string{"testdata/PostgresAccess.scala"},
+			mockCompiledFiles: []*sppb.File{},
+			wantPutSymbols:    []*resolver.Symbol{},
+			wantFiles: []*sppb.File{
+				{
+					Filename: "testdata/UserId.scala",
+					Packages: []string{"common.types"},
+					Classes:  []string{"common.types.UserId"},
+					Objects:  []string{"common.types.UserId"},
+					Names: []string{
+						".value",
+						"AnyVal",
+						"Int",
+						"UserId",
+						"intTypeMapper",
+						"scalapb.TypeMapper",
+						"common.types",
+						"value",
+					},
+					Extends: map[string]*sppb.ClassList{
+						"class common.types.UserId": {Classes: []string{"AnyVal"}},
+					},
+				},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			dir, err := os.Getwd()

@@ -9,7 +9,7 @@ import { Console } from 'node:console';
 import { parseSource } from 'scalameta-parsers';
 
 const __filename = new URL('', import.meta.url).pathname;
-const debug = false;
+const debug = true;
 
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
@@ -173,6 +173,21 @@ class ScalaFile {
         this.extendsMap = new Map();
     }
 
+    addName(name) {
+        switch (name) {
+            case "&&":
+            case "<":
+            case ">":
+            case "<=":
+            case ">=":
+            case "==":
+                return;
+        }
+        if (name.startsWith(".")) {
+            return;
+        }
+        this.names.add(name);
+    }
     /**
      * Runs the parse.
      */
@@ -191,9 +206,11 @@ class ScalaFile {
                 if (!node) {
                     return false
                 }
-                // if (node.type === 'Term.Name' && node.value) {
-                //     this.names.add(node.value);
-                // }
+                const name = this.parseName(node);
+                if (name) {
+                    this.addName(name);
+                    return false;
+                }
                 if (enableNestedImports) {
                     if (node.type === 'Import') {
                         this.visitImport(node);
@@ -501,8 +518,8 @@ class ScalaFile {
     }
 
     /**
-     * Parses a "Ref" node to a string.
-     * @param {Ref} ref 
+     * Parses a typed node to a string.
+     * @param {Node} ref 
      * @returns {string}
      */
     parseName(ref) {
@@ -513,7 +530,7 @@ class ScalaFile {
                 return ref.value;
             case 'Term.Name':
                 return ref.value;
-            case 'Term.Select':
+            case 'Term.Select': {
                 const names = [];
                 if (ref.qual) {
                     names.push(this.parseName(ref.qual));
@@ -522,8 +539,19 @@ class ScalaFile {
                     names.push(this.parseName(ref.name));
                 }
                 return names.join('.');
+            }
+            case 'Type.Select': {
+                const names = [];
+                if (ref.qual) {
+                    names.push(this.parseName(ref.qual));
+                }
+                if (ref.name) {
+                    names.push(this.parseName(ref.name));
+                }
+                return names.join('.');
+            }
             default:
-                if (debug) {
+                if (debug && ref.type) {
                     this.console.warn('unhandled ref type:', ref.type);
                     this.printNode(ref);
                 }
