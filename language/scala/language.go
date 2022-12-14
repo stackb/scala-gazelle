@@ -14,7 +14,6 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -102,14 +101,12 @@ func NewLanguage() language.Language {
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
-	scalac := scalacompile.NewScalacCompiler()
-	lang.sourceProvider = provider.NewSourceProvider(scalac, func(msg string) {
+	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
 	lang.parser = scalaparse.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
-	lang.AddSymbolProvider(scalac)
 	lang.AddSymbolProvider(provider.NewJavaProvider())
 	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))

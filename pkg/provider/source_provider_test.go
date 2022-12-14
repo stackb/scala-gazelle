@@ -50,7 +50,7 @@ func TestScalaSourceProviderParseScalaFiles(t *testing.T) {
 	// 	Maybe().
 	// 	Return(nil, nil)
 
-	provider := provider.NewSourceProvider(&fakeCompiler{}, func(msg string) {})
+	provider := provider.NewSourceProvider(func(msg string) {})
 
 	fs := flag.NewFlagSet("", flag.ExitOnError)
 	c := &config.Config{
@@ -113,12 +113,4 @@ func TestScalaSourceProviderParseScalaFiles(t *testing.T) {
 
 		})
 	}
-}
-
-type fakeCompiler struct {
-}
-
-// CompileScalaFiles implements scalacompile.Compiler
-func (c *fakeCompiler) CompileScalaFiles(from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
-	return nil, nil
 }

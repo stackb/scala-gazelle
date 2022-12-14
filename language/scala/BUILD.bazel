@@ -43,7 +43,6 @@ go_library(
         "//pkg/protobuf",
         "//pkg/provider",
         "//pkg/resolver",
-        "//pkg/scalacompile",
         "//pkg/scalaparse",
         "//pkg/scalarule",
         "@bazel_gazelle//config:go_default_library",
@@ -81,7 +80,7 @@ go_test(
     name = "scala_test",
     srcs = [
         "existing_scala_rule_test.go",
-        "flags_test.go",
+        # "flags_test.go",
         "golden_test.go",
         "language_test.go",
         "loads_test.go",

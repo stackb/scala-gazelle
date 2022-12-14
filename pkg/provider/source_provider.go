@@ -15,16 +15,14 @@ import (
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalacompile"
 	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 type progressFunc func(msg string)
 
 // NewSourceProvider constructs a new NewSourceProvider.
-func NewSourceProvider(compiler scalacompile.Compiler, progress progressFunc) *SourceProvider {
+func NewSourceProvider(progress progressFunc) *SourceProvider {
 	return &SourceProvider{
-		compiler: compiler,
 		progress: progress,
 		parser:   scalaparse.NewScalametaParser(),
 	}
@@ -37,8 +35,6 @@ func NewSourceProvider(compiler scalacompile.Compiler, progress progressFunc) *S
 // sha256, the cache hit will be used.
 type SourceProvider struct {
 	progress progressFunc
-	// compiler to use for symbol resolution
-	compiler scalacompile.Compiler
 	// scope is the target we provide symbols to
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
@@ -134,19 +130,6 @@ func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string)
 	// remove dir prefixes
 	for _, file := range response.Files {
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
-	}
-
-	if false {
-		files, err := r.compiler.CompileScalaFiles(from, dir, srcs...)
-		if err != nil {
-			return nil, err
-		}
-
-		// copy over file symbols from the compiler step.  The file order is
-		// expected to match the given srcs.
-		for i, file := range files {
-			response.Files[i].Symbols = file.Symbols
-		}
 	}
 
 	return response.Files, nil

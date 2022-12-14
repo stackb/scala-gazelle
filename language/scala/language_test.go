@@ -18,6 +18,7 @@ func ExampleLanguage_KnownDirectives() {
 	// scala_rule
 	// resolve_glob
 	// resolve_with
+	// resolve_conflicts
 	// scala_annotate
 	// resolve_kind_rewrite_name
 }

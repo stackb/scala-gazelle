@@ -19,7 +19,6 @@ go_library(
         "//pkg/jarindex",
         "//pkg/maven",
         "//pkg/resolver",
-        "//pkg/scalacompile",
         "//pkg/scalaparse",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
