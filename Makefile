@@ -52,3 +52,6 @@ mocks:
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ConflictResolver
 	mockery --output pkg/scalacompile/mocks --dir=pkg/scalacompile --name=Compiler
 	mockery --output pkg/scalaparse/mocks --dir=pkg/scalaparse --name=Parser
+
+.PHONY: gen
+gen: mocks protos

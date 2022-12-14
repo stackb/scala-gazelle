@@ -6,18 +6,23 @@ import (
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/provider"
-	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
+
+var gsonLabel = label.Label{Repo: "maven", Name: "com_google_code_gson_gson"}
 
 func ExampleJavaProvider_RegisterFlags_printdefaults() {
 	os.Stderr = os.Stdout
 	cr := provider.NewJavaProvider()
-	got := flag.NewFlagSet(scalaName, flag.ExitOnError)
+	got := flag.NewFlagSet("", flag.ExitOnError)
 	c := &config.Config{}
 	cr.RegisterFlags(got, "update", c)
 	got.PrintDefaults()
@@ -26,160 +31,78 @@ func ExampleJavaProvider_RegisterFlags_printdefaults() {
 	//     	path to javaindex.pb or javaindex.json file
 }
 
-func TestJavaProvider(t *testing.T) {
+func TestJavaProviderOnResolve(t *testing.T) {
 	for name, tc := range map[string]struct {
-		args  []string
 		files []testtools.FileSpec
-		want  []string
+		known []*resolver.Symbol
+		want  []*resolver.Symbol
 	}{
 		"empty file": {
-			args: []string{
-				"-javaindex_file=./javaindex.json",
-			},
 			files: []testtools.FileSpec{
 				{
 					Path:    "javaindex.json",
 					Content: "{}",
 				},
 			},
-			want: []string{},
 		},
-		"example jarindex file": {
-			args: []string{
-				"-javaindex_file=./testdata/javaindex.json",
-			},
+		"example java_index file": {
 			files: []testtools.FileSpec{
+				{Path: "testdata/javaindex.json"},
+			},
+			known: []*resolver.Symbol{
 				{
-					Path: "testdata/javaindex.json",
+					Type:     sppb.ImportType_CLASS,
+					Name:     "java.lang.Enum",
+					Label:    label.NoLabel,
+					Provider: "java",
+				},
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "java.lang.Iterable",
+					Label:    label.NoLabel,
+					Provider: "java",
+				},
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "java.lang.RuntimeException",
+					Label:    label.NoLabel,
+					Provider: "java",
 				},
 			},
-			want: []string{
-				"PACKAGE com.google.gson (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.annotations (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.internal (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.internal.bind (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.internal.bind.util (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.internal.reflect (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.internal.sql (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.reflect (@maven//:com_google_code_gson_gson)",
-				"PACKAGE com.google.gson.stream (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ExclusionStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldAttributes (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$4 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$5 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$6 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$4 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$5 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$FutureTypeAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.GsonBuilder (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.InstanceCreator (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonArray (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonDeserializationContext (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonDeserializer (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonElement (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonIOException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonNull (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonObject (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonParseException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonParser (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonPrimitive (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonSerializationContext (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonSerializer (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonStreamParser (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonSyntaxException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$4 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.TypeAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.TypeAdapter$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.TypeAdapterFactory (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Expose (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.JsonAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.SerializedName (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Since (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Until (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Preconditions (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$WildcardTypeImpl (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.ExclusionStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldAttributes (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$4 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$5 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.FieldNamingPolicy$6 (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.FieldNamingStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$4 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$5 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.Gson$FutureTypeAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.GsonBuilder (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.InstanceCreator (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonArray (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.JsonDeserializationContext (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.JsonDeserializer (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonElement (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonIOException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonNull (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonObject (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonParseException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonParser (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonPrimitive (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.JsonSerializationContext (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.JsonSerializer (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonStreamParser (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.JsonSyntaxException (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.LongSerializationPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$1 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$2 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$3 (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.ToNumberPolicy$4 (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.ToNumberStrategy (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.TypeAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.TypeAdapter$1 (@maven//:com_google_code_gson_gson)",
-				"INTERFACE com.google.gson.TypeAdapterFactory (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Expose (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.JsonAdapter (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.SerializedName (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Since (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.annotations.Until (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Preconditions (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl (@maven//:com_google_code_gson_gson)",
-				"CLASS com.google.gson.internal.$Gson$Types$WildcardTypeImpl (@maven//:com_google_code_gson_gson)",
-				"PACKAGE java.util (//:)",
-				"CLASS java.util.Map (//:)",
-				"CLASS java.util.Map$Entry (//:)",
-				"CLASS java.util.MissingFormatArgumentException (//:)",
-				"INTERFACE java.util.Map (//:)",
-				"INTERFACE java.util.Map$Entry (//:)",
-				"CLASS java.util.MissingFormatArgumentException (//:)",
+			want: []*resolver.Symbol{
+				{
+					Type:     sppb.ImportType_PACKAGE,
+					Name:     "com.google.gson",
+					Label:    gsonLabel,
+					Provider: "java",
+				},
+				{
+					Type:     sppb.ImportType_INTERFACE,
+					Name:     "com.google.gson.ExclusionStrategy",
+					Label:    gsonLabel,
+					Provider: "java",
+				},
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.google.gson.FieldAttributes",
+					Label:    gsonLabel,
+					Provider: "java",
+				},
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.google.gson.FieldNamingPolicy",
+					Label:    gsonLabel,
+					Provider: "java",
+					Requires: []*resolver.Symbol{
+						{Type: sppb.ImportType_CLASS, Name: "java.lang.Enum", Provider: "java"},
+						{
+							Type:     sppb.ImportType_INTERFACE,
+							Name:     "com.google.gson.FieldNamingStrategy",
+							Label:    gsonLabel,
+							Provider: "java",
+						},
+					},
+				},
 			},
 		},
 	} {
@@ -188,24 +111,33 @@ func TestJavaProvider(t *testing.T) {
 			defer cleanup()
 
 			p := provider.NewJavaProvider()
-			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
+			fs := flag.NewFlagSet("", flag.ExitOnError)
 			c := &config.Config{
 				WorkDir: tmpDir,
 			}
 			p.RegisterFlags(fs, "update", c)
-			if err := fs.Parse(tc.args); err != nil {
+			if err := fs.Parse([]string{
+				"-javaindex_file=./javaindex.json",
+			},
+			); err != nil {
 				t.Fatal(err)
 			}
 
-			known := mocks.NewSymbolsCapturer(t)
+			scope := resolver.NewTrieScope()
+			for _, known := range tc.known {
+				scope.PutSymbol(known)
+			}
 
-			if err := p.CheckFlags(fs, c, known.Registry); err != nil {
+			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)
 			}
 
-			got := make([]string, len(known.Got))
-			for i, known := range known.Got {
-				got[i] = known.String()
+			p.OnResolve()
+			got := scope.Symbols()
+
+			// don't need to be exhanstive here, just get a sample...
+			if len(got) > 4 {
+				got = got[:4]
 			}
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
@@ -215,70 +147,46 @@ func TestJavaProvider(t *testing.T) {
 	}
 }
 
-// func TestJavaProviderCanProvide(t *testing.T) {
-// 	for name, tc := range map[string]struct {
-// 		mavenInstallJsonContent string
-// 		lang                    string
-// 		from                    label.Label
-// 		want                    bool
-// 	}{
-// 		"degenerate case": {
-// 			mavenInstallJsonContent: mavenInstallJsonExample,
-// 			lang:                    scalaName,
-// 			from:                    label.NoLabel,
-// 			want:                    false,
-// 		},
-// 		"managed xml_apis_xml_apis": {
-// 			mavenInstallJsonContent: mavenInstallJsonExample,
-// 			lang:                    scalaName,
-// 			from:                    label.New("maven", "", "xml_apis_xml_apis"),
-// 			want:                    true,
-// 		},
-// 		"managed generic maven dependency": {
-// 			mavenInstallJsonContent: mavenInstallJsonExample,
-// 			lang:                    scalaName,
-// 			from:                    label.New("maven", "", "com_guava_guava"),
-// 			want:                    true,
-// 		},
-// 		"unmanaged non-maven dependency": {
-// 			mavenInstallJsonContent: mavenInstallJsonExample,
-// 			lang:                    scalaName,
-// 			from:                    label.New("artifactory", "", "xml_apis_xml_apis"),
-// 			want:                    false,
-// 		},
-// 	} {
-// 		t.Run(name, func(t *testing.T) {
-// 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, []testtools.FileSpec{
-// 				{
-// 					Path:    "javaindex.json",
-// 					Content: tc.mavenInstallJsonContent,
-// 				},
-// 			})
-// 			defer cleanup()
+func SkipTestJavaProviderCanProvide(t *testing.T) {
+	for name, tc := range map[string]struct {
+		from label.Label
+		want bool
+	}{
+		"empty file": {},
+	} {
+		t.Run(name, func(t *testing.T) {
+			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, []testtools.FileSpec{
+				{Path: "testdata/javaindex.json"},
+			})
+			defer cleanup()
 
-// 			p := NewJavaProvider(scalaName)
-// 			fs := flag.NewFlagSet(scalaName, flag.ExitOnError)
-// 			c := &config.Config{WorkDir: tmpDir}
-// 			p.RegisterFlags(fs, "update", c)
-// 			if err := fs.Parse([]string{
-// 				"-javaindex_file=./javaindex.json",
-// 			}); err != nil {
-// 				t.Fatal(err)
-// 			}
+			p := provider.NewJavaProvider()
+			fs := flag.NewFlagSet("", flag.ExitOnError)
+			c := &config.Config{
+				WorkDir: tmpDir,
+			}
+			p.RegisterFlags(fs, "update", c)
+			if err := fs.Parse([]string{
+				"-javaindex_file=./javaindex.json",
+			},
+			); err != nil {
+				t.Fatal(err)
+			}
 
-// 			importRegistry := &mockScope{}
+			scope := resolver.NewTrieScope()
 
-// 			if err := p.CheckFlags(fs, c, importRegistry); err != nil {
-// 				t.Fatal(err)
-// 			}
+			if err := p.CheckFlags(fs, c, scope); err != nil {
+				t.Fatal(err)
+			}
+			p.OnResolve()
 
-// 			got := p.CanProvide(tc.from, func(from label.Label) (*rule.Rule, bool) {
-// 				return nil, false
-// 			})
+			got := p.CanProvide(tc.from, func(from label.Label) (*rule.Rule, bool) {
+				return nil, false
+			})
 
-// 			if diff := cmp.Diff(tc.want, got); diff != "" {
-// 				t.Errorf(".CanProvide (-want +got):\n%s", diff)
-// 			}
-// 		})
-// 	}
-// }
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}

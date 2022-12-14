@@ -10,6 +10,9 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
+// TODO: rename this to 'Requirement' or something.  Not all Imports are
+// actually from an import statement.
+
 // Import is used to trace import provenance.
 type Import struct {
 	// Kind is the import type
@@ -27,11 +30,23 @@ type Import struct {
 }
 
 // NewDirectImport creates a new direct import from the given file.
-func NewDirectImport(imp string, src *sppb.File) *Import {
+func NewDirectImport(imp string, source *sppb.File) *Import {
 	return &Import{
 		Kind:   sppb.ImportKind_DIRECT,
 		Imp:    imp,
-		Source: src,
+		Source: source,
+	}
+}
+
+// NewResolvedSymbolImport creates a new resolved import from the given file,
+// name, and symbol.  The 'name' is the token that resolved in the file scope.
+func NewResolvedSymbolImport(imp string, source *sppb.File, name string, symbol *Symbol) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_RESOLVED_SYMBOL,
+		Imp:    imp,
+		Source: source,
+		Src:    name,
+		Symbol: symbol,
 	}
 }
 
@@ -45,11 +60,13 @@ func NewImplicitImport(imp, src string) *Import {
 }
 
 // NewExtendsImport creates a new extends import from the given requiring type.
-func NewExtendsImport(imp, src string) *Import {
+func NewExtendsImport(imp string, source *sppb.File, src string, symbol *Symbol) *Import {
 	return &Import{
-		Kind: sppb.ImportKind_EXTENDS,
-		Imp:  imp,
-		Src:  src,
+		Kind:   sppb.ImportKind_EXTENDS,
+		Imp:    imp,
+		Source: source,
+		Src:    src,
+		Symbol: symbol,
 	}
 }
 

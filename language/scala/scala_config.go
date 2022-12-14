@@ -12,6 +12,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -30,7 +31,7 @@ const (
 	scalaAnnotateDirective          = "scala_annotate"
 	scalaRuleDirective              = "scala_rule"
 	resolveGlobDirective            = "resolve_glob"
-	resolveConflictDirective        = "resolve_conflict"
+	resolveConflictsDirective       = "resolve_conflicts"
 	resolveWithDirective            = "resolve_with"
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
@@ -45,7 +46,7 @@ type scalaConfig struct {
 	rules             map[string]*scalarule.Config
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	annotations       map[annotation]interface{}
-	conflictResolvers map[string]resolver.ConflictResolver
+	conflictResolvers []resolver.ConflictResolver
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -57,7 +58,6 @@ func newScalaConfig(universe resolver.Universe, config *config.Config, rel strin
 		annotations:       make(map[annotation]interface{}),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
 		rules:             make(map[string]*scalarule.Config),
-		conflictResolvers: make(map[string]resolver.ConflictResolver),
 	}
 }
 
@@ -92,9 +92,6 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	for k, v := range c.rules {
 		clone.rules[k] = v.Clone()
 	}
-	for k, v := range c.conflictResolvers {
-		clone.conflictResolvers[k] = v
-	}
 	for k, v := range c.labelNameRewrites {
 		clone.labelNameRewrites[k] = v
 	}
@@ -103,6 +100,9 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	}
 	if c.implicitImports != nil {
 		clone.implicitImports = c.implicitImports[:]
+	}
+	if c.conflictResolvers != nil {
+		clone.conflictResolvers = c.conflictResolvers[:]
 	}
 	return clone
 }
@@ -114,6 +114,27 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 		}
 	}
 	return false
+}
+
+func (c *scalaConfig) shouldResolveName(from label.Label, file *sppb.File, name string) bool {
+	// TODO(pcj): implement this
+	return true
+}
+
+func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
+	if len(c.conflictResolvers) == 0 {
+		log.Printf("Conflict resolution for %q failed (no conflict resolvers enabled)", imp.Imp)
+		return nil, false
+	}
+	for _, resolver := range c.conflictResolvers {
+		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol); ok {
+			log.Printf("Conflict resolver was successful %q: %s", resolver.Name(), imp.Imp)
+			return resolved, true
+		} else {
+			log.Printf("Conflict resolver failed %q: %s", resolver.Name(), imp.Imp)
+		}
+	}
+	return nil, false
 }
 
 // GetKnownRule translates relative labels into their absolute form.
@@ -147,8 +168,8 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveWithDirective(d)
 		case resolveKindRewriteNameDirective:
 			c.parseResolveKindRewriteNameDirective(d)
-		case resolveConflictDirective:
-			if err := c.parseResolveConflictDirective(d); err != nil {
+		case resolveConflictsDirective:
+			if err := c.parseResolveConflictsDirective(d); err != nil {
 				return err
 			}
 		case scalaAnnotateDirective:
@@ -224,7 +245,7 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
 }
 
-func (c *scalaConfig) parseResolveConflictDirective(d rule.Directive) error {
+func (c *scalaConfig) parseResolveConflictsDirective(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
 		if intent.Want {
@@ -232,9 +253,18 @@ func (c *scalaConfig) parseResolveConflictDirective(d rule.Directive) error {
 			if !ok {
 				return fmt.Errorf("invalid directive gazelle:%s: unknown conflict resolver %q", d.Key, intent.Value)
 			}
-			c.conflictResolvers[intent.Value] = resolver
+			for _, cr := range c.conflictResolvers {
+				if cr.Name() == intent.Value {
+					break
+				}
+			}
+			c.conflictResolvers = append(c.conflictResolvers, resolver)
 		} else {
-			delete(c.conflictResolvers, intent.Value)
+			for i, cr := range c.conflictResolvers {
+				if cr.Name() == intent.Value {
+					c.conflictResolvers = removeConflictResolver(c.conflictResolvers, i)
+				}
+			}
 		}
 	}
 	return nil
@@ -360,4 +390,8 @@ func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
 		from = mapping.Rewrite(from)
 	}
 	return from == to
+}
+
+func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {
+	return append(slice[:index], slice[index+1:]...)
 }

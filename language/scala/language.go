@@ -80,6 +80,7 @@ func (*scalaLang) KnownDirectives() []string {
 		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveWithDirective,
+		resolveConflictsDirective,
 		scalaAnnotateDirective,
 		resolveKindRewriteNameDirective,
 	}

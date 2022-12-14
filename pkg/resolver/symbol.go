@@ -1,8 +1,6 @@
 package resolver
 
 import (
-	"fmt"
-
 	"github.com/bazelbuild/bazel-gazelle/label"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -16,6 +14,8 @@ type Symbol struct {
 	Label     label.Label
 	Provider  string
 	Conflicts []*Symbol
+	// Requires is a list of other symbols that are required by this one.
+	Requires []*Symbol
 }
 
 func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label) *Symbol {
@@ -27,6 +27,6 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 	}
 }
 
-func (s *Symbol) String() string {
-	return fmt.Sprintf("%v %s (%v)", s.Type, s.Name, s.Label)
-}
+// func (s *Symbol) String() string {
+// 	return fmt.Sprintf("%v %s (%v)", s.Type, s.Name, s.Label)
+// }

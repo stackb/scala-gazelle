@@ -10,6 +10,8 @@ import (
 // ConflictResolver implementations are capable of applying a conflict
 // resolution strategy for conflicting resolved import symbols.
 type ConflictResolver interface {
+	// Name is the canonical name for the resolver
+	Name() string
 	// RegisterFlags configures the flags.  RegisterFlags is called for all
 	// resolvers whether they are enabled or not.
 	RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config)

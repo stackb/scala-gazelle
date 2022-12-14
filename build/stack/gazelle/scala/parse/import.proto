@@ -57,4 +57,10 @@ enum ImportKind {
     IMPLICIT = 3;
     // An import named in an extends clause. For example 'class Foo extends Bar'. 
     EXTENDS = 4;
+    // An import named by a resolved symbol in the file.  For example, if (1)
+    // the file has an import like `import com.foo.proto._`, (2) there is a name
+    // somewhere else in the AST 'FooMessage', (3), the name 'FooMessage'
+    // successfully resolves (to 'com.foo.proto.FooMessage'), an import is added
+    // of this type.
+    RESOLVED_SYMBOL = 5;
 }

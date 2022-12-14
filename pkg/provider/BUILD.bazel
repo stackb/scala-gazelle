@@ -30,10 +30,10 @@ go_library(
 go_test(
     name = "provider_test",
     srcs = [
-        # "java_provider_test.go",
+        "java_provider_test.go",
         # "maven_provider_test.go",
         # "protobuf_provider_test.go",
-        "source_provider_test.go",
+        # "source_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),
     deps = [

@@ -210,6 +210,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		from:        from,
 		scalaConfig: s.cfg,
 		resolver:    s.universe,
+		scope:       s.universe,
 	}
 
 	return newScalaRule(ctx, pb), nil

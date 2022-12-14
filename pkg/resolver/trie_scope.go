@@ -26,6 +26,20 @@ func NewTrieScope() *TrieScope {
 	}
 }
 
+// Symbols returns a sorted list of all symbols in the scope.
+func (r *TrieScope) Symbols() (symbols []*Symbol) {
+	r.trie.Walk(func(key string, value interface{}) error {
+		symbols = append(symbols, value.(*Symbol))
+		return nil
+	})
+	sort.Slice(symbols, func(i, j int) bool {
+		a := symbols[i]
+		b := symbols[j]
+		return a.Name < b.Name
+	})
+	return
+}
+
 // GetScope implements part of the resolver.Scope interface.
 func (r *TrieScope) GetScope(name string) (Scope, bool) {
 	node := r.trie.Get(name)
