@@ -39,10 +39,7 @@ func TestJavaProviderOnResolve(t *testing.T) {
 	}{
 		"empty file": {
 			files: []testtools.FileSpec{
-				{
-					Path:    "javaindex.json",
-					Content: "{}",
-				},
+				{Path: "testdata/javaindex.json", Content: "{}"},
 			},
 		},
 		"example java_index file": {
@@ -50,44 +47,14 @@ func TestJavaProviderOnResolve(t *testing.T) {
 				{Path: "testdata/javaindex.json"},
 			},
 			known: []*resolver.Symbol{
-				{
-					Type:     sppb.ImportType_CLASS,
-					Name:     "java.lang.Enum",
-					Label:    label.NoLabel,
-					Provider: "java",
-				},
-				{
-					Type:     sppb.ImportType_CLASS,
-					Name:     "java.lang.Iterable",
-					Label:    label.NoLabel,
-					Provider: "java",
-				},
-				{
-					Type:     sppb.ImportType_CLASS,
-					Name:     "java.lang.RuntimeException",
-					Label:    label.NoLabel,
-					Provider: "java",
-				},
+				{Type: sppb.ImportType_CLASS, Name: "java.lang.Enum", Label: label.NoLabel, Provider: "java"},
+				{Type: sppb.ImportType_CLASS, Name: "java.lang.Iterable", Label: label.NoLabel, Provider: "java"},
+				{Type: sppb.ImportType_CLASS, Name: "java.lang.RuntimeException", Label: label.NoLabel, Provider: "java"},
 			},
 			want: []*resolver.Symbol{
-				{
-					Type:     sppb.ImportType_PACKAGE,
-					Name:     "com.google.gson",
-					Label:    gsonLabel,
-					Provider: "java",
-				},
-				{
-					Type:     sppb.ImportType_INTERFACE,
-					Name:     "com.google.gson.ExclusionStrategy",
-					Label:    gsonLabel,
-					Provider: "java",
-				},
-				{
-					Type:     sppb.ImportType_CLASS,
-					Name:     "com.google.gson.FieldAttributes",
-					Label:    gsonLabel,
-					Provider: "java",
-				},
+				{Type: sppb.ImportType_PACKAGE, Name: "com.google.gson", Label: gsonLabel, Provider: "java"},
+				{Type: sppb.ImportType_INTERFACE, Name: "com.google.gson.ExclusionStrategy", Label: gsonLabel, Provider: "java"},
+				{Type: sppb.ImportType_CLASS, Name: "com.google.gson.FieldAttributes", Label: gsonLabel, Provider: "java"},
 				{
 					Type:     sppb.ImportType_CLASS,
 					Name:     "com.google.gson.FieldNamingPolicy",
@@ -112,14 +79,11 @@ func TestJavaProviderOnResolve(t *testing.T) {
 
 			p := provider.NewJavaProvider()
 			fs := flag.NewFlagSet("", flag.ExitOnError)
-			c := &config.Config{
-				WorkDir: tmpDir,
-			}
+			c := &config.Config{WorkDir: tmpDir}
 			p.RegisterFlags(fs, "update", c)
 			if err := fs.Parse([]string{
-				"-javaindex_file=./javaindex.json",
-			},
-			); err != nil {
+				"-javaindex_file=./testdata/javaindex.json",
+			}); err != nil {
 				t.Fatal(err)
 			}
 
@@ -133,9 +97,9 @@ func TestJavaProviderOnResolve(t *testing.T) {
 			}
 
 			p.OnResolve()
-			got := scope.Symbols()
 
-			// don't need to be exhanstive here, just get a sample...
+			got := scope.Symbols()
+			// don't need to be exhaustive here, just look at the first few...
 			if len(got) > 4 {
 				got = got[:4]
 			}
@@ -147,12 +111,23 @@ func TestJavaProviderOnResolve(t *testing.T) {
 	}
 }
 
-func SkipTestJavaProviderCanProvide(t *testing.T) {
+func TestJavaProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		from label.Label
 		want bool
 	}{
-		"empty file": {},
+		"no label": {
+			from: label.NoLabel,
+			want: false,
+		},
+		"not in the index": {
+			from: label.Label{Repo: "@other_maven", Name: "other_lib"},
+			want: false,
+		},
+		"in the index": {
+			from: gsonLabel,
+			want: true,
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustReadAndPrepareTestFiles(t, []testtools.FileSpec{
@@ -167,9 +142,8 @@ func SkipTestJavaProviderCanProvide(t *testing.T) {
 			}
 			p.RegisterFlags(fs, "update", c)
 			if err := fs.Parse([]string{
-				"-javaindex_file=./javaindex.json",
-			},
-			); err != nil {
+				"-javaindex_file=./testdata/javaindex.json",
+			}); err != nil {
 				t.Fatal(err)
 			}
 
