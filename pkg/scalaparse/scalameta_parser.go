@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -32,13 +31,13 @@ const (
 	debugParse = false
 )
 
-func NewScalametaParserService() *ScalametaParserService {
-	return &ScalametaParserService{}
+func NewScalametaParser() *ScalametaParser {
+	return &ScalametaParser{}
 }
 
-// ScalametaParserService is a service that communicates to a scalameta-js
-// parser backend over HTTP.
-type ScalametaParserService struct {
+// ScalametaParser is a service that communicates to a scalameta-js parser
+// backend over HTTP.
+type ScalametaParser struct {
 	sppb.UnimplementedParserServer
 
 	process    *memexec.Exec
@@ -51,7 +50,7 @@ type ScalametaParserService struct {
 	HttpPort int
 }
 
-func (s *ScalametaParserService) Stop() {
+func (s *ScalametaParser) Stop() {
 	if s.httpClient != nil {
 		s.httpClient.CloseIdleConnections()
 		s.httpClient = nil
@@ -70,7 +69,7 @@ func (s *ScalametaParserService) Stop() {
 	}
 }
 
-func (s *ScalametaParserService) Start() error {
+func (s *ScalametaParser) Start() error {
 	t1 := time.Now()
 
 	//
@@ -81,7 +80,7 @@ func (s *ScalametaParserService) Start() error {
 		return fmt.Errorf("creating tmp process dir: %w", err)
 	}
 
-	scriptPath := filepath.Join(processDir, "scalaparser.mjs")
+	scriptPath := filepath.Join(processDir, "scalameta_parser.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
@@ -122,7 +121,7 @@ func (s *ScalametaParserService) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("scalaparser.mjs")
+	cmd := exe.Command("scalameta_parser.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
@@ -149,7 +148,7 @@ func (s *ScalametaParserService) Start() error {
 	host := "localhost"
 	port := s.HttpPort
 	timeout := 3 * time.Second
-	if !waitForConnectionAvailable(host, port, timeout) {
+	if !collections.WaitForConnectionAvailable(host, port, timeout) {
 		return fmt.Errorf("waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
 	}
 
@@ -172,7 +171,7 @@ func (s *ScalametaParserService) Start() error {
 	return nil
 }
 
-func (s *ScalametaParserService) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
 	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
@@ -247,41 +246,4 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
-}
-
-// waitForConnectionAvailable pings a tcp connection every 250 milliseconds
-// until it connects and returns true.  If it fails to connect by the timeout
-// deadline, returns false.
-func waitForConnectionAvailable(host string, port int, timeout time.Duration) bool {
-	target := fmt.Sprintf("%s:%d", host, port)
-	var wg sync.WaitGroup
-	wg.Add(1)
-	then := time.Now()
-
-	success := make(chan bool, 1)
-
-	go func() {
-		go func() {
-			defer wg.Done()
-			for {
-				_, err := net.Dial("tcp", target)
-				if err == nil {
-					if debugParse {
-						log.Printf("%s is available after %s", target, time.Since(then))
-					}
-					break
-				}
-				time.Sleep(250 * time.Millisecond)
-			}
-		}()
-		wg.Wait()
-		success <- true
-	}()
-
-	select {
-	case <-success:
-		return true
-	case <-time.After(timeout):
-		return false
-	}
 }

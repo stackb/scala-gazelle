@@ -201,7 +201,6 @@ object Main {
 							"example.MainContext",
 						},
 						Imports: []string{
-							"MainContext._", // FIXME(pcj): elide this?
 							"akka.actor.ActorSystem",
 						},
 					},
@@ -222,7 +221,7 @@ object Main {
 			files := mustWriteTestFiles(t, tmpDir, tc.files)
 			tc.in.Filenames = files
 
-			server := NewScalametaParserService()
+			server := NewScalametaParser()
 			if err := server.Start(); err != nil {
 				t.Fatal("server start:", err)
 			}

@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const connectionAvailableDuration = 250 * time.Millisecond
+
 // WaitForConnectionAvailable pings a tcp connection every 250 milliseconds
 // until it connects and returns true.  If it fails to connect by the timeout
 // deadline, returns false.
@@ -25,7 +27,7 @@ func WaitForConnectionAvailable(host string, port int, timeout time.Duration) bo
 				if err == nil {
 					break
 				}
-				time.Sleep(250 * time.Millisecond)
+				time.Sleep(connectionAvailableDuration)
 			}
 		}()
 		wg.Wait()

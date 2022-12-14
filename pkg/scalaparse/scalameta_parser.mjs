@@ -1,5 +1,5 @@
 /**
- * @fileoverview scalaparser.mjs parses a list of source files and outputs a
+ * @fileoverview scalameta_parser.mjs parses a list of source files and outputs a
  * JSON summary of top-level symbols to stdout.
  */
 import * as fs from 'node:fs';

@@ -43,7 +43,6 @@ go_test(
         "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/resolver/mocks",
-        "//pkg/scalacompile/mocks",
         "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

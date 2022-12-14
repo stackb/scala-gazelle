@@ -26,7 +26,7 @@ func NewSourceProvider(compiler scalacompile.Compiler, progress progressFunc) *S
 	return &SourceProvider{
 		compiler: compiler,
 		progress: progress,
-		parser:   scalaparse.NewScalametaParserService(),
+		parser:   scalaparse.NewScalametaParser(),
 	}
 }
 
@@ -42,7 +42,7 @@ type SourceProvider struct {
 	// scope is the target we provide symbols to
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
-	parser *scalaparse.ScalametaParserService
+	parser *scalaparse.ScalametaParser
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
