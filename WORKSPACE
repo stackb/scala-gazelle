@@ -73,21 +73,11 @@ go_repositories()
 # tests.
 # ----------------------------------------------------
 
-load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
-    artifacts = IO_GRPC_GRPC_JAVA_ARTIFACTS + [
-        "com.google.code.findbugs:jsr305:3.0.2",
-        "com.google.errorprone:error_prone_annotations:2.11.0",
+    artifacts = [
         "com.google.guava:guava:30.1.1-jre",
-        "io.grpc:grpc-api:1.40.0",
-        "io.grpc:grpc-core:1.40.0",
-        "io.grpc:grpc-netty:1.40.0",
-        "io.grpc:grpc-services:1.40.0",
-        "io.grpc:grpc-stub:1.40.0",
-        "org.slf4j:slf4j-simple:1.7.32",
-        "javax.annotation:javax.annotation-api:1.3.2",
     ],
     maven_install_json = "//:maven_install.json",
     repositories = [
@@ -99,21 +89,6 @@ maven_install(
 load("@maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
-
-bind(
-    name = "error_prone_annotations",
-    actual = "@maven//:com_google_errorprone_error_prone_annotations",
-)
-
-bind(
-    name = "gson",
-    actual = "@maven//:com_google_code_gson_gson",
-)
-
-bind(
-    name = "guava",
-    actual = "@maven//:com_google_guava_guava",
-)
 
 # ----------------------------------------------------
 # @io_bazel_rules_scala
