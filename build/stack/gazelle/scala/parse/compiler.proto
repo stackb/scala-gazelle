@@ -11,9 +11,11 @@ option java_multiple_files = true;
 // CompileRequest holds a list of filenames to be parsed.
 message CompileRequest {
     string dir = 1;
+    // list of files relative to dir.
     repeated string filenames = 2;
 }
 
+// Severity of the diagnostic.
 enum Severity {
     SEVERITY_UNKNOWN = 0;
     INFO = 1;
@@ -21,15 +23,22 @@ enum Severity {
     ERROR = 3;
 }
 
+// Diagnostic is similar structure of what is emitted by the scala compiler
+// (scalac).
 message Diagnostic {
+    // severity level
     Severity severity = 1;
+    // absolute path to file
     string source = 2;
+    // line number
     int32 line = 3;
+    // detail message
     string message = 4;
 }   
 
-// CompileResponse holds the parsed file data.
+// CompileResponse holds the collected diagnostics.
 message CompileResponse {
+    // list of diagnostics
     repeated Diagnostic diagnostics = 1;
     // error is populated when a top-level parse error occurs that is 
     // independent from a single file.

@@ -9,15 +9,21 @@ import (
 // Symbol associates a name with the label that provides it, along with a type
 // classifier that says what kind of symbol it is.
 type Symbol struct {
-	Type      sppb.ImportType
-	Name      string
-	Label     label.Label
-	Provider  string
+	// Type is the kind of symbol this is.
+	Type sppb.ImportType
+	// Name is the fully-qualified import name.
+	Name string
+	// Label is the bazel label where the symbol is provided from.
+	Label label.Label
+	// Provider is the name of the provider that supplied the symbol.
+	Provider string
+	// Conflicts is a list of symbols provided by another provider or label.
 	Conflicts []*Symbol
 	// Requires is a list of other symbols that are required by this one.
 	Requires []*Symbol
 }
 
+// NewSymbol constructs a new symbol pointer with the given arguments.
 func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label) *Symbol {
 	return &Symbol{
 		Type:     impType,
@@ -26,7 +32,3 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 		Label:    from,
 	}
 }
-
-// func (s *Symbol) String() string {
-// 	return fmt.Sprintf("%v %s (%v)", s.Type, s.Name, s.Label)
-// }

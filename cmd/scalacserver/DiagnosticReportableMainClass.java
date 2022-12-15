@@ -20,5 +20,4 @@ public class DiagnosticReportableMainClass extends MainClass {
         reporter = new DiagnosticReporter(settings, this.dir);
         return new Global(settings, reporter);
     }
-
 }

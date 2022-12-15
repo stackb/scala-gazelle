@@ -156,7 +156,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			continue
 		}
 		if sym, ok := scope.GetSymbol(name); ok {
-			imports.Put(resolver.NewResolvedSymbolImport(sym.Name, file, name, sym))
+			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {
 			log.Printf("%s | %s: name not found: %s", r.ctx.from, file.Filename, name)
 		}

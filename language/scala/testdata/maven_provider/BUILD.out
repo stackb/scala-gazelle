@@ -8,7 +8,7 @@ scala_library(
     name = "app",
     srcs =
     # ✅ javax.inject<PACKAGE> @maven//:javax_inject_javax_inject<maven> (IMPLICIT of javax.xml)
-    # ✅ javax.xml<PACKAGE> @maven//:xml_apis_xml_apis<maven> (RESOLVED_SYMBOL of Main.scala)
+    # ✅ javax.xml<PACKAGE> @maven//:xml_apis_xml_apis<maven> (RESOLVED_NAME of Main.scala)
     # ❌ org.junit.rules.TemporaryFolder<ERROR> import not found (DIRECT of Main.scala)
     ["Main.scala"],
     deps = [

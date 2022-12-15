@@ -88,16 +88,6 @@ maven_install(
         "io.grpc:grpc-stub:1.40.0",
         "org.slf4j:slf4j-simple:1.7.32",
         "javax.annotation:javax.annotation-api:1.3.2",
-        # "com.google.caliper:caliper:1.0-beta-3",
-        # "com.google.code.findbugs:jsr305:3.0.2",
-        # "com.google.code.gson:gson:2.8.9",
-        # "com.google.errorprone:error_prone_annotations:2.5.1",
-        # "com.google.j2objc:j2objc-annotations:1.3",
-        # "com.google.guava:guava:31.1-jre",
-        # "com.google.guava:guava-testlib:31.1-jre",
-        # "com.google.truth:truth:1.1.2",
-        # "junit:junit:4.13.2",
-        # "org.mockito:mockito-core:4.3.1",
     ],
     maven_install_json = "//:maven_install.json",
     repositories = [
@@ -140,11 +130,3 @@ scala_repositories()
 load("@io_bazel_rules_scala//scala:toolchains.bzl", "scala_register_toolchains")
 
 scala_register_toolchains()
-
-# load("@rules_graal//graal:graal_bindist.bzl", "graal_bindist_repository")
-
-# graal_bindist_repository(
-#     name = "graal",
-#     java_version = "17",
-#     version = "22.1.0",
-# )

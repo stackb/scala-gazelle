@@ -28,27 +28,12 @@ func TestScalaSourceProviderParseScalaFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// for _, e := range os.Environ() {
-	// 	t.Log(e)
-	// }
 	if bwd, ok := os.LookupEnv("BUILD_WORKSPACE_DIRECTORY"); ok {
 		dir = filepath.Join(bwd, rel)
 	}
 	t.Log("dir:", dir)
 
 	scope := resolver.NewTrieScope()
-
-	// scope := mocks.NewScope(t)
-	// scope.
-	// 	On("PutSymbol", mock.Anything).
-	// 	Maybe().
-	// 	Return(nil)
-
-	// compiler := cmocks.NewCompiler(t)
-	// compiler.
-	// 	On("CompileScalaFiles", mock.Anything, mock.Anything, mock.Anything).
-	// 	Maybe().
-	// 	Return(nil, nil)
 
 	provider := provider.NewSourceProvider(func(msg string) {})
 

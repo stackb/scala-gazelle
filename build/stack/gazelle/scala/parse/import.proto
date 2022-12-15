@@ -62,5 +62,5 @@ enum ImportKind {
     // somewhere else in the AST 'FooMessage', (3), the name 'FooMessage'
     // successfully resolves (to 'com.foo.proto.FooMessage'), an import is added
     // of this type.
-    RESOLVED_SYMBOL = 5;
+    RESOLVED_NAME = 5;
 }

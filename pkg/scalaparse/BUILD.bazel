@@ -6,7 +6,6 @@ go_library(
         "assets.go",
         "exec.go",
         "memo_parser.go",
-        "options.go",
         "parser.go",
         "scalameta_parser.go",
         "service.go",
@@ -35,7 +34,6 @@ go_test(
     srcs = [
         "assets_test.go",
         "exec_test.go",
-        "options_test.go",
         "scalameta_parser_test.go",
     ],
     embed = [":scalaparse"],

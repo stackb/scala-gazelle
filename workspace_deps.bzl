@@ -305,35 +305,6 @@ filegroup(
             """.format(executable = data.executable),
         )
 
-def rules_graal():
-    # Branch: master
-    # Commit: 9fd38761df4ac293f952d10379c0c3520dd9ceed
-    # Date: 2022-04-30 04:01:48 +0000 UTC
-    # URL: https://github.com/andyscott/rules_graal/commit/9fd38761df4ac293f952d10379c0c3520dd9ceed
-    #
-    # Fix: GraalVM `22.1.0` (#22)
-    #
-    # This small fix adds `darwin-aarch64` to the internal prefix list,
-    # which was missed in my last PR. While I was there, I added a better
-    # error message for pre-`22.1.0` use of `aarch64` on macOS.
-    #
-    # Changes enclosed:
-    # - Add `darwin-aarch64` to internal prefix list
-    # - Add better error message if using GVM < `21.3.0` on M1
-    # Size: 13438 (13 kB)
-    # _maybe(
-    #     http_archive,
-    #     name = "rules_graal",
-    #     sha256 = "8fa2a40ef37704a6cd2d2ca5c8e2b845f9b207e77141014877dceac6cd40f321",
-    #     strip_prefix = "rules_graal-9fd38761df4ac293f952d10379c0c3520dd9ceed",
-    #     urls = ["https://github.com/andyscott/rules_graal/archive/9fd38761df4ac293f952d10379c0c3520dd9ceed.tar.gz"],
-    # )
-    _maybe(
-        native.local_repository,
-        name = "rules_graal",
-        path = "/Users/pcj/go/src/github.com/pcj/rules_graal",
-    )
-
 def io_grpc_grpc_java():
     # Branch: master
     # Commit: 2a0b86f7cd2a363cd1d19d56f9c47aead33261d6

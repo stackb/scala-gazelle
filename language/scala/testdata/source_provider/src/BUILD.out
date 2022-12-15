@@ -3,7 +3,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", 
 scala_library(
     name = "lib",
     srcs =
-    # ✅ a.b.c<PACKAGE> //src:app<scala_binary> (RESOLVED_SYMBOL of Lib.scala)
+    # ✅ a.b.c<PACKAGE> //src:app<scala_binary> (RESOLVED_NAME of Lib.scala)
     ["a/b/c/Lib.scala"],
 )
 

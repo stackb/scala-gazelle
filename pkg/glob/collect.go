@@ -11,7 +11,6 @@ import (
 type collector struct {
 	file *rule.File
 	dir  string
-	// rel  string
 	srcs []string
 }
 

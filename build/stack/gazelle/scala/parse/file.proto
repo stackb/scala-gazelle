@@ -35,8 +35,6 @@ message File {
     map<string,ClassList> extends = 11;
     // error is a string assigned when a parse error occurs
     string error = 13;
-    // list of symbols found in the file.
-    repeated build.stack.gazelle.scala.parse.Symbol symbols = 14;
 }
 
 // ClassList represents a set of files.

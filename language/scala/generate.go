@@ -9,6 +9,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/language"
 )
 
+const debugGenerate = false
+
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
 
@@ -40,9 +42,11 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 	}
 
-	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	if len(rules) > 1 {
-		log.Printf("Visited %q (%d rules, %v)", args.Rel, len(rules)-1, t2)
+	if debugGenerate {
+		t2 := time.Since(t1).Round(1 * time.Millisecond)
+		if len(rules) > 1 {
+			log.Printf("Visited %q (%d rules, %v)", args.Rel, len(rules)-1, t2)
+		}
 	}
 
 	return language.GenerateResult{

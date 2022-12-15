@@ -10,7 +10,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-// TODO: rename this to 'Requirement' or something.  Not all Imports are
+// TODO(pcj): rename this to 'Requirement' or something.  Not all Imports are
 // actually from an import statement.
 
 // Import is used to trace import provenance.
@@ -38,11 +38,11 @@ func NewDirectImport(imp string, source *sppb.File) *Import {
 	}
 }
 
-// NewResolvedSymbolImport creates a new resolved import from the given file,
+// NewResolvedNameImport creates a new resolved import from the given file,
 // name, and symbol.  The 'name' is the token that resolved in the file scope.
-func NewResolvedSymbolImport(imp string, source *sppb.File, name string, symbol *Symbol) *Import {
+func NewResolvedNameImport(imp string, source *sppb.File, name string, symbol *Symbol) *Import {
 	return &Import{
-		Kind:   sppb.ImportKind_RESOLVED_SYMBOL,
+		Kind:   sppb.ImportKind_RESOLVED_NAME,
 		Imp:    imp,
 		Source: source,
 		Src:    name,
@@ -113,7 +113,7 @@ func (imp *Import) String() string {
 		parts = append(parts, fmt.Sprintf("(%v via %q)", imp.Kind, imp.Src))
 	case sppb.ImportKind_EXTENDS:
 		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
-	case sppb.ImportKind_RESOLVED_SYMBOL:
+	case sppb.ImportKind_RESOLVED_NAME:
 		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
 	default:
 	}

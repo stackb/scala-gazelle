@@ -13,7 +13,6 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-// import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.io.File;
@@ -49,8 +48,6 @@ public class GrpcServer {
         ServerBuilder serverBuilder = ServerBuilder.forPort(port);
         this.server = serverBuilder
                 .addService(new GrpcService(timeoutHandler))
-                // .addService(new LifecycleService())
-                // .addService(ProtoReflectionService.newInstance())
                 .build();
     }
 
@@ -136,112 +133,5 @@ public class GrpcServer {
             boolean ok = main.process(args);
             return main.reporter.getDiagnostics();
         }
-
-        // private Diagnostic createDiagnostic(CompileResponse.Builder builder,
-        // List<XmlReporter.Diagnostic> diagnostics) {
-        // for (XmlReporter.Diagnostic diagnostic : diagnostics) {
-
-        // d.setAttribute("sev", diagnostic.sev.toString());
-        // if (!diagnostic.pos.source().path().equals("<no file>")) {
-        // d.setAttribute("source", diagnostic.pos.source().path());
-        // }
-        // if (diagnostic.pos.safeLine() != 0) {
-        // d.setAttribute("line", Integer.toString(diagnostic.pos.safeLine()));
-        // }
-        // d.setTextContent(diagnostic.msg);
-        // compileResponse.appendChild(d);
-        // }
-
-        // }
-
-        // private void writeDiagnostics(CompileResponse.Builder builder,
-        // List<XmlReporter.Diagnostic> diagnostics) {
-        // for (XmlReporter.Diagnostic diagnostic : diagnostics) {
-
-        // d.setAttribute("sev", diagnostic.sev.toString());
-        // if (!diagnostic.pos.source().path().equals("<no file>")) {
-        // d.setAttribute("source", diagnostic.pos.source().path());
-        // }
-        // if (diagnostic.pos.safeLine() != 0) {
-        // d.setAttribute("line", Integer.toString(diagnostic.pos.safeLine()));
-        // }
-        // d.setTextContent(diagnostic.msg);
-        // compileResponse.appendChild(d);
-        // }
-
-        // }
-
     }
-
-    // private final Path workspace;
-
-    // @Override
-    // public void parsePackage(
-    // ParsePackageRequest request, StreamObserver<Package> responseObserver) {
-    // timeoutHandler.startedRequest();
-
-    // try {
-    // responseObserver.onNext(getImports(request));
-    // responseObserver.onCompleted();
-    // } catch (Exception ex) {
-    // logger.error(
-    // "Got Exception parsing package {}: {}", Paths.get(request.getRel()),
-    // ex.getMessage());
-    // responseObserver.onError(ex);
-    // responseObserver.onCompleted();
-    // } finally {
-    // timeoutHandler.finishedRequest();
-    // }
-    // }
-
-    // private Package getImports(ParsePackageRequest request) {
-    // List<String> files = new ArrayList<>();
-    // for (int i = 0; i < request.getFilesCount(); i++) {
-    // files.add(request.getFiles(i));
-    // }
-    // logger.debug("Working relative directory: {}", request.getRel());
-    // logger.debug("processing files: {}", files);
-
-    // ClasspathParser parser = new ClasspathParser();
-    // Path directory = workspace.resolve(request.getRel());
-
-    // try {
-    // parser.parseClasses(directory, files);
-    // } catch (IOException exception) {
-    // // If we fail to process a directory, which can happen with the module level
-    // // processing
-    // // or can't parse any of the files, just return an empty response.
-    // return Package.newBuilder().setName("").build();
-    // }
-    // Set<String> packages = parser.getPackages();
-    // if (packages.size() > 1) {
-    // logger.error(
-    // "Set of classes in {} should have only one package, instead is: {}",
-    // request.getRel(),
-    // packages);
-    // throw new StatusRuntimeException(Status.INVALID_ARGUMENT);
-    // } else if (packages.isEmpty()) {
-    // logger.info(
-    // "Set of classes in {} has no package",
-    // Paths.get(request.getRel()).toAbsolutePath());
-    // packages.add("");
-    // }
-    // logger.debug("Got package: {}", Iterables.getOnlyElement(packages));
-    // logger.debug("Got used types: {}", parser.getUsedTypes());
-
-    // Builder packageBuilder = Package.newBuilder()
-    // .setName(Iterables.getOnlyElement(packages))
-    // .addAllImports(parser.getUsedTypes())
-    // .addAllMains(parser.getMainClasses());
-    // for (Map.Entry<String, SortedSet<String>> annotations :
-    // parser.getAnnotatedClasses().entrySet()) {
-    // packageBuilder.putPerClassMetadata(
-    // annotations.getKey(),
-    // PerClassMetadata.newBuilder()
-    // .addAllAnnotationClassNames(annotations.getValue())
-    // .build());
-    // }
-    // return packageBuilder.build();
-    // }
-    // }
 }

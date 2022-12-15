@@ -76,7 +76,7 @@ func (cr *SourceProvider) CanProvide(from label.Label, ruleIndex func(from label
 	return false
 }
 
-// start starts the parser process.
+// start begins the parser process.
 func (r *SourceProvider) start() error {
 	if err := r.parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
@@ -129,6 +129,7 @@ func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string)
 
 	// remove dir prefixes
 	for _, file := range response.Files {
+		// TODO(pcj): isn't there a stdlib function that does this?
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}
 

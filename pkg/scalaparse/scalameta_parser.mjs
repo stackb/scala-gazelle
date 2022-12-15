@@ -214,10 +214,6 @@ class ScalaFile {
                 if (wantNameInContext(stack)) {
                     let name = this.parseName(node);
                     if (name) {
-                        // if (!(stack[stack.length - 1].type === 'Term.Apply'
-                        //     && node.value.match(/^[a-z]/))) {
-                        //     return false;
-                        // }
                         if (wantNameTypes) {
                             const type = this.stackTypeName(node, stack);
                             name = `${name}<${type}>`;
@@ -709,12 +705,6 @@ function wantNameInContext(stack) {
     if (stack.length == 0) {
         return false;
     }
-    // lowercase function applications, excluding those
-    // if (node.type === 'Term.Name'
-    //     && stack[stack.length - 1].type === 'Term.Apply'
-    //     && node.value.match(/^[a-z]/)) {
-    //     return false;
-    // }
     for (let i = stack.length - 1; i >= 0; i--) {
         switch (stack[i].type) {
             // if the immediate parent is a parameter
