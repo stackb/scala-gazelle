@@ -1,4 +1,4 @@
-package scalaparse
+package parser
 
 import (
 	"bytes"
@@ -28,7 +28,7 @@ func NewMemoParser(ruleRegistry lookupScalaRule, next Parser) *MemoParser {
 	}
 }
 
-// ParseScalaFiles implements scalaparse.Parser
+// ParseScalaFiles implements parser.Parser
 func (p *MemoParser) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
 	sort.Strings(srcs)
 

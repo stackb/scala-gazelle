@@ -14,8 +14,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 )
 
 type progressFunc func(msg string)
@@ -24,7 +24,7 @@ type progressFunc func(msg string)
 func NewSourceProvider(progress progressFunc) *SourceProvider {
 	return &SourceProvider{
 		progress: progress,
-		parser:   scalaparse.NewScalametaParser(),
+		parser:   parser.NewScalametaParser(),
 	}
 }
 
@@ -38,7 +38,7 @@ type SourceProvider struct {
 	// scope is the target we provide symbols to
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
-	parser *scalaparse.ScalametaParser
+	parser *parser.ScalametaParser
 }
 
 // Name implements part of the resolver.SymbolProvider interface.

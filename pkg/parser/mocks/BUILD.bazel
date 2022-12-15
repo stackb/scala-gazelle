@@ -3,7 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "mocks",
     srcs = ["Parser.go"],
-    importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse/mocks",
+    importpath = "github.com/stackb/scala-gazelle/pkg/parser/mocks",
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",

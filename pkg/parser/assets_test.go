@@ -1,11 +1,11 @@
-package scalaparse
+package parser
 
 import (
 	"testing"
 )
 
 func TestEmbed(t *testing.T) {
-	if len(scalaparserMjs) == 0 {
+	if len(parserrMjs) == 0 {
 		t.Error("embedded scalameta_parser.mjs script is missing")
 	}
 	if len(scalametaParsersIndexJs) == 0 {

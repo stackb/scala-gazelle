@@ -1,7 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "scalaparse",
+    name = "parser",
     srcs = [
         "assets.go",
         "exec.go",
@@ -14,7 +14,7 @@ go_library(
         "node.exe",
         "scalameta_parser.mjs",
     ],
-    importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
+    importpath = "github.com/stackb/scala-gazelle/pkg/parser",
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
@@ -29,13 +29,13 @@ go_library(
 )
 
 go_test(
-    name = "scalaparse_test",
+    name = "parser_test",
     srcs = [
         "assets_test.go",
         "exec_test.go",
         "scalameta_parser_test.go",
     ],
-    embed = [":scalaparse"],
+    embed = [":parser"],
     deps = [
         "//build/stack/gazelle/scala/parse",
         "@bazel_gazelle//testtools:go_default_library",

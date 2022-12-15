@@ -12,9 +12,9 @@ import (
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -67,7 +67,7 @@ type scalaLang struct {
 	// sourceProvider is the sourceProvider implementation.
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
-	parser scalaparse.Parser
+	parser parser.Parser
 }
 
 // Name implements part of the language.Language interface
@@ -104,7 +104,7 @@ func NewLanguage() language.Language {
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
-	lang.parser = scalaparse.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
+	lang.parser = parser.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())

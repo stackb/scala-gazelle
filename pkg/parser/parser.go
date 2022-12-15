@@ -1,4 +1,4 @@
-package scalaparse
+package parser
 
 import (
 	"github.com/bazelbuild/bazel-gazelle/label"

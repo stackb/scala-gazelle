@@ -1,4 +1,4 @@
-package scalaparse
+package parser
 
 import (
 	"bytes"
@@ -86,8 +86,8 @@ func (s *ScalametaParser) Start() error {
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
 		return fmt.Errorf("mkdir process tmpdir: %w", err)
 	}
-	if err := ioutil.WriteFile(scriptPath, []byte(scalaparserMjs), os.ModePerm); err != nil {
-		return fmt.Errorf("writing %s: %w", scalaparserMjs, err)
+	if err := ioutil.WriteFile(scriptPath, []byte(parserrMjs), os.ModePerm); err != nil {
+		return fmt.Errorf("writing %s: %w", parserrMjs, err)
 	}
 	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
 		return fmt.Errorf("writing %s: %w", scalametaParsersIndexJs, err)
