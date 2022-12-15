@@ -116,13 +116,12 @@ func addResolvedDeps(deps *build.ListExpr, sc *scalaConfig, kind string, from la
 
 		seen[dep] = true
 		kept[dep.Rel(from.Repo, from.Pkg).String()] = imports
-		// log.Println("addResolvedDeps kept:", dep)
 	}
 
-	deps.List = append(deps.List, makeAnnotatedDepExprs(kept, sc.shouldAnnotateResolvedDeps(), from)...)
+	deps.List = append(deps.List, makeDepExprs(kept, from)...)
 }
 
-func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool, from label.Label) (exprs []build.Expr) {
+func makeDepExprs(deps map[string]resolver.ImportMap, from label.Label) (exprs []build.Expr) {
 	labels := make([]string, 0, len(deps))
 	for key := range deps {
 		labels = append(labels, key)
@@ -131,11 +130,6 @@ func makeAnnotatedDepExprs(deps map[string]resolver.ImportMap, annotate bool, fr
 
 	for _, dep := range labels {
 		str := &build.StringExpr{Value: dep}
-		if annotate {
-			deps[dep].Annotate(&str.Comments, func(imp *resolver.Import) bool {
-				return imp.Error == nil && imp.Symbol != nil
-			})
-		}
 		exprs = append(exprs, str)
 	}
 

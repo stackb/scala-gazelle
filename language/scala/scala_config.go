@@ -21,10 +21,8 @@ import (
 type annotation int
 
 const (
-	AnnotateUnknown        annotation = 0
-	AnnotateImports        annotation = 1
-	AnnotateUnresolvedDeps annotation = 2
-	AnnotateResolvedDeps   annotation = 3
+	AnnotateUnknown annotation = 0
+	AnnotateImports annotation = 1
 )
 
 const (
@@ -330,16 +328,6 @@ func (c *scalaConfig) shouldAnnotateImports() bool {
 	return ok
 }
 
-func (c *scalaConfig) shouldAnnotateResolvedDeps() bool {
-	_, ok := c.annotations[AnnotateResolvedDeps]
-	return ok
-}
-
-func (c *scalaConfig) shouldAnnotateUnresolvedDeps() bool {
-	_, ok := c.annotations[AnnotateUnresolvedDeps]
-	return ok
-}
-
 func (c *scalaConfig) Comment() build.Comment {
 	return build.Comment{Token: "# " + c.String()}
 }
@@ -367,10 +355,6 @@ func parseAnnotation(val string) annotation {
 	switch val {
 	case "imports":
 		return AnnotateImports
-	case "resolved_deps":
-		return AnnotateResolvedDeps
-	case "unresolved_deps":
-		return AnnotateUnresolvedDeps
 	default:
 		return AnnotateUnknown
 	}

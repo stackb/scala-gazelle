@@ -36,3 +36,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
+
+replace github.com/bazelbuild/bazel-gazelle => github.com/pcj/bazel-gazelle v0.0.0-20221215190317-f045255d3e6a
