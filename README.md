@@ -84,20 +84,21 @@ Add `build_stack_scala_gazelle` as an external workspace:
 
 ```bazel
 # Branch: master
-# Commit: cb4f18d40ef92bd217578f3ae3605e5e60630d01
-# Date: 2022-12-15 19:33:49 +0000 UTC
-# URL: https://github.com/stackb/scala-gazelle/commit/cb4f18d40ef92bd217578f3ae3605e5e60630d01
+# Commit: cd4ba132018c2ac709bfda4560da394da2544490
+# Date: 2022-12-15 22:11:08 +0000 UTC
+# URL: https://github.com/stackb/scala-gazelle/commit/cd4ba132018c2ac709bfda4560da394da2544490
 # 
-# Convert to using r.AttrComments (#67)
+# Refactor MemoParser (#69)
 # 
-# * convert to using r.AttrComments
-# * Update golden tests
-# Size: 148815 (149 kB)
+# * Refactor MemoParser
+# * regen mocks
+# * Fix cache read/write
+# Size: 150152 (150 kB)
 http_archive(
     name = "build_stack_scala_gazelle",
-    sha256 = "86dc9d224d02c17f1b42ae774b7bce58fbb9c44ea30f3b855eba60a1e2942366",
-    strip_prefix = "scala-gazelle-cb4f18d40ef92bd217578f3ae3605e5e60630d01",
-    urls = ["https://github.com/stackb/scala-gazelle/archive/cb4f18d40ef92bd217578f3ae3605e5e60630d01.tar.gz"],
+    sha256 = "a88095f943b5b382761efe300b098ae438a0083db844bea98efbcfaee6efa8bf",
+    strip_prefix = "scala-gazelle-cd4ba132018c2ac709bfda4560da394da2544490",
+    urls = ["https://github.com/stackb/scala-gazelle/archive/cd4ba132018c2ac709bfda4560da394da2544490.tar.gz"],
 )
 ```
 
