@@ -8,7 +8,6 @@ go_library(
         "memo_parser.go",
         "parser.go",
         "scalameta_parser.go",
-        "service.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",

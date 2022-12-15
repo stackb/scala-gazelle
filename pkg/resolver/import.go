@@ -116,6 +116,7 @@ func (imp *Import) String() string {
 	case sppb.ImportKind_RESOLVED_NAME:
 		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
 	default:
+		parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
 	}
 	return strings.Join(parts, " ")
 }

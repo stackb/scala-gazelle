@@ -15,7 +15,6 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs =
-    # ✅ a.b.c<PACKAGE> //:app<scala_library> (RESOLVED_NAME of Main.scala)
     # ❌ not.Exists<ERROR> import not found (DIRECT of Main.scala)
     # ✅ proto.Customer<PROTO_MESSAGE> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
     ["Main.scala"],
