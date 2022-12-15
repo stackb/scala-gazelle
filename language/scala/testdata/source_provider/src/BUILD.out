@@ -7,10 +7,9 @@ scala_library(
 
 scala_binary(
     name = "app",
-    srcs =
     # ✅ a.b.c.Lib<OBJECT> //src:lib<scala_library> (DIRECT of Main.scala)
     # ✅ a.b.c.Main<OBJECT> //src:app<scala_binary> (MAIN_CLASS)
-    ["a/b/c/Main.scala"],
+    srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
     deps = [":lib"],
 )

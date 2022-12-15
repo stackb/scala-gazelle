@@ -183,9 +183,6 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments) {
 	comments.Before = nil
 	for _, key := range imports.Keys() {
 		imp := imports[key]
-		if imp.Symbol == nil {
-			continue
-		}
 		comments.Before = append(comments.Before, imp.Comment())
 	}
 }
