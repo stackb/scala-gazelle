@@ -4,8 +4,8 @@
 <table border="0">
   <tr>
     <td><img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7d/Bazel_logo.svg/1920px-Bazel_logo.svg.png" height="120"/></td>
-    <td><img src="https://www.scala-lang.org/resources/img/frontpage/scala-spiral.png" height="120"/></td>
-    <td><img src="https://user-images.githubusercontent.com/50580/141892423-5205bbfd-8487-442b-81c7-f56fa3d1f69e.jpeg" height="120"/></td>
+    <td><img src="https://www.scala-lang.org/resources/img/frontpage/scala-spiral.png" width="100" height="120"/></td>
+    <td><img src="https://user-images.githubusercontent.com/50580/141892423-5205bbfd-8487-442b-81c7-f56fa3d1f69e.jpeg" width="130" height="120"/></td>
   </tr>
   <tr>
     <td>bazel</td>
@@ -18,6 +18,7 @@
 - [Installation](#installation)
   - [Primary Dependency](#primary-dependency)
   - [Transitive Dependencies](#transitive-dependencies)
+  - [Patch bazel-gazelle](#patch-bazel-gazelle)
   - [Gazelle Binary](#gazelle-binary)
   - [Gazelle Rule](#gazelle-rule)
 - [Usage](#usage)
@@ -34,6 +35,10 @@
     - [Custom Symbol Provider](#custom-symbol-provider)
     - [CanProvide](#canprovide)
     - [Split Packages](#split-packages)
+  - [Conflict Resolution](#conflict-resolution)
+    - [Conflict Resolvers](#conflict-resolvers)
+    - [`scala_proto_package` conflict resolver](#scala_proto_package-conflict-resolver)
+    - [Custom conflict resolvers](#custom-conflict-resolvers)
   - [Cache](#cache)
   - [Profiling](#profiling)
     - [CPU](#cpu)
@@ -45,9 +50,12 @@
     - [`gazelle:resolve_kind_rewrite_name`](#gazelleresolve_kind_rewrite_name)
     - [`gazelle:annotate`](#gazelleannotate)
       - [`imports`](#imports)
-      - [`unresolved_deps`](#unresolved_deps)
 - [Import Resolution Procedure](#import-resolution-procedure)
   - [How Required Imports are Calculated](#how-required-imports-are-calculated)
+    - [Rule](#rule)
+    - [File](#file)
+      - [Parsing](#parsing)
+      - [Name resolution](#name-resolution)
   - [How Required Imports are Resolved](#how-required-imports-are-resolved)
 - [Help](#help)
 
@@ -76,17 +84,20 @@ Add `build_stack_scala_gazelle` as an external workspace:
 
 ```bazel
 # Branch: master
-# Commit: 476615560157f22919e5c936dc84b7ddf3278ca4
-# Date: 2022-12-08 20:23:01 +0000 UTC
-# URL: https://github.com/stackb/scala-gazelle/commit/476615560157f22919e5c936dc84b7ddf3278ca4
+# Commit: cb4f18d40ef92bd217578f3ae3605e5e60630d01
+# Date: 2022-12-15 19:33:49 +0000 UTC
+# URL: https://github.com/stackb/scala-gazelle/commit/cb4f18d40ef92bd217578f3ae3605e5e60630d01
 # 
-# Add license (#53)
-# Size: 149692 (150 kB)
+# Convert to using r.AttrComments (#67)
+# 
+# * convert to using r.AttrComments
+# * Update golden tests
+# Size: 148815 (149 kB)
 http_archive(
     name = "build_stack_scala_gazelle",
-    sha256 = "e903f248ba5921b5f6891ada8134760984749478ee350b11c64302205b04001a",
-    strip_prefix = "scala-gazelle-476615560157f22919e5c936dc84b7ddf3278ca4",
-    urls = ["https://github.com/stackb/scala-gazelle/archive/476615560157f22919e5c936dc84b7ddf3278ca4.tar.gz"],
+    sha256 = "86dc9d224d02c17f1b42ae774b7bce58fbb9c44ea30f3b855eba60a1e2942366",
+    strip_prefix = "scala-gazelle-cb4f18d40ef92bd217578f3ae3605e5e60630d01",
+    urls = ["https://github.com/stackb/scala-gazelle/archive/cb4f18d40ef92bd217578f3ae3605e5e60630d01.tar.gz"],
 )
 ```
 
@@ -104,6 +115,21 @@ language_scala_deps()
 load("@build_stack_scala_gazelle//:go_repos.bzl", build_stack_scala_gazelle_gazelle_extension_deps = "gazelle_extension_deps")
 
 build_stack_scala_gazelle_gazelle_extension_deps()
+```
+
+## Patch bazel-gazelle
+
+At the time of this writing, scala-gazelle uses a feature from https://github.com/bazelbuild/bazel-gazelle/pull/1394.  To patch:
+
+```bazel
+http_archive(
+    name = "bazel_gazelle",
+    patch_args = ["-p1"],
+    patches = ["@build_stack_scala_gazelle//third_party/bazelbuild/bazel-gazelle:pr-1394.patch"],
+    sha256 = "5ebc984c7be67a317175a9527ea1fb027c67f0b57bb0c990bac348186195f1ba",
+    strip_prefix = "bazel-gazelle-2d1002926dd160e4c787c1b7ecc60fb7d39b97dc",
+    urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc.tar.gz"],
+)
 ```
 
 ## Gazelle Binary
@@ -511,6 +537,124 @@ To help avoid issues with split packages:
 - Use the `java` provider to supply fine-grained deps for selected artifacts.
 - Avoid wildcard imports that involve split packages.
 
+## Conflict Resolution
+
+When the symbol trie is populated from the enabled symbol providers, conflicts
+can arise if the same symbol is put more than once under the same name.
+
+Rather than ignoring the duplicate, additional symbols are stored on the `*resolver.Symbol.Conflicts` slice, which has this signature:
+
+```go
+// Symbol associates a name with the label that provides it, along with a type
+// classifier that says what kind of symbol it is.
+type Symbol struct {
+	// Type is the kind of symbol this is.
+	Type sppb.ImportType
+	// Name is the fully-qualified import name.
+	Name string
+	// Label is the bazel label where the symbol is provided from.
+	Label label.Label
+	// Provider is the name of the provider that supplied the symbol.
+	Provider string
+	// Conflicts is a list of symbols provided by another provider or label.
+	Conflicts []*Symbol
+	// Requires is a list of other symbols that are required by this one.
+	Requires []*Symbol
+}
+```
+
+If an import resolves to a symbol that carries a conflict, a warning is emitted.  Example:
+
+```
+Unresolved symbol conflict: CLASS "com.google.protobuf.Empty" has multiple providers!
+ - Maybe add one of the following to //common/akka/grpc:BUILD.bazel:
+     # gazelle:resolve scala scala com.google.protobuf.Empty @protobufapis//google/protobuf:empty_proto_scala_library:
+     # gazelle:resolve scala scala com.google.protobuf.Empty @maven//:com_google_protobuf_protobuf_java:
+```
+
+As the warning suggests, one way to suppress the warning is to add a `gazelle:resolve` directive indicating which rule should be chosen.
+
+### Conflict Resolvers
+
+Another way to resolve the conflict is to use a `resolver.ConflictResolver` implementation, which has this signature:
+
+```go
+// ConflictResolver implementations are capable of applying a conflict
+// resolution strategy for conflicting resolved import symbols.
+type ConflictResolver interface {  
+	// ResolveConflict takes the context rule and imports, and the target symbol
+	// with conflicts to resolve.
+	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool)
+}
+```
+
+### `scala_proto_package` conflict resolver
+
+Another example:
+
+```
+Unresolved symbol conflict: PROTO_PACKAGE "examples.helloworld.greeter.proto" has multiple providers!
+ - Maybe remove a wildcard import (if one exists)
+ - Maybe add one of the following to @unity//examples/helloworld/greeter/server/scala:BUILD.bazel:
+     # gazelle:resolve scala scala examples.helloworld.greeter.proto //examples/helloworld/greeter/proto:examples_helloworld_greeter_proto_grpc_scala_library:
+     # gazelle:resolve scala scala examples.helloworld.greeter.proto //examples/helloworld/greeter/proto:examples_helloworld_greeter_proto_proto_scala_library:
+```
+
+In this case, the conflict occurred because the package
+`examples.helloworld.greeter.proto` was resolved via a wildcard import
+`import examples.helloworld.greeter.proto._`.  Because that package is provided by
+two rules (one proto only, one grpc), we need to choose one.
+
+One way to avoid this conflict is to remove the wildcard import and be explicit about which things are to be imported.
+
+Another way is implemented by the `scala_proto_package` conflict resolver:
+  - if the rule is using any grpc symbols, choose the `examples_helloworld_greeter_proto_grpc_scala_library`.
+  - if the rule is not using any grpc, take the proto one, since we don't want unnecessary grpc deps when they aren't needed.
+
+To use it, you need to register it with a flag and enable it with a directive:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_conflict_resolver=scala_proto_package",
+        ...
+    ],
+    ...
+)
+```
+
+```bazel
+# gazelle:resolve_conflicts +scala_proto_package
+```
+
+> The `+` sign is an *intent modifier* and is optional in the positive case.
+
+To turn off this strategy in a sub-package:
+
+```bazel
+# gazelle:resolve_conflicts -scala_proto_package
+```
+
+### Custom conflict resolvers
+
+You can implement your own conflict resolution strategies by implementing the `resolver.ConflictResolver` interface and registering it with the global registry:
+
+```go
+package custom
+
+import "github.com/stackb/scala-gazelle/pkg/resolver" 
+
+func init() {
+  cr := &customConflictResolver{}
+  resolver.GlobalConflictResolverRegistry().PutConflictResolver(cr.Name(), cr)
+}
+
+type customConflictResolver struct {}
+
+...
+```
+
 ## Cache
 
 Parsing scala source files for a large repository is expensive.  A cache can be
@@ -650,46 +794,62 @@ Generates:
 ```bazel
 scala_binary(
     name = "app",
-    srcs =
     # ❌ AbstractServiceBase<ERROR> import not found (EXTENDS of foo.allocation.Main)
     # ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
     # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
     # ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
-    glob(["src/main/**/*.scala"]),
+    srcs = glob(["src/main/**/*.scala"]),
     main_class = "foo.allocation.Main",
 )
 ```
-
-#### `unresolved_deps`
-
-Similar to above, but only the `import not found` would be included.
 
 # Import Resolution Procedure
 
 ## How Required Imports are Calculated
 
-The imports are calculated as a union of the following for all `.scala` source
-files in the rule:
+### Rule 
 
-1. All imports explicitly named in an import statement (`DIRECT` import). Nested
-   imports are included and resolved in a best-effort basis.
-1. The `main_class`, if the rule has that attribute (`MAIN_CLASS` import).
-1. All symbols named in an `extends` clause (`EXTENDS` import).
-1. Any additional imports matching a `gazelle:resolve_with` directive
-   (`IMPLICIT` import).
+If the rule has `main_class` attribute, that name is added to the imports (type `MAIN_CLASS`).
+
+The remainder of rule imports are collected from file imports for all `.scala` source files in the rule.
+
+Once this initial set of imports are gathered, the transitive set of required symbol are collected from:
+
+- `extends` clauses (type `EXTENDS`)
+- imports matching a `gazelle:resolve_with` directive (type `IMPLICIT`).
+
+### File 
+
+The imports for a file are collected as follows:
+
+#### Parsing
+
+The `.scala` file is parsed:
+
+- Import statements are collected, including nested imports.
+- a set of *names* are collected by traversing the body of the AST.  Some of these names are function calls, some of them are types, etc.
+
+Symbols named in import statements are added to imports (type `DIRECT`).
+
+#### Name resolution
+
+A trie of the symbols in scope for the file is built from:
+
+- the file package(s)
+- wildcard imports
+
+Then, all *names* in the file are tested against the file scope.  Matching symbols are added to the imports (type `RESOLVED_NAME`).
 
 ## How Required Imports are Resolved
 
 The resolution procedure works as follows:
 
-1. Is the import provided by the containing rule?  If yes, `NoLabel` is
-   required.  Stop ✅.
-2. Is the import named in a `gazelle:resolve` override?  If yes, stop ✅.
-3. Does the import satisfy a longest prefix match in the known import trie?  If
+1. Is the import named in a `gazelle:resolve` override?  If yes, stop ✅.
+2. Does the import satisfy a longest prefix match in the known import trie?  If
    yes, stop ✅.
-4. Does the gazelle "rule index" and "cross-resolve" mechanism find a result for
+3. Does the gazelle "rule index" and "cross-resolve" mechanism find a result for
    the import?  If yes, stop ✅.
-5. No label was found.  Mark as `import not found` and move on ❌. 
+4. No label was found.  Mark as `import not found` and move on ❌. 
 
 # Help
 
