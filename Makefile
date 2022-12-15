@@ -14,8 +14,8 @@ jarindex_protos:
 	mv build/stack/gazelle/scala/jarindex/build/stack/gazelle/scala/jarindex/*.go build/stack/gazelle/scala/jarindex/
 	rm -rf build/stack/gazelle/scala/jarindex/build
 
-.PHONY: scalaparse_protos
-scalaparse_protos:
+.PHONY: parser_protos
+parser_protos:
 	bazel run //build/stack/gazelle/scala/parse:parse_go_compiled_sources.update
 	mv build/stack/gazelle/scala/parse/build/stack/gazelle/scala/parse/*.go build/stack/gazelle/scala/parse/
 	rm -rf build/stack/gazelle/scala/parse/build
@@ -27,7 +27,7 @@ scalacache_protos:
 	rm -rf build/stack/gazelle/scala/cache/build
 
 .PHONY: protos
-protos: jarindex_protos scalaparse_protos scalacache_protos 
+protos: jarindex_protos parser_protos scalacache_protos 
 	echo "Done."
 
 .PHONY: tidy
@@ -50,7 +50,7 @@ mocks:
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolProvider
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolResolver
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ConflictResolver
-	mockery --output pkg/scalaparse/mocks --dir=pkg/scalaparse --name=Parser
+	mockery --output pkg/parser/mocks --dir=pkg/parser --name=Parser
 	mockery --output pkg/scalarule/mocks --dir=pkg/scalarule --name=ProviderRegistry
 
 .PHONY: gen

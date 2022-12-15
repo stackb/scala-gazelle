@@ -13,8 +13,8 @@ import (
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/glob"
+	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
-	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -27,7 +27,7 @@ type scalaPackage struct {
 	// rel is the package name (from args.Rel)
 	rel string
 	// parser is the file parser
-	parser scalaparse.Parser
+	parser parser.Parser
 	// universe is the parent universe
 	universe resolver.Universe
 	// the registry to use
@@ -48,7 +48,7 @@ func newScalaPackage(
 	file *rule.File,
 	cfg *scalaConfig,
 	providerRegistry scalarule.ProviderRegistry,
-	parser scalaparse.Parser,
+	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,

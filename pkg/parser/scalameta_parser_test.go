@@ -1,4 +1,4 @@
-package scalaparse
+package parser
 
 import (
 	"context"
