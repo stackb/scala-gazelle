@@ -9,6 +9,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs =
+    # ✅ a.b.c<PACKAGE> //:app<scala_library> (RESOLVED_SYMBOL of Main.scala)
     # ✅ com.typesafe.scalalogging.LazyLogging<OVERRIDE> @maven//:com_typesafe_scala_logging_scala_logging_2_12<override> (DIRECT of Main.scala)
     # ✅ org.slf4j.Logger<OVERRIDE> @maven//:org_slf4j_slf4j_api<override> (IMPLICIT of com.typesafe.scalalogging.LazyLogging)
     ["Main.scala"],

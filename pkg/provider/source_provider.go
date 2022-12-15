@@ -121,10 +121,10 @@ func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string)
 		Filenames: filenames,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("parser error: %v", err)
+		return nil, fmt.Errorf("parse error: %v", err)
 	}
 	if response.Error != "" {
-		return nil, fmt.Errorf("parse error: %s", response.Error)
+		return nil, fmt.Errorf("parser error: %s", response.Error)
 	}
 
 	// remove dir prefixes
@@ -161,9 +161,13 @@ func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb
 	for _, imp := range file.Vals {
 		r.putSymbol(from, kind, imp, sppb.ImportType_VALUE)
 	}
-	for _, imp := range file.Packages {
-		r.putSymbol(from, kind, imp, sppb.ImportType_PACKAGE)
-	}
+	// TODO(pcj): should sources advertise their package symbols?  Currently
+	// this leads the sitations where a lib will erroneously take on a dep to
+	// a binary rule.
+	//
+	// for _, imp := range file.Packages {
+	// 	r.putSymbol(from, kind, imp, sppb.ImportType_PACKAGE)
+	// }
 	return nil
 }
 

@@ -13,7 +13,7 @@ import (
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -91,8 +91,8 @@ func (p *JavaProvider) CanProvide(dep label.Label, knownRule func(from label.Lab
 }
 
 func (p *JavaProvider) readJarIndex(filename string) error {
-	index, err := jarindex.ReadJarIndexFile(filename)
-	if err != nil {
+	var index jipb.JarIndex
+	if err := protobuf.ReadFile(filename, &index); err != nil {
 		return fmt.Errorf("reading %s: %v", filename, err)
 	}
 
@@ -127,7 +127,6 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 			return fmt.Errorf("%s: parsing label %q: %v", jarFile.Filename, jarFile.Label, err)
 		}
 	}
-
 	p.byLabel[from] = jarFile
 
 	if isPredefined[from] {
@@ -136,10 +135,6 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 
 	for _, pkg := range jarFile.PackageName {
 		p.putSymbol(sppb.ImportType_PACKAGE, pkg, from)
-	}
-
-	for _, classFile := range jarFile.ClassFile {
-		p.putSymbol(sppb.ImportType_CLASS, classFile.Name, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {

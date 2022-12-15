@@ -120,7 +120,7 @@ func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
 }
 
 func (sl *scalaLang) setupExistingScalaRule(fqn, load, kind string) error {
-	provider := &existingScalaRuleProvider{load, kind, isBinaryRule(kind)}
+	provider := &existingScalaRuleProvider{load, kind}
 	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
 }
 
@@ -178,8 +178,4 @@ func (sl *scalaLang) stopMemoryProfiling() {
 
 		log.Println("Wrote memprofile to", sl.memprofileFlagValue)
 	}
-}
-
-func isBinaryRule(kind string) bool {
-	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
 }

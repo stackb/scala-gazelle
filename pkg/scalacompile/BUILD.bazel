@@ -6,7 +6,6 @@ go_library(
     name = "scalacompile",
     srcs = [
         "compiler.go",
-        "noop_compiler.go",
         "scalac_compiler.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalacompile",

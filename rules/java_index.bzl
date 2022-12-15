@@ -2,74 +2,21 @@
 """
 
 load(":providers.bzl", "JarIndexerAspectInfo")
-load(":java_indexer_aspect.bzl", "java_indexer_aspect")
+load(":java_indexer_aspect.bzl", "jarindexer_action", "java_indexer_aspect")
 
-def build_jarfile_index(ctx, label, basename, jar):
-    """Builds a single jarfile index.
-
-    Args:
-        ctx: the context object
-        label: label to use for the jar
-        basename: a string representing a filename prefix for generated files
-        jar: the File to parse
-    Returns:
-        the output File of the index.
-    """
-
-    ijar = ctx.actions.declare_file(jar.short_path.replace("/", "-"))
-    ctx.actions.run(
-        executable = ctx.executable._ijar,
-        inputs = [jar],
-        outputs = [ijar],
-        arguments = [
-            "--target_label",
-            str(label),
-            jar.path,
-            ijar.path,
-        ],
-        mnemonic = "Ijar",
-    )
-
-    output_file = ctx.actions.declare_file(basename + ".jarindex.bin")
-    ctx.actions.run(
-        mnemonic = "JarIndexer",
-        progress_message = "Indexing jar " + ijar.basename,
-        executable = ctx.executable._jarindexer,
-        arguments = [
-            "--label",
-            str(label),
-            "--output_file",
-            output_file.path,
-            jar.path,
-        ],
-        inputs = [ijar, jar],
-        outputs = [output_file],
-    )
-
-    return output_file
-
-def build_mergeindex(ctx, output_file, javaindex_files):
-    """Builds the merged index for all jarindexes.
-
-    Args:
-        ctx: the context object
-        output_file: the output File of the merged file.
-        javaindex_files: a sequence of File representing the jarindex files
-    Returns:
-    """
-
+def merge_action(ctx, output_file, jarindex_files):
     args = ctx.actions.args()
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
     args.add_joined("--predefined", [target.label for target in ctx.attr.platform_jars], uniquify = True, join_with = ",")
-    args.add_all(javaindex_files)
+    args.add_all(jarindex_files)
 
     ctx.actions.run(
         mnemonic = "MergeIndex",
         progress_message = "Merging jarindex files: " + str(ctx.label),
         executable = ctx.executable._mergeindex,
         arguments = [args],
-        inputs = javaindex_files,
+        inputs = jarindex_files,
         outputs = [output_file],
     )
 
@@ -82,46 +29,39 @@ def jarindex_basename(ctx, label):
     ])
 
 def _java_index_impl(ctx):
-    """Implementation that collects symbols from jars."""
-
-    # List[File]
-    direct_files = []
-
     # List[Depset[File]]
-    transitive_javaindex_files = []
+    transitive_jarindex_files = []
 
     # List[File]
-    javaindex_files = []
+    jarindex_files = []
 
-    for dep in ctx.attr.deps:
-        info = dep[JarIndexerAspectInfo]
-        javaindex_files.extend(info.jar_index_files.to_list())
-        transitive_javaindex_files += [info.info_file, info.jar_index_files]
-
-    for i, jar in enumerate(ctx.files.jars):
-        label = ctx.attr.jars[i].label
-        basename = jarindex_basename(ctx, label)
-        javaindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+    for dep in ctx.attr.deps + ctx.attr.jars + ctx.attr.platform_jars:
+        if JarIndexerAspectInfo in dep:
+            info = dep[JarIndexerAspectInfo]
+            jarindex_files.extend(info.jar_index_files.to_list())
+            transitive_jarindex_files.append(info.jar_index_files)
 
     for i, jar in enumerate(ctx.files.platform_jars):
         label = ctx.attr.platform_jars[i].label
-        basename = jarindex_basename(ctx, label)
-        javaindex_files.append(build_jarfile_index(ctx, label, basename, jar))
+        jarindex_files.append(jarindexer_action(ctx, label, ctx.executable._jarindexer, jar))
 
     output_proto = ctx.outputs.out_proto
     output_json = ctx.outputs.out_json
 
-    build_mergeindex(ctx, output_proto, javaindex_files)
-    build_mergeindex(ctx, output_json, javaindex_files)
+    jarindex_depset = depset(direct = jarindex_files, transitive = transitive_jarindex_files)
+    files = jarindex_depset.to_list()
+    merge_action(ctx, output_proto, files)
+    merge_action(ctx, output_json, files)
 
-    direct_files.append(output_proto)
+    # List[File]
+    direct_files = [output_proto]
 
     return [DefaultInfo(
         files = depset(direct_files),
     ), OutputGroupInfo(
         proto = [output_proto],
         json = [output_json],
-        javaindex_files = depset(transitive = transitive_javaindex_files),
+        jarindex_depset = jarindex_depset,
     )]
 
 java_index = rule(

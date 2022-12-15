@@ -106,12 +106,16 @@ func (imp *Import) String() string {
 		parts = append(parts, fmt.Sprintf("%v", imp.Error))
 	}
 
-	if imp.Source != nil {
+	switch imp.Kind {
+	case sppb.ImportKind_DIRECT:
 		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, filepath.Base(imp.Source.Filename)))
-	} else if imp.Src != "" {
-		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
-	} else {
-		parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
+	case sppb.ImportKind_IMPLICIT:
+		parts = append(parts, fmt.Sprintf("(%v via %q)", imp.Kind, imp.Src))
+	case sppb.ImportKind_EXTENDS:
+		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
+	case sppb.ImportKind_RESOLVED_SYMBOL:
+		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
+	default:
 	}
 	return strings.Join(parts, " ")
 }

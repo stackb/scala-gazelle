@@ -11,6 +11,7 @@ import (
 
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	"github.com/stackb/scala-gazelle/pkg/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
 const debug = false
@@ -44,7 +45,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := jarindex.WriteJarIndexFile(outputFile, index); err != nil {
+	if err := protobuf.WriteFile(outputFile, index); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -97,13 +98,13 @@ func parseFlags(args []string) (files []string, err error) {
 func merge(filenames ...string) (*jipb.JarIndex, error) {
 	jars := make([]*jipb.JarFile, 0, len(filenames))
 	for _, filename := range filenames {
-		idx, err := jarindex.ReadJarIndexFile(filename)
-		if err != nil {
-			return nil, err
+		idx := jipb.JarIndex{}
+		if err := protobuf.ReadFile(filename, &idx); err != nil {
+			return nil, fmt.Errorf("reading jarindex file %q: %w", filename, err)
 		}
 		jars = append(jars, idx.JarFile...)
 		if debug {
-			if err := writeJarIndexJarFileJSONFiles(idx); err != nil {
+			if err := writeJarIndexJarFileJSONFiles(&idx); err != nil {
 				return nil, err
 			}
 		}
@@ -137,7 +138,7 @@ func writeJarIndexJarFileJSONFiles(idx *jipb.JarIndex) error {
 
 func writeJarFileJSONFile(file *jipb.JarFile) error {
 	jarFilename := "/tmp/" + filepath.Base(file.Filename) + ".json"
-	if err := jarindex.WriteJarFileFile(jarFilename, file); err != nil {
+	if err := protobuf.WriteFile(jarFilename, file); err != nil {
 		return err
 	}
 	log.Println("Wrote:", jarFilename)

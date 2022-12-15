@@ -17,27 +17,26 @@ import (
 )
 
 func init() {
-	mustRegister := func(load, kind string, isBinaryRule bool) {
+	mustRegister := func(load, kind string) {
 		fqn := load + "%" + kind
 		if err := scalarule.
 			GlobalProviderRegistry().
-			RegisterProvider(fqn, &existingScalaRuleProvider{load, kind, isBinaryRule}); err != nil {
+			RegisterProvider(fqn, &existingScalaRuleProvider{load, kind}); err != nil {
 			log.Fatalf("registering scala_rule providers: %v", err)
 		}
 	}
 
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", true)
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", false)
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library", false)
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test", true)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
 }
 
 // existingScalaRuleProvider implements RuleResolver for scala-like rules that are
 // already in the build file.  It does not create any new rules.  This rule
 // implementation is used to parse files named in 'srcs' and update 'deps'.
 type existingScalaRuleProvider struct {
-	load, name   string
-	isBinaryRule bool
+	load, name string
 }
 
 // Name implements part of the scalarule.Provider interface.
@@ -79,16 +78,15 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 
-	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinaryRule}
+	return &existingScalaRule{cfg, pkg, r, scalaRule}
 }
 
 // existingScalaRule implements scalarule.RuleProvider for existing scala rules.
 type existingScalaRule struct {
-	cfg          *scalarule.Config
-	pkg          scalarule.Package
-	rule         *rule.Rule
-	scalaRule    scalarule.Rule
-	isBinaryRule bool
+	cfg       *scalarule.Config
+	pkg       scalarule.Package
+	rule      *rule.Rule
+	scalaRule scalarule.Rule
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -108,13 +106,6 @@ func (s *existingScalaRule) Rule() *rule.Rule {
 
 // Imports implements part of the scalarule.RuleProvider interface.
 func (s *existingScalaRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	// binary rules should not be deps of anything else, so we don't advertise
-	// any imports. TODO(pcj): this is too simplisitic: test helpers can be used
-	// by other test rules.  So we should probably use the 'impLang' to differentiate
-	// generic imports ('scala') vs testonly imports ('test').
-	if s.isBinaryRule {
-		return nil
-	}
 	return s.scalaRule.Exports()
 }
 
@@ -162,11 +153,11 @@ func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw in
 				lines := make([]string, 0, len(symbol.Conflicts)+3)
 				lines = append(lines, fmt.Sprintf("Unresolved symbol conflict: %v %q has multiple providers!", symbol.Type, symbol.Name))
 				if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
-					lines = append(lines, " - Maybe removing the wildcard import (if one exists)")
+					lines = append(lines, " - Maybe remove a wildcard import (if one exists)")
 				}
-				lines = append(lines, fmt.Sprintf(" - Consider adding one of the following to %s:", label.New(ctx.From.Repo, ctx.From.Pkg, "BUILD.bazel")))
+				lines = append(lines, fmt.Sprintf(" - Maybe add one of the following to %s:", label.New(ctx.From.Repo, ctx.From.Pkg, "BUILD.bazel")))
 				for _, conflict := range append(symbol.Conflicts, symbol) {
-					lines = append(lines, fmt.Sprintf(" - # gazelle:resolve scala scala %s %s:", symbol.Name, conflict.Label))
+					lines = append(lines, fmt.Sprintf("     # gazelle:resolve scala scala %s %s:", symbol.Name, conflict.Label))
 				}
 				fmt.Println(strings.Join(lines, "\n"))
 			}
