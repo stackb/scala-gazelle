@@ -78,7 +78,7 @@ def bazel_gazelle():
         http_archive,
         name = "bazel_gazelle",
         patch_args = ["-p1"],
-        patches = ["//third_party/bazelbuild/bazel-gazelle:rule-attrassignment-api.patch"],
+        patches = ["//third_party/bazelbuild/bazel-gazelle:pr-1394.patch"],
         sha256 = "5ebc984c7be67a317175a9527ea1fb027c67f0b57bb0c990bac348186195f1ba",
         strip_prefix = "bazel-gazelle-2d1002926dd160e4c787c1b7ecc60fb7d39b97dc",
         urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc.tar.gz"],
