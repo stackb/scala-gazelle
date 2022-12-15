@@ -171,26 +171,18 @@ func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw in
 
 	// part 2: srcs
 
-	if sc.shouldAnnotateImports() || sc.shouldAnnotateResolvedDeps() {
-		attr := r.Attr("srcs")
-		switch t := attr.(type) {
-		case *build.ListExpr:
-			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
-		case *build.CallExpr:
-			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
-		case *build.BinaryExpr:
-			annotateImports(imports, &t.Comments, sc.shouldAnnotateImports(), sc.shouldAnnotateUnresolvedDeps())
+	if sc.shouldAnnotateImports() {
+		comments := r.AttrComments("srcs")
+		if comments != nil {
+			annotateImports(imports, comments)
 		}
 	}
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments, wantImports, wantUnresolved bool) {
+func annotateImports(imports resolver.ImportMap, comments *build.Comments) {
 	comments.Before = nil
 	for _, key := range imports.Keys() {
 		imp := imports[key]
-		if !(wantImports || (wantUnresolved && imp.Symbol == nil)) {
-			continue
-		}
 		comments.Before = append(comments.Before, imp.Comment())
 	}
 }
