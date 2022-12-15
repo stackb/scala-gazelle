@@ -10,7 +10,6 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/provider"
@@ -54,8 +53,6 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
-	// knownScalaRules is a map of all scala rules protos
-	knownScalaRules map[label.Label]*sppb.Rule
 	// conflictResolvers is a map of all known generated rules
 	conflictResolvers map[string]resolver.ConflictResolver
 	// globalScope includes all known symbols in the universe
@@ -67,7 +64,7 @@ type scalaLang struct {
 	// sourceProvider is the sourceProvider implementation.
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
-	parser parser.Parser
+	parser *parser.MemoParser
 }
 
 // Name implements part of the language.Language interface
@@ -94,7 +91,6 @@ func NewLanguage() language.Language {
 		cache:                &scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
-		knownScalaRules:      make(map[label.Label]*sppb.Rule),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
@@ -104,7 +100,7 @@ func NewLanguage() language.Language {
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
-	lang.parser = parser.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
+	lang.parser = parser.NewMemoParser(lang.sourceProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())

@@ -15,6 +15,9 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+const debugNameNotFound = false
+const debugExtendsNameNotFound = false
+
 type scalaRuleContext struct {
 	// the parent config
 	scalaConfig *scalaConfig
@@ -144,7 +147,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
 				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
-			} else {
+			} else if debugExtendsNameNotFound {
 				log.Printf("%s | %s: extends name not found: %s", r.ctx.from, file.Filename, name)
 			}
 		}
@@ -157,7 +160,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		}
 		if sym, ok := scope.GetSymbol(name); ok {
 			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
-		} else {
+		} else if debugNameNotFound {
 			log.Printf("%s | %s: name not found: %s", r.ctx.from, file.Filename, name)
 		}
 	}

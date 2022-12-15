@@ -1,9 +1,10 @@
 {
-  "label":  "//pkg/provider:testdata/DockerKit.scala",
-  "files":  [
+  "label": "//pkg/provider:testdata/DockerKit.scala",
+  "kind": "scala_library",
+  "files": [
     {
-      "filename":  "testdata/DockerKit.scala",
-      "imports":  [
+      "filename": "testdata/DockerKit.scala",
+      "imports": [
         "com.github.dockerjava.api.DockerClient",
         "com.github.dockerjava.api.async.ResultCallback",
         "com.github.dockerjava.api.command.CreateContainerResponse",
@@ -15,19 +16,19 @@
         "scala.collection.JavaConverters._",
         "scala.util.Try"
       ],
-      "packages":  [
+      "packages": [
         "container.testing"
       ],
-      "classes":  [
+      "classes": [
         "container.testing.LoggingCallback"
       ],
-      "objects":  [
+      "objects": [
         "container.testing.DockerKit"
       ],
-      "traits":  [
+      "traits": [
         "container.testing.DockerKit"
       ],
-      "names":  [
+      "names": [
         "Boolean",
         "CreateContainerResponse",
         "DockerClient",
@@ -74,20 +75,20 @@
         "toString",
         "waitForStringInLogs"
       ],
-      "extends":  {
-        "class container.testing.LoggingCallback":  {
-          "classes":  [
+      "extends": {
+        "class container.testing.LoggingCallback": {
+          "classes": [
             "ResultCallback.Adapter"
           ]
         },
-        "object container.testing.DockerKit":  {
-          "classes":  [
+        "object container.testing.DockerKit": {
+          "classes": [
             "TestConfig",
             "com.typesafe.scalalogging.LazyLogging"
           ]
         },
-        "trait container.testing.DockerKit":  {
-          "classes":  [
+        "trait container.testing.DockerKit": {
+          "classes": [
             "TestConfig",
             "com.typesafe.scalalogging.LazyLogging"
           ]

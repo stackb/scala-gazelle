@@ -14,8 +14,8 @@ type Parser struct {
 	mock.Mock
 }
 
-// ParseScalaFiles provides a mock function with given fields: kind, from, dir, srcs
-func (_m *Parser) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*parse.File, error) {
+// ParseScalaRule provides a mock function with given fields: kind, from, dir, srcs
+func (_m *Parser) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) ([]*parse.File, error) {
 	_va := make([]interface{}, len(srcs))
 	for _i := range srcs {
 		_va[_i] = srcs[_i]

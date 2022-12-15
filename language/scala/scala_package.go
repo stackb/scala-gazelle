@@ -3,7 +3,6 @@ package scala
 import (
 	"log"
 	"path/filepath"
-	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -11,7 +10,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -177,7 +175,6 @@ func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule
 
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
-	t1 := time.Now()
 
 	dir := filepath.Join(s.repoRootDir(), s.rel)
 	srcs, err := glob.CollectFilenames(s.file, dir, r.Attr(attrName))
@@ -186,21 +183,11 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 	}
 
 	from := label.New("", s.rel, r.Name())
-	pb, ok := s.universe.GetKnownScalaRule(from)
-	if !ok {
-		pb = &sppb.Rule{
-			Label: from.String(),
-			Kind:  r.Kind(),
-		}
-		s.universe.PutKnownScalaRule(from, pb)
-	}
-	files, err := s.parser.ParseScalaFiles(r.Kind(), from, dir, srcs...)
+
+	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
 	if err != nil {
 		return nil, err
 	}
-
-	pb.Files = files
-	pb.ParseTimeMillis = time.Since(t1).Milliseconds()
 
 	ctx := &scalaRuleContext{
 		rule:        r,
@@ -210,7 +197,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scope:       s.universe,
 	}
 
-	return newScalaRule(ctx, pb), nil
+	return newScalaRule(ctx, rule), nil
 }
 
 // repoRootDir return the root directory of the repo.

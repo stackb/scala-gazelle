@@ -18,7 +18,6 @@ go_library(
         "generate.go",
         "kinds.go",
         "known_rule_registry.go",
-        "known_scala_rule_registry.go",
         "language.go",
         "lifecycle.go",
         "loads.go",
