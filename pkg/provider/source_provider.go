@@ -104,7 +104,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 	}
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	if false {
+	if true {
 		log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
 	}
 

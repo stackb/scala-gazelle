@@ -8,7 +8,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
-const debugCache = true
+const debugCache = false
 
 func (sl *scalaLang) readScalaRuleCacheFile() error {
 	t1 := time.Now()

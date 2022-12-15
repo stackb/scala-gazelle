@@ -12,6 +12,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
+const debugMemoParser = false
+
 // MemoParser is a Parser frontend that uses cached state of the files sha256
 // values are up-to-date.
 type MemoParser struct {
@@ -48,10 +50,14 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 	}
 
 	if rule, ok := p.rules[from]; ok && rule.Sha256 == sha256 {
-		log.Printf("rule cache hit: %s", from)
+		if debugMemoParser {
+			log.Printf("rule cache hit: %s", from)
+		}
 		return rule, nil
 	}
-	log.Printf("rule cache miss: %s (%s)", from, sha256)
+	if debugMemoParser {
+		log.Printf("rule cache miss: %s (%s)", from, sha256)
+	}
 
 	rule, err := p.next.ParseScalaRule(kind, from, dir, srcs...)
 	if err != nil {
@@ -60,11 +66,16 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 	rule.Sha256 = sha256
 	p.rules[from] = rule
 
+	if debugMemoParser {
+		log.Printf("rule cache save: %s (%s)", from, sha256)
+	}
+
 	return rule, nil
 }
 
 // LoadScalaRule loads the given state.
 func (p *MemoParser) LoadScalaRule(from label.Label, rule *sppb.Rule) error {
+	p.rules[from] = rule
 	return p.next.LoadScalaRule(from, rule)
 }
 

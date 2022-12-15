@@ -166,7 +166,9 @@ func (s *ScalametaParser) Start() error {
 	}
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	log.Printf("parser started (%v)", t2)
+	if debugParse {
+		log.Printf("parser started (%v)", t2)
+	}
 
 	return nil
 }

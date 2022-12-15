@@ -9,11 +9,10 @@ option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
 
 // File represents a parsed file named in a scala rule.srcs list.
+// next: 2 (was sha256, can be re-used)
 message File {
     // filename is the (relative) source filename
     string filename = 1;
-    // sha256 is the sha256 hash of the file contents
-    string sha256 = 2;
     // imports is a list of required imports.
     repeated string imports = 3;
     // packages is a list of provided top-level classes.
