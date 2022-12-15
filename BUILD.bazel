@@ -30,18 +30,13 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # gazelle:proto_language go rule proto_compiled_sources
 
 # gazelle:proto_plugin java implementation builtin:java
-# gazelle:proto_plugin protoc-gen-grpc-java implementation grpc:grpc-java:protoc-gen-grpc-java
 # gazelle:proto_rule proto_java_library implementation stackb:rules_proto:proto_java_library
-# gazelle:proto_rule proto_java_library deps @maven//:com_google_protobuf_protobuf_java
+# gazelle:proto_rule proto_java_library deps @protobuf_java_jar//jar
 # gazelle:proto_rule proto_java_library visibility //visibility:public
-# gazelle:proto_rule grpc_java_library implementation stackb:rules_proto:grpc_java_library
-# gazelle:proto_rule grpc_java_library deps //java:grpc_java
-# gazelle:proto_rule grpc_java_library visibility //visibility:public
 # gazelle:proto_language java plugin java
-# gazelle:proto_language java plugin protoc-gen-grpc-java
 # gazelle:proto_language java rule proto_compile
 # gazelle:proto_language java rule proto_java_library
-# gazelle:proto_language java rule grpc_java_library
+# gazelle:proto_language java enabled false
 
 gazelle_binary(
     name = "gazelle-protobuf",

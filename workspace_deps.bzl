@@ -1,7 +1,7 @@
 """workspace_deps.bzl declares dependencies for the workspace
 """
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file", "http_jar")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_jar")
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
@@ -16,10 +16,7 @@ def language_scala_deps():
     protobuf_java_jar()
     classgraph_jar()
     scalameta_parsers()
-
-    # see https://nodejs.org/dist/ to update
     node_binaries()
-    io_grpc_grpc_java()
 
 def workspace_deps():
     """workspace_deps loads all dependencies for the workspace
@@ -32,7 +29,6 @@ def workspace_deps():
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
-    viz_js_lite()
 
 def protobuf_core_deps():
     bazel_skylib()  # via com_google_protobuf
@@ -152,37 +148,6 @@ def io_bazel_rules_scala():
         ],
     )
 
-def viz_js_lite():
-    # HTTP/2.0 200 OK
-    # Content-Type: application/javascript; charset=utf-8
-    # Date: Sat, 26 Mar 2022 00:35:46 GMT
-    # Last-Modified: Mon, 04 May 2020 16:17:44 GMT
-    # Size: 1439383 (1.4 MB)
-    _maybe(
-        http_file,
-        name = "cdnjs_cloudflare_com_ajax_libs_viz_js_2_1_2_lite_render_js",
-        sha256 = "1344fd45812f33abcb3de9857ebfdd599e57f49e3d0849841e75e28be1dd6959",
-        urls = ["https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/lite.render.js"],
-    )
-
-def bun_darwin():
-    _maybe(
-        http_archive,
-        name = "bun_darwin",
-        sha256 = "8976309239260f8089377980cf9399e99a6e352f22878b59fc9804e7a8b98b7b",
-        strip_prefix = "bun-darwin-x64",
-        build_file_content = """
-filegroup(
-    name = "bin",
-    srcs = ["bun"],
-    visibility = ["//visibility:public"],
-)
-        """,
-        urls = [
-            "https://github.com/oven-sh/bun/releases/download/bun-v0.2.1/bun-darwin-x64.zip",
-        ],
-    )
-
 def classgraph_jar():
     # bzl use jar https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar
     # Last-Modified: Wed, 06 Jul 2022 04:30:32 GMT
@@ -254,6 +219,7 @@ def com_google_protobuf():
     )
 
 def node_binaries():
+    # see https://nodejs.org/dist/ to update
     versions = {
         "linux-x64": struct(
             executable = "bin/node",
@@ -304,27 +270,3 @@ filegroup(
 )
             """.format(executable = data.executable),
         )
-
-def io_grpc_grpc_java():
-    # Branch: master
-    # Commit: 2a0b86f7cd2a363cd1d19d56f9c47aead33261d6
-    # Date: 2022-12-09 23:21:47 +0000 UTC
-    # URL: https://github.com/grpc/grpc-java/commit/2a0b86f7cd2a363cd1d19d56f9c47aead33261d6
-    #
-    # binder: BinderInternal.setIBinder() is public static (#9743)
-    # Size: 2832515 (2.8 MB)
-    # _maybe(
-    #     http_archive,
-    #     name = "io_grpc_grpc_java",
-    #     sha256 = "3e45af77525f2014e6ea4db8839f769d40cc143d10cd61104c21018733eed69f",
-    #     strip_prefix = "grpc-java-2a0b86f7cd2a363cd1d19d56f9c47aead33261d6",
-    #     urls = ["https://github.com/grpc/grpc-java/archive/2a0b86f7cd2a363cd1d19d56f9c47aead33261d6.tar.gz"],
-    # )
-
-    _maybe(
-        http_archive,
-        name = "io_grpc_grpc_java",
-        sha256 = "0f6cf8c1e97757333e08975c8637093b40540a54a201cfd3ce284c8d1d073fae",
-        strip_prefix = "grpc-java-1.47.0",
-        urls = ["https://github.com/grpc/grpc-java/archive/v1.47.0.tar.gz"],
-    )
