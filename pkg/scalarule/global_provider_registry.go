@@ -6,9 +6,7 @@ import (
 )
 
 // globalProviderRegistry is the default registry singleton.
-var globalProviderRegistry = &providerRegistryMap{
-	providers: make(map[string]Provider),
-}
+var globalProviderRegistry = NewProviderRegistryMap()
 
 // GlobalProviderRegistry returns a reference to the global ProviderRegistry
 // implementation.
@@ -16,13 +14,19 @@ func GlobalProviderRegistry() ProviderRegistry {
 	return globalProviderRegistry
 }
 
-// providerRegistryMap implements ProviderRegistry using a map.
-type providerRegistryMap struct {
+// ProviderRegistryMap implements ProviderRegistry using a map.
+type ProviderRegistryMap struct {
 	providers map[string]Provider
 }
 
+func NewProviderRegistryMap() *ProviderRegistryMap {
+	return &ProviderRegistryMap{
+		providers: make(map[string]Provider),
+	}
+}
+
 // ProviderNames implements part of the ProviderRegistry interface.
-func (p *providerRegistryMap) ProviderNames() []string {
+func (p *ProviderRegistryMap) ProviderNames() []string {
 	names := make([]string, 0, len(p.providers))
 	for name := range p.providers {
 		names = append(names, name)
@@ -32,7 +36,7 @@ func (p *providerRegistryMap) ProviderNames() []string {
 }
 
 // RegisterProvider implements part of the ProviderRegistry interface.
-func (p *providerRegistryMap) RegisterProvider(name string, provider Provider) error {
+func (p *ProviderRegistryMap) RegisterProvider(name string, provider Provider) error {
 	_, ok := p.providers[name]
 	if ok {
 		return fmt.Errorf("provider already registered: %q", name)
@@ -42,7 +46,7 @@ func (p *providerRegistryMap) RegisterProvider(name string, provider Provider) e
 }
 
 // LookupProvider implements part of the RuleRegistry interface.
-func (p *providerRegistryMap) LookupProvider(name string) (Provider, bool) {
+func (p *ProviderRegistryMap) LookupProvider(name string) (Provider, bool) {
 	provider, ok := p.providers[name]
 	if !ok {
 		return nil, false

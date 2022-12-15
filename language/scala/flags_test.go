@@ -12,24 +12,17 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
-func TestFlags(t *testing.T) {
+func TestCacheFlags(t *testing.T) {
 	for name, tc := range map[string]struct {
 		args    []string
 		files   []testtools.FileSpec
 		wantErr error
 		check   func(t *testing.T, tmpDir string, lang *scalaLang)
 	}{
-		"scalasource_import_provider": {
-			args: []string{
-				"-scala_symbol_provider=source",
-				"-scala_symbol_provider=java",
-				"-scala_symbol_provider=protobuf",
-				"-scala_symbol_provider=maven",
-			},
-		},
 		"scala_gazelle_cache_file": {
 			files: []testtools.FileSpec{
 				{
@@ -113,6 +106,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			lang := NewLanguage().(*scalaLang)
+			lang.ruleProviderRegistry = scalarule.NewProviderRegistryMap() // don't use global one
 			if testutil.ExpectError(t, tc.wantErr, lang.setupExistingScalaRules(tc.providerNames)) {
 				return
 			}

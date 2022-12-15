@@ -80,7 +80,7 @@ go_test(
     name = "scala_test",
     srcs = [
         "existing_scala_rule_test.go",
-        # "flags_test.go",
+        "flags_test.go",
         "golden_test.go",
         "language_test.go",
         "loads_test.go",

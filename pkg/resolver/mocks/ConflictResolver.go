@@ -33,6 +33,20 @@ func (_m *ConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error
 	return r0
 }
 
+// Name provides a mock function with given fields:
+func (_m *ConflictResolver) Name() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // RegisterFlags provides a mock function with given fields: fs, cmd, c
 func (_m *ConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 	_m.Called(fs, cmd, c)
