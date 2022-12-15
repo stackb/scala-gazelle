@@ -77,6 +77,8 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     artifacts = [
+        "com.google.code.gson:gson:2.8.9",
+        "com.google.errorprone:error_prone_annotations:2.11.0",
         "com.google.guava:guava:30.1.1-jre",
     ],
     maven_install_json = "//:maven_install.json",
@@ -89,6 +91,24 @@ maven_install(
 load("@maven//:defs.bzl", "pinned_maven_install")
 
 pinned_maven_install()
+
+# required by @com_google_protobuf//java/util:util
+bind(
+    name = "error_prone_annotations",
+    actual = "@maven//:com_google_errorprone_error_prone_annotations",
+)
+
+# required by @com_google_protobuf//java/util:util
+bind(
+    name = "gson",
+    actual = "@maven//:com_google_code_gson_gson",
+)
+
+# required by @com_google_protobuf//java/util:util
+bind(
+    name = "guava",
+    actual = "@maven//:com_google_guava_guava",
+)
 
 # ----------------------------------------------------
 # @io_bazel_rules_scala
