@@ -1,0 +1,98 @@
+From f045255d3e6afc3c0569ce435c57c4c797dc54ef Mon Sep 17 00:00:00 2001
+From: Paul Johnston <pcj@stack.build>
+Date: Thu, 15 Dec 2022 12:03:17 -0700
+Subject: [PATCH] Add rule.AttrComments func
+
+---
+ rule/rule.go      | 11 ++++++++++
+ rule/rule_test.go | 51 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+
+diff --git a/rule/rule.go b/rule/rule.go
+index c9ff2759..b1c2376d 100644
+--- a/rule/rule.go
++++ b/rule/rule.go
+@@ -827,6 +827,17 @@ func (r *Rule) Attr(key string) bzl.Expr {
+ 	return attr.RHS
+ }
+ 
++// AttrComments returns the Comments struct of the underlying binary assigment
++// expression for the given attribute name. nil is returned when the attribute
++// is not set.
++func (r *Rule) AttrComments(key string) *bzl.Comments {
++	attr, ok := r.attrs[key]
++	if !ok {
++		return nil
++	}
++	return &attr.Comments
++}
++
+ // AttrString returns the value of the named attribute if it is a scalar string.
+ // "" is returned if the attribute is not set or is not a string.
+ func (r *Rule) AttrString(key string) string {
+diff --git a/rule/rule_test.go b/rule/rule_test.go
+index ca1a15ea..0a744896 100644
+--- a/rule/rule_test.go
++++ b/rule/rule_test.go
+@@ -23,6 +23,7 @@ import (
+ 	"testing"
+ 
+ 	bzl "github.com/bazelbuild/buildtools/build"
++	"github.com/google/go-cmp/cmp"
+ )
+ 
+ // This file contains tests for File, Load, Rule, and related functions.
+@@ -571,3 +572,53 @@ func TestCheckFile(t *testing.T) {
+ 		t.Errorf("unexpected error: %v", err)
+ 	}
+ }
++
++func TestRuleAttrComments(t *testing.T) {
++	for name, tc := range map[string]struct {
++		src  string
++		want *bzl.Comments
++	}{
++		"returns nil when assigment does not exist": {
++			src: `
++test_rule(
++    name = "test",
++)`,
++			want: nil,
++		},
++		"returns the comments for 'srcs'": {
++			src: `
++test_rule(
++	name = "test",
++	# The answer is: 42
++	srcs = [],
++)`,
++			want: &bzl.Comments{
++				Before: []bzl.Comment{
++					{
++						Start: bzl.Position{Line: 4, LineRune: 2, Byte: 29},
++						Token: "# The answer is: 42",
++					},
++				},
++			},
++		},
++	} {
++		t.Run(name, func(t *testing.T) {
++			r := mustLoadOneRule(t, tc.src)
++			got := r.AttrComments("srcs")
++			if diff := cmp.Diff(got, tc.want); diff != "" {
++				t.Errorf("r.AttrComments(srcs) diff (-got, +want):\n%s", diff)
++			}
++		})
++	}
++}
++
++func mustLoadOneRule(t *testing.T, content string) *Rule {
++	f, err := LoadData("<in-memory>", "", []byte(content))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(f.Rules) != 1 {
++		t.Fatal("want 1 rule, got:", len(f.Rules))
++	}
++	return f.Rules[0]
++}

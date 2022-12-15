@@ -1,1 +1,1 @@
-exports_files(["rule-attrassignment-api.patch"])
+exports_files(["pr-1394.patch"])
