@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.parse;
+
+import "build/stack/gazelle/scala/parse/file.proto";
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
+option java_package = "build.stack.gazelle.scala.parse";
+option java_multiple_files = true;
+
+// CompileRequest holds a list of filenames to be parsed.
+message CompileRequest {
+    string dir = 1;
+    // list of files relative to dir.
+    repeated string filenames = 2;
+}
+
+// Severity of the diagnostic.
+enum Severity {
+    SEVERITY_UNKNOWN = 0;
+    INFO = 1;
+    WARN = 2;
+    ERROR = 3;
+}
+
+// Diagnostic is similar structure of what is emitted by the scala compiler
+// (scalac).
+message Diagnostic {
+    // severity level
+    Severity severity = 1;
+    // absolute path to file
+    string source = 2;
+    // line number
+    int32 line = 3;
+    // detail message
+    string message = 4;
+}   
+
+// CompileResponse holds the collected diagnostics.
+message CompileResponse {
+    // list of diagnostics
+    repeated Diagnostic diagnostics = 1;
+    // error is populated when a top-level parse error occurs that is 
+    // independent from a single file.
+    string error = 2;
+    // elapsed_millis is the total time spent on the request.
+    int64 elapsed_millis = 3;
+}
+
+// Compiler is a service that can compile scala files.
+service Compiler {
+    // Compile is a unary rpc function that takes a single request and returns a
+    // single response.
+    rpc Compile(CompileRequest) returns (CompileResponse) {}
+}

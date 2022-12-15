@@ -73,22 +73,23 @@ go_repositories()
 # tests.
 # ----------------------------------------------------
 
+load("@io_grpc_grpc_java//:repositories.bzl", "IO_GRPC_GRPC_JAVA_ARTIFACTS")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
-    artifacts = [
-        "com.google.caliper:caliper:1.0-beta-3",
+    artifacts = IO_GRPC_GRPC_JAVA_ARTIFACTS + [
         "com.google.code.findbugs:jsr305:3.0.2",
-        "com.google.code.gson:gson:2.8.9",
-        "com.google.errorprone:error_prone_annotations:2.5.1",
-        "com.google.j2objc:j2objc-annotations:1.3",
-        "com.google.guava:guava:31.1-jre",
-        "com.google.guava:guava-testlib:31.1-jre",
-        "com.google.truth:truth:1.1.2",
-        "junit:junit:4.13.2",
-        "org.mockito:mockito-core:4.3.1",
+        "com.google.errorprone:error_prone_annotations:2.11.0",
+        "com.google.guava:guava:30.1.1-jre",
+        "io.grpc:grpc-api:1.40.0",
+        "io.grpc:grpc-core:1.40.0",
+        "io.grpc:grpc-netty:1.40.0",
+        "io.grpc:grpc-services:1.40.0",
+        "io.grpc:grpc-stub:1.40.0",
+        "org.slf4j:slf4j-simple:1.7.32",
+        "javax.annotation:javax.annotation-api:1.3.2",
     ],
-    # maven_install_json = "//:maven_install.json",
+    maven_install_json = "//:maven_install.json",
     repositories = [
         "https://repo1.maven.org/maven2",
         "https://repo.maven.apache.org/maven2",

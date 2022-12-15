@@ -1,0 +1,31 @@
+{
+  "label":  "//pkg/provider:testdata/UserId.scala",
+  "files":  [
+    {
+      "filename":  "testdata/UserId.scala",
+      "packages":  [
+        "common.types"
+      ],
+      "classes":  [
+        "common.types.UserId"
+      ],
+      "objects":  [
+        "common.types.UserId"
+      ],
+      "names":  [
+        "AnyVal",
+        "Int",
+        "UserId",
+        "common.types",
+        "scalapb.TypeMapper"
+      ],
+      "extends":  {
+        "class common.types.UserId":  {
+          "classes":  [
+            "AnyVal"
+          ]
+        }
+      }
+    }
+  ]
+}

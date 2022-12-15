@@ -201,7 +201,6 @@ object Main {
 							"example.MainContext",
 						},
 						Imports: []string{
-							"MainContext._", // FIXME(pcj): elide this?
 							"akka.actor.ActorSystem",
 						},
 					},
@@ -222,7 +221,7 @@ object Main {
 			files := mustWriteTestFiles(t, tmpDir, tc.files)
 			tc.in.Filenames = files
 
-			server := NewScalaParseServer()
+			server := NewScalametaParser()
 			if err := server.Start(); err != nil {
 				t.Fatal("server start:", err)
 			}
@@ -236,7 +235,6 @@ object Main {
 
 			// remove tmpdir prefix and zero the time delta for diff comparison
 			for i := range got.Files {
-				got.Files[i].ElapsedMillis = 0
 				if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
 					got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
 				}

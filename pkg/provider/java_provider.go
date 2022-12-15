@@ -13,7 +13,7 @@ import (
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -23,6 +23,8 @@ type JavaProvider struct {
 
 	scope   resolver.Scope
 	byLabel map[label.Label]*jipb.JarFile
+	// classSymbols is map a *.ClassFile to it's symbol
+	classSymbols map[*jipb.ClassFile]*resolver.Symbol
 }
 
 // NewJavaProvider constructs a new provider.
@@ -30,6 +32,7 @@ func NewJavaProvider() *JavaProvider {
 	return &JavaProvider{
 		byLabel:       make(map[label.Label]*jipb.JarFile),
 		jarindexFiles: make(collections.StringSlice, 0),
+		classSymbols:  make(map[*jipb.ClassFile]*resolver.Symbol),
 	}
 }
 
@@ -60,7 +63,22 @@ func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope reso
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (p *JavaProvider) OnResolve() {
+func (p *JavaProvider) OnResolve() error {
+	for classFile, symbol := range p.classSymbols {
+		for _, superclass := range append(classFile.Superclasses, classFile.Interfaces...) {
+			if resolved, ok := p.scope.GetSymbol(superclass); ok {
+				symbol.Requires = append(symbol.Requires, resolved)
+			} else {
+				log.Printf("Unresolved superclass %s of %s", superclass, classFile.Name)
+			}
+		}
+	}
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (p *JavaProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
@@ -72,8 +90,8 @@ func (p *JavaProvider) CanProvide(dep label.Label, knownRule func(from label.Lab
 }
 
 func (p *JavaProvider) readJarIndex(filename string) error {
-	index, err := jarindex.ReadJarIndexFile(filename)
-	if err != nil {
+	var index jipb.JarIndex
+	if err := protobuf.ReadFile(filename, &index); err != nil {
 		return fmt.Errorf("reading %s: %v", filename, err)
 	}
 
@@ -108,7 +126,6 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 			return fmt.Errorf("%s: parsing label %q: %v", jarFile.Filename, jarFile.Label, err)
 		}
 	}
-
 	p.byLabel[from] = jarFile
 
 	if isPredefined[from] {
@@ -117,10 +134,6 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 
 	for _, pkg := range jarFile.PackageName {
 		p.putSymbol(sppb.ImportType_PACKAGE, pkg, from)
-	}
-
-	for _, classFile := range jarFile.ClassFile {
-		p.putSymbol(sppb.ImportType_CLASS, classFile.Name, from)
 	}
 
 	for _, classFile := range jarFile.ClassFile {
@@ -135,9 +148,14 @@ func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label
 	if classFile.IsInterface {
 		impType = sppb.ImportType_INTERFACE
 	}
-	p.putSymbol(impType, classFile.Name, from)
+	symbol := p.putSymbol(impType, classFile.Name, from)
+	if len(classFile.Superclasses) > 0 || len(classFile.Interfaces) > 0 {
+		p.classSymbols[classFile] = symbol
+	}
 }
 
-func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) {
-	p.scope.PutSymbol(resolver.NewSymbol(impType, imp, p.Name(), from))
+func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) *resolver.Symbol {
+	symbol := resolver.NewSymbol(impType, imp, p.Name(), from)
+	p.scope.PutSymbol(symbol)
+	return symbol
 }

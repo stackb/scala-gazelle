@@ -49,11 +49,11 @@ func (sl *scalaLang) Resolve(
 
 	if r.Kind() == packageMarkerRuleKind {
 		resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
+		sl.remainingPackages--
 	} else {
 		pkg.Resolve(c, ix, rc, r, importsRaw, from)
 	}
 
-	sl.remainingPackages--
 	if sl.remainingPackages == 0 {
 		sl.onEnd()
 	}

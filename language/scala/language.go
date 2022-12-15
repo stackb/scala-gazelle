@@ -10,14 +10,15 @@ import (
 	"github.com/stackb/rules_proto/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaparse"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 const scalaLangName = "scala"
-const debug = false
 
 // scalaLang implements language.Language.
 type scalaLang struct {
@@ -25,7 +26,11 @@ type scalaLang struct {
 	cacheFileFlagValue string
 	// symbolProviderNamesFlagValue is a repeatable list of resolver to enable
 	symbolProviderNamesFlagValue collections.StringSlice
-	// existingScalaRulesFlagValue is the value of the existing_scala_rule repeatable flag
+	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
+	// to enable
+	conflictResolverNamesFlagValue collections.StringSlice
+	// existingScalaRulesFlagValue is the value of the existing_scala_rule
+	// repeatable flag
 	existingScalaRulesFlagValue collections.StringSlice
 	cpuprofileFlagValue         string
 	memprofileFlagValue         string
@@ -34,8 +39,6 @@ type scalaLang struct {
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
 	// rules configured via gazelle directives by the user.
 	ruleProviderRegistry scalarule.ProviderRegistry
-	// sourceProvider is the source resolver implementation.
-	sourceProvider *provider.SourceProvider
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
 	packages map[string]*scalaPackage
@@ -44,18 +47,27 @@ type scalaLang struct {
 	// has completed and deps resolution phase has started (it calls
 	// onResolvePhase).
 	isResolvePhase bool
-	// remainingPackages is a counter that tracks when all packages have been resolved.
+	// remainingPackages is a counter that tracks when all packages have been
+	// resolved.
 	remainingPackages int
 	// progress is the progress interface
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
+	// knownScalaRules is a map of all scala rules protos
+	knownScalaRules map[label.Label]*sppb.Rule
+	// conflictResolvers is a map of all known generated rules
+	conflictResolvers map[string]resolver.ConflictResolver
 	// globalScope includes all known symbols in the universe
 	globalScope resolver.Scope
 	// symbolProviders is a list of providers
 	symbolProviders []resolver.SymbolProvider
 	// symbolResolver is our top-level known import resolver implementation
 	symbolResolver resolver.SymbolResolver
+	// sourceProvider is the sourceProvider implementation.
+	sourceProvider *provider.SourceProvider
+	// parser is the parser instance
+	parser scalaparse.Parser
 }
 
 // Name implements part of the language.Language interface
@@ -64,11 +76,12 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
-		ruleDirective,
+		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveWithDirective,
+		resolveConflictsDirective,
 		scalaAnnotateDirective,
-		resolveKindRewriteName,
+		resolveKindRewriteNameDirective,
 	}
 }
 
@@ -81,6 +94,8 @@ func NewLanguage() language.Language {
 		cache:                &scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
+		knownScalaRules:      make(map[label.Label]*sppb.Rule),
+		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
@@ -89,6 +104,7 @@ func NewLanguage() language.Language {
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
 		writeParseProgress(lang.progress, msg)
 	})
+	lang.parser = scalaparse.NewMemoParser(lang.GetKnownScalaRule, lang.sourceProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())

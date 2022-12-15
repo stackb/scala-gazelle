@@ -18,6 +18,7 @@ import (
 
 const (
 	scalaSymbolProviderFlagName   = "scala_symbol_provider"
+	scalaConflictResolverFlagName = "scala_conflict_resolver"
 	existingScalaRulesFlagName    = "existing_scala_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
 	cpuprofileFileFlagName        = "cpuprofile_file"
@@ -30,9 +31,11 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")
+	flags.Var(&sl.conflictResolverNamesFlagValue, scalaConflictResolverFlagName, "name of a conflict resolver implementation to enable")
 	flags.Var(&sl.existingScalaRulesFlagValue, existingScalaRulesFlagName, "LOAD%NAME mapping for a custom existing_scala_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 
 	sl.registerSymbolProviders(flags, cmd, c)
+	sl.registerConflictResolvers(flags, cmd, c)
 }
 
 func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c *config.Config) {
@@ -42,11 +45,21 @@ func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c 
 	}
 }
 
+func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, c *config.Config) {
+	resolver := resolver.GlobalConflictResolvers()
+	for _, provider := range resolver {
+		provider.RegisterFlags(flags, cmd, c)
+	}
+}
+
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	sl.symbolResolver = newUniverseResolver(sl)
 
 	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {
+		return err
+	}
+	if err := sl.setupConflictResolvers(flags, c, sl.conflictResolverNamesFlagValue); err != nil {
 		return err
 	}
 	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
@@ -79,6 +92,20 @@ func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config,
 	return nil
 }
 
+func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Config, names []string) error {
+	for _, name := range sl.conflictResolverNamesFlagValue {
+		resolver, ok := resolver.GlobalConflictResolverRegistry().GetConflictResolver(name)
+		if !ok {
+			return fmt.Errorf("-%s not found: %q", scalaConflictResolverFlagName, name)
+		}
+		if err := resolver.CheckFlags(flags, c); err != nil {
+			return err
+		}
+		sl.conflictResolvers[name] = resolver
+	}
+	return nil
+}
+
 func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
@@ -93,14 +120,14 @@ func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
 }
 
 func (sl *scalaLang) setupExistingScalaRule(fqn, load, kind string) error {
-	provider := &existingScalaRuleProvider{load, kind, isBinaryRule(kind)}
+	provider := &existingScalaRuleProvider{load, kind}
 	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
 }
 
 func (sl *scalaLang) setupCache() error {
 	if sl.cacheFileFlagValue != "" {
 		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
-		if err := sl.readCacheFile(); err != nil {
+		if err := sl.readScalaRuleCacheFile(); err != nil {
 			// don't report error if the file does not exist yet
 			if !errors.Is(err, fs.ErrNotExist) {
 				return fmt.Errorf("reading cache file: %w", err)
@@ -151,8 +178,4 @@ func (sl *scalaLang) stopMemoryProfiling() {
 
 		log.Println("Wrote memprofile to", sl.memprofileFlagValue)
 	}
-}
-
-func isBinaryRule(kind string) bool {
-	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
 }

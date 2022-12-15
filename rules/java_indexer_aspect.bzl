@@ -7,6 +7,10 @@ load(
 )
 load(":providers.bzl", "JarIndexerAspectInfo")
 
+# TODO(pcj): this file was originally copied from the bazel-intellij project and
+# does way more than we need.  Consider rewrite it from scratch and collect java
+# info more simply?
+
 _cpp_header_extensions = [
     "hh",
     "hxx",
@@ -34,6 +38,8 @@ _scala_rules = [
     "scala_library",
     "scala_binary",
 ]
+
+_supported_rules = _java_rules + _scala_rules
 
 def get_aspect_ids(ctx, target):
     """Returns the all aspect ids, filtering out self."""
@@ -98,8 +104,6 @@ UNSUPPORTED_FEATURES = [
     "fdo_optimize",
 ]
 
-_all_rules = _java_rules + _scala_rules
-
 def make_target_key(label, aspect_ids):
     """Returns a TargetKey proto struct from a target."""
     return struct_omit_none(
@@ -118,12 +122,6 @@ def library_artifact(java_output):
         source_jar = artifact_location(src_jars[0]) if src_jars else None,
         source_jars = [artifact_location(f) for f in src_jars],
     )
-
-def semantics_extra_deps(base, semantics, name):
-    if not hasattr(semantics, name):
-        return base
-    extra_deps = getattr(semantics, name)
-    return base + extra_deps
 
 def _is_proto_library_wrapper(target, ctx):
     """Returns True if the target is an empty shim around a proto library."""
@@ -177,6 +175,7 @@ def _collect_generated_files(java):
     return []
 
 def annotation_processing_jars(generated_class_jar, generated_source_jar):
+    fail("not used")
     """Creates a LibraryArtifact representing Java annotation processing jars."""
     src_jar = generated_source_jar
     return struct_omit_none(
@@ -202,6 +201,7 @@ def get_java_provider(target):
     return None
 
 def update_set_in_dict(input_dict, key, other_set):
+    fail("not used")
     """Updates depset in dict, merging it with another depset."""
     input_dict[key] = depset(transitive = [input_dict.get(key, depset()), other_set])
 
@@ -226,14 +226,17 @@ def divide_java_sources(ctx):
     return java_sources, gen_java_sources, srcjars
 
 def _is_cpp_target(srcs):
+    fail("not used")
     if all([src.extension in _c_or_cpp_header_extensions for src in srcs]):
         return True  # assume header-only lib is c++
     return any([src.extension in _cpp_extensions for src in srcs])
 
 def _is_objcpp_target(srcs):
+    fail("not used")
     return any([src.extension == "mm" for src in srcs])
 
 def _sources(ctx, target):
+    fail("not used")
     srcs = []
     if hasattr(ctx.rule.attr, "srcs"):
         srcs += [f for src in ctx.rule.attr.srcs for f in src.files.to_list()]
@@ -264,15 +267,22 @@ def collect_targets_from_attrs(rule_attrs, attrs):
         _collect_target_from_attr(rule_attrs, attr_name, result)
     return [target for target in result if is_valid_aspect_target(target)]
 
-def build_jar_index(ctx, target, jar):
-    """Builds the java package manifest for the given source files."""
+def _jarindex_basename(ctx, label):
+    return "-".join([
+        # # ctx.label.workspace_name if ctx.label.workspace_name else "ctx",
+        # ctx.label.package if ctx.label.package else "_",
+        ctx.label.name,
+        label.workspace_name if label.workspace_name else "default",
+        label.package if label.package else "_",
+        label.name,
+    ])
 
-    output_file = ctx.actions.declare_file(target.label.name + ".javaindex.json")
-
+def jarindexer_action(ctx, label, executable, jar):
+    output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
     ctx.actions.run(
         mnemonic = "JarIndexer",
         progress_message = "Indexing " + jar.basename,
-        executable = ctx.executable._jarindexer,
+        executable = executable,
         arguments = [
             "--label",
             str(ctx.label),
@@ -283,7 +293,6 @@ def build_jar_index(ctx, target, jar):
         inputs = [jar],
         outputs = [output_file],
     )
-
     return output_file
 
 def collect_java_toolchain_info(target, ide_info, ide_info_file):
@@ -295,7 +304,6 @@ def collect_java_toolchain_info(target, ide_info, ide_info_file):
         toolchain = target[java_common.JavaToolchainInfo]
     else:
         return False
-    print("collecting java toolchain info!")
 
     javac_jars = []
     if hasattr(toolchain, "tools"):
@@ -310,7 +318,6 @@ def collect_java_toolchain_info(target, ide_info, ide_info_file):
         target_version = toolchain.target_version,
     )
 
-    # update_sync_output_groups(output_groups, "intellij-info-java", depset([ide_info_file]))
     return True
 
 def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info, jar_index_files):
@@ -369,17 +376,6 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     if java_semantics:
         srcjars = java_semantics.filter_source_jars(target, ctx, srcjars)
 
-    # filtered_gen_jar = None
-    # if java_sources and (gen_java_sources or srcjars):
-    #     filtered_gen_jar, filtered_gen_resolve_files = _build_filtered_gen_jar(
-    #         ctx,
-    #         target,
-    #         java_outputs,
-    #         gen_java_sources,
-    #         srcjars,
-    #     )
-    #     resolve_files += filtered_gen_resolve_files
-
     # Custom lint checks are incorporated as java plugins. We collect them here and register them with the IDE so that the IDE can also run the same checks.
     plugin_processor_jars = []
     if hasattr(java, "annotation_processing") and java.annotation_processing:
@@ -390,34 +386,21 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     if java_outputs:
         class_jars = [info.class_jar for info in java_outputs]
         for jar in class_jars:
-            jar_index_file = build_jar_index(ctx, target, jar)
-            jar_index_files.append(jar_index_file)
+            if not jar.basename.endswith("_java.jar"):
+                jar_index_file = jarindexer_action(ctx, target.label, ctx.executable._jarindexer, jar)
+                jar_index_files.append(jar_index_file)
 
     java_info = struct_omit_none(
-        # filtered_gen_jar = filtered_gen_jar,
         generated_jars = gen_jars,
         jars = jars,
         jdeps = jdeps,
         main_class = getattr(ctx.rule.attr, "main_class", None),
-        # package_manifest = artifact_location(package_manifest),
         sources = sources,
         test_class = getattr(ctx.rule.attr, "test_class", None),
-        # TODO(b/211509545): re-enable plugin_processor_jars after mac user get latest aswb/ ij (2021.12.14.0.1 or later)
-        #plugin_processor_jars = plugin_processor_jars,
     )
 
-    # print("java_info:", java_info)
     ide_info["java_ide_info"] = java_info
 
-    # java_info_files.append(ide_info_file)
-    # update_sync_output_groups(output_groups, "intellij-info-java", depset(ide_info_files))
-    # update_sync_output_groups(output_groups, "intellij-compile-java", depset(compile_files))
-    # update_sync_output_groups(output_groups, "intellij-resolve-java", depset(resolve_files))
-
-    # also add transitive hjars + src jars, to catch implicit deps
-    # if hasattr(java, "transitive_compile_time_jars"):
-    #     update_set_in_dict(output_groups, "intellij-resolve-java-direct-deps", java.transitive_compile_time_jars)
-    #     update_set_in_dict(output_groups, "intellij-resolve-java-direct-deps", java.transitive_source_jars)
     return True
 
 def _java_indexer_aspect_impl(target, ctx):
@@ -439,7 +422,7 @@ def _java_indexer_aspect_impl(target, ctx):
         java_info_files.append(dep[OutputGroupInfo].java_info_files)
 
     # We support only these rule kinds.
-    if ctx.rule.kind not in _all_rules:
+    if ctx.rule.kind not in _supported_rules:
         return [
             JarIndexerAspectInfo(
                 info_file = depset(transitive = transitive_info_file),
@@ -464,7 +447,6 @@ def _java_indexer_aspect_impl(target, ctx):
     direct_dep_targets = collect_targets_from_attrs(
         rule_attrs,
         DEPS,
-        # semantics_extra_deps(DEPS, semantics, "extra_deps"),
     )
     direct_deps = make_deps(direct_dep_targets, COMPILE_TIME)
 
@@ -507,7 +489,6 @@ def _java_indexer_aspect_impl(target, ctx):
     extra_prerequisite_targets = collect_targets_from_attrs(
         rule_attrs,
         PREREQUISITE_DEPS,
-        # semantics_extra_deps(PREREQUISITE_DEPS, semantics, "extra_prerequisites"),
     )
 
     forwarded_deps = _get_forwarded_deps(target, ctx) + direct_exports
@@ -565,16 +546,12 @@ def _java_indexer_aspect_impl(target, ctx):
     )
 
     jar_index_files = []
-    if ctx.rule.kind in _java_rules:
+    if ctx.rule.kind in _supported_rules:
         handled = False
         handled = collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info, jar_index_files)
         handled = collect_java_toolchain_info(target, ide_info, ide_info_file) or handled
-
-        # elif ctx.rule.kind in _objc_rules:
-        #     compile_commands = _objc_compile_commands(ctx, target, feature_configuration, cc_toolchain)
-
     else:
-        fail("unsupported rule: " + ctx.rule.kind)
+        fail("unsupported java_index rule: \"%s\" (must be one of %s)" % (ctx.rule.kind, _java_rules))
 
     # Write the commands for this target.
     info = struct_omit_none(**ide_info)

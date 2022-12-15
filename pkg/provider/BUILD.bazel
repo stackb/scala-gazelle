@@ -16,8 +16,8 @@ go_library(
         "//build/stack/gazelle/scala/jarindex",
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
-        "//pkg/jarindex",
         "//pkg/maven",
+        "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/scalaparse",
         "@bazel_gazelle//config:go_default_library",
@@ -28,17 +28,18 @@ go_library(
 
 go_test(
     name = "provider_test",
-    size = "small",
     srcs = [
         "java_provider_test.go",
         "maven_provider_test.go",
         "protobuf_provider_test.go",
-        "scala_source_provider_test.go",
+        "source_provider_test.go",
     ],
     data = glob(["testdata/**/*"]),
     deps = [
         ":provider",
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/resolver/mocks",
         "//pkg/testutil",
@@ -47,6 +48,7 @@ go_test(
         "@bazel_gazelle//rule:go_default_library",
         "@bazel_gazelle//testtools:go_default_library",
         "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
         "@com_github_stretchr_testify//mock",
     ],
 )

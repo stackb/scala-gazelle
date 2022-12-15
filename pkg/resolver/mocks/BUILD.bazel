@@ -4,6 +4,7 @@ go_library(
     name = "mocks",
     testonly = True,
     srcs = [
+        "ConflictResolver.go",
         "Scope.go",
         "SymbolProvider.go",
         "SymbolResolver.go",
@@ -13,6 +14,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver/mocks",
     visibility = ["//visibility:public"],
     deps = [
+        "//build/stack/gazelle/scala/parse",
         "//pkg/resolver",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

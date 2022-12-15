@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.parse;
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
+option java_package = "build.stack.gazelle.scala.parse";
+option java_multiple_files = true;
+
+// Symbol represents a 
+message Symbol {
+    // Type of the symbol
+    SymbolType type = 1;
+    // the fully-qualified name of the symbol.
+    string name = 2;
+}
+
+// SymbolType describes the possible kinds of symbols.
+enum SymbolType {
+    SYMBOL_TYPE_UNKNOWN = 0;
+    // Package type
+    SYMBOL_PACKAGE = 1;
+    // JVM class type
+    SYMBOL_CLASS = 2;
+    // JVM interface type
+    SYMBOL_INTERFACE = 3;
+    // Scala trait type
+    SYMBOL_TRAIT = 4;
+    // Scala object type
+    SYMBOL_OBJECT = 5;
+    // Scala val type
+    SYMBOL_VALUE = 7;
+    // OVERRIDE signals that the import was configured via a 'gazelle:resolve'
+    // override directive and hence we don't know the underlying type of thing.
+    SYMBOL_OVERRIDE = 8;
+    // CROSS_RESOLVE signals that the import was resolved via gazelle's underlying
+    // cross resolver system.  We don't know the underlying type here either.
+    SYMBOL_CROSS_RESOLVE = 9;
+    // PLATFORM imports include stdlib'ish things like java.lang.String.  We
+    // don't need a dep for them (and we don't know the underlying type).
+    SYMBOL_PLATFORM = 10;
+    // Scala type type
+    SYMBOL_TYPE = 11;
+    // Protobuf Enum
+    SYMBOL_PROTO_ENUM = 12;
+    // Protobuf Enum Field
+    SYMBOL_PROTO_ENUM_FIELD = 13;
+    // Protobuf Message
+    SYMBOL_PROTO_MESSAGE = 14;
+    // Protobuf Service
+    SYMBOL_PROTO_SERVICE = 15;
+    // Protobuf Package
+    SYMBOL_PROTO_PACKAGE = 16;
+}

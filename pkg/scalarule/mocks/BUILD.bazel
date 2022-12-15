@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "mocks",
+    srcs = ["ProviderRegistry.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/scalarule/mocks",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/scalarule",
+        "@com_github_stretchr_testify//mock",
+    ],
+)

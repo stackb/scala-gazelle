@@ -40,15 +40,6 @@ func (imports ImportMap) Put(imp *Import) {
 	imports[imp.Imp] = imp
 }
 
-func (imports ImportMap) HasErrors() bool {
-	for _, imp := range imports {
-		if imp.Error != nil {
-			return true
-		}
-	}
-	return false
-}
-
 func (imports ImportMap) Annotate(comments *build.Comments, accept func(imp *Import) bool) {
 	for _, key := range imports.Keys() {
 		imp := imports[key]

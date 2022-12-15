@@ -1,3 +1,5 @@
+load("@build_stack_rules_proto//rules/java:proto_java_library.bzl", "proto_java_library")
+load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
@@ -26,5 +28,27 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "@org_golang_google_protobuf//reflect/protoreflect",
         "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)
+
+proto_compile(
+    name = "cache_java_compile",
+    outs = {"@build_stack_rules_proto//plugin/builtin:java": "build/stack/gazelle/scala/cache/cache.srcjar"},
+    outputs = ["cache.srcjar"],
+    plugins = ["@build_stack_rules_proto//plugin/builtin:java"],
+    proto = "cache_proto",
+)
+
+proto_java_library(
+    name = "cache_java_library",
+    srcs = ["cache.srcjar"],
+    visibility = ["//visibility:public"],
+    exports = [
+        "//build/stack/gazelle/scala/parse:parse_java_library",
+        "@maven//:com_google_protobuf_protobuf_java",
+    ],
+    deps = [
+        "//build/stack/gazelle/scala/parse:parse_java_library",
+        "@maven//:com_google_protobuf_protobuf_java",
     ],
 )

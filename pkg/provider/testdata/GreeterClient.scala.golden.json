@@ -1,0 +1,81 @@
+{
+  "label":  "//pkg/provider:testdata/GreeterClient.scala",
+  "files":  [
+    {
+      "filename":  "testdata/GreeterClient.scala",
+      "imports":  [
+        "akka.Done",
+        "akka.NotUsed",
+        "akka.actor.ActorSystem",
+        "akka.grpc.GrpcClientSettings",
+        "akka.stream.Materializer",
+        "akka.stream.scaladsl.Source",
+        "com.typesafe.scalalogging.LazyLogging",
+        "examples.helloworld.greeter.proto.GreeterServiceClient",
+        "examples.helloworld.greeter.proto.HelloReplyMessage",
+        "examples.helloworld.greeter.proto.HelloRequest",
+        "examples.helloworld.greeter.proto.MonitorHelloRequest",
+        "scala.concurrent.Future",
+        "scala.concurrent.duration._",
+        "scala.util.Failure",
+        "scala.util.Success"
+      ],
+      "packages":  [
+        "examples.helloworld.greeter"
+      ],
+      "objects":  [
+        "examples.helloworld.greeter.GreeterClient"
+      ],
+      "names":  [
+        "ActorSystem",
+        "Failure",
+        "Future",
+        "GreeterClient",
+        "GreeterServiceClient",
+        "GrpcClientSettings.fromConfig",
+        "HelloRequest",
+        "LazyLogging",
+        "List",
+        "Materializer",
+        "NotUsed",
+        "Source",
+        "Success",
+        "Unit",
+        "args",
+        "args.isEmpty",
+        "args.nonEmpty",
+        "args.toList",
+        "broadcastHellos",
+        "client",
+        "client.broadcastHellos",
+        "client.sayHello",
+        "client.sayHelloToAll",
+        "done.onComplete",
+        "examples.helloworld.greeter",
+        "logger.error",
+        "logger.info",
+        "main",
+        "makeHelloRequests",
+        "monitorHellos",
+        "monitorHellosWithSnapshot",
+        "msg.toString",
+        "name",
+        "names.foreach",
+        "reply.onComplete",
+        "requestStream",
+        "responseStream.runForeach",
+        "singleRequestReply",
+        "streamingBroadcast",
+        "sys",
+        "sys.dispatcher"
+      ],
+      "extends":  {
+        "object examples.helloworld.greeter.GreeterClient":  {
+          "classes":  [
+            "com.typesafe.scalalogging.LazyLogging"
+          ]
+        }
+      }
+    }
+  ]
+}

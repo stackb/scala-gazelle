@@ -1,3 +1,5 @@
+package scalacserver;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -9,9 +11,11 @@ import scala.tools.nsc.Settings;
 public class XmlReporter extends ConsoleReporter {
 
     final List<Diagnostic> diagnostics = new ArrayList<>();
+    final boolean verbose;
 
-    public XmlReporter(Settings settings) {
+    public XmlReporter(Settings settings, boolean verbose) {
         super(settings);
+        this.verbose = verbose;
     }
 
     /**
@@ -23,7 +27,9 @@ public class XmlReporter extends ConsoleReporter {
 
     @Override
     public void info0(Position pos, String msg, Severity severity, boolean force) {
-        super.info0(pos, msg, severity, force);
+        if (this.verbose) {
+            super.info0(pos, msg, severity, force);
+        }
         diagnostics.add(new Diagnostic(pos, msg, severity));
     }
 
@@ -44,10 +50,9 @@ public class XmlReporter extends ConsoleReporter {
              * Base64 used here as a poor-mans way of avoiding JSON encoding issues with the
              * message.
              */
-            return String.format("{\"pos\": \"%s\", \"sev\": \"%s\", \"msg\": \"%s\"}\n",
-                    pos,
-                    sev,
-                    msg);
+            return String.format(
+                    "{\"pos\": \"%s\", \"sev\": \"%s\", \"msg\": \"%s\"}\n",
+                    pos, sev, msg);
         }
     }
 }

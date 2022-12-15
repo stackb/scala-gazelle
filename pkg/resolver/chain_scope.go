@@ -30,6 +30,16 @@ func (r *ChainScope) GetSymbol(imp string) (*Symbol, bool) {
 	return nil, false
 }
 
+// GetScope implements part of the resolver.Scope interface.
+func (r *ChainScope) GetScope(imp string) (Scope, bool) {
+	for _, next := range r.chain {
+		if scope, ok := next.GetScope(imp); ok {
+			return scope, true
+		}
+	}
+	return nil, false
+}
+
 // GetSymbols implements part of the Scope interface
 func (r *ChainScope) GetSymbols(prefix string) []*Symbol {
 	for _, next := range r.chain {

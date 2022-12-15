@@ -1,2 +1,4 @@
 # Keep until @io_bazel_rules_scala is upgraded
 build --incompatible_java_common_parameters=false
+
+query --output=label_kind

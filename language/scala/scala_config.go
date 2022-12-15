@@ -12,6 +12,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -27,16 +28,12 @@ const (
 )
 
 const (
-	// scalaAnnotate is the name of a directive.
-	scalaAnnotateDirective = "scala_annotate"
-	// ruleDirective is the directive for enabling rule generation.
-	ruleDirective = "scala_rule"
-	// resolveGlobDirective implements override via globs.
-	resolveGlobDirective = "resolve_glob"
-	// resolveWithDirective adds additional imports for resolution
-	resolveWithDirective = "resolve_with"
-	// resolveKindRewriteName allows renaming of resolved labels.
-	resolveKindRewriteName = "resolve_kind_rewrite_name"
+	scalaAnnotateDirective          = "scala_annotate"
+	scalaRuleDirective              = "scala_rule"
+	resolveGlobDirective            = "resolve_glob"
+	resolveConflictsDirective       = "resolve_conflicts"
+	resolveWithDirective            = "resolve_with"
+	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
 // scalaConfig represents the config extension for the a scala package.
@@ -49,6 +46,7 @@ type scalaConfig struct {
 	rules             map[string]*scalarule.Config
 	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
 	annotations       map[annotation]interface{}
+	conflictResolvers []resolver.ConflictResolver
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -103,6 +101,9 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	if c.implicitImports != nil {
 		clone.implicitImports = c.implicitImports[:]
 	}
+	if c.conflictResolvers != nil {
+		clone.conflictResolvers = c.conflictResolvers[:]
+	}
 	return clone
 }
 
@@ -113,6 +114,27 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 		}
 	}
 	return false
+}
+
+func (c *scalaConfig) shouldResolveName(from label.Label, file *sppb.File, name string) bool {
+	// TODO(pcj): implement this
+	return true
+}
+
+func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
+	if len(c.conflictResolvers) == 0 {
+		log.Printf("Conflict resolution for %q failed (no conflict resolvers enabled)", imp.Imp)
+		return nil, false
+	}
+	for _, resolver := range c.conflictResolvers {
+		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol); ok {
+			log.Printf("Conflict resolver was successful %q: %s", resolver.Name(), imp.Imp)
+			return resolved, true
+		} else {
+			log.Printf("Conflict resolver failed %q: %s", resolver.Name(), imp.Imp)
+		}
+	}
+	return nil, false
 }
 
 // GetKnownRule translates relative labels into their absolute form.
@@ -135,8 +157,8 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	for _, d := range directives {
 		switch d.Key {
-		case ruleDirective:
-			err = c.parseRuleDirective(d)
+		case scalaRuleDirective:
+			err = c.parseScalaRuleDirective(d)
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
@@ -144,8 +166,12 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
 			c.parseResolveWithDirective(d)
-		case resolveKindRewriteName:
+		case resolveKindRewriteNameDirective:
 			c.parseResolveKindRewriteNameDirective(d)
+		case resolveConflictsDirective:
+			if err := c.parseResolveConflictsDirective(d); err != nil {
+				return err
+			}
 		case scalaAnnotateDirective:
 			if err := c.parseScalaAnnotation(d); err != nil {
 				return err
@@ -155,7 +181,7 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	return
 }
 
-func (c *scalaConfig) parseRuleDirective(d rule.Directive) error {
+func (c *scalaConfig) parseScalaRuleDirective(d rule.Directive) error {
 	fields := strings.Fields(d.Value)
 	if len(fields) < 3 {
 		return fmt.Errorf("expected three or more fields, got %d", len(fields))
@@ -209,7 +235,7 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 3 {
-		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteName, parts)
+		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteNameDirective, parts)
 		return
 	}
 	kind := parts[0]
@@ -217,6 +243,31 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	dst := parts[2]
 
 	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
+}
+
+func (c *scalaConfig) parseResolveConflictsDirective(d rule.Directive) error {
+	for _, key := range strings.Fields(d.Value) {
+		intent := collections.ParseIntent(key)
+		if intent.Want {
+			resolver, ok := c.universe.GetConflictResolver(intent.Value)
+			if !ok {
+				return fmt.Errorf("invalid directive gazelle:%s: unknown conflict resolver %q", d.Key, intent.Value)
+			}
+			for _, cr := range c.conflictResolvers {
+				if cr.Name() == intent.Value {
+					break
+				}
+			}
+			c.conflictResolvers = append(c.conflictResolvers, resolver)
+		} else {
+			for i, cr := range c.conflictResolvers {
+				if cr.Name() == intent.Value {
+					c.conflictResolvers = removeConflictResolver(c.conflictResolvers, i)
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
@@ -339,4 +390,8 @@ func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
 		from = mapping.Rewrite(from)
 	}
 	return from == to
+}
+
+func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {
+	return append(slice[:index], slice[index+1:]...)
 }

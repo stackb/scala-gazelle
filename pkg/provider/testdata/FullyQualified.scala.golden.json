@@ -1,0 +1,24 @@
+{
+  "label":  "//pkg/provider:testdata/FullyQualified.scala",
+  "files":  [
+    {
+      "filename":  "testdata/FullyQualified.scala",
+      "imports":  [
+        "sk.ygor.stackoverflow.q53326545.macros.ExampleMacro.methodName"
+      ],
+      "packages":  [
+        "foo"
+      ],
+      "objects":  [
+        "foo.Main"
+      ],
+      "names":  [
+        "Main",
+        "Unit",
+        "foo",
+        "java.dx.Map",
+        "main"
+      ]
+    }
+  ]
+}

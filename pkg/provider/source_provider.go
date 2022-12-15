@@ -2,15 +2,11 @@ package provider
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"os"
 	"path/filepath"
-	"sort"
+	"strings"
 	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -27,10 +23,8 @@ type progressFunc func(msg string)
 // NewSourceProvider constructs a new NewSourceProvider.
 func NewSourceProvider(progress progressFunc) *SourceProvider {
 	return &SourceProvider{
-		progress:   progress,
-		parser:     scalaparse.NewScalaParseServer(),
-		byFilename: make(map[string]*sppb.File),
-		byRule:     make(map[label.Label]*sppb.Rule),
+		progress: progress,
+		parser:   scalaparse.NewScalametaParser(),
 	}
 }
 
@@ -41,14 +35,10 @@ func NewSourceProvider(progress progressFunc) *SourceProvider {
 // sha256, the cache hit will be used.
 type SourceProvider struct {
 	progress progressFunc
-	// scope is the interface we provide imports to
+	// scope is the target we provide symbols to
 	scope resolver.Scope
-	// byFilename is a mapping of the scala file to the spec
-	byFilename map[string]*sppb.File
-	// byRule is a mapping of the scala rule to the spec
-	byRule map[label.Label]*sppb.Rule
 	// parser is an instance of the scala source parser
-	parser *scalaparse.ScalaParseServer
+	parser *scalaparse.ScalametaParser
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -63,12 +53,18 @@ func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *confi
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	r.scope = scope
-	return nil
+	return r.start()
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (r *SourceProvider) OnResolve() {
+func (r *SourceProvider) OnResolve() error {
 	r.parser.Stop()
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (r *SourceProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements the resolver.SymbolProvider interface.
@@ -80,165 +76,102 @@ func (cr *SourceProvider) CanProvide(from label.Label, ruleIndex func(from label
 	return false
 }
 
-// Start begins the parser process.
-func (r *SourceProvider) Start() error {
+// start begins the parser process.
+func (r *SourceProvider) start() error {
 	if err := r.parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}
 	return nil
 }
 
-// ParseScalaFiles implements scalaparse.ScalaParser
-func (r *SourceProvider) ParseScalaFiles(from label.Label, kind string, dir string, srcs ...string) (*sppb.Rule, error) {
-	rule := &sppb.Rule{
-		Label: from.String(),
-		Kind:  kind,
-		Files: make([]*sppb.File, len(srcs)),
-	}
-	for i, src := range srcs {
-		filename := filepath.Join(from.Pkg, src)
-		file, err := r.parseScalaFile(dir, filename)
-		if err != nil {
-			return nil, err
-		}
-		rule.Files[i] = file
+// ParseScalaFiles implements scalarule.Parser
+func (r *SourceProvider) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
+	if len(srcs) == 0 {
+		return nil, nil
 	}
 
-	if err := r.ProvideRule(rule); err != nil {
-		return nil, err
-	}
-	return rule, nil
-}
-
-func (r *SourceProvider) parseScalaFile(dir, filename string) (*sppb.File, error) {
-	if filename == "" {
-		return nil, fmt.Errorf("invalid filename argument: must not be empty")
-	}
 	t1 := time.Now()
 
-	abs := filepath.Join(dir, filename)
-	sha256, err := fileSha256(abs)
+	files, err := r.parseFiles(from, dir, srcs)
 	if err != nil {
-		return nil, fmt.Errorf("parse scala file (dir=%q, filename=%q) read sha256 error: %v", dir, filename, err)
+		return nil, err
 	}
 
-	file, ok := r.byFilename[filename]
-	if ok {
-		if file.Sha256 == sha256 {
-			// log.Printf("file cache hit: <%s> (%s)", filename, sha256)
-			return file, nil
-		} else {
-			// log.Printf("file cache out-of-date: <%s> (%s)", filename, sha256)
+	for _, file := range files {
+		if err := r.loadScalaFile(from, kind, file); err != nil {
+			return nil, err
 		}
-	} else {
-		// log.Printf("file cache miss: <%s>", filename)
-	}
-
-	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
-		Filenames: []string{abs},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("scala file parse error %s: %v", abs, err)
 	}
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
-
-	if response.Error != "" {
-		log.Printf("Parse Error <%s>: %s", filename, response.Error)
-	} else {
-		// r.progress(fmt.Sprintf("parsed %s (%v)", filename, t2))
-		log.Printf("parsed %s (%v)", filename, t2)
+	if false {
+		log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
 	}
 
-	scalaFile := response.Files[0]
-	scalaFile.Filename = filename
-	scalaFile.Sha256 = sha256
-	return scalaFile, nil
+	return files, nil
 }
 
-// ProvidedRules returns a sorted list of all known source rules.
-func (r *SourceProvider) ProvidedRules() []*sppb.Rule {
-	rules := make([]*sppb.Rule, 0, len(r.byRule))
-	for _, r := range r.byRule {
-		rules = append(rules, r)
+func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string) ([]*sppb.File, error) {
+	filenames := make([]string, len(srcs))
+	for i, src := range srcs {
+		filenames[i] = filepath.Join(dir, src)
 	}
-	sort.Slice(rules, func(i, j int) bool {
-		a := rules[i]
-		b := rules[j]
-		return a.Label < b.Label
+
+	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
+		Filenames: filenames,
 	})
-	return rules
-}
-
-// ProvideRule indexes the given rule.
-func (r *SourceProvider) ProvideRule(rule *sppb.Rule) error {
-	from, err := label.Parse(rule.Label)
-	if err != nil || from == label.NoLabel {
-		return fmt.Errorf("bad label while loading rule %q: %v", rule.Label, err)
+	if err != nil {
+		return nil, fmt.Errorf("parse error: %v", err)
+	}
+	if response.Error != "" {
+		return nil, fmt.Errorf("parser error: %s", response.Error)
 	}
 
+	// remove dir prefixes
+	for _, file := range response.Files {
+		// TODO(pcj): isn't there a stdlib function that does this?
+		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
+	}
+
+	return response.Files, nil
+}
+
+// LoadScalaRule loads the given state.
+func (r *SourceProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) error {
 	for _, file := range rule.Files {
-		if err := r.provideFile(from, rule, file); err != nil {
+		if err := r.loadScalaFile(from, rule.Kind, file); err != nil {
 			return err
 		}
 	}
-
-	r.byRule[from] = rule
-
 	return nil
 }
 
-func (r *SourceProvider) provideFile(from label.Label, rule *sppb.Rule, file *sppb.File) error {
-	if _, exists := r.byFilename[file.Filename]; exists {
-		// return fmt.Errorf("duplicate filename <%s>", file.Filename)
-		return nil
-	}
-
+func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb.File) error {
 	for _, imp := range file.Classes {
-		r.putSymbol(rule, from, imp, sppb.ImportType_CLASS)
+		r.putSymbol(from, kind, imp, sppb.ImportType_CLASS)
 	}
 	for _, imp := range file.Objects {
-		r.putSymbol(rule, from, imp, sppb.ImportType_OBJECT)
+		r.putSymbol(from, kind, imp, sppb.ImportType_OBJECT)
 	}
 	for _, imp := range file.Traits {
-		r.putSymbol(rule, from, imp, sppb.ImportType_TRAIT)
+		r.putSymbol(from, kind, imp, sppb.ImportType_TRAIT)
 	}
 	for _, imp := range file.Types {
-		r.putSymbol(rule, from, imp, sppb.ImportType_TYPE)
+		r.putSymbol(from, kind, imp, sppb.ImportType_TYPE)
 	}
 	for _, imp := range file.Vals {
-		r.putSymbol(rule, from, imp, sppb.ImportType_VALUE)
+		r.putSymbol(from, kind, imp, sppb.ImportType_VALUE)
 	}
-	for _, imp := range file.Packages {
-		r.putSymbol(rule, from, imp, sppb.ImportType_PACKAGE)
-	}
-
-	r.byFilename[file.Filename] = file
-	// log.Printf("cached file <%s> (%s) %+v", file.Filename, file.Sha256, file)
-
+	// TODO(pcj): should sources advertise their package symbols?  Currently
+	// this leads the sitations where a lib will erroneously take on a dep to
+	// a binary rule.
+	//
+	// for _, imp := range file.Packages {
+	// 	r.putSymbol(from, kind, imp, sppb.ImportType_PACKAGE)
+	// }
 	return nil
 }
 
-func (r *SourceProvider) putSymbol(rule *sppb.Rule, from label.Label, imp string, impType sppb.ImportType) {
-	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, rule.Kind, from))
-}
-
-// fileSha256 computes the sha256 hash of a file
-func fileSha256(filename string) (string, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	return readSha256(f)
-}
-
-// Compute the sha256 hash of a reader
-func readSha256(in io.Reader) (string, error) {
-	h := sha256.New()
-	if _, err := io.Copy(h, in); err != nil {
-		return "", err
-	}
-	return hex.EncodeToString(h.Sum(nil)), nil
+func (r *SourceProvider) putSymbol(from label.Label, kind, imp string, impType sppb.ImportType) {
+	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, kind, from))
 }

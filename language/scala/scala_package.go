@@ -2,6 +2,8 @@ package scala
 
 import (
 	"log"
+	"path/filepath"
+	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -41,11 +43,17 @@ type scalaPackage struct {
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
-func newScalaPackage(rel string, file *rule.File, cfg *scalaConfig, providerRegistry scalarule.ProviderRegistry, parser scalaparse.Parser, importResolver resolver.Universe) *scalaPackage {
+func newScalaPackage(
+	rel string,
+	file *rule.File,
+	cfg *scalaConfig,
+	providerRegistry scalarule.ProviderRegistry,
+	parser scalaparse.Parser,
+	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
 		parser:           parser,
-		universe:         importResolver,
+		universe:         universe,
 		providerRegistry: providerRegistry,
 		file:             file,
 		cfg:              cfg,
@@ -83,7 +91,13 @@ func (s *scalaPackage) Resolve(
 		log.Printf("no known rule provider for %v", from)
 		return
 	}
-	provider.Resolve(c, ix, r, importsRaw, from)
+	ctx := &scalarule.ResolveContext{
+		Config:    c,
+		RuleIndex: ix,
+		Rule:      r,
+		From:      from,
+	}
+	provider.Resolve(ctx, importsRaw)
 	s.rules[r.Name()] = r // TODO(pcj): do we need this assignment here?
 }
 
@@ -163,25 +177,40 @@ func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule
 
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
-	filenames, err := glob.CollectFilenames(s.file, s.repoRootDir(), s.rel, r.Attr(attrName))
+	t1 := time.Now()
+
+	dir := filepath.Join(s.repoRootDir(), s.rel)
+	srcs, err := glob.CollectFilenames(s.file, dir, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
 
 	from := label.New("", s.rel, r.Name())
-
-	files, err := parseScalaFiles(s.repoRootDir(), from, r.Kind(), filenames, s.parser)
+	pb, ok := s.universe.GetKnownScalaRule(from)
+	if !ok {
+		pb = &sppb.Rule{
+			Label: from.String(),
+			Kind:  r.Kind(),
+		}
+		s.universe.PutKnownScalaRule(from, pb)
+	}
+	files, err := s.parser.ParseScalaFiles(r.Kind(), from, dir, srcs...)
 	if err != nil {
 		return nil, err
 	}
 
-	return newScalaRule(
-		s.cfg,
-		s.universe,
-		s.universe,
-		resolver.NewTrieScope(),
-		r, from, files,
-	), nil
+	pb.Files = files
+	pb.ParseTimeMillis = time.Since(t1).Milliseconds()
+
+	ctx := &scalaRuleContext{
+		rule:        r,
+		from:        from,
+		scalaConfig: s.cfg,
+		resolver:    s.universe,
+		scope:       s.universe,
+	}
+
+	return newScalaRule(ctx, pb), nil
 }
 
 // repoRootDir return the root directory of the repo.
@@ -224,12 +253,4 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 		rules = append(rules, r)
 	}
 	return rules
-}
-
-func parseScalaFiles(dir string, from label.Label, kind string, srcs []string, parser scalaparse.Parser) ([]*sppb.File, error) {
-	if index, err := parser.ParseScalaFiles(from, kind, dir, srcs...); err != nil {
-		return nil, err
-	} else {
-		return index.Files, nil
-	}
 }

@@ -12,13 +12,36 @@ type Scope struct {
 	mock.Mock
 }
 
-// GetSymbol provides a mock function with given fields: imp
-func (_m *Scope) GetSymbol(imp string) (*resolver.Symbol, bool) {
-	ret := _m.Called(imp)
+// GetScope provides a mock function with given fields: name
+func (_m *Scope) GetScope(name string) (resolver.Scope, bool) {
+	ret := _m.Called(name)
+
+	var r0 resolver.Scope
+	if rf, ok := ret.Get(0).(func(string) resolver.Scope); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(resolver.Scope)
+		}
+	}
+
+	var r1 bool
+	if rf, ok := ret.Get(1).(func(string) bool); ok {
+		r1 = rf(name)
+	} else {
+		r1 = ret.Get(1).(bool)
+	}
+
+	return r0, r1
+}
+
+// GetSymbol provides a mock function with given fields: name
+func (_m *Scope) GetSymbol(name string) (*resolver.Symbol, bool) {
+	ret := _m.Called(name)
 
 	var r0 *resolver.Symbol
 	if rf, ok := ret.Get(0).(func(string) *resolver.Symbol); ok {
-		r0 = rf(imp)
+		r0 = rf(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*resolver.Symbol)
@@ -27,7 +50,7 @@ func (_m *Scope) GetSymbol(imp string) (*resolver.Symbol, bool) {
 
 	var r1 bool
 	if rf, ok := ret.Get(1).(func(string) bool); ok {
-		r1 = rf(imp)
+		r1 = rf(name)
 	} else {
 		r1 = ret.Get(1).(bool)
 	}

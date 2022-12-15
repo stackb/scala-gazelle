@@ -48,3 +48,19 @@ func WriteFile(filename string, message protoreflect.ProtoMessage) error {
 	}
 	return nil
 }
+
+func WritePrettyJSONFile(filename string, message protoreflect.ProtoMessage) error {
+	marshaler := protojson.MarshalOptions{
+		Multiline:       true,
+		Indent:          "  ",
+		EmitUnpopulated: false,
+	}
+	data, err := marshaler.Marshal(message)
+	if err != nil {
+		return fmt.Errorf("marshal: %w", err)
+	}
+	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+		return fmt.Errorf("write: %w", err)
+	}
+	return nil
+}

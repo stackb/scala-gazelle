@@ -10,6 +10,9 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
+// TODO(pcj): rename this to 'Requirement' or something.  Not all Imports are
+// actually from an import statement.
+
 // Import is used to trace import provenance.
 type Import struct {
 	// Kind is the import type
@@ -27,11 +30,23 @@ type Import struct {
 }
 
 // NewDirectImport creates a new direct import from the given file.
-func NewDirectImport(imp string, src *sppb.File) *Import {
+func NewDirectImport(imp string, source *sppb.File) *Import {
 	return &Import{
 		Kind:   sppb.ImportKind_DIRECT,
 		Imp:    imp,
-		Source: src,
+		Source: source,
+	}
+}
+
+// NewResolvedNameImport creates a new resolved import from the given file,
+// name, and symbol.  The 'name' is the token that resolved in the file scope.
+func NewResolvedNameImport(imp string, source *sppb.File, name string, symbol *Symbol) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_RESOLVED_NAME,
+		Imp:    imp,
+		Source: source,
+		Src:    name,
+		Symbol: symbol,
 	}
 }
 
@@ -45,11 +60,13 @@ func NewImplicitImport(imp, src string) *Import {
 }
 
 // NewExtendsImport creates a new extends import from the given requiring type.
-func NewExtendsImport(imp, src string) *Import {
+func NewExtendsImport(imp string, source *sppb.File, src string, symbol *Symbol) *Import {
 	return &Import{
-		Kind: sppb.ImportKind_EXTENDS,
-		Imp:  imp,
-		Src:  src,
+		Kind:   sppb.ImportKind_EXTENDS,
+		Imp:    imp,
+		Source: source,
+		Src:    src,
+		Symbol: symbol,
 	}
 }
 
@@ -89,11 +106,16 @@ func (imp *Import) String() string {
 		parts = append(parts, fmt.Sprintf("%v", imp.Error))
 	}
 
-	if imp.Source != nil {
+	switch imp.Kind {
+	case sppb.ImportKind_DIRECT:
 		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, filepath.Base(imp.Source.Filename)))
-	} else if imp.Src != "" {
-		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
-	} else {
+	case sppb.ImportKind_IMPLICIT:
+		parts = append(parts, fmt.Sprintf("(%v via %q)", imp.Kind, imp.Src))
+	case sppb.ImportKind_EXTENDS:
+		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
+	case sppb.ImportKind_RESOLVED_NAME:
+		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
+	default:
 		parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
 	}
 	return strings.Join(parts, " ")

@@ -10,16 +10,13 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 # gazelle:proto_language scala rule proto_scala_library
 
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
-# gazelle:scala_annotate imports resolved_deps unresolved_deps
+# gazelle:scala_annotate imports
 
 scala_library(
     name = "app",
     srcs =
     # ❌ not.Exists<ERROR> import not found (DIRECT of Main.scala)
-    # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
+    # ✅ proto.Customer<PROTO_MESSAGE> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
     ["Main.scala"],
-    deps = [
-        # ✅ proto.Customer<CLASS> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
-        "//proto:proto_proto_scala_library",
-    ],
+    deps = ["//proto:proto_proto_scala_library"],
 )

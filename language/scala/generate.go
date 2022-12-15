@@ -2,11 +2,14 @@ package scala
 
 import (
 	"log"
+	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 )
+
+const debugGenerate = false
 
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
@@ -15,11 +18,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		return language.GenerateResult{}
 	}
 
-	if len(sl.packages) == 0 {
-		if err := sl.onGenerate(); err != nil {
-			log.Fatal(err)
-		}
-	}
+	t1 := time.Now()
 
 	if sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
@@ -41,6 +40,13 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
+	}
+
+	if debugGenerate {
+		t2 := time.Since(t1).Round(1 * time.Millisecond)
+		if len(rules) > 1 {
+			log.Printf("Visited %q (%d rules, %v)", args.Rel, len(rules)-1, t2)
+		}
 	}
 
 	return language.GenerateResult{

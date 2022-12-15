@@ -5,6 +5,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
@@ -22,6 +24,29 @@ func NewTrieScope() *TrieScope {
 	return &TrieScope{
 		trie: collections.NewPathTrieWithConfig(scopePathTrieConfig),
 	}
+}
+
+// Symbols returns a sorted list of all symbols in the scope.
+func (r *TrieScope) Symbols() (symbols []*Symbol) {
+	r.trie.Walk(func(key string, value interface{}) error {
+		symbols = append(symbols, value.(*Symbol))
+		return nil
+	})
+	sort.Slice(symbols, func(i, j int) bool {
+		a := symbols[i]
+		b := symbols[j]
+		return a.Name < b.Name
+	})
+	return
+}
+
+// GetScope implements part of the resolver.Scope interface.
+func (r *TrieScope) GetScope(name string) (Scope, bool) {
+	node := r.trie.Get(name)
+	if node == nil {
+		return nil, false
+	}
+	return &TrieScope{node}, true
 }
 
 // GetSymbols implements part of the resolver.Scope interface.
@@ -59,6 +84,19 @@ func (r *TrieScope) GetSymbol(imp string) (*Symbol, bool) {
 func (r *TrieScope) PutSymbol(symbol *Symbol) error {
 	if symbol.Provider == "" {
 		log.Panicf("fatal (missing provider): %+v", symbol)
+	}
+	if current, ok := r.GetSymbol(symbol.Name); ok && current.Name == symbol.Name {
+		if current.Label != symbol.Label {
+			current.Conflicts = append(current.Conflicts, symbol)
+			return nil
+		}
+		if false {
+			diff := cmp.Diff(current, symbol, cmpopts.IgnoreFields(Symbol{}, "Conflicts"))
+			if diff != "" {
+				// log.Printf("conflicting symbols %q: %s", current.Name, diff)
+				return nil
+			}
+		}
 	}
 	r.trie.Put(symbol.Name, symbol)
 	return nil

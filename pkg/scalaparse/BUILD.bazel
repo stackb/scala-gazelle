@@ -5,19 +5,20 @@ go_library(
     srcs = [
         "assets.go",
         "exec.go",
-        "options.go",
-        "scala_parser.go",
-        "server.go",
+        "memo_parser.go",
+        "parser.go",
+        "scalameta_parser.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
-        "scalaparser.mjs",
         "node.exe",
+        "scalameta_parser.mjs",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaparse",
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",
@@ -32,8 +33,7 @@ go_test(
     srcs = [
         "assets_test.go",
         "exec_test.go",
-        "options_test.go",
-        "server_test.go",
+        "scalameta_parser_test.go",
     ],
     embed = [":scalaparse"],
     deps = [

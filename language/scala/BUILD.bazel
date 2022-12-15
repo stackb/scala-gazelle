@@ -10,6 +10,7 @@ go_library(
     srcs = [
         "cache.go",
         "configure.go",
+        "conflict_resolver_registry.go",
         "cross_resolve.go",
         "existing_scala_rule.go",
         "fix.go",
@@ -17,6 +18,7 @@ go_library(
         "generate.go",
         "kinds.go",
         "known_rule_registry.go",
+        "known_scala_rule_registry.go",
         "language.go",
         "lifecycle.go",
         "loads.go",
@@ -53,14 +55,6 @@ go_library(
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_pcj_mobyprogress//:mobyprogress",
     ],
-)
-
-genrule(
-    name = "scalacserver_jar",
-    outs = ["scalacserver.jar"],
-    cmd = "cp $(location //cmd/scalacserver:scalacserver_deploy.jar) $@",
-    executable = True,
-    tools = ["//cmd/scalacserver:scalacserver_deploy.jar"],
 )
 
 genrule(

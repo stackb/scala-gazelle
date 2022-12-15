@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -23,6 +22,7 @@ import (
 	"github.com/bazelbuild/rules_go/go/tools/bazel"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
 const (
@@ -31,11 +31,13 @@ const (
 	debugParse = false
 )
 
-func NewScalaParseServer() *ScalaParseServer {
-	return &ScalaParseServer{}
+func NewScalametaParser() *ScalametaParser {
+	return &ScalametaParser{}
 }
 
-type ScalaParseServer struct {
+// ScalametaParser is a service that communicates to a scalameta-js parser
+// backend over HTTP.
+type ScalametaParser struct {
 	sppb.UnimplementedParserServer
 
 	process    *memexec.Exec
@@ -48,7 +50,7 @@ type ScalaParseServer struct {
 	HttpPort int
 }
 
-func (s *ScalaParseServer) Stop() {
+func (s *ScalametaParser) Stop() {
 	if s.httpClient != nil {
 		s.httpClient.CloseIdleConnections()
 		s.httpClient = nil
@@ -67,7 +69,9 @@ func (s *ScalaParseServer) Stop() {
 	}
 }
 
-func (s *ScalaParseServer) Start() error {
+func (s *ScalametaParser) Start() error {
+	t1 := time.Now()
+
 	//
 	// Setup temp process directory and write js files
 	//
@@ -76,7 +80,7 @@ func (s *ScalaParseServer) Start() error {
 		return fmt.Errorf("creating tmp process dir: %w", err)
 	}
 
-	scriptPath := filepath.Join(processDir, "scalaparser.mjs")
+	scriptPath := filepath.Join(processDir, "scalameta_parser.mjs")
 	parserPath := filepath.Join(processDir, "node_modules", "scalameta-parsers", "index.js")
 
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
@@ -90,7 +94,7 @@ func (s *ScalaParseServer) Start() error {
 	}
 
 	if debugParse {
-		listFiles(".")
+		collections.ListFiles(".")
 	}
 
 	//
@@ -117,7 +121,7 @@ func (s *ScalaParseServer) Start() error {
 	//
 	// Start the bun process
 	//
-	cmd := exe.Command("scalaparser.mjs")
+	cmd := exe.Command("scalameta_parser.mjs")
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
@@ -144,7 +148,7 @@ func (s *ScalaParseServer) Start() error {
 	host := "localhost"
 	port := s.HttpPort
 	timeout := 3 * time.Second
-	if !waitForConnectionAvailable(host, port, timeout) {
+	if !collections.WaitForConnectionAvailable(host, port, timeout) {
 		return fmt.Errorf("waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
 	}
 
@@ -161,10 +165,13 @@ func (s *ScalaParseServer) Start() error {
 		},
 	}
 
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	log.Printf("parser started (%v)", t2)
+
 	return nil
 }
 
-func (s *ScalaParseServer) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
 	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
@@ -239,54 +246,4 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 	req.Header.Set("Content-Type", "application/json")
 
 	return req, nil
-}
-
-// waitForConnectionAvailable pings a tcp connection every 250 milliseconds
-// until it connects and returns true.  If it fails to connect by the timeout
-// deadline, returns false.
-func waitForConnectionAvailable(host string, port int, timeout time.Duration) bool {
-	target := fmt.Sprintf("%s:%d", host, port)
-	var wg sync.WaitGroup
-	wg.Add(1)
-	then := time.Now()
-
-	success := make(chan bool, 1)
-
-	go func() {
-		go func() {
-			defer wg.Done()
-			for {
-				_, err := net.Dial("tcp", target)
-				if err == nil {
-					if debugParse {
-						log.Printf("%s is available after %s", target, time.Since(then))
-					}
-					break
-				}
-				time.Sleep(250 * time.Millisecond)
-			}
-		}()
-		wg.Wait()
-		success <- true
-	}()
-
-	select {
-	case <-success:
-		return true
-	case <-time.After(timeout):
-		return false
-	}
-}
-
-// listFiles is a convenience debugging function to log the files under a given dir.
-func listFiles(dir string) error {
-	log.Println("Listing files under " + dir)
-	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			log.Printf("%v\n", err)
-			return err
-		}
-		log.Println(path)
-		return nil
-	})
 }

@@ -13,12 +13,14 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # gazelle:go_generate_proto false
 
 # -- Gazelle language "protobuf" ---
+# gazelle:proto_rule proto_compile implementation stackb:rules_proto:proto_compile
+# gazelle:proto_rule proto_compiled_sources implementation stackb:rules_proto:proto_compiled_sources
+
 # gazelle:proto_plugin protoc-gen-go implementation golang:protobuf:protoc-gen-go
 # gazelle:proto_plugin protoc-gen-go-grpc implementation grpc:grpc-go:protoc-gen-go-grpc
 # gazelle:proto_plugin protoc-gen-go-grpc deps @org_golang_google_grpc//:go_default_library
 # gazelle:proto_plugin protoc-gen-go-grpc deps @org_golang_google_grpc//codes
 # gazelle:proto_plugin protoc-gen-go-grpc deps @org_golang_google_grpc//status
-# gazelle:proto_rule proto_compiled_sources implementation stackb:rules_proto:proto_compiled_sources
 # gazelle:proto_rule proto_go_library implementation stackb:rules_proto:proto_go_library
 # gazelle:proto_rule proto_go_library deps @org_golang_google_protobuf//reflect/protoreflect
 # gazelle:proto_rule proto_go_library deps @org_golang_google_protobuf//runtime/protoimpl
@@ -26,6 +28,20 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 # gazelle:proto_language go plugin protoc-gen-go
 # gazelle:proto_language go plugin protoc-gen-go-grpc
 # gazelle:proto_language go rule proto_compiled_sources
+
+# gazelle:proto_plugin java implementation builtin:java
+# gazelle:proto_plugin protoc-gen-grpc-java implementation grpc:grpc-java:protoc-gen-grpc-java
+# gazelle:proto_rule proto_java_library implementation stackb:rules_proto:proto_java_library
+# gazelle:proto_rule proto_java_library deps @maven//:com_google_protobuf_protobuf_java
+# gazelle:proto_rule proto_java_library visibility //visibility:public
+# gazelle:proto_rule grpc_java_library implementation stackb:rules_proto:grpc_java_library
+# gazelle:proto_rule grpc_java_library deps //java:grpc_java
+# gazelle:proto_rule grpc_java_library visibility //visibility:public
+# gazelle:proto_language java plugin java
+# gazelle:proto_language java plugin protoc-gen-grpc-java
+# gazelle:proto_language java rule proto_compile
+# gazelle:proto_language java rule proto_java_library
+# gazelle:proto_language java rule grpc_java_library
 
 gazelle_binary(
     name = "gazelle-protobuf",

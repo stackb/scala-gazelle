@@ -1,5 +1,5 @@
 /**
- * @fileoverview scalaparser.mjs parses a list of source files and outputs a
+ * @fileoverview scalameta_parser.mjs parses a list of source files and outputs a
  * JSON summary of top-level symbols to stdout.
  */
 import * as fs from 'node:fs';
@@ -10,6 +10,7 @@ import { parseSource } from 'scalameta-parsers';
 
 const __filename = new URL('', import.meta.url).pathname;
 const debug = false;
+const wantNameTypes = false;
 
 // enableNestedImports will capture imports not at the top-level.  This can be
 // useful, but in-practive is often used to narrow an import already named at
@@ -47,6 +48,9 @@ class Scope {
      * @param {?string} sym
      */
     addImport(imp, sym) {
+        if (!imp) {
+            return; // FIXME(pcj): why should this ever be null?
+        }
         this.imports.add(imp);
         if (sym) {
             this.addSymbol(sym, imp);
@@ -170,6 +174,25 @@ class ScalaFile {
         this.extendsMap = new Map();
     }
 
+    addName(name) {
+        switch (name) {
+            case "&&":
+            case "<":
+            case ">":
+            case "<=":
+            case ">=":
+            case "==":
+            case "!":
+            case "+":
+            case "+=":
+            case "-":
+                return;
+        }
+        if (name.startsWith(".")) {
+            return;
+        }
+        this.names.add(name);
+    }
     /**
      * Runs the parse.
      */
@@ -188,8 +211,16 @@ class ScalaFile {
                 if (!node) {
                     return false
                 }
-                if (node.type === 'Term.Name' && node.value) {
-                    this.names.add(node.value);
+                if (wantNameInContext(stack)) {
+                    let name = this.parseName(node);
+                    if (name) {
+                        if (wantNameTypes) {
+                            const type = this.stackTypeName(node, stack);
+                            name = `${name}<${type}>`;
+                        }
+                        this.addName(name);
+                        return false;
+                    }
                 }
                 if (enableNestedImports) {
                     if (node.type === 'Import') {
@@ -497,9 +528,22 @@ class ScalaFile {
         this.console.warn(JSON.stringify(node, null, 2));
     }
 
+    stackTypeName(node, stack) {
+        const names = [];
+        for (let i = 0; i < stack.length; i++) {
+            if (stack[i].type) {
+                names.push(stack[i].type);
+            }
+        }
+        if (node.type) {
+            names.push(node.type);
+        }
+        return names.join('/');
+    }
+
     /**
-     * Parses a "Ref" node to a string.
-     * @param {Ref} ref 
+     * Parses a typed node to a string.
+     * @param {Node} ref 
      * @returns {string}
      */
     parseName(ref) {
@@ -510,7 +554,7 @@ class ScalaFile {
                 return ref.value;
             case 'Term.Name':
                 return ref.value;
-            case 'Term.Select':
+            case 'Term.Select': {
                 const names = [];
                 if (ref.qual) {
                     names.push(this.parseName(ref.qual));
@@ -519,8 +563,19 @@ class ScalaFile {
                     names.push(this.parseName(ref.name));
                 }
                 return names.join('.');
+            }
+            case 'Type.Select': {
+                const names = [];
+                if (ref.qual) {
+                    names.push(this.parseName(ref.qual));
+                }
+                if (ref.name) {
+                    names.push(this.parseName(ref.name));
+                }
+                return names.join('.');
+            }
             default:
-                if (debug) {
+                if (debug && ref.type) {
                     this.console.warn('unhandled ref type:', ref.type);
                     this.printNode(ref);
                 }
@@ -536,12 +591,10 @@ class ScalaFile {
  * @returns {!ScalaFile}
  */
 function parseFile(filename) {
-    const start = new Date().getTime();
     try {
         const src = new ScalaFile(filename);
         src.parse();
         const result = src.toObject();
-        result.elapsedMillis = new Date().getTime() - start;
         return result;
     } catch (e) {
         return {
@@ -588,16 +641,14 @@ async function processJSONRequest(request) {
         throw new Error(`bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`);
     }
 
-    const start = new Date().getTime();
     let files = [];
     if (process.env.PARALLEL_MODE) {
         files = await parseFilesParallel(request.filenames);
     } else {
         files = await parseFiles(request.filenames);
     }
-    const elapsedMillis = new Date().getTime() - start;
 
-    return { files, elapsedMillis };
+    return { files };
 }
 
 function processApplicationJSON(data) {
@@ -643,4 +694,32 @@ if (isMainThread) {
     const filename = workerData;
     const result = parseFile(filename);
     parentPort.postMessage(result);
+}
+
+/**
+ * Determine if we we should collect this name.
+ * @param {!Array<Node>} stack 
+ * @returns {boolean}
+ */
+function wantNameInContext(stack) {
+    if (stack.length == 0) {
+        return false;
+    }
+    for (let i = stack.length - 1; i >= 0; i--) {
+        switch (stack[i].type) {
+            // if the immediate parent is a parameter
+            case 'Term.Param':
+            case 'Term.Interpolate':
+            case 'Pat.Var':
+                if (i === stack.length - 1) {
+                    return false;
+                }
+                return false;
+            // any infix or unary context
+            case 'Term.ApplyUnary':
+            case 'Term.ApplyInfix':
+                return false;
+        }
+    }
+    return true;
 }

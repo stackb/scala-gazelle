@@ -51,32 +51,43 @@ func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope 
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
-func (p *ProtobufProvider) OnResolve() {
+func (p *ProtobufProvider) OnResolve() error {
 	for from, symbols := range p.importProvider(p.lang, "package") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_PACKAGE, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_PACKAGE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "enum") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_OBJECT, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_ENUM, symbol, from)
+		}
+	}
+	for from, symbols := range p.importProvider(p.lang, "enumfield") {
+		for _, symbol := range symbols {
+			p.putSymbol(sppb.ImportType_PROTO_ENUM_FIELD, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "message") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_MESSAGE, symbol, from)
 		}
 	}
 	for from, symbols := range p.importProvider(p.lang, "service") {
 		for _, symbol := range symbols {
-			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
+			p.putSymbol(sppb.ImportType_PROTO_SERVICE, symbol, from)
 		}
 	}
-	for from, symbols := range p.importProvider(p.lang, p.impLang) {
+	for from, symbols := range p.importProvider(p.lang, "class") {
 		for _, symbol := range symbols {
 			p.putSymbol(sppb.ImportType_CLASS, symbol, from)
 		}
 	}
+	return nil
+}
+
+// OnEnd implements part of the resolver.SymbolProvider interface.
+func (p *ProtobufProvider) OnEnd() error {
+	return nil
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.

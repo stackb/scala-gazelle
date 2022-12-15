@@ -19,6 +19,7 @@ def language_scala_deps():
 
     # see https://nodejs.org/dist/ to update
     node_binaries()
+    io_grpc_grpc_java()
 
 def workspace_deps():
     """workspace_deps loads all dependencies for the workspace
@@ -303,3 +304,27 @@ filegroup(
 )
             """.format(executable = data.executable),
         )
+
+def io_grpc_grpc_java():
+    # Branch: master
+    # Commit: 2a0b86f7cd2a363cd1d19d56f9c47aead33261d6
+    # Date: 2022-12-09 23:21:47 +0000 UTC
+    # URL: https://github.com/grpc/grpc-java/commit/2a0b86f7cd2a363cd1d19d56f9c47aead33261d6
+    #
+    # binder: BinderInternal.setIBinder() is public static (#9743)
+    # Size: 2832515 (2.8 MB)
+    # _maybe(
+    #     http_archive,
+    #     name = "io_grpc_grpc_java",
+    #     sha256 = "3e45af77525f2014e6ea4db8839f769d40cc143d10cd61104c21018733eed69f",
+    #     strip_prefix = "grpc-java-2a0b86f7cd2a363cd1d19d56f9c47aead33261d6",
+    #     urls = ["https://github.com/grpc/grpc-java/archive/2a0b86f7cd2a363cd1d19d56f9c47aead33261d6.tar.gz"],
+    # )
+
+    _maybe(
+        http_archive,
+        name = "io_grpc_grpc_java",
+        sha256 = "0f6cf8c1e97757333e08975c8637093b40540a54a201cfd3ce284c8d1d073fae",
+        strip_prefix = "grpc-java-1.47.0",
+        urls = ["https://github.com/grpc/grpc-java/archive/v1.47.0.tar.gz"],
+    )

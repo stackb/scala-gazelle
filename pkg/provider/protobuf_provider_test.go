@@ -37,13 +37,13 @@ func TestProtoSymbolProviderOnResolve(t *testing.T) {
 			},
 			want: []*resolver.Symbol{
 				{
-					Type:     sppb.ImportType_OBJECT,
+					Type:     sppb.ImportType_PROTO_ENUM,
 					Name:     "com.foo.bar.proto.Enum",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 					Provider: "protobuf",
 				},
 				{
-					Type:     sppb.ImportType_CLASS,
+					Type:     sppb.ImportType_PROTO_MESSAGE,
 					Name:     "com.foo.bar.proto.Message",
 					Label:    label.Label{Repo: "", Pkg: "com/foo/bar/proto", Name: "proto_scala_library"},
 					Provider: "protobuf",

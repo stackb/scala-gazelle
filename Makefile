@@ -27,7 +27,7 @@ scalacache_protos:
 	rm -rf build/stack/gazelle/scala/cache/build
 
 .PHONY: protos
-protos: jarindex_protos scalaparse_protos scalacache_protosgit 
+protos: jarindex_protos scalaparse_protos scalacache_protos 
 	echo "Done."
 
 .PHONY: tidy
@@ -49,3 +49,9 @@ mocks:
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=Scope
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolProvider
 	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=SymbolResolver
+	mockery --output pkg/resolver/mocks --dir=pkg/resolver --name=ConflictResolver
+	mockery --output pkg/scalaparse/mocks --dir=pkg/scalaparse --name=Parser
+	mockery --output pkg/scalarule/mocks --dir=pkg/scalarule --name=ProviderRegistry
+
+.PHONY: gen
+gen: mocks protos

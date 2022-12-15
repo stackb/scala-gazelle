@@ -4,7 +4,7 @@ import (
 	_ "embed"
 )
 
-//go:embed scalaparser.mjs
+//go:embed scalameta_parser.mjs
 var scalaparserMjs string
 
 //go:embed node_modules/scalameta-parsers/index.js
