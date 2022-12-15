@@ -147,8 +147,6 @@ func (sl *scalaLang) setupCpuProfiling(workDir string) error {
 			return err
 		}
 		pprof.StartCPUProfile(f)
-
-		log.Println("Collecting cpuprofile to", sl.cpuprofileFlagValue)
 	}
 	return nil
 }
@@ -165,6 +163,7 @@ func (sl *scalaLang) setupMemoryProfiling(workDir string) error {
 func (sl *scalaLang) stopCpuProfiling() {
 	if sl.cpuprofileFlagValue != "" {
 		pprof.StopCPUProfile()
+		log.Println("Wrote cpuprofile to", sl.cpuprofileFlagValue)
 	}
 }
 

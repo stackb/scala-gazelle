@@ -14,8 +14,22 @@ type Parser struct {
 	mock.Mock
 }
 
-// ParseScalaFiles provides a mock function with given fields: kind, from, dir, srcs
-func (_m *Parser) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*parse.File, error) {
+// LoadScalaRule provides a mock function with given fields: from, rule
+func (_m *Parser) LoadScalaRule(from label.Label, rule *parse.Rule) error {
+	ret := _m.Called(from, rule)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(label.Label, *parse.Rule) error); ok {
+		r0 = rf(from, rule)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ParseScalaRule provides a mock function with given fields: kind, from, dir, srcs
+func (_m *Parser) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*parse.Rule, error) {
 	_va := make([]interface{}, len(srcs))
 	for _i := range srcs {
 		_va[_i] = srcs[_i]
@@ -25,12 +39,12 @@ func (_m *Parser) ParseScalaFiles(kind string, from label.Label, dir string, src
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 []*parse.File
-	if rf, ok := ret.Get(0).(func(string, label.Label, string, ...string) []*parse.File); ok {
+	var r0 *parse.Rule
+	if rf, ok := ret.Get(0).(func(string, label.Label, string, ...string) *parse.Rule); ok {
 		r0 = rf(kind, from, dir, srcs...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*parse.File)
+			r0 = ret.Get(0).(*parse.Rule)
 		}
 	}
 

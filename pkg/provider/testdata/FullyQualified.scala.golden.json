@@ -1,18 +1,19 @@
 {
-  "label":  "//pkg/provider:testdata/FullyQualified.scala",
-  "files":  [
+  "label": "//pkg/provider:testdata/FullyQualified.scala",
+  "kind": "scala_library",
+  "files": [
     {
-      "filename":  "testdata/FullyQualified.scala",
-      "imports":  [
+      "filename": "testdata/FullyQualified.scala",
+      "imports": [
         "sk.ygor.stackoverflow.q53326545.macros.ExampleMacro.methodName"
       ],
-      "packages":  [
+      "packages": [
         "foo"
       ],
-      "objects":  [
+      "objects": [
         "foo.Main"
       ],
-      "names":  [
+      "names": [
         "Main",
         "Unit",
         "foo",

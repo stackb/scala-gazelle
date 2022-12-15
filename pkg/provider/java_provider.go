@@ -17,6 +17,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+const debugUnresolvedSuperclass = false
+
 // JavaProvider is a provider of symbols for a set of jarindex protos.
 type JavaProvider struct {
 	jarindexFiles collections.StringSlice
@@ -68,7 +70,7 @@ func (p *JavaProvider) OnResolve() error {
 		for _, superclass := range append(classFile.Superclasses, classFile.Interfaces...) {
 			if resolved, ok := p.scope.GetSymbol(superclass); ok {
 				symbol.Requires = append(symbol.Requires, resolved)
-			} else {
+			} else if debugUnresolvedSuperclass {
 				log.Printf("Unresolved superclass %s of %s", superclass, classFile.Name)
 			}
 		}

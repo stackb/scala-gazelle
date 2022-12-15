@@ -30,7 +30,7 @@ func NewSourceProvider(progress progressFunc) *SourceProvider {
 
 // SourceProvider is provider for scala source files. If -scala_source_index_in
 // is configured, the given source index will be used to bootstrap the internal
-// cache.  At runtime the .ParseScalaFiles function can be used to parse scala
+// cache.  At runtime the .ParseScalaRule function can be used to parse scala
 // files.  If the cache already has an entry for the filename with matching
 // sha256, the cache hit will be used.
 type SourceProvider struct {
@@ -84,8 +84,8 @@ func (r *SourceProvider) start() error {
 	return nil
 }
 
-// ParseScalaFiles implements scalarule.Parser
-func (r *SourceProvider) ParseScalaFiles(kind string, from label.Label, dir string, srcs ...string) ([]*sppb.File, error) {
+// ParseScalaRule implements scalarule.Parser
+func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
 	if len(srcs) == 0 {
 		return nil, nil
 	}
@@ -104,11 +104,16 @@ func (r *SourceProvider) ParseScalaFiles(kind string, from label.Label, dir stri
 	}
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	if false {
+	if true {
 		log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
 	}
 
-	return files, nil
+	return &sppb.Rule{
+		Label:           from.String(),
+		Kind:            kind,
+		Files:           files,
+		ParseTimeMillis: t2.Milliseconds(),
+	}, nil
 }
 
 func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string) ([]*sppb.File, error) {

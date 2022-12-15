@@ -5,7 +5,6 @@ package resolver
 type Universe interface {
 	SymbolProviderRegistry
 	KnownRuleRegistry
-	KnownScalaRuleRegistry
 	ConflictResolverRegistry
 	Scope
 	SymbolResolver

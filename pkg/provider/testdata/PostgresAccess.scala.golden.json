@@ -1,24 +1,25 @@
 {
-  "label":  "//pkg/provider:testdata/PostgresAccess.scala",
-  "files":  [
+  "label": "//pkg/provider:testdata/PostgresAccess.scala",
+  "kind": "scala_library",
+  "files": [
     {
-      "filename":  "testdata/PostgresAccess.scala",
-      "packages":  [
+      "filename": "testdata/PostgresAccess.scala",
+      "packages": [
         "auth.dao"
       ],
-      "objects":  [
+      "objects": [
         "auth.dao.PostgresAccess"
       ],
-      "names":  [
+      "names": [
         "PostgresAccess",
         "String",
         "auth.dao",
         "common.postgres.PostgresAccess",
         "dbConfigKey"
       ],
-      "extends":  {
-        "object auth.dao.PostgresAccess":  {
-          "classes":  [
+      "extends": {
+        "object auth.dao.PostgresAccess": {
+          "classes": [
             "common.postgres.PostgresAccess"
           ]
         }

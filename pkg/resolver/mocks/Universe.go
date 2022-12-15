@@ -8,8 +8,6 @@ import (
 
 	mock "github.com/stretchr/testify/mock"
 
-	parse "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-
 	resolve "github.com/bazelbuild/bazel-gazelle/resolve"
 
 	resolver "github.com/stackb/scala-gazelle/pkg/resolver"
@@ -69,29 +67,6 @@ func (_m *Universe) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*rule.Rule)
-		}
-	}
-
-	var r1 bool
-	if rf, ok := ret.Get(1).(func(label.Label) bool); ok {
-		r1 = rf(from)
-	} else {
-		r1 = ret.Get(1).(bool)
-	}
-
-	return r0, r1
-}
-
-// GetKnownScalaRule provides a mock function with given fields: from
-func (_m *Universe) GetKnownScalaRule(from label.Label) (*parse.Rule, bool) {
-	ret := _m.Called(from)
-
-	var r0 *parse.Rule
-	if rf, ok := ret.Get(0).(func(label.Label) *parse.Rule); ok {
-		r0 = rf(from)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*parse.Rule)
 		}
 	}
 
@@ -187,20 +162,6 @@ func (_m *Universe) PutKnownRule(from label.Label, r *rule.Rule) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(label.Label, *rule.Rule) error); ok {
-		r0 = rf(from, r)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// PutKnownScalaRule provides a mock function with given fields: from, r
-func (_m *Universe) PutKnownScalaRule(from label.Label, r *parse.Rule) error {
-	ret := _m.Called(from, r)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(label.Label, *parse.Rule) error); ok {
 		r0 = rf(from, r)
 	} else {
 		r0 = ret.Error(0)

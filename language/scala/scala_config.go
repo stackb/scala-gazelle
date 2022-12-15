@@ -126,10 +126,7 @@ func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, 
 	}
 	for _, resolver := range c.conflictResolvers {
 		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol); ok {
-			log.Printf("Conflict resolver was successful %q: %s", resolver.Name(), imp.Imp)
 			return resolved, true
-		} else {
-			log.Printf("Conflict resolver failed %q: %s", resolver.Name(), imp.Imp)
 		}
 	}
 	return nil, false
