@@ -265,6 +265,6 @@ func ExampleTrieScope_String_not_empty() {
 	}
 	fmt.Println(scope)
 	// output:
-	// javalangString (java.lang.String<CLASS> //:<java>)
-	// scalaAny (scala.Any<CLASS> //:<java>)
+	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// scala.Any (scala.Any<CLASS> //:<java>)
 }
