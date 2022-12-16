@@ -24,5 +24,5 @@ func (m *LabelNameRewriteSpec) Rewrite(from label.Label) label.Label {
 	if !(m.Src == from.Name || m.Src == "%{name}") {
 		return from
 	}
-	return label.New(from.Repo, from.Pkg, strings.ReplaceAll(m.Dst, "%{name}", from.Name))
+	return label.Label{Repo: from.Repo, Pkg: from.Pkg, Name: strings.ReplaceAll(m.Dst, "%{name}", from.Name)}
 }
