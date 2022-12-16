@@ -37,3 +37,8 @@ func (r *TrimPrefixScope) GetScope(name string) (Scope, bool) {
 func (r *TrimPrefixScope) GetSymbols(name string) []*Symbol {
 	return r.next.GetSymbols(strings.TrimPrefix(name, r.prefix))
 }
+
+// String implements the fmt.Stringer interface
+func (r *TrimPrefixScope) String() string {
+	return r.next.String()
+}
