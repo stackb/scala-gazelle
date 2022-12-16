@@ -54,7 +54,8 @@ func (r *ChainScope) GetSymbols(prefix string) []*Symbol {
 // String implements the fmt.Stringer interface
 func (r *ChainScope) String() string {
 	var buf strings.Builder
-	for _, next := range r.chain {
+	for i, next := range r.chain {
+		buf.WriteString(fmt.Sprintf("--- layer %d ---\n", i))
 		buf.WriteString(next.String())
 		buf.WriteRune('\n')
 	}
