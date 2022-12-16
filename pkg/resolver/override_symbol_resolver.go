@@ -20,9 +20,9 @@ func NewOverrideSymbolResolver(lang string) *OverrideSymbolResolver {
 }
 
 // ResolveSymbol implements the SymbolResolver interface
-func (sr *OverrideSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, error) {
+func (sr *OverrideSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, bool) {
 	if to, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, sr.lang); ok {
-		return NewSymbol(sppb.ImportType_OVERRIDE, imp, overrideProviderName, to), nil
+		return NewSymbol(sppb.ImportType_OVERRIDE, imp, overrideProviderName, to), true
 	}
-	return nil, ErrImportNotFound
+	return nil, false
 }

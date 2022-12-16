@@ -185,7 +185,7 @@ func (_m *Universe) PutSymbol(known *resolver.Symbol) error {
 }
 
 // ResolveSymbol provides a mock function with given fields: c, ix, from, lang, sym
-func (_m *Universe) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*resolver.Symbol, error) {
+func (_m *Universe) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*resolver.Symbol, bool) {
 	ret := _m.Called(c, ix, from, lang, sym)
 
 	var r0 *resolver.Symbol
@@ -197,11 +197,11 @@ func (_m *Universe) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 		}
 	}
 
-	var r1 error
-	if rf, ok := ret.Get(1).(func(*config.Config, *resolve.RuleIndex, label.Label, string, string) error); ok {
+	var r1 bool
+	if rf, ok := ret.Get(1).(func(*config.Config, *resolve.RuleIndex, label.Label, string, string) bool); ok {
 		r1 = rf(c, ix, from, lang, sym)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(bool)
 	}
 
 	return r0, r1

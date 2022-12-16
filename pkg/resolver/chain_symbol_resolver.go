@@ -18,17 +18,11 @@ func NewChainSymbolResolver(chain ...SymbolResolver) *ChainSymbolResolver {
 }
 
 // ResolveSymbol implements the SymbolResolver interface
-func (r *ChainSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, error) {
+func (r *ChainSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, bool) {
 	for _, next := range r.chain {
-		known, err := next.ResolveSymbol(c, ix, from, lang, imp)
-		if err == nil {
-			return known, err
+		if sym, ok := next.ResolveSymbol(c, ix, from, lang, imp); ok {
+			return sym, true
 		}
-		if err == ErrImportNotFound {
-			continue
-		}
-		return nil, err
 	}
-
-	return nil, ErrImportNotFound
+	return nil, false
 }

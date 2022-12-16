@@ -3,7 +3,6 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "resolver",
     srcs = [
-        "ambiguous_symbol_error.go",
         "chain_scope.go",
         "chain_symbol_resolver.go",
         "conflict_resolver.go",

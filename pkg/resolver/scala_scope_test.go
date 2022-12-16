@@ -46,25 +46,26 @@ func Example_newScalaScope_String() {
 
 	fmt.Println(scala)
 	// output:
+	//
 	// --- layer 0 ---
-	// java.lang (java.lang<PACKAGE> //:<java>)
-	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// java <nil>
+	// └ lang (java.lang<PACKAGE> //:<java>)
+	//   └ String (java.lang.String<CLASS> //:<java>)
 	// scala (scala<PACKAGE> //:<java>)
-	// scala.Any (scala.Any<CLASS> //:<java>)
+	// └ Any (scala.Any<CLASS> //:<java>)
 	//
 	// --- layer 1 ---
-	//  (scala<PACKAGE> //:<java>)
 	// Any (scala.Any<CLASS> //:<java>)
 	//
 	// --- layer 2 ---
-	//  (java.lang<PACKAGE> //:<java>)
 	// String (java.lang.String<CLASS> //:<java>)
 	//
 	// --- layer 3 ---
-	// java.lang (java.lang<PACKAGE> //:<java>)
-	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// java <nil>
+	// └ lang (java.lang<PACKAGE> //:<java>)
+	//   └ String (java.lang.String<CLASS> //:<java>)
 	// scala (scala<PACKAGE> //:<java>)
-	// scala.Any (scala.Any<CLASS> //:<java>)
+	// └ Any (scala.Any<CLASS> //:<java>)
 }
 
 func TestScalaScope(t *testing.T) {

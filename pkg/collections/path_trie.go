@@ -1,7 +1,10 @@
 package collections
 
 import (
+	"fmt"
+	"io"
 	"sort"
+	"strings"
 
 	"github.com/dghubble/trie"
 )
@@ -167,6 +170,35 @@ func (trie *PathTrie) WalkPath(key string, walker trie.WalkFunc) error {
 		}
 	}
 	return nil
+}
+
+// String implements the fmt.Stringer interface.
+func (trie *PathTrie) String() string {
+	var buf strings.Builder
+	trie.Fprint(&buf, true, "")
+	return buf.String()
+}
+
+// Fprint prints a tree structure to the given writer.
+func (trie *PathTrie) Fprint(w io.Writer, root bool, padding string) {
+	if trie == nil {
+		return
+	}
+
+	keys := make([]string, 0, len(trie.children))
+	for key := range trie.children {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	index := 0
+	for _, k := range keys {
+		v := trie.children[k]
+		name := fmt.Sprintf("%s %v", k, v.value)
+		fmt.Fprintf(w, "%s%s\n", padding+getBoxPadding(root, getBoxType(index, len(trie.children))), name)
+		v.Fprint(w, false, padding+getBoxPadding(root, getBoxTypeExternal(index, len(trie.children))))
+		index++
+	}
 }
 
 // PathTrie node and the part string key of the child the path descends into.

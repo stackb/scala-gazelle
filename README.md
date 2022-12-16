@@ -795,7 +795,7 @@ Generates:
 ```bazel
 scala_binary(
     name = "app",
-    # ❌ AbstractServiceBase<ERROR> import not found (EXTENDS of foo.allocation.Main)
+    # ❌ AbstractServiceBase<ERROR> symbol not found (EXTENDS of foo.allocation.Main)
     # ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
     # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
     # ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
@@ -850,7 +850,7 @@ The resolution procedure works as follows:
    yes, stop ✅.
 3. Does the gazelle "rule index" and "cross-resolve" mechanism find a result for
    the import?  If yes, stop ✅.
-4. No label was found.  Mark as `import not found` and move on ❌. 
+4. No label was found.  Mark as `symbol not found` and move on ❌.
 
 # Help
 

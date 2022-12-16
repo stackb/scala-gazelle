@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -15,8 +16,11 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-const debugNameNotFound = false
-const debugExtendsNameNotFound = false
+const (
+	debugNameNotFound        = false
+	debugExtendsNameNotFound = false
+	debugFileScope           = false
+)
 
 type scalaRuleContext struct {
 	// the parent config
@@ -61,10 +65,7 @@ func newScalaRule(
 }
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
-func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	if symbol, ok := r.ctx.scope.GetSymbol(imp); ok {
-		return symbol, nil
-	}
+func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
 	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
@@ -106,32 +107,44 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	var scopes []resolver.Scope
+	direct := resolver.NewTrieScope()
 
 	// gather import scopes
-	for _, imp := range file.Imports {
-		if wimp, ok := isWildcardImport(imp); ok {
+	for _, name := range file.Imports {
+		if wimp, ok := isWildcardImport(name); ok {
 			if scope, ok := r.ctx.scope.GetScope(wimp); ok {
 				scopes = append(scopes, scope)
-			} else {
+			} else if debugNameNotFound {
 				log.Printf("%s | warning: wildcard import scope not found: %s", r.ctx.from, wimp)
 			}
 		} else {
-			imports.Put(resolver.NewDirectImport(imp, file))
+			imp := resolver.NewDirectImport(name, file)
+			imports.Put(imp)
+			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
+				imp.Symbol = sym
+				direct.Put(importBasename(name), sym)
+			} else if debugNameNotFound {
+				log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, name)
+			}
 		}
 	}
 	// gather package scopes
 	for _, pkg := range file.Packages {
 		if scope, ok := r.ctx.scope.GetScope(pkg); ok {
 			scopes = append(scopes, scope)
-		} else {
+		} else if debugNameNotFound {
 			log.Printf("%s | warning: package scope not found: %s", r.ctx.from, pkg)
 		}
 	}
 
 	// add in outer scope
-	scopes = append(scopes, r.ctx.scope)
+	scopes = append(scopes, r.ctx.scope, direct)
 	// build final scope used to resolve names in the file.
 	scope := resolver.NewChainScope(scopes...)
+
+	if debugFileScope {
+		log.Printf("%s scope:\n%s", file.Filename, scope.String())
+	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
@@ -160,8 +173,8 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		}
 		if sym, ok := scope.GetSymbol(name); ok {
 			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
-		} else if debugNameNotFound {
-			log.Printf("%s | %s: name not found: %s", r.ctx.from, file.Filename, name)
+		} else {
+			imports.Put(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
 	}
 
@@ -218,4 +231,12 @@ func isWildcardImport(imp string) (string, bool) {
 
 func isBinaryRule(kind string) bool {
 	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
+}
+
+func importBasename(imp string) string {
+	index := strings.LastIndex(imp, ".")
+	if index == -1 {
+		return imp
+	}
+	return imp[index+1:]
 }

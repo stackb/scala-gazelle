@@ -280,8 +280,9 @@ func ExampleTrieScope_String() {
 	fmt.Println(scope)
 	// output:
 	//
-	// java.lang (java.lang<PACKAGE> //:<java>)
-	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// java <nil>
+	// └ lang (java.lang<PACKAGE> //:<java>)
+	//   └ String (java.lang.String<CLASS> //:<java>)
 	// scala (scala<PACKAGE> //:<java>)
-	// scala.Any (scala.Any<CLASS> //:<java>)
+	// └ Any (scala.Any<CLASS> //:<java>)
 }
