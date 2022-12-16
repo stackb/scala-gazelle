@@ -9,11 +9,12 @@ import (
 func TestScala(t *testing.T) {
 	goldentest.FromDir("language/scala",
 		goldentest.WithOnlyTests(
-			"maven_provider",
-			"protobuf_provider",
-			"source_provider",
-			"override_provider",
 			"java_provider",
+			"maven_provider",
+			"override_provider",
+			"protobuf_provider",
+			"resolve_kind_rewrite_name",
+			"source_provider",
 		),
 	).Run(t, "gazelle")
 }

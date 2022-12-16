@@ -182,7 +182,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		return nil, err
 	}
 
-	from := label.New("", s.rel, r.Name())
+	from := s.cfg.maybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
 
 	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
 	if err != nil {

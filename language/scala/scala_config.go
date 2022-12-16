@@ -333,6 +333,13 @@ func (c *scalaConfig) String() string {
 	return fmt.Sprintf("scalaConfig rel=%q, annotations=%+v", c.rel, c.annotations)
 }
 
+func (c *scalaConfig) maybeRewrite(kind string, from label.Label) label.Label {
+	if spec, ok := c.labelNameRewrites[kind]; ok {
+		return spec.Rewrite(from)
+	}
+	return from
+}
+
 type overrideSpec struct {
 	imp  resolve.ImportSpec
 	lang string
