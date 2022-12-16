@@ -113,5 +113,5 @@ func importSegmenter(path string, start int) (segment string, next int) {
 	if end == -1 {
 		return path[start:], -1
 	}
-	return path[start : start+end+1], start + end + 1
+	return path[start : start+end+1], start + end + 2
 }
