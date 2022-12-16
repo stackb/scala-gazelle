@@ -1,7 +1,11 @@
 package resolver
 
+import "fmt"
+
 // Scope is an index of known symbols.
 type Scope interface {
+	fmt.Stringer
+
 	// GetScope returns a scope for th symbol under the given prefix.
 	GetScope(name string) (Scope, bool)
 

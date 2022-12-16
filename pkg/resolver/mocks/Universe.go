@@ -207,6 +207,20 @@ func (_m *Universe) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 	return r0, r1
 }
 
+// String provides a mock function with given fields:
+func (_m *Universe) String() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // SymbolProviders provides a mock function with given fields:
 func (_m *Universe) SymbolProviders() []resolver.SymbolProvider {
 	ret := _m.Called()

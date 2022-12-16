@@ -1,6 +1,8 @@
 package resolver
 
 import (
+	"fmt"
+
 	"github.com/bazelbuild/bazel-gazelle/label"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -31,4 +33,9 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 		Provider: provider,
 		Label:    from,
 	}
+}
+
+// String implements fmt.Stringer
+func (s *Symbol) String() string {
+	return fmt.Sprintf("(%s<%v> %s<%v>)", s.Name, s.Type, s.Label, s.Provider)
 }

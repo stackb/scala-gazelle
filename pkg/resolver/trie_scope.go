@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -100,6 +101,16 @@ func (r *TrieScope) PutSymbol(symbol *Symbol) error {
 	}
 	r.trie.Put(symbol.Name, symbol)
 	return nil
+}
+
+// String implements the fmt.Stringer interface.
+func (r *TrieScope) String() string {
+	var buf strings.Builder
+	r.trie.Walk(func(key string, value interface{}) error {
+		_, err := buf.WriteString(fmt.Sprintf("%s %v\n", key, value))
+		return err
+	})
+	return buf.String()
 }
 
 // importSegmenter segments string key paths by dot separators. For example,

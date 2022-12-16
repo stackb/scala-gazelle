@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -236,4 +237,34 @@ func TestImportSegmenter(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ExampleTrieScope_String_empty() {
+	scope := NewTrieScope()
+	fmt.Println(scope)
+	// output:
+	//
+}
+
+func ExampleTrieScope_String_not_empty() {
+	scope := NewTrieScope()
+
+	for _, symbol := range []*Symbol{
+		{
+			Type:     sppb.ImportType_CLASS,
+			Name:     "java.lang.String",
+			Provider: "java",
+		},
+		{
+			Type:     sppb.ImportType_CLASS,
+			Name:     "scala.Any",
+			Provider: "java",
+		},
+	} {
+		scope.PutSymbol(symbol)
+	}
+	fmt.Println(scope)
+	// output:
+	// javalangString (java.lang.String<CLASS> //:<java>)
+	// scalaAny (scala.Any<CLASS> //:<java>)
 }
