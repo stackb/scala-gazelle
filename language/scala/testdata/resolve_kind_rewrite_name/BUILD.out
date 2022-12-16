@@ -1,3 +1,3 @@
 # gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library
 # gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
-# gazelle:resolve_kind_rewrite_name scala_helper_library %{name}_helper
+# gazelle:resolve_kind_rewrite_name scala_helper_library %{name} %{name}_helper

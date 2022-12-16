@@ -2,5 +2,5 @@ load("//rules:scala.bzl", "scala_helper_library")
 
 scala_helper_library(
     name = "lib",
-    srcs = ["Lib.scala"],
+    srcs = ["Helper.scala"],
 )
