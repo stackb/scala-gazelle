@@ -115,7 +115,7 @@ func (r *TrieScope) String() string {
 }
 
 // importSegmenter segments string key paths by dot separators. For example,
-// ".a.b.c" -> (".a", 2), (".b", 4), (".c", -1) in successive calls. It does
+// ".a.b.c" -> ("a", 2), ("b", 4), ("c", -1) in successive calls. It does
 // not allocate any heap memory.
 func importSegmenter(path string, start int) (segment string, next int) {
 	if len(path) == 0 || start < 0 || start > len(path)-1 {
