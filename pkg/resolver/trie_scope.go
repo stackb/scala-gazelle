@@ -13,6 +13,7 @@ import (
 
 var scopePathTrieConfig = &collections.PathTrieConfig{
 	Segmenter: importSegmenter,
+	Separator: ".",
 }
 
 // TrieScope implements Scope using a trie.
