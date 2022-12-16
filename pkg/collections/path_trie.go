@@ -4,7 +4,7 @@ import "github.com/dghubble/trie"
 
 // PathTrie is a copy of https://github.com/dghubble/trie/blob/main/path_trie.go
 // with a slightly modified API: this version returns the PathTrie node rather
-// than the interface value on the node.  It also tracks the parent node.
+// than the interface value on the node.
 
 // PathTrie is a trie of string keys and interface{} values. Internal nodes
 // have nil values so stored nil values cannot be distinguished and are
@@ -14,6 +14,7 @@ import "github.com/dghubble/trie"
 // nodes. A classic trie might segment keys by rune (i.e. unicode points).
 type PathTrie struct {
 	segmenter trie.StringSegmenter // key segmenter, must not cause heap allocs
+	separator string
 	value     interface{}
 	children  map[string]*PathTrie
 }
@@ -21,24 +22,24 @@ type PathTrie struct {
 // PathTrieConfig for building a path trie with different segmenter
 type PathTrieConfig struct {
 	Segmenter trie.StringSegmenter
-}
-
-// NewPathTrie allocates and returns a new *PathTrie.
-func NewPathTrie() *PathTrie {
-	return &PathTrie{
-		segmenter: trie.PathSegmenter,
-	}
+	Separator string
 }
 
 // NewPathTrieWithConfig allocates and returns a new *PathTrie with the given *PathTrieConfig
 func NewPathTrieWithConfig(config *PathTrieConfig) *PathTrie {
 	segmenter := trie.PathSegmenter
-	if config != nil && config.Segmenter != nil {
-		segmenter = config.Segmenter
+	separator := ""
+	if config != nil {
+		if config.Segmenter != nil {
+			segmenter = config.Segmenter
+		}
+		if config.Separator != "" {
+			separator = config.Separator
+		}
 	}
-
 	return &PathTrie{
 		segmenter: segmenter,
+		separator: separator,
 	}
 }
 
@@ -46,6 +47,7 @@ func NewPathTrieWithConfig(config *PathTrieConfig) *PathTrie {
 func (trie *PathTrie) newPathTrie() *PathTrie {
 	return &PathTrie{
 		segmenter: trie.segmenter,
+		separator: trie.separator,
 	}
 }
 
@@ -128,7 +130,7 @@ func (trie *PathTrie) Delete(key string) bool {
 // an error, the walk is aborted.
 // The traversal is depth first with no guaranteed order.
 func (trie *PathTrie) Walk(walker trie.WalkFunc) error {
-	return trie.walk("", walker)
+	return trie.walk("", 0, walker)
 }
 
 // WalkPath iterates over each key/value in the path in trie from the root to
@@ -169,14 +171,19 @@ type nodeStr struct {
 	part string
 }
 
-func (trie *PathTrie) walk(key string, walker trie.WalkFunc) error {
+func (trie *PathTrie) walk(key string, depth int, walker trie.WalkFunc) error {
 	if trie.value != nil {
 		if err := walker(key, trie.value); err != nil {
 			return err
 		}
 	}
 	for part, child := range trie.children {
-		if err := child.walk(key+part, walker); err != nil {
+		k := key
+		if depth != 0 {
+			k += trie.separator
+		}
+		k += part
+		if err := child.walk(k, depth+1, walker); err != nil {
 			return err
 		}
 	}
