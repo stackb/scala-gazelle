@@ -9,7 +9,6 @@ go_library(
         "conflict_resolver.go",
         "conflict_resolver_registry.go",
         "cross_symbol_resolver.go",
-        "flat_scope.go",
         "global_conflict_resolver_registry.go",
         "global_symbol_provider_registry.go",
         "import.go",
