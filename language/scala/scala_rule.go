@@ -15,8 +15,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-const debugNameNotFound = false
-const debugExtendsNameNotFound = false
+const debugNameNotFound = true
+const debugExtendsNameNotFound = true
 
 type scalaRuleContext struct {
 	// the parent config
@@ -105,7 +105,15 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
-	var scopes []resolver.Scope
+	direct := resolver.NewTrieScope()
+	scopes := []resolver.Scope{direct}
+
+	if scala, ok := r.ctx.scope.GetScope("scala"); ok {
+		scopes = append(scopes, scala)
+	}
+	if java, ok := r.ctx.scope.GetScope("java.lang"); ok {
+		scopes = append(scopes, java)
+	}
 
 	// gather import scopes
 	for _, imp := range file.Imports {
@@ -117,6 +125,9 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			}
 		} else {
 			imports.Put(resolver.NewDirectImport(imp, file))
+			if sym, ok := r.ctx.scope.GetSymbol(imp); ok {
+				direct.PutSymbol(sym)
+			}
 		}
 	}
 	// gather package scopes
@@ -133,6 +144,11 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	// build final scope used to resolve names in the file.
 	scope := resolver.NewChainScope(scopes...)
 
+	if true {
+		log.Printf("scope of %v:", r.ctx.from)
+		log.Println(direct)
+	}
+
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
 	for token, extends := range file.Extends {
@@ -146,7 +162,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
-				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
+				imports.Put(resolver.NewExtendsImport(sym.Name, file, name+"|"+imp, sym))
 			} else if debugExtendsNameNotFound {
 				log.Printf("%s | %s: extends name not found: %s", r.ctx.from, file.Filename, name)
 			}
@@ -159,7 +175,11 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			continue
 		}
 		if sym, ok := scope.GetSymbol(name); ok {
-			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
+			if !(sym.Type == sppb.ImportType_PACKAGE || sym.Type == sppb.ImportType_PROTO_PACKAGE) {
+				imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
+			} else {
+				log.Printf("%s | %s: name resolved to package (skipping): %s", r.ctx.from, file.Filename, name)
+			}
 		} else if debugNameNotFound {
 			log.Printf("%s | %s: name not found: %s", r.ctx.from, file.Filename, name)
 		}

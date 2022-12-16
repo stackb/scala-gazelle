@@ -16,6 +16,8 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+const mavenName = "maven"
+
 // MavenProvider is a provider of symbols for the
 // bazelbuild/rules_jvm_external gazelle extension.
 type MavenProvider struct {
@@ -36,7 +38,7 @@ func NewMavenProvider(lang string) *MavenProvider {
 
 // Name implements part of the provider.SymbolProvider interface.
 func (p *MavenProvider) Name() string {
-	return "maven"
+	return mavenName
 }
 
 // RegisterFlags implements part of the provider.SymbolProvider interface.

@@ -13,6 +13,12 @@ func (sl *scalaLang) onResolve() {
 		}
 	}
 
+	// var err error
+	// sl.universe, err = newScalaScope(sl.universe)
+	// if err != nil {
+	// 	log.Printf("setting up final scope: %v", err)
+	// }
+
 	if sl.cacheFileFlagValue != "" {
 		if err := sl.writeScalaRuleCacheFile(); err != nil {
 			log.Fatalf("failed to write cache: %v", err)

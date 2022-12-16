@@ -88,6 +88,20 @@ func (_m *Scope) PutSymbol(known *resolver.Symbol) error {
 	return r0
 }
 
+// String provides a mock function with given fields:
+func (_m *Scope) String() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewScope interface {
 	mock.TestingT
 	Cleanup(func())

@@ -55,8 +55,8 @@ type scalaLang struct {
 	knownRules map[label.Label]*rule.Rule
 	// conflictResolvers is a map of all known generated rules
 	conflictResolvers map[string]resolver.ConflictResolver
-	// globalScope includes all known symbols in the universe
-	globalScope resolver.Scope
+	// universe includes all known symbols in the universe
+	universe resolver.Scope
 	// symbolProviders is a list of providers
 	symbolProviders []resolver.SymbolProvider
 	// symbolResolver is our top-level known import resolver implementation
@@ -89,7 +89,7 @@ func NewLanguage() language.Language {
 
 	lang := &scalaLang{
 		cache:                &scpb.Cache{},
-		globalScope:          resolver.NewTrieScope(),
+		universe:             resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,

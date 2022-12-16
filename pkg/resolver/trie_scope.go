@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -102,8 +103,18 @@ func (r *TrieScope) PutSymbol(symbol *Symbol) error {
 	return nil
 }
 
+// String implements the fmt.Stringer interface.
+func (r *TrieScope) String() string {
+	var buf strings.Builder
+	r.trie.Walk(func(key string, value interface{}) error {
+		_, err := buf.WriteString(fmt.Sprintf("%s %v\n", key, value))
+		return err
+	})
+	return buf.String()
+}
+
 // importSegmenter segments string key paths by dot separators. For example,
-// ".a.b.c" -> (".a", 2), (".b", 4), (".c", -1) in successive calls. It does
+// "a.b.c" -> ("a", 2), ("b", 4), ("c", -1) in successive calls. It does
 // not allocate any heap memory.
 func importSegmenter(path string, start int) (segment string, next int) {
 	if len(path) == 0 || start < 0 || start > len(path)-1 {
@@ -113,5 +124,5 @@ func importSegmenter(path string, start int) (segment string, next int) {
 	if end == -1 {
 		return path[start:], -1
 	}
-	return path[start : start+end+1], start + end + 1
+	return path[start : start+end+1], start + end + 2 // +2 skips over the '.'
 }

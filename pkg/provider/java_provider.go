@@ -18,6 +18,7 @@ import (
 )
 
 const debugUnresolvedSuperclass = false
+const javaName = "java"
 
 // JavaProvider is a provider of symbols for a set of jarindex protos.
 type JavaProvider struct {
@@ -40,7 +41,7 @@ func NewJavaProvider() *JavaProvider {
 
 // Name implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) Name() string {
-	return "java"
+	return javaName
 }
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
@@ -157,7 +158,7 @@ func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label
 }
 
 func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) *resolver.Symbol {
-	symbol := resolver.NewSymbol(impType, imp, p.Name(), from)
+	symbol := resolver.NewSymbol(impType, imp, javaName, from)
 	p.scope.PutSymbol(symbol)
 	return symbol
 }
