@@ -123,20 +123,16 @@ func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw in
 	// part 1: deps
 
 	for _, imp := range imports.Values() {
-		// has it already been resolved?
-		if imp.Symbol != nil {
+		// has it already been settled?
+		if imp.Symbol != nil || imp.Error != nil {
 			continue
 		}
-
 		// resolve the symbol
-		symbol, err := scalaRule.ResolveSymbol(ctx.Config, ctx.RuleIndex, ctx.From, scalaLangName, imp.Imp)
-		// resolve error? move on.
-		if err != nil {
-			imp.Error = err
-			continue
+		if symbol, ok := scalaRule.ResolveSymbol(ctx.Config, ctx.RuleIndex, ctx.From, scalaLangName, imp.Imp); ok {
+			imp.Symbol = symbol
+		} else {
+			imp.Error = resolver.ErrSymbolNotFound
 		}
-
-		imp.Symbol = symbol
 	}
 
 	// deal with symbol conflicts after the first pass

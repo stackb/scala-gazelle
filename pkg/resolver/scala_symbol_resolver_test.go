@@ -61,7 +61,7 @@ func TestScalaSymbolResolver(t *testing.T) {
 					mock.MatchedBy(captureSymbol),
 				).
 				Maybe().
-				Return(nil, nil)
+				Return(nil, false)
 
 			rslv := resolver.NewScalaSymbolResolver(symbolResolver)
 			c := config.New()

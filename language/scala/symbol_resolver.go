@@ -21,6 +21,6 @@ func newUniverseResolver(scope resolver.Scope) resolver.SymbolResolver {
 }
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
-func (sl *scalaLang) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
+func (sl *scalaLang) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
 	return sl.symbolResolver.ResolveSymbol(c, ix, from, lang, imp)
 }

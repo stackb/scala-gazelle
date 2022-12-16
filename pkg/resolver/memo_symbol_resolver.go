@@ -20,13 +20,13 @@ func NewMemoSymbolResolver(next SymbolResolver) *MemoSymbolResolver {
 }
 
 // ResolveSymbol implements the SymbolResolver interface
-func (r *MemoSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, error) {
+func (r *MemoSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, bool) {
 	if sym, ok := r.cache[imp]; ok {
-		return sym, nil
+		return sym, true
 	}
-	sym, err := r.next.ResolveSymbol(c, ix, from, lang, imp)
-	if sym != nil && err == nil {
+	if sym, ok := r.next.ResolveSymbol(c, ix, from, lang, imp); ok {
 		r.cache[imp] = sym
+		return sym, true
 	}
-	return sym, err
+	return nil, false
 }

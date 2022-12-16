@@ -16,9 +16,9 @@ func NewScopeSymbolResolver(scope Scope) *ScopeSymbolResolver {
 }
 
 // ResolveSymbol implements the ImportResolver interface
-func (sr *ScopeSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, symbol string) (*Symbol, error) {
-	if known, ok := sr.scope.GetSymbol(symbol); ok {
-		return known, nil
+func (sr *ScopeSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, symbol string) (*Symbol, bool) {
+	if sym, ok := sr.scope.GetSymbol(symbol); ok {
+		return sym, true
 	}
-	return nil, ErrSymbolNotFound
+	return nil, false
 }

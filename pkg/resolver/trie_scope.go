@@ -112,6 +112,10 @@ func (r *TrieScope) Put(name string, symbol *Symbol) error {
 
 // String implements the fmt.Stringer interface.
 func (r *TrieScope) String() string {
+	return r.trie.String()
+}
+
+func (r *TrieScope) Lines() string {
 	var buf strings.Builder
 	r.trie.Walk(func(key string, value interface{}) error {
 		_, err := buf.WriteString(fmt.Sprintf("%s %v\n", key, value))

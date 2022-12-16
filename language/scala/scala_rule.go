@@ -62,10 +62,7 @@ func newScalaRule(
 }
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
-func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, error) {
-	if symbol, ok := r.ctx.scope.GetSymbol(imp); ok {
-		return symbol, nil
-	}
+func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
 	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
@@ -144,6 +141,8 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	scopes = append(scopes, r.ctx.scope, direct)
 	// build final scope used to resolve names in the file.
 	scope := resolver.NewChainScope(scopes...)
+
+	log.Printf("%s scope:\n%s", file.Filename, scope.String())
 
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.

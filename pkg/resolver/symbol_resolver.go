@@ -16,5 +16,5 @@ var ErrSymbolNotFound = fmt.Errorf("symbol not found")
 type SymbolResolver interface {
 	// ResolveSymbol takes the given config, gazelle rule index, and an
 	// import to resolve.
-	ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*Symbol, error)
+	ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*Symbol, bool)
 }

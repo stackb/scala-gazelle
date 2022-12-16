@@ -21,7 +21,7 @@ func NewScalaSymbolResolver(next SymbolResolver) *ScalaSymbolResolver {
 }
 
 // ResolveSymbol implements the SymbolResolver interface
-func (sr *ScalaSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, error) {
+func (sr *ScalaSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, bool) {
 	imp = strings.TrimPrefix(imp, "_root_.")
 	imp = strings.TrimSuffix(imp, "._")
 	return sr.next.ResolveSymbol(c, ix, from, lang, imp)
