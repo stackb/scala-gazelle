@@ -2,6 +2,7 @@ package resolver_test
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -36,7 +37,9 @@ func Example_newScalaScope_String() {
 			Provider: "java",
 		},
 	} {
-		scope.PutSymbol(symbol)
+		if err := scope.PutSymbol(symbol); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	scala, _ := resolver.NewScalaScope(scope)
