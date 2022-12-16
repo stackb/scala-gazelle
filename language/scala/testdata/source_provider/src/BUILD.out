@@ -2,6 +2,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", 
 
 scala_library(
     name = "lib",
+    # ✅ a.b.c.Lib<OBJECT> //src:lib<scala_library> (RESOLVED_NAME of Lib.scala via "Lib")
     srcs = ["a/b/c/Lib.scala"],
 )
 
