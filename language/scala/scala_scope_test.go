@@ -11,6 +11,56 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
+func Example_newScalaScope_String() {
+	scope := resolver.NewTrieScope()
+
+	for _, symbol := range []*resolver.Symbol{
+		{
+			Type:     sppb.ImportType_PACKAGE,
+			Name:     "java.lang",
+			Provider: "java",
+		},
+		{
+			Type:     sppb.ImportType_CLASS,
+			Name:     "java.lang.String",
+			Provider: "java",
+		},
+		{
+			Type:     sppb.ImportType_PACKAGE,
+			Name:     "scala",
+			Provider: "java",
+		},
+		{
+			Type:     sppb.ImportType_CLASS,
+			Name:     "scala.Any",
+			Provider: "java",
+		},
+	} {
+		scope.PutSymbol(symbol)
+	}
+
+	scala, _ := newScalaScope(scope)
+
+	fmt.Println(scala)
+	// output:
+	// java.lang (java.lang<PACKAGE> //:<java>)
+	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// scala (scala<PACKAGE> //:<java>)
+	// scala.Any (scala.Any<CLASS> //:<java>)
+	//
+	//  (scala<PACKAGE> //:<java>)
+	// Any (scala.Any<CLASS> //:<java>)
+	//
+	//  (java.lang<PACKAGE> //:<java>)
+	// String (java.lang.String<CLASS> //:<java>)
+	//
+	// java.lang (java.lang<PACKAGE> //:<java>)
+	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// scala (scala<PACKAGE> //:<java>)
+	// scala.Any (scala.Any<CLASS> //:<java>)
+
+}
+
 func TestScalaScope(t *testing.T) {
 	for name, tc := range map[string]struct {
 		known   []*resolver.Symbol
