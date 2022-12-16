@@ -110,26 +110,21 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	direct := resolver.NewTrieScope()
 
 	// gather import scopes
-	for _, imp := range file.Imports {
-		if wimp, ok := isWildcardImport(imp); ok {
+	for _, name := range file.Imports {
+		if wimp, ok := isWildcardImport(name); ok {
 			if scope, ok := r.ctx.scope.GetScope(wimp); ok {
 				scopes = append(scopes, scope)
 			} else if debugNameNotFound {
 				log.Printf("%s | warning: wildcard import scope not found: %s", r.ctx.from, wimp)
 			}
 		} else {
-			if sym, ok := r.ctx.scope.GetSymbol(imp); ok {
-				direct.Put(importBasename(imp), sym)
-				// we have already found the symbol, go ahead and resolve it
-				// now.
-				resolved := resolver.NewDirectImport(imp, file)
-				resolved.Symbol = sym
-				imports.Put(resolved)
-			} else {
-				if debugNameNotFound {
-					log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, imp)
-				}
-				imports.Put(resolver.NewDirectImport(imp, file))
+			imp := resolver.NewDirectImport(name, file)
+			imports.Put(imp)
+			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
+				imp.Symbol = sym
+				direct.Put(importBasename(name), sym)
+			} else if debugNameNotFound {
+				log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, name)
 			}
 		}
 	}
