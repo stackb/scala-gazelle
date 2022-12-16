@@ -1,6 +1,10 @@
 package collections
 
-import "github.com/dghubble/trie"
+import (
+	"sort"
+
+	"github.com/dghubble/trie"
+)
 
 // PathTrie is a copy of https://github.com/dghubble/trie/blob/main/path_trie.go
 // with a slightly modified API: this version returns the PathTrie node rather
@@ -177,7 +181,13 @@ func (trie *PathTrie) walk(key string, depth int, walker trie.WalkFunc) error {
 			return err
 		}
 	}
-	for part, child := range trie.children {
+	keys := make([]string, 0, len(trie.children))
+	for key := range trie.children {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, part := range keys {
+		child := trie.children[part]
 		k := key
 		if depth != 0 {
 			k += trie.separator

@@ -2,6 +2,8 @@ package scala
 
 import (
 	"log"
+
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 // onResolve is called when gazelle transitions from the generate phase to the
@@ -11,6 +13,13 @@ func (sl *scalaLang) onResolve() {
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
 		}
+	}
+
+	// assign final readonly scala-specific scope
+	if scalaScope, err := resolver.NewScalaScope(sl.globalScope); err != nil {
+		log.Printf("warning: error while setting up final scope: %v (some builtin symbols may not resolve!)", err)
+	} else {
+		sl.globalScope = scalaScope
 	}
 
 	if sl.cacheFileFlagValue != "" {

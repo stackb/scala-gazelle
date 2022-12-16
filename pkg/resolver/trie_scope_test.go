@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -246,13 +247,23 @@ func ExampleTrieScope_String_empty() {
 	//
 }
 
-func ExampleTrieScope_String_not_empty() {
+func ExampleTrieScope_String() {
 	scope := NewTrieScope()
 
 	for _, symbol := range []*Symbol{
 		{
+			Type:     sppb.ImportType_PACKAGE,
+			Name:     "java.lang",
+			Provider: "java",
+		},
+		{
 			Type:     sppb.ImportType_CLASS,
 			Name:     "java.lang.String",
+			Provider: "java",
+		},
+		{
+			Type:     sppb.ImportType_PACKAGE,
+			Name:     "scala",
 			Provider: "java",
 		},
 		{
@@ -261,10 +272,16 @@ func ExampleTrieScope_String_not_empty() {
 			Provider: "java",
 		},
 	} {
-		scope.PutSymbol(symbol)
+		if err := scope.PutSymbol(symbol); err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	fmt.Println(scope)
 	// output:
+	//
+	// java.lang (java.lang<PACKAGE> //:<java>)
 	// java.lang.String (java.lang.String<CLASS> //:<java>)
+	// scala (scala<PACKAGE> //:<java>)
 	// scala.Any (scala.Any<CLASS> //:<java>)
 }
