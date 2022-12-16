@@ -148,7 +148,7 @@ func TestTrieScopeGetScope(t *testing.T) {
 				if symbol, ok := scope.GetSymbol(name); ok {
 					got = append(got, symbol)
 				} else {
-					t.Log("name not found:", name)
+					t.Log("scope not found:", name)
 				}
 			}
 			if diff := cmp.Diff(tc.want, got); diff != "" {
