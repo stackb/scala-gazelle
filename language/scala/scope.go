@@ -21,3 +21,8 @@ func (sl *scalaLang) GetSymbols(prefix string) []*resolver.Symbol {
 func (sl *scalaLang) PutSymbol(symbol *resolver.Symbol) error {
 	return sl.globalScope.PutSymbol(symbol)
 }
+
+// String implements the fmt.Stringer interface.
+func (sl *scalaLang) String() string {
+	return sl.globalScope.String()
+}

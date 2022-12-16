@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"fmt"
+	"strings"
 )
 
 // ChainScope implements Scope over a chain of registries.
@@ -48,4 +49,14 @@ func (r *ChainScope) GetSymbols(prefix string) []*Symbol {
 		}
 	}
 	return nil
+}
+
+// String implements the fmt.Stringer interface
+func (r *ChainScope) String() string {
+	var buf strings.Builder
+	for _, next := range r.chain {
+		buf.WriteString(next.String())
+		buf.WriteRune('\n')
+	}
+	return buf.String()
 }
