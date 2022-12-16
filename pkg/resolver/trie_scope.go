@@ -84,10 +84,16 @@ func (r *TrieScope) GetSymbol(imp string) (*Symbol, bool) {
 
 // PutSymbol implements part of the Scope interface.
 func (r *TrieScope) PutSymbol(symbol *Symbol) error {
+	return r.Put(symbol.Name, symbol)
+}
+
+// Put gives the user control over the name of the symbol to be added to the
+// trie.
+func (r *TrieScope) Put(name string, symbol *Symbol) error {
 	if symbol.Provider == "" {
 		log.Panicf("fatal (missing provider): %+v", symbol)
 	}
-	if current, ok := r.GetSymbol(symbol.Name); ok && current.Name == symbol.Name {
+	if current, ok := r.GetSymbol(name); ok && current.Name == name {
 		if current.Label != symbol.Label {
 			current.Conflicts = append(current.Conflicts, symbol)
 			return nil
@@ -100,7 +106,7 @@ func (r *TrieScope) PutSymbol(symbol *Symbol) error {
 			}
 		}
 	}
-	r.trie.Put(symbol.Name, symbol)
+	r.trie.Put(name, symbol)
 	return nil
 }
 

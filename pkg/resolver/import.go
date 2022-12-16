@@ -50,6 +50,18 @@ func NewResolvedNameImport(imp string, source *sppb.File, name string, symbol *S
 	}
 }
 
+// NewError creates a new err import from the given file,
+// name, and symbol.
+func NewErrorImport(imp string, source *sppb.File, src string, err error) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_IMPORT_KIND_UNKNOWN,
+		Imp:    imp,
+		Source: source,
+		Src:    src,
+		Error:  err,
+	}
+}
+
 // NewImplicitImport creates a new implicit import from the given parent src.
 func NewImplicitImport(imp, src string) *Import {
 	return &Import{

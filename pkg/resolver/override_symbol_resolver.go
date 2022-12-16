@@ -24,5 +24,5 @@ func (sr *OverrideSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.Ru
 	if to, ok := resolve.FindRuleWithOverride(c, resolve.ImportSpec{Lang: lang, Imp: imp}, sr.lang); ok {
 		return NewSymbol(sppb.ImportType_OVERRIDE, imp, overrideProviderName, to), nil
 	}
-	return nil, ErrImportNotFound
+	return nil, ErrSymbolNotFound
 }

@@ -20,5 +20,5 @@ func (sr *ScopeSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleI
 	if known, ok := sr.scope.GetSymbol(symbol); ok {
 		return known, nil
 	}
-	return nil, ErrImportNotFound
+	return nil, ErrSymbolNotFound
 }

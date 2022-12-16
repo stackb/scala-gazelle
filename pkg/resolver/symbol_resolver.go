@@ -8,15 +8,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 )
 
-// ErrImportNotFound is an error value assigned to an Import when the import
-// could not be resolved.
-var ErrImportNotFound = fmt.Errorf("import not found")
+// ErrSymbolNotFound is an error value assigned to an Import when the name could
+// not be resolved.
+var ErrSymbolNotFound = fmt.Errorf("symbol not found")
 
 // SymbolResolver knows how to resolve imports.
 type SymbolResolver interface {
 	// ResolveSymbol takes the given config, gazelle rule index, and an
-	// import to resolve. Implementations should return ErrImportNotFound if
-	// unsuccessful.  If multiple matches are found, return
-	// ImportAmbiguousError.
+	// import to resolve.
 	ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, sym string) (*Symbol, error)
 }

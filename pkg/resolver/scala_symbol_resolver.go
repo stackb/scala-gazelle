@@ -14,7 +14,8 @@ type ScalaSymbolResolver struct {
 	next SymbolResolver
 }
 
-// NewScalaSymbolResolver constructs a new resolver that chains to the given resolver.
+// NewScalaSymbolResolver constructs a new resolver that chains to the given
+// resolver.
 func NewScalaSymbolResolver(next SymbolResolver) *ScalaSymbolResolver {
 	return &ScalaSymbolResolver{next}
 }
@@ -23,8 +24,5 @@ func NewScalaSymbolResolver(next SymbolResolver) *ScalaSymbolResolver {
 func (sr *ScalaSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*Symbol, error) {
 	imp = strings.TrimPrefix(imp, "_root_.")
 	imp = strings.TrimSuffix(imp, "._")
-
-	// TODO: if have unresolved dep, try add 'scala.'
-
 	return sr.next.ResolveSymbol(c, ix, from, lang, imp)
 }

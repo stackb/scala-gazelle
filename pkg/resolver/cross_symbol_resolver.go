@@ -23,7 +23,7 @@ func (sr *CrossSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleI
 	matches := ix.FindRulesByImportWithConfig(c, resolve.ImportSpec{Lang: lang, Imp: imp}, sr.lang)
 	switch len(matches) {
 	case 0:
-		return nil, ErrImportNotFound
+		return nil, ErrSymbolNotFound
 	case 1:
 		return NewSymbol(sppb.ImportType_CROSS_RESOLVE, imp, "cross-resolve", matches[0].Label), nil
 	default:

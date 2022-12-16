@@ -24,11 +24,11 @@ func (r *ChainSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleIn
 		if err == nil {
 			return known, err
 		}
-		if err == ErrImportNotFound {
+		if err == ErrSymbolNotFound {
 			continue
 		}
 		return nil, err
 	}
 
-	return nil, ErrImportNotFound
+	return nil, ErrSymbolNotFound
 }
