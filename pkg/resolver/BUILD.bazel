@@ -18,6 +18,7 @@ go_library(
         "memo_symbol_resolver.go",
         "override_symbol_resolver.go",
         "scala_proto_package_conflict_resolver.go",
+        "scala_scope.go",
         "scala_symbol_resolver.go",
         "scope.go",
         "scope_symbol_resolver.go",
@@ -27,6 +28,7 @@ go_library(
         "symbol_provider_registry.go",
         "symbol_resolver.go",
         "trie_scope.go",
+        "trim_prefix_scope.go",
         "universe.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/resolver",
@@ -47,6 +49,7 @@ go_library(
 go_test(
     name = "resolver_test",
     srcs = [
+        "scala_scope_test.go",
         "scala_symbol_resolver_test.go",
         "scope_map_test.go",
         "trie_scope_test.go",
@@ -55,6 +58,7 @@ go_test(
     deps = [
         "//build/stack/gazelle/scala/parse",
         "//pkg/resolver/mocks",
+        "//pkg/testutil",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
