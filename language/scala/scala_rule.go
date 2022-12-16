@@ -16,8 +16,11 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-const debugNameNotFound = false
-const debugExtendsNameNotFound = false
+const (
+	debugNameNotFound        = false
+	debugExtendsNameNotFound = false
+	debugFileScope           = false
+)
 
 type scalaRuleContext struct {
 	// the parent config
@@ -122,8 +125,10 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 				resolved := resolver.NewDirectImport(imp, file)
 				resolved.Symbol = sym
 				imports.Put(resolved)
-			} else if debugNameNotFound {
-				log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, imp)
+			} else {
+				if debugNameNotFound {
+					log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, imp)
+				}
 				imports.Put(resolver.NewDirectImport(imp, file))
 			}
 		}
@@ -142,7 +147,9 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	// build final scope used to resolve names in the file.
 	scope := resolver.NewChainScope(scopes...)
 
-	log.Printf("%s scope:\n%s", file.Filename, scope.String())
+	if debugFileScope {
+		log.Printf("%s scope:\n%s", file.Filename, scope.String())
+	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
