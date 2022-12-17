@@ -350,7 +350,7 @@ func (c *scalaConfig) mergeDeps(kind string, target *build.ListExpr, deps []labe
 		a, aIsString := target.List[i].(*build.StringExpr)
 		b, bIsString := target.List[j].(*build.StringExpr)
 		if aIsString && bIsString {
-			return a.Token > b.Token
+			return a.Token < b.Token
 		}
 		return false
 	})

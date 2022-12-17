@@ -325,12 +325,6 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 			want:      label.New("", "a", "test"),
 			wantTimes: 1,
 		},
-		"makes repo absolute": {
-			repoName:  "foo",
-			from:      label.New("", "", "test"),
-			want:      label.New("foo", "", "test"),
-			wantTimes: 1,
-		},
 		"absolute remains unchanged": {
 			from:      label.New("bar", "b", "test"),
 			want:      label.New("bar", "b", "test"),
@@ -365,58 +359,6 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 			sc.GetKnownRule(tc.from)
 
 			universe.AssertExpectations(t)
-			if diff := cmp.Diff(tc.want, got); diff != "" {
-				t.Errorf("(-want +got):\n%s", diff)
-			}
-		})
-	}
-}
-
-func TestIsSameImport(t *testing.T) {
-	for name, tc := range map[string]struct {
-		repoName string
-		kind     string
-		from, to label.Label
-		want     bool
-	}{
-		"degenerate": {
-			want: true,
-		},
-		"equal": {
-			from: label.New("corp", "pkg", "name"),
-			to:   label.New("corp", "pkg", "name"),
-			want: true,
-		},
-		"different": {
-			repoName: "corp",
-			from:     label.New("other", "pkg", "name"),
-			to:       label.New("other", "pkg", "name"),
-			want:     true,
-		},
-		"both internal labels": {
-			repoName: "corp",
-			from:     label.New("", "pkg", "name"),
-			to:       label.New("", "pkg", "name"),
-			want:     true,
-		},
-		"from has repo": {
-			repoName: "corp",
-			from:     label.New("corp", "pkg", "name"),
-			to:       label.New("", "pkg", "name"),
-			want:     true,
-		},
-		"to has repo": {
-			repoName: "corp",
-			from:     label.New("", "pkg", "name"),
-			to:       label.New("corp", "pkg", "name"),
-			want:     true,
-		},
-	} {
-		t.Run(name, func(t *testing.T) {
-			c := config.New()
-			c.RepoName = tc.repoName
-			sc := newScalaConfig(mocks.NewUniverse(t), c, "")
-			got := isSameImport(sc, tc.kind, tc.from, tc.to)
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

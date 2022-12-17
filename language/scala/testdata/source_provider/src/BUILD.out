@@ -16,7 +16,7 @@ scala_binary(
     # ❌ main<ERROR> name not found (IMPORT_KIND_UNKNOWN)
     srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
-    deps = ["//src:lib"],
+    deps = [":lib"],
 )
 
 scala_test(
