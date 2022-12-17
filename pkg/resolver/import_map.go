@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"log"
 	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -47,12 +48,13 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 		if imp.Symbol == nil || imp.Error != nil {
 			continue
 		}
-		if seen[imp.Symbol.Label] {
+		dep := imp.Symbol.Label
+		if seen[dep] {
 			continue
 		}
-
-		deps = append(deps, imp.Symbol.Label)
-		seen[imp.Symbol.Label] = true
+		log.Printf("adding dep %s (from=%s)", dep, from)
+		deps = append(deps, dep)
+		seen[dep] = true
 	}
 
 	return

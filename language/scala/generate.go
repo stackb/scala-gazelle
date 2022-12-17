@@ -31,7 +31,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	rules := pkg.Rules()
 	for _, r := range rules {
-		from := label.New(args.Config.RepoName, args.Rel, r.Name())
+		from := label.Label{Pkg: args.Rel, Name: r.Name()}
 		sl.PutKnownRule(from, r)
 	}
 

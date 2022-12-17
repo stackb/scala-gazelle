@@ -137,11 +137,8 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	if from.Name == "" {
 		return nil, false
 	}
-	if from.Repo == "" {
-		from = label.New(c.config.RepoName, from.Pkg, from.Name)
-	}
-	if from.Pkg == "" && from.Repo == c.config.RepoName {
-		from = label.New(from.Repo, c.rel, from.Name)
+	if from.Repo == "" && from.Pkg == "" {
+		from = label.Label{Pkg: c.rel, Name: from.Name}
 	}
 	return c.universe.GetKnownRule(from)
 }
@@ -449,22 +446,6 @@ func parseAnnotation(val string) annotation {
 	default:
 		return AnnotateUnknown
 	}
-}
-
-// isSameImport returns true if the "from" and "to" labels are the same,
-// normalizing to the config.RepoName and performing label name remapping if the
-// kind matches.
-func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
-	if from.Repo == "" {
-		from = label.New(sc.config.RepoName, from.Pkg, from.Name)
-	}
-	if to.Repo == "" {
-		to = label.New(sc.config.RepoName, to.Pkg, to.Name)
-	}
-	if mapping, ok := sc.labelNameRewrites[kind]; ok {
-		from = mapping.Rewrite(from)
-	}
-	return from == to
 }
 
 func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {
