@@ -161,8 +161,8 @@ func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw in
 
 	}
 
-	deps := buildKeepDepsList(sc, r.Attr("deps"))
-	addResolvedDeps(deps, sc, r.Kind(), ctx.From, imports)
+	deps := sc.cleanDeps(r.Attr("deps"))
+	sc.mergeDeps(r.Kind(), deps, imports.Deps(ctx.From))
 	r.SetAttr("deps", deps)
 
 	// part 2: srcs

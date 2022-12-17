@@ -340,6 +340,93 @@ func (c *scalaConfig) maybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
+// mergeDeps takes the given list of existing deps and a list of dependency
+// labels and merges it into a final list.
+func (c *scalaConfig) mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
+
+	for _, dep := range deps {
+		str := &build.StringExpr{Value: dep.String()}
+		target.List = append(target.List, str)
+	}
+
+	sort.Slice(target.List, func(i, j int) bool {
+		a, aIsString := target.List[i].(*build.StringExpr)
+		b, bIsString := target.List[j].(*build.StringExpr)
+		if aIsString && bIsString {
+			return a.Token > b.Token
+		}
+		return false
+	})
+}
+
+// cleanDeps takes the given list of deps and removes those that are expected to
+// be provided again.
+func (c *scalaConfig) cleanDeps(current build.Expr) *build.ListExpr {
+	deps := &build.ListExpr{}
+	if current != nil {
+		if listExpr, ok := current.(*build.ListExpr); ok {
+			for _, expr := range listExpr.List {
+				if c.shouldKeepDep(expr) {
+					deps.List = append(deps.List, expr)
+				}
+			}
+		}
+	}
+	return deps
+}
+
+func (c *scalaConfig) shouldKeepDep(expr build.Expr) bool {
+	// does it have a '# keep' directive?
+	if rule.ShouldKeep(expr) {
+		return true
+	}
+
+	// is the expression something we can parse as a label? If not, just leave
+	// it be.
+	from := labelFromDepExpr(expr)
+	if from == label.NoLabel {
+		return true
+	}
+
+	// if we can find a provider for this label, remove it (it should have been
+	// resolved again if still wanted)
+	if c.canProvide(from) {
+		return false
+	}
+
+	// we didn't find an owner so keep just it, it's not a managed dependency.
+	return true
+}
+
+// labelFromDepExpr returns the label from an expression like "@maven//:guava"
+// or scala_dep("@maven//:guava")
+func labelFromDepExpr(expr build.Expr) label.Label {
+	switch t := expr.(type) {
+	case *build.StringExpr:
+		if from, err := label.Parse(t.Value); err != nil {
+			return label.NoLabel
+		} else {
+			return from
+		}
+	case *build.CallExpr:
+		if ident, ok := t.X.(*build.Ident); ok && ident.Name == "scala_dep" {
+			if len(t.List) == 0 {
+				return label.NoLabel
+			}
+			first := t.List[0]
+			if str, ok := first.(*build.StringExpr); ok {
+				if from, err := label.Parse(str.Value); err != nil {
+					return label.NoLabel
+				} else {
+					return from
+				}
+			}
+		}
+	}
+
+	return label.NoLabel
+}
+
 type overrideSpec struct {
 	imp  resolve.ImportSpec
 	lang string

@@ -3,6 +3,7 @@ package resolver
 import (
 	"sort"
 
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/buildtools/build"
 )
 
@@ -32,6 +33,29 @@ func (imports ImportMap) Values() []*Import {
 		vals[i] = imports[k]
 	}
 	return vals
+}
+
+// Deps returns a de-duplicated list of labels that represent the final deps for
+// a given rule label (from). The list is not sorted under the expectation that
+// sorting will be done elsewhere.
+func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
+	seen := make(map[label.Label]bool)
+	seen[label.NoLabel] = true
+	seen[from] = true
+
+	for _, imp := range imports {
+		if imp.Symbol == nil || imp.Error != nil {
+			continue
+		}
+		if seen[imp.Symbol.Label] {
+			continue
+		}
+
+		deps = append(deps, imp.Symbol.Label)
+		seen[imp.Symbol.Label] = true
+	}
+
+	return
 }
 
 // Put the given import in the map.

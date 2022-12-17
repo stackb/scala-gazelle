@@ -24,7 +24,6 @@ go_library(
         "package_marker_rule.go",
         "progress.go",
         "resolve.go",
-        "resolver.go",
         "scala_config.go",
         "scala_package.go",
         "scala_rule.go",
