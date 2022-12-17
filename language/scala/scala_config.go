@@ -137,11 +137,8 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	if from.Name == "" {
 		return nil, false
 	}
-	if from.Repo == "" {
-		from = label.New(c.config.RepoName, from.Pkg, from.Name)
-	}
-	if from.Pkg == "" && from.Repo == c.config.RepoName {
-		from = label.New(from.Repo, c.rel, from.Name)
+	if from.Repo == "" && from.Pkg == "" {
+		from = label.Label{Pkg: c.rel, Name: from.Name}
 	}
 	return c.universe.GetKnownRule(from)
 }
@@ -340,6 +337,93 @@ func (c *scalaConfig) maybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
+// mergeDeps takes the given list of existing deps and a list of dependency
+// labels and merges it into a final list.
+func (c *scalaConfig) mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
+
+	for _, dep := range deps {
+		str := &build.StringExpr{Value: dep.String()}
+		target.List = append(target.List, str)
+	}
+
+	sort.Slice(target.List, func(i, j int) bool {
+		a, aIsString := target.List[i].(*build.StringExpr)
+		b, bIsString := target.List[j].(*build.StringExpr)
+		if aIsString && bIsString {
+			return a.Token < b.Token
+		}
+		return false
+	})
+}
+
+// cleanDeps takes the given list of deps and removes those that are expected to
+// be provided again.
+func (c *scalaConfig) cleanDeps(current build.Expr) *build.ListExpr {
+	deps := &build.ListExpr{}
+	if current != nil {
+		if listExpr, ok := current.(*build.ListExpr); ok {
+			for _, expr := range listExpr.List {
+				if c.shouldKeepDep(expr) {
+					deps.List = append(deps.List, expr)
+				}
+			}
+		}
+	}
+	return deps
+}
+
+func (c *scalaConfig) shouldKeepDep(expr build.Expr) bool {
+	// does it have a '# keep' directive?
+	if rule.ShouldKeep(expr) {
+		return true
+	}
+
+	// is the expression something we can parse as a label? If not, just leave
+	// it be.
+	from := labelFromDepExpr(expr)
+	if from == label.NoLabel {
+		return true
+	}
+
+	// if we can find a provider for this label, remove it (it should have been
+	// resolved again if still wanted)
+	if c.canProvide(from) {
+		return false
+	}
+
+	// we didn't find an owner so keep just it, it's not a managed dependency.
+	return true
+}
+
+// labelFromDepExpr returns the label from an expression like "@maven//:guava"
+// or scala_dep("@maven//:guava")
+func labelFromDepExpr(expr build.Expr) label.Label {
+	switch t := expr.(type) {
+	case *build.StringExpr:
+		if from, err := label.Parse(t.Value); err != nil {
+			return label.NoLabel
+		} else {
+			return from
+		}
+	case *build.CallExpr:
+		if ident, ok := t.X.(*build.Ident); ok && ident.Name == "scala_dep" {
+			if len(t.List) == 0 {
+				return label.NoLabel
+			}
+			first := t.List[0]
+			if str, ok := first.(*build.StringExpr); ok {
+				if from, err := label.Parse(str.Value); err != nil {
+					return label.NoLabel
+				} else {
+					return from
+				}
+			}
+		}
+	}
+
+	return label.NoLabel
+}
+
 type overrideSpec struct {
 	imp  resolve.ImportSpec
 	lang string
@@ -362,22 +446,6 @@ func parseAnnotation(val string) annotation {
 	default:
 		return AnnotateUnknown
 	}
-}
-
-// isSameImport returns true if the "from" and "to" labels are the same,
-// normalizing to the config.RepoName and performing label name remapping if the
-// kind matches.
-func isSameImport(sc *scalaConfig, kind string, from, to label.Label) bool {
-	if from.Repo == "" {
-		from = label.New(sc.config.RepoName, from.Pkg, from.Name)
-	}
-	if to.Repo == "" {
-		to = label.New(sc.config.RepoName, to.Pkg, to.Name)
-	}
-	if mapping, ok := sc.labelNameRewrites[kind]; ok {
-		from = mapping.Rewrite(from)
-	}
-	return from == to
 }
 
 func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {

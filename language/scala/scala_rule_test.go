@@ -74,7 +74,6 @@ func TestScalaRuleExports(t *testing.T) {
 
 			ctx := &scalaRuleContext{
 				rule:        tc.rule,
-				from:        tc.from,
 				scalaConfig: sc,
 				resolver:    universe,
 				scope:       universe,
@@ -205,7 +204,6 @@ func SkipTestScalaRuleImports(t *testing.T) {
 
 			ctx := &scalaRuleContext{
 				rule:        tc.rule,
-				from:        tc.from,
 				scalaConfig: sc,
 				resolver:    universe,
 				scope:       universe,

@@ -10,7 +10,7 @@ import (
 
 // Imports implements part of the language.Language interface
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
-	from := label.New("", f.Pkg, r.Name())
+	from := label.Label{Pkg: f.Pkg, Name: r.Name()}
 
 	pkg, ok := sl.packages[from.Pkg]
 	if !ok {
@@ -37,6 +37,14 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
+	// gazelle supplies the 'from' label fully-qualified (label.Repo is set to
+	// the current workspace name).  However, all the symbols provided are using
+	// the default workspace, so normalize it here without the repoName to make
+	// matching simpler.
+	if from.Repo == c.RepoName {
+		from.Repo = ""
+	}
+
 	if !sl.isResolvePhase {
 		sl.isResolvePhase = true
 		sl.onResolve()

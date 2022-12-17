@@ -48,7 +48,7 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse coordinate %v: %w", dep.Coord, err)
 		}
-		from := label.New(mavenWorkspaceName, "", bazel.CleanupLabel(c.ArtifactString()))
+		from := label.Label{Repo: mavenWorkspaceName, Name: bazel.CleanupLabel(c.ArtifactString())}
 		labelString := from.String()
 		r.artifacts[dep.Coord] = from
 

@@ -191,7 +191,6 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 
 	ctx := &scalaRuleContext{
 		rule:        r,
-		from:        from,
 		scalaConfig: s.cfg,
 		resolver:    s.universe,
 		scope:       s.universe,
