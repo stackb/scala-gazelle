@@ -25,8 +25,6 @@ const (
 type scalaRuleContext struct {
 	// the parent config
 	scalaConfig *scalaConfig
-	// from is the label for the rule.
-	from label.Label
 	// rule (lowercase) is the parent gazelle rule
 	rule *rule.Rule
 	// scope is a map of symbols that are outside the rule.
@@ -115,7 +113,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if scope, ok := r.ctx.scope.GetScope(wimp); ok {
 				scopes = append(scopes, scope)
 			} else if debugNameNotFound {
-				log.Printf("%s | warning: wildcard import scope not found: %s", r.ctx.from, wimp)
+				log.Printf("%s | warning: wildcard import scope not found: %s", r.pb.Label, wimp)
 			}
 		} else {
 			imp := resolver.NewDirectImport(name, file)
@@ -124,7 +122,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 				imp.Symbol = sym
 				direct.Put(importBasename(name), sym)
 			} else if debugNameNotFound {
-				log.Printf("%s | warning: direct symbol not found: %s", r.ctx.from, name)
+				log.Printf("%s | warning: direct symbol not found: %s", r.pb.Label, name)
 			}
 		}
 	}
@@ -133,7 +131,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		if scope, ok := r.ctx.scope.GetScope(pkg); ok {
 			scopes = append(scopes, scope)
 		} else if debugNameNotFound {
-			log.Printf("%s | warning: package scope not found: %s", r.ctx.from, pkg)
+			log.Printf("%s | warning: package scope not found: %s", r.pb.Label, pkg)
 		}
 	}
 
@@ -161,16 +159,13 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if sym, ok := scope.GetSymbol(imp); ok {
 				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
 			} else if debugExtendsNameNotFound {
-				log.Printf("%s | %s: extends name not found: %s", r.ctx.from, file.Filename, name)
+				log.Printf("%s | %s: extends name not found: %s", r.pb.Label, file.Filename, name)
 			}
 		}
 	}
 
 	// resolve symbols named in the file.  For each one we find, add an import.
 	for _, name := range file.Names {
-		if !r.ctx.scalaConfig.shouldResolveName(r.ctx.from, file, name) {
-			continue
-		}
 		if sym, ok := scope.GetSymbol(name); ok {
 			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {

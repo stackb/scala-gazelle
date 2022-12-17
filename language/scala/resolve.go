@@ -37,7 +37,6 @@ func (sl *scalaLang) Resolve(
 	importsRaw interface{},
 	from label.Label,
 ) {
-	sc := getScalaConfig(c)
 	// gazelle supplies the 'from' label fully-qualified (label.Repo is set to
 	// the current workspace name).  However, all the symbols provided are using
 	// the default workspace, so normalize it here without the repoName to make
@@ -45,8 +44,6 @@ func (sl *scalaLang) Resolve(
 	if from.Repo == c.RepoName {
 		from.Repo = ""
 	}
-	// rewrite to the effective resolve label
-	from = sc.maybeRewrite(r.Kind(), from)
 
 	if !sl.isResolvePhase {
 		sl.isResolvePhase = true
