@@ -218,6 +218,39 @@ func TestScalaRuleImports(t *testing.T) {
 				`✅ com.foo.ClassB<> (IMPLICIT via "com.foo.ClassA")`,
 			},
 		},
+		"transitive require": {
+			globalSymbols: []*resolver.Symbol{
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.foo.proto.FooMessage",
+					Provider: "protobuf",
+					Label:    label.Label{Pkg: "proto", Name: "foo_proto_scala_library"},
+					Requires: []*resolver.Symbol{
+						{
+							Type:     sppb.ImportType_CLASS,
+							Name:     "scalapb.GeneratedMessage",
+							Provider: "java",
+							Label:    label.Label{Repo: "@maven", Name: "scalapb_runtime"},
+						},
+					},
+				},
+			},
+			rule: rule.NewRule("scala_library", "somelib"),
+			from: label.Label{Pkg: "com/foo", Name: "somelib"},
+			files: []*sppb.File{
+				{
+					Filename: "A.scala",
+					Imports:  []string{"com.foo.proto._"},
+					Classes:  []string{"com.foo.ClassA"},
+					Extends: map[string]*sppb.ClassList{
+						"class com.foo.ClassA": {Classes: []string{"FooMessage"}},
+					},
+				},
+			},
+			want: []string{
+				`✅ com.foo.proto.FooMessage<CLASS> //proto:foo_proto_scala_library<protobuf> (EXTENDS of A.scala via "com.foo.ClassA")`,
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			universe := newMockGlobalScope(t, tc.globalSymbols)
