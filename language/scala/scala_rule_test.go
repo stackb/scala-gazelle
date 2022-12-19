@@ -94,13 +94,13 @@ func TestScalaRuleExports(t *testing.T) {
 	}
 }
 
-func SkipTestScalaRuleImports(t *testing.T) {
+func TestScalaRuleImports(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives    []string
 		rule          *rule.Rule
 		from          label.Label
 		files         []*sppb.File
-		globalSymbols []*resolver.Symbol
+		globalSymbols []*resolver.Symbol // list of symbols in global scope
 		want          []string
 	}{
 		"degenerate": {
@@ -108,6 +108,20 @@ func SkipTestScalaRuleImports(t *testing.T) {
 			want: []string{},
 		},
 		"explicit imports + extends": {
+			globalSymbols: []*resolver.Symbol{
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.foo.ClassA",
+					Provider: "source",
+					Label:    label.Label{Pkg: "com/foo", Name: "somelib"},
+				},
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "akka.actor.Actor",
+					Provider: "maven",
+					Label:    label.Label{Repo: "maven", Name: "akka_actor_akka_actor"},
+				},
+			},
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
 			files: []*sppb.File{
@@ -122,9 +136,9 @@ func SkipTestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				"✅ akka.actor.Actor<> (EXTENDS of com.foo.ClassA)",
-				"✅ com.foo.Bar<> (DIRECT of A.scala)",
-				"✅ com.foo.ClassA<> (EXTENDS of com.foo.ClassB)",
+				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				`✅ com.foo.Bar<> (DIRECT of A.scala)`,
+				`✅ com.foo.ClassA<CLASS> //com/foo:somelib<source> (EXTENDS of A.scala via "com.foo.ClassB")`,
 			},
 		},
 		"extends symbol completed by wildcard import": {
@@ -132,8 +146,9 @@ func SkipTestScalaRuleImports(t *testing.T) {
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
 			globalSymbols: []*resolver.Symbol{
 				{
+					Type:     sppb.ImportType_CLASS,
 					Name:     "akka.actor.Actor",
-					Label:    label.Label{Repo: "maven", Name: "akka_actor"},
+					Label:    label.Label{Repo: "maven", Name: "akka_actor_akka_actor"},
 					Provider: "maven",
 				},
 			},
@@ -148,13 +163,20 @@ func SkipTestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				"✅ akka.actor.Actor<> (EXTENDS of com.foo.ClassA)",
-				"✅ akka.actor._<> (DIRECT of A.scala)",
+				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
 			},
 		},
 		"resolve_with via extends": {
 			directives: []string{
 				"resolve_with scala com.typesafe.scalalogging.LazyLogging org.slf4j.Logger",
+			},
+			globalSymbols: []*resolver.Symbol{
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.typesafe.scalalogging.LazyLogging",
+					Label:    label.Label{Repo: "maven", Name: "com_typesafe_scalalogging"},
+					Provider: "maven",
+				},
 			},
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
@@ -168,13 +190,21 @@ func SkipTestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				"✅ com.typesafe.scalalogging.LazyLogging<> (EXTENDS of com.foo.ClassA)",
-				"✅ org.slf4j.Logger<> (IMPLICIT of com.typesafe.scalalogging.LazyLogging)",
+				`✅ com.typesafe.scalalogging.LazyLogging<CLASS> @maven//:com_typesafe_scalalogging<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				`✅ org.slf4j.Logger<> (IMPLICIT via "com.typesafe.scalalogging.LazyLogging")`,
 			},
 		},
 		"resolve_with self type": {
 			directives: []string{
 				"resolve_with scala com.foo.ClassA com.foo.ClassB",
+			},
+			globalSymbols: []*resolver.Symbol{
+				{
+					Type:     sppb.ImportType_CLASS,
+					Name:     "com.foo.ClassA",
+					Provider: "source",
+					Label:    label.Label{Pkg: "com/foo", Name: "somelib"},
+				},
 			},
 			rule: rule.NewRule("scala_library", "somelib"),
 			from: label.Label{Pkg: "com/foo", Name: "somelib"},
@@ -185,12 +215,12 @@ func SkipTestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				"✅ com.foo.ClassB<> (IMPLICIT of com.foo.ClassA)",
+				`✅ com.foo.ClassB<> (IMPLICIT via "com.foo.ClassA")`,
 			},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			universe := mocks.NewUniverse(t)
+			universe := newMockGlobalScope(t, tc.globalSymbols)
 
 			global := resolver.NewTrieScope()
 			for _, symbol := range tc.globalSymbols {
@@ -236,4 +266,37 @@ func makeDirectives(in []string) (out []rule.Directive) {
 		out = append(out, rule.Directive{Key: fields[0], Value: strings.Join(fields[1:], " ")})
 	}
 	return
+}
+
+type mockGlobalScope struct {
+	resolver.Universe
+	Global resolver.Scope
+}
+
+func newMockGlobalScope(t *testing.T, known []*resolver.Symbol) *mockGlobalScope {
+	scope := &mockGlobalScope{
+		Universe: mocks.NewUniverse(t),
+		Global:   resolver.NewTrieScope(),
+	}
+	for _, symbol := range known {
+		scope.Global.PutSymbol(symbol)
+	}
+	return scope
+}
+
+// GetScope returns a scope for th symbol under the given prefix.
+func (m *mockGlobalScope) GetScope(name string) (resolver.Scope, bool) {
+	return m.Global.GetScope(name)
+}
+
+// GetSymbol does a lookup of the given import symbol and returns the
+// known import.  If not known `(nil, false)` is returned.
+func (m *mockGlobalScope) GetSymbol(name string) (*resolver.Symbol, bool) {
+	return m.Global.GetSymbol(name)
+}
+
+// GetSymbols does a lookup of the given prefix and returns the
+// symbols.
+func (m *mockGlobalScope) GetSymbols(prefix string) []*resolver.Symbol {
+	return m.Global.GetSymbols(prefix)
 }
