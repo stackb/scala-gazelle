@@ -14,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 const (
@@ -29,8 +30,7 @@ type scalaRuleContext struct {
 	rule *rule.Rule
 	// scope is a map of symbols that are outside the rule.
 	scope resolver.Scope
-	// the import resolver to which we chain to when self-imports are not
-	// matched.
+	// the global import resolver
 	resolver resolver.SymbolResolver
 }
 
@@ -62,8 +62,61 @@ func newScalaRule(
 	return scalaRule
 }
 
+// Resolve performs symbol resolution for imports of the rule.
+func (r *scalaRule) Resolve(rctx *scalarule.ResolveContext) resolver.ImportMap {
+	imports := r.Imports()
+	sc := getScalaConfig(rctx.Config)
+
+	transitive := newImportSymbols()
+
+	//
+	// part 1: resolve any unsettled imports and populate the transitive stack.
+	//
+	for _, imp := range imports.Values() {
+		if imp.Error != nil {
+			continue
+		}
+		if imp.Symbol == nil {
+			if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
+				imp.Symbol = symbol
+			} else {
+				imp.Error = resolver.ErrSymbolNotFound
+			}
+		}
+		if imp.Symbol != nil {
+			transitive.Push(imp, imp.Symbol)
+		}
+	}
+
+	//
+	// part 2: process each symbol and address conflicts, transitively.
+	//
+	for !transitive.IsEmpty() {
+		item, _ := transitive.Pop()
+
+		if len(item.sym.Conflicts) > 0 {
+			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
+				item.imp.Symbol = resolved
+			} else {
+				fmt.Println(resolver.SymbolConfictMessage(item.sym, rctx.From))
+			}
+		}
+
+		for _, req := range item.sym.Requires {
+			if _, ok := imports[req.Name]; ok {
+				continue
+			}
+			imports.Put(resolver.NewTransitiveImport(req.Name, item.sym.Name, req))
+			transitive.Push(item.imp, req)
+		}
+	}
+
+	return imports
+}
+
 // ResolveSymbol implements the resolver.SymbolResolver interface.
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
+
 	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
@@ -172,11 +225,6 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			imports.Put(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
 	}
-
-}
-
-func (r *scalaRule) Files() []*sppb.File {
-	return r.pb.Files
 }
 
 // Exports implements part of the scalarule.Rule interface.
@@ -234,4 +282,42 @@ func importBasename(imp string) string {
 		return imp
 	}
 	return imp[index+1:]
+}
+
+// importSymbol is a pair (import, symbol). If pair.imp.Symbol == pair.sym it
+// represents a direct, otherwise pair.sym is a transitive requirement of
+// pair.imp.
+type importSymbol struct {
+	imp *resolver.Import
+	sym *resolver.Symbol
+}
+
+// importSymbols is a stack of importSymbol pairs.
+type importSymbols []*importSymbol
+
+func newImportSymbols() importSymbols {
+	return []*importSymbol{}
+}
+
+// IsEmpty checks if the stack is empty
+func (s *importSymbols) IsEmpty() bool {
+	return len(*s) == 0
+}
+
+// Push a new pair onto the stack
+func (s *importSymbols) Push(imp *resolver.Import, sym *resolver.Symbol) {
+	*s = append(*s, &importSymbol{imp, sym})
+}
+
+// Pop: remove and return top element of stack, return false if stack is empty
+func (s *importSymbols) Pop() (*importSymbol, bool) {
+	if s.IsEmpty() {
+		return nil, false
+	}
+
+	i := len(*s) - 1
+	x := (*s)[i]
+	*s = (*s)[:i]
+
+	return x, true
 }

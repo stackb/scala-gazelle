@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 
@@ -38,4 +39,20 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 // String implements fmt.Stringer
 func (s *Symbol) String() string {
 	return fmt.Sprintf("(%s<%v> %s<%v>)", s.Name, s.Type, s.Label, s.Provider)
+}
+
+func SymbolConfictMessage(symbol *Symbol, from label.Label) string {
+	if len(symbol.Conflicts) == 0 {
+		return ""
+	}
+	lines := make([]string, 0, len(symbol.Conflicts)+3)
+	lines = append(lines, fmt.Sprintf("Unresolved symbol conflict: %v %q has multiple providers!", symbol.Type, symbol.Name))
+	if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
+		lines = append(lines, " - Maybe remove a wildcard import (if one exists)")
+	}
+	lines = append(lines, fmt.Sprintf(" - Maybe add one of the following to %s:", label.Label{Repo: from.Repo, Pkg: from.Pkg, Name: "BUILD.bazel"}))
+	for _, conflict := range append(symbol.Conflicts, symbol) {
+		lines = append(lines, fmt.Sprintf("     # gazelle:resolve scala scala %s %s:", symbol.Name, conflict.Label))
+	}
+	return strings.Join(lines, "\n")
 }

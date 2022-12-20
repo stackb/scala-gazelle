@@ -89,14 +89,12 @@ func (s *scalaPackage) Resolve(
 		log.Printf("no known rule provider for %v", from)
 		return
 	}
-	ctx := &scalarule.ResolveContext{
+	provider.Resolve(&scalarule.ResolveContext{
 		Config:    c,
 		RuleIndex: ix,
 		Rule:      r,
 		From:      from,
-	}
-	provider.Resolve(ctx, importsRaw)
-	s.rules[r.Name()] = r // TODO(pcj): do we need this assignment here?
+	}, importsRaw)
 }
 
 // generateRules constructs a list of rules based on the configured set of rule

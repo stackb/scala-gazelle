@@ -63,4 +63,7 @@ enum ImportKind {
     // successfully resolves (to 'com.foo.proto.FooMessage'), an import is added
     // of this type.
     RESOLVED_NAME = 5;
+    // An import required as a transitive dependency of some direct/initial
+    // dependency.
+    TRANSITIVE = 6;
 }
