@@ -277,7 +277,8 @@ def _jarindex_basename(ctx, label):
         label.name,
     ])
 
-def jarindexer_action(ctx, label, executable, jar):
+def jarindexer_action(ctx, label, kind, executable, jar):
+    print("indexing", kind, label)
     output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
     ctx.actions.run(
         mnemonic = "JarIndexer",
@@ -286,6 +287,8 @@ def jarindexer_action(ctx, label, executable, jar):
         arguments = [
             "--label",
             str(ctx.label),
+            "--kind",
+            kind,
             "--output_file",
             output_file.path,
             jar.path,
@@ -387,7 +390,7 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
         class_jars = [info.class_jar for info in java_outputs]
         for jar in class_jars:
             if not jar.basename.endswith("_java.jar"):
-                jar_index_file = jarindexer_action(ctx, target.label, ctx.executable._jarindexer, jar)
+                jar_index_file = jarindexer_action(ctx, target.label, ctx.rule.kind, ctx.executable._jarindexer, jar)
                 jar_index_files.append(jar_index_file)
 
     java_info = struct_omit_none(

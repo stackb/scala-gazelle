@@ -8,7 +8,7 @@ def merge_action(ctx, output_file, jarindex_files):
     args = ctx.actions.args()
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
-    args.add_joined("--predefined", [target.label for target in ctx.attr.platform_jars], uniquify = True, join_with = ",")
+    args.add_joined("--predefined", [target.label for target in ctx.attr.platform_deps], uniquify = True, join_with = ",")
     args.add_all(jarindex_files)
 
     ctx.actions.run(
@@ -35,15 +35,15 @@ def _java_index_impl(ctx):
     # List[File]
     jarindex_files = []
 
-    for dep in ctx.attr.deps + ctx.attr.jars + ctx.attr.platform_jars:
+    for dep in ctx.attr.deps + ctx.attr.platform_deps:
         if JarIndexerAspectInfo in dep:
             info = dep[JarIndexerAspectInfo]
             jarindex_files.extend(info.jar_index_files.to_list())
             transitive_jarindex_files.append(info.jar_index_files)
 
-    for i, jar in enumerate(ctx.files.platform_jars):
-        label = ctx.attr.platform_jars[i].label
-        jarindex_files.append(jarindexer_action(ctx, label, ctx.executable._jarindexer, jar))
+    for i, jar in enumerate(ctx.files.platform_deps):
+        label = ctx.attr.platform_deps[i].label
+        jarindex_files.append(jarindexer_action(ctx, label, "bootclasspath", ctx.executable._jarindexer, jar))
 
     output_proto = ctx.outputs.out_proto
     output_json = ctx.outputs.out_json
@@ -68,17 +68,11 @@ java_index = rule(
     implementation = _java_index_impl,
     attrs = {
         "deps": attr.label_list(
-            # TODO(pcj): make JavaInfo a requirement here?  Currently the aspect looks for it if present.
-            # providers = [JavaInfo],
             aspects = [java_indexer_aspect],
             doc = "list of java deps to be indexed",
         ),
-        "jars": attr.label_list(
-            aspects = [java_indexer_aspect],
-            doc = "list of jars to be indexed",
-        ),
-        "platform_jars": attr.label_list(
-            doc = "list of jar files to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
+        "platform_deps": attr.label_list(
+            doc = "list of java labels to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
         ),
         "_mergeindex": attr.label(

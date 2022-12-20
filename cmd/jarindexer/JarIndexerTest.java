@@ -90,7 +90,7 @@ public class JarIndexerTest {
                 Files.createDirectories(tmpFile.getParent());
                 Files.copy(srcFile, tmpFile, StandardCopyOption.REPLACE_EXISTING);
 
-                indexer.index("//fake:label", tmpFile);
+                indexer.index("//fake:label", "java_library", tmpFile);
             }
         }
 

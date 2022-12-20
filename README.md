@@ -333,29 +333,29 @@ load("@build_stack_scala_gazelle//rules:java_index.bzl", "java_index")
 
 java_index(
     name = "java_index",
-    jars = [
+    deps = [
         "@maven//:io_grpc_grpc_context",
         "@maven//:io_grpc_grpc_core",
     ],
     out_json = "java_index.json",
     out_proto = "java_index.pb",
-    platform_jars = ["@bazel_tools//tools/jdk:platformclasspath"],
+    platform_deps = ["@bazel_tools//tools/jdk:platformclasspath"],
 )
 ```
 
 > NOTE: Use `bazel build //:java_index --output_groups=json` to produce the JSON
 > file if you want to inspect it.
 
-The `jars` attribute names dependencies that you want indexed at a
+The `deps` attribute names dependencies that you want indexed at a
 _fine-grained_ level.  Any label that provides `JavaInfo` will satisfy.
 
-The `platform_jars` attribute is special: it indexes jars that are provided by
+The `platform_deps` attribute is special: it indexes jars that are provided by
 the platform and do not need to be resolved to a label in rule `deps`.  For
 example, if you import `java.util.Map`, no additional bazel label is required to
 use it. The `@bazel_tools//tools/jdk:platformclasspath` is the bazel rule that
 supplies these symbols.  You can also add things like
 `@maven//:org_scala_lang_scala_library` or other toolchain-provided jars that
-never need to be explicitly stated in `deps`.
+never need to be explicitly stated in scala rule `deps`.
 
 To enable it:
 

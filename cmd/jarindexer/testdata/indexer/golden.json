@@ -2,6 +2,7 @@
   "jarFiles": [{
     "filename": "testdata/indexer/indexer.jar",
     "label": "//fake:label",
+    "kind": "java_library",
     "files": [{
       "name": "JarIndexer",
       "symbols": ["build.stack.gazelle.scala.jarindex.ClassFile", "build.stack.gazelle.scala.jarindex.JarFile", "build.stack.gazelle.scala.jarindex.JarIndex", "io.github.classgraph.ClassInfo", "io.github.classgraph.MethodParameterInfo", "io.github.classgraph.MethodTypeSignature", "io.github.classgraph.TypeParameter", "io.github.classgraph.TypeSignature", "java.lang.String", "java.nio.file.Path", "java.util.Collection", "java.util.Set"]
