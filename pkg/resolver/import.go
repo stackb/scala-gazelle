@@ -50,6 +50,17 @@ func NewResolvedNameImport(imp string, source *sppb.File, name string, symbol *S
 	}
 }
 
+// NewTransitiveImport creates a new resolved import from the given file,
+// name, and symbol.  The 'name' is the token that resolved in the file scope.
+func NewTransitiveImport(imp string, name string, symbol *Symbol) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_TRANSITIVE,
+		Imp:    imp,
+		Src:    name,
+		Symbol: symbol,
+	}
+}
+
 // NewError creates a new err import from the given file,
 // name, and symbol.
 func NewErrorImport(imp string, source *sppb.File, src string, err error) *Import {
@@ -127,6 +138,8 @@ func (imp *Import) String() string {
 		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
 	case sppb.ImportKind_RESOLVED_NAME:
 		parts = append(parts, fmt.Sprintf("(%v of %s via %q)", imp.Kind, filepath.Base(imp.Source.Filename), imp.Src))
+	case sppb.ImportKind_TRANSITIVE:
+		parts = append(parts, fmt.Sprintf("(%v of %s)", imp.Kind, imp.Src))
 	default:
 		parts = append(parts, fmt.Sprintf("(%v)", imp.Kind))
 	}

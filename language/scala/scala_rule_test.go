@@ -218,7 +218,7 @@ func TestScalaRuleImports(t *testing.T) {
 				`✅ com.foo.ClassB<> (IMPLICIT via "com.foo.ClassA")`,
 			},
 		},
-		"transitive require": {
+		"transitive require - this is done later": {
 			globalSymbols: []*resolver.Symbol{
 				{
 					Type:     sppb.ImportType_CLASS,
@@ -230,7 +230,7 @@ func TestScalaRuleImports(t *testing.T) {
 							Type:     sppb.ImportType_CLASS,
 							Name:     "scalapb.GeneratedMessage",
 							Provider: "java",
-							Label:    label.Label{Repo: "@maven", Name: "scalapb_runtime"},
+							Label:    label.Label{Repo: "maven", Name: "scalapb_runtime"},
 						},
 					},
 				},

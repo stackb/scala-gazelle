@@ -7,6 +7,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
+// ResolveContext carries context about a rule during rule provider import
+// resolution.
 type ResolveContext struct {
 	Config    *config.Config
 	RuleIndex *resolve.RuleIndex

@@ -1,17 +1,13 @@
 package scala
 
 import (
-	"fmt"
 	"log"
-	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -110,59 +106,20 @@ func (s *existingScalaRule) Imports(c *config.Config, r *rule.Rule, file *rule.F
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
-func (s *existingScalaRule) Resolve(ctx *scalarule.ResolveContext, importsRaw interface{}) {
+func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
 	scalaRule, ok := importsRaw.(*scalaRule)
 	if !ok {
 		return
 	}
 
-	r := ctx.Rule
-	sc := getScalaConfig(ctx.Config)
-	imports := scalaRule.Imports()
+	imports := scalaRule.Resolve(rctx)
+	r := rctx.Rule
+	sc := getScalaConfig(rctx.Config)
 
 	// part 1: deps
 
-	for _, imp := range imports.Values() {
-		// has it already been settled?
-		if imp.Symbol != nil || imp.Error != nil {
-			continue
-		}
-		// resolve the symbol
-		if symbol, ok := scalaRule.ResolveSymbol(ctx.Config, ctx.RuleIndex, ctx.From, scalaLangName, imp.Imp); ok {
-			imp.Symbol = symbol
-		} else {
-			imp.Error = resolver.ErrSymbolNotFound
-		}
-	}
-
-	// deal with symbol conflicts after the first pass
-	for _, imp := range imports.Values() {
-		symbol := imp.Symbol
-		if symbol == nil {
-			continue
-		}
-		// if the symbol has conflicts, just print it for now?  Where do we apply conflict resolution strategies?
-		if len(symbol.Conflicts) > 0 {
-			if resolved, ok := sc.resolveConflict(r, imports, imp, symbol); ok {
-				imp.Symbol = resolved
-			} else {
-				lines := make([]string, 0, len(symbol.Conflicts)+3)
-				lines = append(lines, fmt.Sprintf("Unresolved symbol conflict: %v %q has multiple providers!", symbol.Type, symbol.Name))
-				if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
-					lines = append(lines, " - Maybe remove a wildcard import (if one exists)")
-				}
-				lines = append(lines, fmt.Sprintf(" - Maybe add one of the following to %s:", label.New(ctx.From.Repo, ctx.From.Pkg, "BUILD.bazel")))
-				for _, conflict := range append(symbol.Conflicts, symbol) {
-					lines = append(lines, fmt.Sprintf("     # gazelle:resolve scala scala %s %s:", symbol.Name, conflict.Label))
-				}
-				fmt.Println(strings.Join(lines, "\n"))
-			}
-		}
-
-	}
-
 	deps := sc.cleanDeps(r.Attr("deps"))
-	sc.mergeDeps(r.Kind(), deps, imports.Deps(sc.maybeRewrite(r.Kind(), ctx.From)))
+	sc.mergeDeps(r.Kind(), deps, imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
 	r.SetAttr("deps", deps)
 
 	// part 2: srcs
