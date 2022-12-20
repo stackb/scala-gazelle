@@ -53,16 +53,17 @@ public class JarIndexer extends Object {
         return index.build();
     }
 
-    public void index(String label, Path path) {
+    public void index(String label, String kind, Path path) {
         logger.log(Level.FINE, "indexing file {0}", path);
 
-        index.addJarFile(this.makeJarFile(label, path));
+        index.addJarFile(this.makeJarFile(label, kind, path));
     }
 
-    public JarFile makeJarFile(String label, Path path) {
+    public JarFile makeJarFile(String label, String kind, Path path) {
         JarFile.Builder jarFile = JarFile.newBuilder();
         jarFile.setFilename(this.baseDir.relativize(path).toString());
         jarFile.setLabel(label);
+        jarFile.setKind(kind);
 
         final ScanResult scanResult = new ClassGraph()
                 .verbose(false)
@@ -169,6 +170,7 @@ public class JarIndexer extends Object {
         }
 
         String label = null;
+        String kind = null;
         String outputFile = null;
         List<String> inputFiles = new ArrayList<>();
         int maxArg = args.length - 1;
@@ -190,10 +192,21 @@ public class JarIndexer extends Object {
                 i++;
                 continue;
             }
+            if ("--kind".equals(arg)) {
+                if (i + 1 > maxArg) {
+                    throw new IllegalArgumentException("malformed --kind: no argument provided");
+                }
+                kind = args[i + 1];
+                i++;
+                continue;
+            }
             inputFiles.add(arg);
         }
         if (label == null || label.isEmpty()) {
             throw new IllegalArgumentException("malformed usage: no label provided");
+        }
+        if (kind == null || kind.isEmpty()) {
+            throw new IllegalArgumentException("malformed usage: no kind provided");
         }
         if (outputFile == null) {
             throw new IllegalArgumentException("malformed usage: no output file specified");
@@ -205,7 +218,7 @@ public class JarIndexer extends Object {
         JarIndexer indexer = new JarIndexer(Path.of("."));
 
         for (final String inputFile : inputFiles) {
-            indexer.index(label, Path.of(inputFile));
+            indexer.index(label, kind, Path.of(inputFile));
         }
 
         final JarIndex index = indexer.build();
