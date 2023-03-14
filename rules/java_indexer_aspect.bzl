@@ -286,7 +286,7 @@ def jarindexer_action(ctx, label, kind, executable, jar):
         executable = executable,
         arguments = [
             "--label",
-            str(ctx.label),
+            str(label),
             "--kind",
             kind,
             "--output_file",
