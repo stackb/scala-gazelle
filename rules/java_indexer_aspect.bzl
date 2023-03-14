@@ -278,7 +278,6 @@ def _jarindex_basename(ctx, label):
     ])
 
 def jarindexer_action(ctx, label, kind, executable, jar):
-    print("indexing", kind, label)
     output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
     ctx.actions.run(
         mnemonic = "JarIndexer",
@@ -286,7 +285,7 @@ def jarindexer_action(ctx, label, kind, executable, jar):
         executable = executable,
         arguments = [
             "--label",
-            str(ctx.label),
+            str(label),
             "--kind",
             kind,
             "--output_file",
@@ -407,7 +406,6 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     return True
 
 def _java_indexer_aspect_impl(target, ctx):
-    # print("indexer aspect visiting:", str(target.label))
     deps = []
     if hasattr(ctx.rule.attr, "deps"):
         deps.extend(ctx.rule.attr.deps)
