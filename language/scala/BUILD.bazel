@@ -77,6 +77,7 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
+        "cache_test.go",
         "existing_scala_rule_test.go",
         "flags_test.go",
         "golden_test.go",

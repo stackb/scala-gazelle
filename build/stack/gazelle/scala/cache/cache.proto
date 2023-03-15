@@ -15,5 +15,8 @@ message Cache {
     int32 package_count = 1;
     // rules is the list of parsed rules.
     repeated build.stack.gazelle.scala.parse.Rule rules = 2;
+    // key is a string that is persisted in the cache file.  If the key changes,
+    // the cache is evicted.
+    string key = 3;
 }
 

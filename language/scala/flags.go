@@ -21,6 +21,7 @@ const (
 	scalaConflictResolverFlagName = "scala_conflict_resolver"
 	existingScalaRulesFlagName    = "existing_scala_rule"
 	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
+	scalaGazelleCacheKeyFlagName  = "scala_gazelle_cache_key"
 	cpuprofileFileFlagName        = "cpuprofile_file"
 	memprofileFileFlagName        = "memprofile_file"
 )
@@ -28,6 +29,7 @@ const (
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
+	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")

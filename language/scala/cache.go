@@ -16,6 +16,14 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 	if err := protobuf.ReadFile(sl.cacheFileFlagValue, sl.cache); err != nil {
 		return err
 	}
+
+	if sl.cacheKeyFlagValue != sl.cache.Key {
+		if debugCache {
+			log.Printf("scala-gazelle cache invalidated! (want %q, got %q)", sl.cacheFileFlagValue, sl.cache.Key)
+		}
+		return nil
+	}
+
 	for _, rule := range sl.cache.Rules {
 		from, err := label.Parse(rule.Label)
 		if err != nil {
@@ -37,9 +45,10 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 func (sl *scalaLang) writeScalaRuleCacheFile() error {
 	sl.cache.PackageCount = int32(len(sl.packages))
 	sl.cache.Rules = sl.parser.ScalaRules()
+	sl.cache.Key = sl.cacheKeyFlagValue
 
 	if debugCache {
-		log.Printf("Wrote cache %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))
+		log.Printf("Wrote scala-gazelle cache %s (%d rules)", sl.cacheFileFlagValue, len(sl.cache.Rules))
 	}
 
 	return protobuf.WriteFile(sl.cacheFileFlagValue, sl.cache)

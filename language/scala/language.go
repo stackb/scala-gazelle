@@ -23,6 +23,8 @@ const scalaLangName = "scala"
 type scalaLang struct {
 	// cacheFileFlagValue is the main cache file, if enabled
 	cacheFileFlagValue string
+	// cacheKeyFlagValue is the main cache key, if enabled
+	cacheKeyFlagValue string
 	// symbolProviderNamesFlagValue is a repeatable list of resolver to enable
 	symbolProviderNamesFlagValue collections.StringSlice
 	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
