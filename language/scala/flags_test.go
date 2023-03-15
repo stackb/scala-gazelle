@@ -48,6 +48,50 @@ func TestCacheFlags(t *testing.T) {
 				}
 			},
 		},
+		"scala_gazelle_cache_key__valid": {
+			files: []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: "{}",
+				},
+				{
+					Path:    "./cache.json",
+					Content: `{"package_count": 100, "key": "1"}`,
+				},
+			},
+			args: []string{
+				"-maven_install_json_file=./maven_install.json",
+				"-scala_gazelle_cache_file=${TEST_TMPDIR}/cache.json",
+				"-scala_gazelle_cache_key=1",
+			},
+			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
+				if lang.cache == nil {
+					t.Error("expected cache to be valid!")
+				}
+			},
+		},
+		"scala_gazelle_cache_key__invalid": {
+			files: []testtools.FileSpec{
+				{
+					Path:    "maven_install.json",
+					Content: "{}",
+				},
+				{
+					Path:    "./cache.json",
+					Content: `{"package_count": 100, "key": "1"}`,
+				},
+			},
+			args: []string{
+				"-maven_install_json_file=./maven_install.json",
+				"-scala_gazelle_cache_file=${TEST_TMPDIR}/cache.json",
+				"-scala_gazelle_cache_key=2",
+			},
+			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
+				if lang.cache != nil {
+					t.Error("expected cache to be invalidated!")
+				}
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)

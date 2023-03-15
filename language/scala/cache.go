@@ -21,6 +21,7 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 		if debugCache {
 			log.Printf("scala-gazelle cache invalidated! (want %q, got %q)", sl.cacheFileFlagValue, sl.cache.Key)
 		}
+		sl.cache = nil
 		return nil
 	}
 
@@ -34,11 +35,11 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 		}
 	}
 
-	t2 := time.Since(t1).Round(1 * time.Millisecond)
-
 	if debugCache {
+		t2 := time.Since(t1).Round(1 * time.Millisecond)
 		log.Printf("Read cache %s (%d rules) %v", sl.cacheFileFlagValue, len(sl.cache.Rules), t2)
 	}
+
 	return nil
 }
 
