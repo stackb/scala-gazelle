@@ -65,7 +65,7 @@ func TestCacheFlags(t *testing.T) {
 				"-scala_gazelle_cache_key=1",
 			},
 			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
-				if lang.cache == nil {
+				if lang.cache.PackageCount == 0 {
 					t.Error("expected cache to be valid!")
 				}
 			},
@@ -87,7 +87,7 @@ func TestCacheFlags(t *testing.T) {
 				"-scala_gazelle_cache_key=2",
 			},
 			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
-				if lang.cache != nil {
+				if lang.cache.PackageCount != 0 {
 					t.Error("expected cache to be invalidated!")
 				}
 			},

@@ -39,7 +39,7 @@ type scalaLang struct {
 	cpuprofileFlagValue         string
 	memprofileFlagValue         string
 	// cache is the loaded cache, if configured
-	cache *scpb.Cache
+	cache scpb.Cache
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
 	// rules configured via gazelle directives by the user.
 	ruleProviderRegistry scalarule.ProviderRegistry
@@ -93,7 +93,7 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 
 	lang := &scalaLang{
-		cache:                &scpb.Cache{},
+		cache:                scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
