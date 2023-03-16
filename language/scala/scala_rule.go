@@ -220,7 +220,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if sym, ok := scope.GetSymbol(imp); ok {
 				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
 				if resolvedOK && resolved != sym {
-					resolved.Requires = append(resolved.Requires, sym)
+					resolved.Require(sym)
 				}
 			} else if debugExtendsNameNotFound {
 				log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)

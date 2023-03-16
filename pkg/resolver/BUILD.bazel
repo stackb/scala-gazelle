@@ -48,6 +48,7 @@ go_library(
 go_test(
     name = "resolver_test",
     srcs = [
+        "chain_scope_test.go",
         "import_map_test.go",
         "scala_scope_test.go",
         "scala_symbol_resolver_test.go",

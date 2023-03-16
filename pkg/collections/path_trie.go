@@ -143,11 +143,13 @@ func (trie *PathTrie) Walk(walker trie.WalkFunc) error {
 // WalkPath iterates over each key/value in the path in trie from the root to
 // the node at the given key, calling the given walker function for each
 // key/value. If the walker function returns an error, the walk is aborted.
-func (trie *PathTrie) WalkPath(key string, walker trie.WalkFunc) error {
-	// Get root value if one exists.
-	if trie.value != nil {
-		if err := walker("", trie.value); err != nil {
-			return err
+func (trie *PathTrie) WalkPath(key string, wantRootValue bool, walker trie.WalkFunc) error {
+	if wantRootValue {
+		// Get root value if one exists.
+		if trie.value != nil {
+			if err := walker("", trie.value); err != nil {
+				return err
+			}
 		}
 	}
 	for part, i := trie.segmenter(key, 0); ; part, i = trie.segmenter(key, i) {

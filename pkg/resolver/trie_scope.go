@@ -72,7 +72,7 @@ func (r *TrieScope) GetSymbols(prefix string) (symbols []*Symbol) {
 // GetSymbol implements part of the resolver.Scope interface.
 func (r *TrieScope) GetSymbol(imp string) (*Symbol, bool) {
 	var last interface{}
-	r.trie.WalkPath(imp, func(key string, value interface{}) error {
+	r.trie.WalkPath(imp, false /* wantRootValue */, func(key string, value interface{}) error {
 		last = value
 		return nil
 	})
