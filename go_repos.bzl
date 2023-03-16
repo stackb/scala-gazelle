@@ -90,8 +90,9 @@ def go_repositories():
         name = "com_github_bazelbuild_bazel_gazelle",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/bazelbuild/bazel-gazelle",
-        sum = "h1:iujqkjq64S7XRev6oNfQ22qGyenjkFxZI0hoCEm46BY=",
-        version = "v0.28.1-0.20221114044302-2d1002926dd1",
+        replace = "github.com/pcj/bazel-gazelle",
+        sum = "h1:LNZ2Bt36Zc01LTTVHxSchpuzmtTfGGuL3vvJ94KTOyw=",
+        version = "v0.0.0-20221215190317-f045255d3e6a",
     )
     go_repository(
         name = "com_github_bazelbuild_buildtools",
@@ -460,8 +461,8 @@ def go_repositories():
         name = "org_golang_x_crypto",
         build_file_proto_mode = "disable_global",
         importpath = "golang.org/x/crypto",
-        sum = "h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=",
-        version = "v0.0.0-20210921155107-089bfa567519",
+        sum = "h1:MDRAIl0xIo9Io2xV565hzXHw3zVseKrJKodhohM5CjU=",
+        version = "v0.1.0",
     )
     go_repository(
         name = "org_golang_x_exp",
