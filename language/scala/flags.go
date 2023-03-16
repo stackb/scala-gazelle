@@ -17,17 +17,19 @@ import (
 )
 
 const (
-	scalaSymbolProviderFlagName   = "scala_symbol_provider"
-	scalaConflictResolverFlagName = "scala_conflict_resolver"
-	existingScalaRulesFlagName    = "existing_scala_rule"
-	scalaGazelleCacheFileFlagName = "scala_gazelle_cache_file"
-	scalaGazelleCacheKeyFlagName  = "scala_gazelle_cache_key"
-	cpuprofileFileFlagName        = "cpuprofile_file"
-	memprofileFileFlagName        = "memprofile_file"
+	scalaSymbolProviderFlagName          = "scala_symbol_provider"
+	scalaConflictResolverFlagName        = "scala_conflict_resolver"
+	existingScalaRulesFlagName           = "existing_scala_rule"
+	scalaGazelleCacheFileFlagName        = "scala_gazelle_cache_file"
+	scalaGazelleDebugProcessFileFlagName = "scala_gazelle_debug_process"
+	scalaGazelleCacheKeyFlagName         = "scala_gazelle_cache_key"
+	cpuprofileFileFlagName               = "cpuprofile_file"
+	memprofileFileFlagName               = "memprofile_file"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	flags.BoolVar(&sl.debugProcessFlagValue, scalaGazelleDebugProcessFileFlagName, false, "if true, prints the process ID and waits for debugger to attach")
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
@@ -56,6 +58,13 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	if sl.debugProcessFlagValue {
+		fmt.Printf("Debugging session requested (Process ID: %d)\n", os.Getpid())
+		fmt.Printf("NOTE: binary must be built with debug symbols for this to work (e.g 'bazel run -c dbg //:gazelle')\n")
+		fmt.Printf("dlv attach --headless --listen=:2345 %d\n", os.Getpid())
+		fmt.Println("Press ENTER to continue.")
+		fmt.Scanln()
+	}
 	sl.symbolResolver = newUniverseResolver(sl)
 
 	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {

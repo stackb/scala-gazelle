@@ -179,6 +179,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			}
 		}
 	}
+
 	// gather package scopes
 	for _, pkg := range file.Packages {
 		if scope, ok := r.ctx.scope.GetScope(pkg); ok {
@@ -205,14 +206,24 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
 		}
 
-		// kind := parts[0] // kind not used
+		// kind := parts[0]
 		name := parts[1]
+
+		// assume the name if fully-qualified, so resolve it from the "root"
+		// scope rather than involving package scopes.
+		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
+		if !resolvedOK {
+			log.Printf("warning: invalid extends token: symbol %q: was not found' ", name)
+		}
 
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
 				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
+				if resolvedOK && resolved != sym {
+					resolved.Requires = append(resolved.Requires, sym)
+				}
 			} else if debugExtendsNameNotFound {
-				log.Printf("%s | %s: extends name not found: %s", r.pb.Label, file.Filename, name)
+				log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
 			}
 		}
 	}
