@@ -19,7 +19,7 @@ import (
 
 const (
 	debugNameNotFound        = false
-	debugExtendsNameNotFound = true
+	debugExtendsNameNotFound = false
 	debugFileScope           = false
 )
 
@@ -157,8 +157,6 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
-	log.Printf(">>>>>> %v: %s fileImports <begin>", r.pb.Label, file.Filename)
-
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
