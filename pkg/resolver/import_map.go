@@ -52,7 +52,13 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 			continue
 		}
 		seen[dep] = true
-		deps = append(deps, dep.Rel(from.Repo, from.Pkg))
+		relDep := dep.Rel(from.Repo, from.Pkg)
+		// remove relative self imports (TODO: should these have been removed
+		// earlier?)
+		if relDep.Relative && relDep.Name == from.Name {
+			continue
+		}
+		deps = append(deps, relDep)
 	}
 	return
 }

@@ -21,6 +21,9 @@ const scalaLangName = "scala"
 
 // scalaLang implements language.Language.
 type scalaLang struct {
+	// debugProcessFlagValue halts processing and prints the PID for attaching a
+	// delve debugger.
+	debugProcessFlagValue bool
 	// cacheFileFlagValue is the main cache file, if enabled
 	cacheFileFlagValue string
 	// cacheKeyFlagValue is the main cache key, if enabled
