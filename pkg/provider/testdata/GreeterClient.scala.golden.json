@@ -1,10 +1,10 @@
 {
-  "label": "//pkg/provider:testdata/GreeterClient.scala",
-  "kind": "scala_library",
-  "files": [
+  "label":  "//pkg/provider:testdata/GreeterClient.scala",
+  "kind":  "scala_library",
+  "files":  [
     {
-      "filename": "testdata/GreeterClient.scala",
-      "imports": [
+      "filename":  "testdata/GreeterClient.scala",
+      "imports":  [
         "akka.Done",
         "akka.NotUsed",
         "akka.actor.ActorSystem",
@@ -21,56 +21,46 @@
         "scala.util.Failure",
         "scala.util.Success"
       ],
-      "packages": [
+      "packages":  [
         "examples.helloworld.greeter"
       ],
-      "objects": [
+      "objects":  [
         "examples.helloworld.greeter.GreeterClient"
       ],
-      "names": [
+      "names":  [
+        "ActorSystem",
         "Future",
         "GreeterClient",
-        "GrpcClientSettings",
+        "GreeterServiceClient",
         "LazyLogging",
+        "List",
         "Materializer",
-        "NotUsed",
         "Source",
         "Unit",
         "args.isEmpty",
         "args.nonEmpty",
         "args.toList",
         "broadcastHellos",
-        "client",
-        "done",
-        "error",
+        "client.broadcastHellos",
+        "client.sayHello",
+        "client.sayHelloToAll",
+        "done.onComplete",
         "examples.helloworld.greeter",
-        "foreach",
-        "fromConfig",
-        "i",
-        "info",
-        "logger",
+        "logger.info",
         "main",
         "makeHelloRequests",
-        "map",
-        "mapMaterializedValue",
         "monitorHellos",
         "monitorHellosWithSnapshot",
-        "msg",
-        "names",
-        "onComplete",
-        "reply",
-        "responseStream",
-        "runForeach",
-        "sayHello",
-        "sayHelloToAll",
+        "names.foreach",
+        "reply.onComplete",
+        "responseStream.runForeach",
         "singleRequestReply",
         "streamingBroadcast",
-        "sys.dispatcher",
-        "toString"
+        "sys.dispatcher"
       ],
-      "extends": {
-        "object examples.helloworld.greeter.GreeterClient": {
-          "classes": [
+      "extends":  {
+        "object examples.helloworld.greeter.GreeterClient":  {
+          "classes":  [
             "com.typesafe.scalalogging.LazyLogging"
           ]
         }

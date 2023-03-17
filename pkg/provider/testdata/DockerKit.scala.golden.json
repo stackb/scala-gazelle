@@ -1,10 +1,10 @@
 {
-  "label": "//pkg/provider:testdata/DockerKit.scala",
-  "kind": "scala_library",
-  "files": [
+  "label":  "//pkg/provider:testdata/DockerKit.scala",
+  "kind":  "scala_library",
+  "files":  [
     {
-      "filename": "testdata/DockerKit.scala",
-      "imports": [
+      "filename":  "testdata/DockerKit.scala",
+      "imports":  [
         "com.github.dockerjava.api.DockerClient",
         "com.github.dockerjava.api.async.ResultCallback",
         "com.github.dockerjava.api.command.CreateContainerResponse",
@@ -16,24 +16,22 @@
         "scala.collection.JavaConverters._",
         "scala.util.Try"
       ],
-      "packages": [
+      "packages":  [
         "container.testing"
       ],
-      "classes": [
+      "classes":  [
         "container.testing.LoggingCallback"
       ],
-      "objects": [
+      "objects":  [
         "container.testing.DockerKit"
       ],
-      "traits": [
+      "traits":  [
         "container.testing.DockerKit"
       ],
-      "names": [
+      "names":  [
         "Boolean",
         "CreateContainerResponse",
-        "DefaultDockerClientConfig.createDefaultConfigBuilder",
         "DockerClient",
-        "DockerClientBuilder",
         "DockerKit",
         "DockerKit.dockerClient",
         "LazyLogging",
@@ -44,74 +42,46 @@
         "StringBuffer",
         "System.currentTimeMillis",
         "TestConfig",
-        "Thread",
-        "Throwable",
+        "Thread.sleep",
         "Unit",
-        "append",
-        "build",
-        "c",
         "cleanupContainer",
-        "container",
-        "container.getId",
         "container.testing",
         "containerId",
         "containerLog",
         "containerName",
         "containers",
-        "contains",
         "createContainer",
-        "debug",
         "dockerClient",
-        "error",
-        "exec",
-        "exists",
-        "filter",
-        "find",
-        "foreach",
         "found",
-        "frame",
-        "getId",
-        "getInstance",
-        "getOrElse",
-        "getPayload",
-        "info",
         "isContainerRunning",
         "kill",
-        "killContainerCmd",
-        "log",
+        "log.append",
         "log.toString",
-        "logger",
-        "map",
+        "logger.debug",
+        "logger.error",
+        "logger.info",
+        "logger.warn",
         "onNext",
-        "removeContainerCmd",
         "restart",
-        "restartContainerCmd",
         "runContainer",
-        "sleep",
-        "startContainerCmd",
         "stop",
         "toString",
-        "waitForStringInLogs",
-        "warn",
-        "withDockerHost",
-        "withDockerTlsVerify",
-        "withForce",
-        "withRemoveVolumes"
+        "waitForStringInLogs"
       ],
-      "extends": {
-        "class container.testing.LoggingCallback": {
-          "classes": [
+      "extends":  {
+        "class container.testing.LoggingCallback":  {
+          "classes":  [
             "ResultCallback.Adapter"
           ]
         },
-        "object container.testing.DockerKit": {
-          "classes": [
+        "object container.testing.DockerKit":  {
+          "classes":  [
             "TestConfig",
             "com.typesafe.scalalogging.LazyLogging"
           ]
         },
-        "trait container.testing.DockerKit": {
-          "classes": [
+        "trait container.testing.DockerKit":  {
+          "classes":  [
             "TestConfig",
             "com.typesafe.scalalogging.LazyLogging"
           ]
