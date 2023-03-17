@@ -17,7 +17,7 @@ func (sl *scalaLang) GetConflictResolver(name string) (resolver.ConflictResolver
 // interface.
 func (sl *scalaLang) PutConflictResolver(name string, r resolver.ConflictResolver) error {
 	if _, ok := sl.conflictResolvers[name]; ok {
-		return fmt.Errorf("duplicate known rule: %s", name)
+		return fmt.Errorf("duplicate conflict resolver: %s", name)
 	}
 	sl.conflictResolvers[name] = r
 	return nil

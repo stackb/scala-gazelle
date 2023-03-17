@@ -38,6 +38,7 @@
   - [Conflict Resolution](#conflict-resolution)
     - [Conflict Resolvers](#conflict-resolvers)
     - [`scala_proto_package` conflict resolver](#scala_proto_package-conflict-resolver)
+    - [`predefined_label` conflict resolver](#predefined_label-conflict-resolver)
     - [Custom conflict resolvers](#custom-conflict-resolvers)
   - [Cache](#cache)
   - [Profiling](#profiling)
@@ -635,6 +636,62 @@ To turn off this strategy in a sub-package:
 
 ```bazel
 # gazelle:resolve_conflicts -scala_proto_package
+```
+
+### `predefined_label` conflict resolver
+
+The `predefined_label` conflict resolver prefers symbols that have no origin
+label.  For example, consider the following `java_index` rule:
+
+```python
+java_index(
+    name = "java_index",
+    out_json = "java_index.json",
+    out_proto = "java_index.pb",
+    platform_deps = [
+        "@bazel_tools//tools/jdk:platformclasspath",
+        "@maven//:org_scala_lang_scala_library",
+    ],
+    visibility = ["//visibility:public"],
+)
+```
+
+When the java provider reads this, it loads all the symbols from
+`@maven//:org_scala_lang_scala_library` and sets their label to `label.NoLabel`,
+which implies that this dependency `@maven//:org_scala_lang_scala_library` is
+not needed in rule `deps` since the scala_library is already provided by the
+toolchain / compiler.
+
+When choosing between the following conflict, it will choose the one without the
+label, thereby suppressing it in `deps`:
+
+```diff
+gazelle: conflicting symbols "scala.runtime":   &resolver.Symbol{
+  	Type:     s"PACKAGE",
+  	Name:     "scala.runtime",
+- 	Label:    s"@maven//:org_scala_lang_scala_library",
++ 	Label:    s"//:",
+- 	Provider: "maven",
++ 	Provider: "java",
+  	... // 1 ignored and 1 identical fields
+  }
+```
+
+To use it, you need to register it with a flag and enable it with a directive:
+
+```bazel
+gazelle(
+    name = "gazelle",
+    args = [
+        "-scala_conflict_resolver=predefined_label",
+        ...
+    ],
+    ...
+)
+```
+
+```bazel
+# gazelle:resolve_conflicts predefined_label
 ```
 
 ### Custom conflict resolvers

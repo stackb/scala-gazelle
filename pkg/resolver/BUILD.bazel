@@ -16,6 +16,7 @@ go_library(
         "label_name_rewrite_spec.go",
         "memo_symbol_resolver.go",
         "override_symbol_resolver.go",
+        "predefined_label_conflict_resolver.go",
         "scala_proto_package_conflict_resolver.go",
         "scala_scope.go",
         "scala_symbol_resolver.go",
@@ -50,6 +51,7 @@ go_test(
     srcs = [
         "chain_scope_test.go",
         "import_map_test.go",
+        "predefined_label_conflict_resolver_test.go",
         "scala_scope_test.go",
         "scala_symbol_resolver_test.go",
         "scope_map_test.go",

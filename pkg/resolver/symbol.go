@@ -48,12 +48,6 @@ func (s *Symbol) Require(sym *Symbol) {
 
 // Conflict adds a symbol to the conflicts list.
 func (s *Symbol) Conflict(sym *Symbol) {
-	if sym.Label == label.NoLabel {
-		if debugConflicts {
-			log.Printf("ignoring conflicting symbol that has no label: %v", sym.String())
-		}
-		return
-	}
 	if debugConflicts {
 		diff := cmp.Diff(s, sym, cmpopts.IgnoreFields(Symbol{}, "Conflicts"))
 		if diff != "" {
