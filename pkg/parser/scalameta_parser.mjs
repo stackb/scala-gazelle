@@ -207,9 +207,13 @@ class ScalaFile {
         if (tree.error) {
             this.visitError(tree);
         } else {
-            this.traverse(tree, [], (key, node, stack) => {
+            this.traverse(tree, undefined /* root property */, undefined /* parent */, [], (propName, node, parent, stack) => {
                 if (!node) {
                     return false
+                }
+                // skip parameter names (#96)
+                if (parent && parent.type === 'Term.Apply' && propName === 'args') {
+                    return false;
                 }
                 if (wantNameInContext(stack)) {
                     let name = this.parseName(node);
@@ -265,25 +269,39 @@ class ScalaFile {
      * Traverse an object, calling filter on each key/value pair to know whether
      * to continue.  The stack contains all parent objects which have a '.type'
      * field.
+     * The visit function is a callback that takes the current key/value from the object
+     * and the stack.
      * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/.
-     * @param  {object} obj
-     * @param  {Array<object>} stack
-     * @param  {function} filter
+     * @param {object} obj
+     * @param {string | undefined} prop
+     * @param {object | undefined} parent
+     * @param {Array<object>} stack
+     * @param {function} visit
      */
-    traverse(obj, stack, filter) {
+    traverse(obj, prop, parent, stack, visit) {
         if (typeof obj !== 'object' || obj === null) {
             return;
         }
         if (obj.type) {
             stack.push(obj);
             this.pushScope();
+            parent = obj;
         }
-        Object.entries(obj).forEach(([key, value]) => {
-            // Key is either an array index or object key
-            if (filter(key, value, stack)) {
-                this.traverse(value, stack, filter);
-            }
-        });
+
+        if (Array.isArray(obj)) {
+            obj.forEach((value) => {
+                if (visit(prop, value, parent, stack)) {
+                    this.traverse(value, prop, parent, stack, visit);
+                }
+            });
+        } else {
+            Object.entries(obj).forEach(([key, value]) => {
+                if (visit(key, value, parent, stack)) {
+                    this.traverse(value, key, parent, stack, visit);
+                }
+            });
+        }
+
         if (obj.type) {
             stack.pop();
             this.popScope();
@@ -309,7 +327,7 @@ class ScalaFile {
 
     visitNode(node) {
         if (debug) {
-            this.console.log('visit ' + node.type);
+            this.console.log('visitNode ' + node.type);
         }
         switch (node.type) {
             case 'Source':
@@ -344,7 +362,7 @@ class ScalaFile {
                 break;
             default:
                 if (debug) {
-                    this.console.log('unhandled node type', node.type, this.filename);
+                    this.console.log('unhandled visitNode type', node.type, this.filename);
                     this.printNode(node);
                 }
                 this.visitStats(node.stats);
@@ -705,15 +723,13 @@ function wantNameInContext(stack) {
     if (stack.length == 0) {
         return false;
     }
+
     for (let i = stack.length - 1; i >= 0; i--) {
         switch (stack[i].type) {
             // if the immediate parent is a parameter
             case 'Term.Param':
             case 'Term.Interpolate':
             case 'Pat.Var':
-                if (i === stack.length - 1) {
-                    return false;
-                }
                 return false;
             // any infix or unary context
             case 'Term.ApplyUnary':
