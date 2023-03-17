@@ -660,7 +660,7 @@ When the java provider reads this, it loads all the symbols from
 `@maven//:org_scala_lang_scala_library` and sets their label to `label.NoLabel`,
 which implies that this dependency `@maven//:org_scala_lang_scala_library` is
 not needed in rule `deps` since the scala_library is already provided by the
-compiler itself.
+toolchain / compiler.
 
 When choosing between the following conflict, it will choose the one without the
 label, thereby suppressing it in `deps`:
