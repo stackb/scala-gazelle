@@ -18,7 +18,8 @@
         "Int",
         "UserId",
         "common.types",
-        "scalapb.TypeMapper"
+        "scalapb.TypeMapper",
+        "value"
       ],
       "extends": {
         "class common.types.UserId": {
