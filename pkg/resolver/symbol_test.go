@@ -32,7 +32,7 @@ func TestSymbolConflicts(t *testing.T) {
 				},
 			},
 		},
-		"ignores symbols without labels": {
+		"keeps symbols without labels": {
 			conflicts: []*Symbol{
 				{
 					Label: label.Label{Name: "a"},
@@ -44,6 +44,9 @@ func TestSymbolConflicts(t *testing.T) {
 			want: []*Symbol{
 				{
 					Label: label.Label{Name: "a"},
+				},
+				{
+					Label: label.NoLabel,
 				},
 			},
 		},

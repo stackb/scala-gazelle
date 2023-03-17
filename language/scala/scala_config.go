@@ -12,7 +12,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -114,16 +113,7 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 	return false
 }
 
-func (c *scalaConfig) shouldResolveName(from label.Label, file *sppb.File, name string) bool {
-	// TODO(pcj): implement this
-	return true
-}
-
 func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
-	if len(c.conflictResolvers) == 0 {
-		log.Printf("Conflict resolution for %q failed (no conflict resolvers enabled)", imp.Imp)
-		return nil, false
-	}
 	for _, resolver := range c.conflictResolvers {
 		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol); ok {
 			return resolved, true
