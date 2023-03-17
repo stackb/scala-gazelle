@@ -163,6 +163,14 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	// gather import scopes
 	for _, name := range file.Imports {
 		if wimp, ok := isWildcardImport(name); ok {
+			// collect the (package) symbol for import
+			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
+				imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
+			} else {
+				log.Printf("warning: invalid wildcard import: symbol %q: was not found' ", name)
+			}
+
+			// collect the scope
 			if scope, ok := r.ctx.scope.GetScope(wimp); ok {
 				scopes = append(scopes, scope)
 			} else if debugNameNotFound {
