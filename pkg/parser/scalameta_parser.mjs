@@ -309,7 +309,7 @@ class ScalaFile {
 
     visitNode(node) {
         if (debug) {
-            this.console.log('visit ' + node.type);
+            this.console.log('visitNode ' + node.type);
         }
         switch (node.type) {
             case 'Source':
@@ -344,7 +344,7 @@ class ScalaFile {
                 break;
             default:
                 if (debug) {
-                    this.console.log('unhandled node type', node.type, this.filename);
+                    this.console.log('unhandled visitNode type', node.type, this.filename);
                     this.printNode(node);
                 }
                 this.visitStats(node.stats);
@@ -705,15 +705,25 @@ function wantNameInContext(stack) {
     if (stack.length == 0) {
         return false;
     }
+
+    const parent = stack[stack.length - 1];
+
+    // we want to avoid including parameter names in the 'names' list, because
+    // they can never refer to types.  At present this works for the repo in
+    // question but is likely weofully inadequate for general use.
+    //
+    // Example case: don't capture 'meta' in:
+    // (e.g override def sayHello(request: HelloHopRequest, meta: Metadata): Future[HelloReply] = {)
+    if (parent.fun && parent.args) {
+        return false;
+    }
+
     for (let i = stack.length - 1; i >= 0; i--) {
         switch (stack[i].type) {
             // if the immediate parent is a parameter
             case 'Term.Param':
             case 'Term.Interpolate':
             case 'Pat.Var':
-                if (i === stack.length - 1) {
-                    return false;
-                }
                 return false;
             // any infix or unary context
             case 'Term.ApplyUnary':

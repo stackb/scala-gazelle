@@ -96,8 +96,8 @@ object Main extends LazyLogging {
 							},
 						},
 						Names: []string{
-							"ArgProcessor.process", "LazyLogging", "Main", "Unit", "args", "example",
-							"logger.info", "main",
+							"ArgProcessor", "BlendTestService", "LazyLogging", "Main", "Unit", "dotForm",
+							"example", "info", "logger", "main", "process",
 						},
 					},
 				},
@@ -171,7 +171,7 @@ object Palette {
 							"java.awt.Color",
 							"scala.util.Random.nextInt",
 						},
-						Names: []string{"MandelPalette", "Palette", "color"},
+						Names: []string{"Color", "MandelPalette", "Palette", "Seq.tabulate", "color", "toArray"},
 					},
 				},
 			},
@@ -225,7 +225,6 @@ class Main {
 	override def sayHello(request: HelloHopRequest, meta: Metadata): Future[HelloReply] = {
 	actions.instrumented(meta, request, "sayHello") { implicit tracing =>
 		val name = request.name
-		logger.info(s"Forwarding 'sayHello' request for ${name} with ${tracing.headersToForward}")
 		// Use the invoke method on ClientTracingInvoker that will propagate extracted headers from parent Ingress request
 		// Send one async request this way.
 		tracing.invoke(client.sayHello(), HelloRequest(name))
@@ -245,23 +244,22 @@ class Main {
 						},
 						Names: []string{
 							"Future",
-							"HelloRequest",
 							"Main",
-							"actions.instrumented",
-							"client.sayHello",
+							"actions",
+							"client",
 							"example",
-							"logger.info",
-							"name",
+							"instrumented",
+							"invoke",
 							"request.name",
 							"sayHello",
-							"tracing.invoke",
+							"tracing",
 						},
 					},
 				},
 			},
 		},
 	} {
-		// if name != "nested import" {
+		// if name != "skips parameter names" {
 		// 	continue
 		// }
 		t.Run(name, func(t *testing.T) {
