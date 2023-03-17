@@ -18,6 +18,7 @@ import (
 )
 
 const (
+	debugSelfImports         = false
 	debugNameNotFound        = false
 	debugExtendsNameNotFound = false
 	debugFileScope           = false
@@ -125,7 +126,6 @@ func (r *scalaRule) Resolve(rctx *scalarule.ResolveContext) resolver.ImportMap {
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
-
 	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 }
 
@@ -169,12 +169,22 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
-	// gather import scopes
+	putImport := func(imp *resolver.Import) {
+		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+			if debugSelfImports {
+				log.Println("skipping import from current", imp.Imp)
+			}
+			return
+		}
+		imports.Put(imp)
+	}
+
+	// gather direct imports and import scopes
 	for _, name := range file.Imports {
 		if wimp, ok := isWildcardImport(name); ok {
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
-				imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
+				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
 				log.Printf("warning: invalid wildcard import: symbol %q: was not found' ", name)
 			}
@@ -187,13 +197,13 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			}
 		} else {
 			imp := resolver.NewDirectImport(name, file)
-			imports.Put(imp)
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				imp.Symbol = sym
 				direct.Put(importBasename(name), sym)
 			} else if debugNameNotFound {
 				log.Printf("%s | warning: direct symbol not found: %s", r.pb.Label, name)
 			}
+			putImport(imp)
 		}
 	}
 
@@ -235,7 +245,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
-				imports.Put(resolver.NewExtendsImport(sym.Name, file, name, sym))
+				putImport(resolver.NewExtendsImport(sym.Name, file, name, sym))
 				if resolvedOK && resolved != sym {
 					resolved.Require(sym)
 				}
@@ -248,9 +258,9 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	// resolve symbols named in the file.  For each one we find, add an import.
 	for _, name := range file.Names {
 		if sym, ok := scope.GetSymbol(name); ok {
-			imports.Put(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
+			putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {
-			imports.Put(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
+			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
 	}
 }
@@ -302,6 +312,22 @@ func isWildcardImport(imp string) (string, bool) {
 
 func isBinaryRule(kind string) bool {
 	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
+}
+
+func isSelfImport(imp *resolver.Import, repo, pkg, name string) bool {
+	if imp.Symbol == nil {
+		return false
+	}
+	if repo != "" {
+		return false
+	}
+	if pkg != imp.Symbol.Label.Pkg {
+		return false
+	}
+	if name != imp.Symbol.Label.Name {
+		return false
+	}
+	return true
 }
 
 func importBasename(imp string) string {

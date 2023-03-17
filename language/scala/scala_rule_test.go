@@ -138,7 +138,6 @@ func TestScalaRuleImports(t *testing.T) {
 			want: []string{
 				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
 				`✅ com.foo.Bar<> (DIRECT of A.scala)`,
-				`✅ com.foo.ClassA<CLASS> //com/foo:somelib<source> (EXTENDS of A.scala via "com.foo.ClassB")`,
 			},
 		},
 		"extends symbol completed by wildcard import": {
