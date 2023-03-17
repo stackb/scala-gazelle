@@ -1,10 +1,10 @@
 {
-  "label":  "//pkg/provider:testdata/GreeterClient.scala",
-  "kind":  "scala_library",
-  "files":  [
+  "label": "//pkg/provider:testdata/GreeterClient.scala",
+  "kind": "scala_library",
+  "files": [
     {
-      "filename":  "testdata/GreeterClient.scala",
-      "imports":  [
+      "filename": "testdata/GreeterClient.scala",
+      "imports": [
         "akka.Done",
         "akka.NotUsed",
         "akka.actor.ActorSystem",
@@ -21,13 +21,13 @@
         "scala.util.Failure",
         "scala.util.Success"
       ],
-      "packages":  [
+      "packages": [
         "examples.helloworld.greeter"
       ],
-      "objects":  [
+      "objects": [
         "examples.helloworld.greeter.GreeterClient"
       ],
-      "names":  [
+      "names": [
         "ActorSystem",
         "Future",
         "GreeterClient",
@@ -58,9 +58,9 @@
         "streamingBroadcast",
         "sys.dispatcher"
       ],
-      "extends":  {
-        "object examples.helloworld.greeter.GreeterClient":  {
-          "classes":  [
+      "extends": {
+        "object examples.helloworld.greeter.GreeterClient": {
+          "classes": [
             "com.typesafe.scalalogging.LazyLogging"
           ]
         }

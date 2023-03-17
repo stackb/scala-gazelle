@@ -1,28 +1,28 @@
 {
-  "label":  "//pkg/provider:testdata/UserId.scala",
-  "kind":  "scala_library",
-  "files":  [
+  "label": "//pkg/provider:testdata/UserId.scala",
+  "kind": "scala_library",
+  "files": [
     {
-      "filename":  "testdata/UserId.scala",
-      "packages":  [
+      "filename": "testdata/UserId.scala",
+      "packages": [
         "common.types"
       ],
-      "classes":  [
+      "classes": [
         "common.types.UserId"
       ],
-      "objects":  [
+      "objects": [
         "common.types.UserId"
       ],
-      "names":  [
+      "names": [
         "AnyVal",
         "Int",
         "UserId",
         "common.types",
         "scalapb.TypeMapper"
       ],
-      "extends":  {
-        "class common.types.UserId":  {
-          "classes":  [
+      "extends": {
+        "class common.types.UserId": {
+          "classes": [
             "AnyVal"
           ]
         }
