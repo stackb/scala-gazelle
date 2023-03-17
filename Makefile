@@ -55,3 +55,6 @@ mocks:
 
 .PHONY: gen
 gen: mocks protos
+
+update_provider_test_golden_files:
+	bazel run pkg/provider:provider_test -- -update
