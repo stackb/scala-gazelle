@@ -37,6 +37,8 @@ type scalaRuleContext struct {
 type scalaRule struct {
 	// Rule is the pb representation
 	pb *sppb.Rule
+	// files is a list of files, copied from pb.Files but sorted again
+	files []*sppb.File
 	// ctx is the rule context
 	ctx *scalaRuleContext
 	// exports keyed by their import
@@ -49,12 +51,19 @@ func newScalaRule(
 ) *scalaRule {
 	scalaRule := &scalaRule{
 		pb:      rule,
+		files:   rule.Files,
 		ctx:     ctx,
 		exports: make(map[string]resolve.ImportSpec),
 	}
 
+	sort.Slice(scalaRule.files, func(i, j int) bool {
+		a := scalaRule.files[i]
+		b := scalaRule.files[j]
+		return a.Filename < b.Filename
+	})
+
 	if !isBinaryRule(ctx.rule.Kind()) {
-		for _, file := range scalaRule.pb.Files {
+		for _, file := range scalaRule.files {
 			scalaRule.putExports(file)
 		}
 	}
@@ -126,7 +135,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	impLang := scalaLangName
 
 	// direct
-	for _, file := range r.pb.Files {
+	for _, file := range r.files {
 		r.fileImports(file, imports)
 	}
 
