@@ -36,6 +36,11 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 	}
 }
 
+// Require adds a symbol to the requires list.
+func (s *Symbol) Require(sym *Symbol) {
+	s.Requires = append(s.Requires, sym)
+}
+
 // String implements fmt.Stringer
 func (s *Symbol) String() string {
 	return fmt.Sprintf("(%s<%v> %s<%v>)", s.Name, s.Type, s.Label, s.Provider)

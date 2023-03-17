@@ -69,7 +69,7 @@ func (p *JavaProvider) OnResolve() error {
 	for classFile, symbol := range p.classSymbols {
 		for _, superclass := range append(classFile.Superclasses, classFile.Interfaces...) {
 			if resolved, ok := p.scope.GetSymbol(superclass); ok {
-				symbol.Requires = append(symbol.Requires, resolved)
+				symbol.Require(resolved)
 			} else if debugUnresolvedSuperclass {
 				log.Printf("Unresolved superclass %s of %s", superclass, classFile.Name)
 			}
