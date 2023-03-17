@@ -2,12 +2,17 @@ package resolver
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
+
+const debugConflicts = false
 
 // Symbol associates a name with the label that provides it, along with a type
 // classifier that says what kind of symbol it is.
@@ -39,6 +44,23 @@ func NewSymbol(impType sppb.ImportType, name, provider string, from label.Label)
 // Require adds a symbol to the requires list.
 func (s *Symbol) Require(sym *Symbol) {
 	s.Requires = append(s.Requires, sym)
+}
+
+// Conflict adds a symbol to the conflicts list.
+func (s *Symbol) Conflict(sym *Symbol) {
+	if sym.Label == label.NoLabel {
+		if debugConflicts {
+			log.Printf("ignoring conflicting symbol that has no label: %v", sym.String())
+		}
+		return
+	}
+	if debugConflicts {
+		diff := cmp.Diff(s, sym, cmpopts.IgnoreFields(Symbol{}, "Conflicts"))
+		if diff != "" {
+			log.Printf("conflicting symbols %q: %s", s.Name, diff)
+		}
+	}
+	s.Conflicts = append(s.Conflicts, sym)
 }
 
 // String implements fmt.Stringer
