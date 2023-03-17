@@ -49,12 +49,12 @@ class Foo extends HashMap {
 						Packages: []string{"a"},
 						Classes:  []string{"a.Foo"},
 						Imports:  []string{"java.util.HashMap"},
-						Names:    []string{"a", "java", "util"},
 						Extends: map[string]*sppb.ClassList{
 							"class a.Foo": {
 								Classes: []string{"java.util.HashMap"},
 							},
 						},
+						Names: []string{"Foo", "HashMap", "a"},
 					},
 				},
 			},
@@ -95,6 +95,10 @@ object Main extends LazyLogging {
 								Classes: []string{"com.typesafe.scalalogging.LazyLogging"},
 							},
 						},
+						Names: []string{
+							"ArgProcessor.process", "LazyLogging", "Main", "Unit", "args", "example",
+							"logger.info", "main",
+						},
 					},
 				},
 			},
@@ -134,6 +138,7 @@ class FooTest extends FlatSpec with Matchers {
 								},
 							},
 						},
+						Names: []string{"FlatSpec", "FooTest", "Matchers", "foo.test"},
 					},
 				},
 			},
@@ -166,6 +171,7 @@ object Palette {
 							"java.awt.Color",
 							"scala.util.Random.nextInt",
 						},
+						Names: []string{"MandelPalette", "Palette", "color"},
 					},
 				},
 			},
@@ -202,6 +208,53 @@ object Main {
 						},
 						Imports: []string{
 							"akka.actor.ActorSystem",
+						},
+						Names: []string{"ActorSystem", "Main", "MainContext", "Unit", "example", "makeRequest"},
+					},
+				},
+			},
+		},
+		"skips parameter names": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package example
+
+class Main {
+	override def sayHello(request: HelloHopRequest, meta: Metadata): Future[HelloReply] = {
+	actions.instrumented(meta, request, "sayHello") { implicit tracing =>
+		val name = request.name
+		logger.info(s"Forwarding 'sayHello' request for ${name} with ${tracing.headersToForward}")
+		// Use the invoke method on ClientTracingInvoker that will propagate extracted headers from parent Ingress request
+		// Send one async request this way.
+		tracing.invoke(client.sayHello(), HelloRequest(name))
+	}
+	}
+}
+`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Packages: []string{"example"},
+						Classes: []string{
+							"example.Main",
+						},
+						Names: []string{
+							"Future",
+							"HelloRequest",
+							"Main",
+							"actions.instrumented",
+							"client.sayHello",
+							"example",
+							"logger.info",
+							"name",
+							"request.name",
+							"sayHello",
+							"tracing.invoke",
 						},
 					},
 				},
@@ -244,7 +297,7 @@ object Main {
 				sppb.ParseResponse{},
 				sppb.File{},
 				sppb.ClassList{},
-			), cmpopts.IgnoreFields(sppb.File{}, "Names")); diff != "" {
+			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
 			}
 		})
