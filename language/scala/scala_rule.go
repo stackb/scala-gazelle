@@ -134,14 +134,14 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
 
-	// direct
-	for _, file := range r.files {
-		r.fileImports(file, imports)
-	}
-
 	// if this rule has a main_class
 	if mainClass := r.ctx.rule.AttrString("main_class"); mainClass != "" {
 		imports.Put(resolver.NewMainClassImport(mainClass))
+	}
+
+	// direct
+	for _, file := range r.files {
+		r.fileImports(file, imports)
 	}
 
 	// Initialize a list of symbols to find implicits for from all known

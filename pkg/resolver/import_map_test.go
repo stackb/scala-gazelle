@@ -70,6 +70,32 @@ func TestImportMapDeps(t *testing.T) {
 				{Repo: "maven", Name: "com_typesafe_scalalogging"},
 			},
 		},
+		"first-put-wins-semantics": {
+			imports: []*resolver.Import{
+				{
+					Kind: parse.ImportKind_DIRECT,
+					Imp:  "com.typesafe.scalalogging.LazyLogging",
+					Symbol: &resolver.Symbol{
+						Name:     "com.typesafe.scalalogging.LazyLogging",
+						Provider: "maven",
+						Label:    label.Label{Repo: "maven", Name: "com_typesafe_scalalogging"},
+					},
+				},
+				{
+					Kind: parse.ImportKind_DIRECT,
+					Imp:  "com.typesafe.scalalogging.LazyLogging",
+					Symbol: &resolver.Symbol{
+						Name:     "com.typesafe.scalalogging.LazyLogging",
+						Provider: "maven",
+						Label:    label.Label{Repo: "maven", Name: "com_typesafe_scalalogging2"},
+					},
+				},
+			},
+			from: label.Label{Pkg: "app", Name: "server"},
+			want: []label.Label{
+				{Repo: "maven", Name: "com_typesafe_scalalogging"},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			importMap := resolver.NewImportMap()

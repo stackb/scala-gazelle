@@ -65,8 +65,10 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 
 // Put the given import in the map.
 func (imports ImportMap) Put(imp *Import) {
-	// TODO: should we record *all* imports for a given key?
-	imports[imp.Imp] = imp
+	// TODO: should we record *all* imports for a given key?  Does priority matter?
+	if _, ok := imports[imp.Imp]; !ok {
+		imports[imp.Imp] = imp
+	}
 }
 
 func (imports ImportMap) Annotate(comments *build.Comments, accept func(imp *Import) bool) {
