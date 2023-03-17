@@ -6,8 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
@@ -95,15 +93,8 @@ func (r *TrieScope) Put(name string, symbol *Symbol) error {
 	}
 	if current, ok := r.GetSymbol(name); ok && current.Name == name {
 		if current.Label != symbol.Label {
-			current.Conflicts = append(current.Conflicts, symbol)
+			current.Conflict(symbol)
 			return nil
-		}
-		if false {
-			diff := cmp.Diff(current, symbol, cmpopts.IgnoreFields(Symbol{}, "Conflicts"))
-			if diff != "" {
-				// log.Printf("conflicting symbols %q: %s", current.Name, diff)
-				return nil
-			}
 		}
 	}
 	r.trie.Put(name, symbol)

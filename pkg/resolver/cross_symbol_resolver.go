@@ -29,8 +29,10 @@ func (sr *CrossSymbolResolver) ResolveSymbol(c *config.Config, ix *resolve.RuleI
 	default:
 		sym := NewSymbol(sppb.ImportType_CROSS_RESOLVE, imp, "cross-resolve", matches[0].Label)
 		for _, match := range matches[1:] {
-			conflict := NewSymbol(sppb.ImportType_CROSS_RESOLVE, imp, "cross-resolve", match.Label)
-			sym.Conflicts = append(sym.Conflicts, conflict)
+			if match.Label != label.NoLabel {
+				conflict := NewSymbol(sppb.ImportType_CROSS_RESOLVE, imp, "cross-resolve", match.Label)
+				sym.Conflict(conflict)
+			}
 		}
 		return sym, true
 	}

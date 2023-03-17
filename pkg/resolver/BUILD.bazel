@@ -53,6 +53,7 @@ go_test(
         "scala_scope_test.go",
         "scala_symbol_resolver_test.go",
         "scope_map_test.go",
+        "symbol_test.go",
         "trie_scope_test.go",
     ],
     embed = [":resolver"],
