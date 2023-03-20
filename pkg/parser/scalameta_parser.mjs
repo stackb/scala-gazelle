@@ -186,6 +186,9 @@ class ScalaFile {
             case "+":
             case "+=":
             case "-":
+            case ":=":
+            case "~>":
+            case "???":
                 return;
         }
         if (name.startsWith(".")) {
