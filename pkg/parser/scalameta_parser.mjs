@@ -192,19 +192,21 @@ class ScalaFile {
 
     addName(name) {
         switch (name) {
-            case "&&":
-            case "<":
-            case ">":
-            case "<=":
-            case ">=":
-            case "==":
+            case "-":
+            case "::":
+            case ":=":
             case "!":
+            case "???":
+            case "*":
+            case "&&":
             case "+":
             case "+=":
-            case "-":
-            case ":=":
+            case "<":
+            case "<=":
+            case "==":
+            case ">":
+            case ">=":
             case "~>":
-            case "???":
                 return;
         }
         if (name.startsWith(".")) {

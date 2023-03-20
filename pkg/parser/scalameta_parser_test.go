@@ -450,9 +450,9 @@ case class MetaData(meta: Map[String, Any] = Map()) {
 			},
 		},
 	} {
-		if name != "not-scalameta" {
-			continue
-		}
+		// if name != "not-scalameta" {
+		// 	continue
+		// }
 		t.Run(name,
 			func(t *testing.T) {
 				tmpDir, err := bazel.NewTmpDir("")
