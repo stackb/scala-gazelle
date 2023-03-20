@@ -16,6 +16,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
+	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
@@ -216,6 +217,7 @@ object Main {
 							"example.MainContext",
 						},
 						Imports: []string{
+							"MainContext._",
 							"akka.actor.ActorSystem",
 						},
 						Names: []string{"ActorSystem", "Main", "MainContext", "Unit", "example", "makeRequest"},
@@ -262,47 +264,233 @@ class Main {
 				},
 			},
 		},
+		"peerlink": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package corp.core.linkage
+
+import corp.core.linkage.Transport.Response
+import corp.core.vm.HostComms
+import corp.core.vm.HostComms.PeerPrefixPath
+import corp.core.vm.utils.{DaemonThread, Startable}
+import corp.core.{HostSignal, Location, Path}
+import java.io.{ObjectInputStream, ObjectOutputStream}
+import java.net.{ConnectException, InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
+import java.util.concurrent.ConcurrentHashMap
+import java.util.{Timer, TimerTask}
+
+import com.typesafe.scalalogging.LazyLogging
+
+/** The PeerLink module looks after peer connections and communications
+	*/
+object PeerLink extends LazyLogging {
+	case class ConnectionRequest(peerTag: String, peerHost: String, peerPort: Int)
+	case class ConnectionResponse(hostTag: String, host: String, hostPort: Int)
+	case class PeerAlreadyKnown(peerTag: String)
+
+	sealed trait Peer
+	case object NoPeer extends Peer
+	case object PendingOutPeer extends Peer
+	case object PendingInPeer extends Peer
+
+	case class PeerConnection(
+		peerTag: String,
+		peerHost: String,
+		peerPort: Int,
+		location: Location,
+		in: ObjectInputStream,
+		out: ObjectOutputStream)
+		extends Peer
+
+	/** The PeerLink acts as a coordinator and repository for external peer connections.<p>
+	*
+	* The PeerLink through its ConnectionHandlers (one per connection) forwards inbound messages
+	*
+	* @param port      The port to use for the ServerSocket
+	* @param transport The Related Transport which connects the internal comms to the PeerLink entities
+	* @param continue  An external predicate to allow full shutdown to be decided for the PeerLink entities
+	* @param deliver   An external callback for messages
+	*/
+	case class PeerLink(port: Int, transport: SimpleTransport, continue: Unit => Boolean, deliver: AnyRef => Unit) {
+	// TODO: Implement
+	def send(origin: Location, dest: Location, msg: AnyRef): Response = ???
+	// TODO: Implement
+	def sendHostSignal(origin: Location, signal: HostSignal): Response = ???
+
+	// scalastyle:off
+	val peers: ConcurrentHashMap[(String, Int), Peer] = new ConcurrentHashMap()
+	val timer: Timer = new Timer("PeerLinkTimer", true)
+	// scalastyle:on
+
+	private def listPeers(): List[String] = {
+		import scala.jdk.CollectionConverters._
+		peers
+		.values()
+		.asScala
+		.collect { case p: PeerConnection => p.peerTag + "@" + p.peerHost + ":" + p.peerPort }
+		.toList
+	}
+
+}
+}
+					
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Imports: []string{
+							"com.typesafe.scalalogging.LazyLogging",
+							"corp.core.HostSignal",
+							"corp.core.Location",
+							"corp.core.Path",
+							"corp.core.linkage.Transport.Response",
+							"corp.core.vm.HostComms",
+							"corp.core.vm.HostComms.PeerPrefixPath",
+							"corp.core.vm.utils.DaemonThread",
+							"corp.core.vm.utils.Startable",
+							"java.io.ObjectInputStream",
+							"java.io.ObjectOutputStream",
+							"java.net.ConnectException",
+							"java.net.InetSocketAddress",
+							"java.net.ServerSocket",
+							"java.net.Socket",
+							"java.net.SocketTimeoutException",
+							"java.util.Timer",
+							"java.util.TimerTask",
+							"java.util.concurrent.ConcurrentHashMap",
+							"scala.jdk.CollectionConverters._",
+						},
+						Objects:  []string{"corp.core.linkage.PeerLink"},
+						Packages: []string{"corp.core.linkage"},
+						Extends: map[string]*parse.ClassList{
+							"object corp.core.linkage.PeerLink": {
+								Classes: []string{
+									"com.typesafe.scalalogging.LazyLogging",
+								},
+							},
+						},
+						Names: []string{
+							"ConcurrentHashMap",
+							"ConnectionRequest",
+							"ConnectionResponse",
+							"LazyLogging",
+							"List",
+							"NoPeer",
+							"Peer",
+							"PeerAlreadyKnown",
+							"PeerConnection",
+							"PeerLink",
+							"PendingInPeer",
+							"PendingOutPeer",
+							"Response",
+							"Timer",
+							"corp.core.linkage",
+							"listPeers",
+							"send",
+							"sendHostSignal",
+						},
+					},
+				},
+			},
+		},
+		"not-scalameta": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package trumid.common.truscale.core
+
+object MetaData {
+	val NoMetaData: MetaData = MetaData(Map())
+	val NoMD: MetaData = NoMetaData
+
+	val AckResponse = "AckResponse"
+	val UnexpectedResponse = "UnexpectedResponse"
+
+	// Standard keys
+	val FailureReason = "FailureReason"
+}
+
+case class MetaData(meta: Map[String, Any] = Map()) {
+	def keys: Iterable[String] = meta.keys
+	def this(k: String, v: Any) = this(Map(k -> v))
+	def update(key: String, value: Any): MetaData = MetaData(meta.updated(key, value))
+	def apply(key: String): Any = meta(key)
+}					
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Classes:  []string{"trumid.common.truscale.core.MetaData"},
+						Objects:  []string{"trumid.common.truscale.core.MetaData"},
+						Packages: []string{"trumid.common.truscale.core"},
+						Names: []string{
+							"Any",
+							"Iterable",
+							"Map",
+							"MetaData",
+							"NoMetaData",
+							"apply",
+							"keys",
+							"meta",
+							"meta.keys",
+							"trumid.common.truscale.core",
+							"update",
+						},
+					},
+				},
+			},
+		},
 	} {
-		// if name != "skips parameter names" {
+		// if name != "not-scalameta" {
 		// 	continue
 		// }
-		t.Run(name, func(t *testing.T) {
-			tmpDir, err := bazel.NewTmpDir("")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.RemoveAll(tmpDir)
-
-			files := mustWriteTestFiles(t, tmpDir, tc.files)
-			tc.in.Filenames = files
-
-			server := NewScalametaParser()
-			if err := server.Start(); err != nil {
-				t.Fatal("server start:", err)
-			}
-			defer server.Stop()
-
-			got, err := server.Parse(context.Background(), &tc.in)
-			if err != nil {
-				t.Fatal(err)
-			}
-			got.ElapsedMillis = 0
-
-			// remove tmpdir prefix and zero the time delta for diff comparison
-			for i := range got.Files {
-				if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
-					got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
+		t.Run(name,
+			func(t *testing.T) {
+				tmpDir, err := bazel.NewTmpDir("")
+				if err != nil {
+					t.Fatal(err)
 				}
-			}
+				defer os.RemoveAll(tmpDir)
 
-			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
-				sppb.ParseResponse{},
-				sppb.File{},
-				sppb.ClassList{},
-			)); diff != "" {
-				t.Errorf(".Parse (-want +got):\n%s", diff)
-			}
-		})
+				files := mustWriteTestFiles(t, tmpDir, tc.files)
+				tc.in.Filenames = files
+
+				server := NewScalametaParser()
+				if err := server.Start(); err != nil {
+					t.Fatal("server start:", err)
+				}
+				defer server.Stop()
+
+				got, err := server.Parse(context.Background(), &tc.in)
+				if err != nil {
+					t.Fatal(err)
+				}
+				got.ElapsedMillis = 0
+
+				// remove tmpdir prefix and zero the time delta for diff comparison
+				for i := range got.Files {
+					if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
+						got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
+					}
+				}
+
+				if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
+					sppb.ParseResponse{},
+					sppb.File{},
+					sppb.ClassList{},
+				)); diff != "" {
+					t.Errorf(".Parse (-want +got):\n%s", diff)
+				}
+			})
 	}
 }
 

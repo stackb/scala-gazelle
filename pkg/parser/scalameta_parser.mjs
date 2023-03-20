@@ -20,9 +20,14 @@ const enableNestedImports = true;
 class Scope {
     /**
      * Construct a scope having a possibly-undefined parent scope.
+     * @param {string} name
      * @param {Scope|undefined} parent 
      */
-    constructor(parent) {
+    constructor(name, parent) {
+        /**
+         * @type {string}
+         */
+        this.name = name;
         /**
          * @type {Scope|undefined}
          */
@@ -48,16 +53,27 @@ class Scope {
      * @param {?string} sym
      */
     addImport(imp, sym) {
-        if (!imp) {
-            return; // FIXME(pcj): why should this ever be null?
-        }
         this.imports.add(imp);
         if (sym) {
             this.addSymbol(sym, imp);
         }
         if (this.parent) {
-            this.parent.addImport(sym, imp)
+            this.parent.addImport(imp, sym);
         }
+    }
+
+    /**
+     * Get the scope qualified name.
+     * @returns {string}
+     */
+    qname() {
+        const names = [];
+        let current = this;
+        while (current) {
+            names.push(current.name);
+            current = current.parent;
+        }
+        return names.join('.');
     }
 
     /**
@@ -103,7 +119,7 @@ class ScalaFile {
         /**
          * The root scope.
          */
-        this.root = new Scope(undefined);
+        this.root = new Scope('root');
 
         /**
          * The scope stack.
@@ -176,16 +192,21 @@ class ScalaFile {
 
     addName(name) {
         switch (name) {
-            case "&&":
-            case "<":
-            case ">":
-            case "<=":
-            case ">=":
-            case "==":
+            case "-":
+            case "::":
+            case ":=":
             case "!":
+            case "???":
+            case "*":
+            case "&&":
             case "+":
             case "+=":
-            case "-":
+            case "<":
+            case "<=":
+            case "==":
+            case ">":
+            case ">=":
+            case "~>":
                 return;
         }
         if (name.startsWith(".")) {
@@ -207,7 +228,7 @@ class ScalaFile {
         if (tree.error) {
             this.visitError(tree);
         } else {
-            this.traverse(tree, undefined /* root property */, undefined /* parent */, [], (propName, node, parent, stack) => {
+            this.traverse(this.root, this.root.name, tree, undefined /* parent */, [], (propName, node, parent, stack) => {
                 if (!node) {
                     return false
                 }
@@ -249,10 +270,12 @@ class ScalaFile {
 
     /**
      * Push scope create a new scope and pushed it on the stack
+     * @param {string} name An arbitrary name for the scope
+     * @param {!Scope} parent The parent scope
      * @returns {Scope|undefined}
      */
-    pushScope() {
-        const scope = new Scope(this.currentScope());
+    pushScope(name, parent) {
+        const scope = new Scope(name, parent);
         this.scopes.push(scope);
         return scope;
     }
@@ -262,6 +285,9 @@ class ScalaFile {
      * @returns {Scope|undefined}
      */
     popScope() {
+        if (this.scopes.length === 1) {
+            throw new Error(`must not pop root scope!`);
+        }
         return this.scopes.pop();
     }
 
@@ -272,32 +298,33 @@ class ScalaFile {
      * The visit function is a callback that takes the current key/value from the object
      * and the stack.
      * @see https://micahjon.com/2020/simple-depth-first-search-with-object-entries/.
+     * @param {Scope} scope
+     * @param {string} prop
      * @param {object} obj
-     * @param {string | undefined} prop
      * @param {object | undefined} parent
      * @param {Array<object>} stack
      * @param {function} visit
      */
-    traverse(obj, prop, parent, stack, visit) {
+    traverse(scope, prop, obj, parent, stack, visit) {
         if (typeof obj !== 'object' || obj === null) {
             return;
         }
         if (obj.type) {
             stack.push(obj);
-            this.pushScope();
+            scope = this.pushScope(prop, scope);
             parent = obj;
         }
 
         if (Array.isArray(obj)) {
             obj.forEach((value) => {
                 if (visit(prop, value, parent, stack)) {
-                    this.traverse(value, prop, parent, stack, visit);
+                    this.traverse(scope, prop, value, parent, stack, visit);
                 }
             });
         } else {
             Object.entries(obj).forEach(([key, value]) => {
                 if (visit(key, value, parent, stack)) {
-                    this.traverse(value, key, parent, stack, visit);
+                    this.traverse(scope, key, value, parent, stack, visit);
                 }
             });
         }
