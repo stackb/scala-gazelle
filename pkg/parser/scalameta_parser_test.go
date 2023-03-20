@@ -332,160 +332,7 @@ object PeerLink extends LazyLogging {
 		.toList
 	}
 
-	// ---------- Outbound connection requests ----------
-
-	private def newScanTask(startPort: Int, endPort: Int): ScanTask = ScanTask(startPort, endPort)
-
-	case class ScanTask(startPort: Int, endPort: Int) extends TimerTask with LazyLogging {
-		override def run(): Unit = {
-		logger.info(listPeers.mkString("Active peers: ", ", ", ""))
-		for {
-			peerPort <- startPort to endPort
-			if peerPort != HostComms.hostPort
-		} {
-			peerConnectionRequest("localhost", peerPort)
-		}
-		if (continue(())) timer.schedule(newScanTask(startPort, endPort), 15000)
-		}
-	}
-
-	/** Scan for peers within the port range (startPort - endPort)<p>
-		*
-		* Ignore any already connected peers.
-		*
-		* @param startPort The first port in the peer port range (typically 50000)
-		* @param endPort   The last port in the peer port range (typically 50010)
-		*/
-	def scanForPeers(startPort: Int, endPort: Int): Unit = {
-		timer.schedule(newScanTask(startPort, endPort), 5000)
-	}
-
-	// TODO: Add protection for timeouts
-
-	def peerConnectionRequest(peerHost: String, peerPort: Int): Unit = {
-		DaemonThread(autoStart = true)(ConnectionRequestor(peerHost, peerPort, continue, this))
-	}
-
-	// TODO: Add protection and Peer removal on failure as appropriate
-
-	/** Contacts a detected peer and sends a connection request, recording details in the peers Map.
-		*
-		* @param peerHost  The Peer's host
-		* @param peerPort  The Peer's port
-		* @param continue  A high level external predicate to shut down all PeerLink activity
-		* @param peerLink  The parent PeerLink, required for Peer Locations
-		*/
-	case class ConnectionRequestor(peerHost: String, peerPort: Int, continue: Unit => Boolean, peerLink: PeerLink)
-		extends Startable
-		with LazyLogging {
-		def start(): Unit = {
-		peers.computeIfAbsent(
-			(peerHost, peerPort),
-			_ => PendingOutPeer
-		) // Sets a mark to indicate it is working on establishing a Peer
-		peers.compute((peerHost, peerPort), (_, peer) => if (peer == PendingOutPeer) connect else peer)
-		peers.entrySet().removeIf(e => e.getValue == NoPeer)
-		}
-
-		private def connect: Peer = try {
-		val soc = new Socket()
-		val isa = new InetSocketAddress(peerHost, peerPort)
-		soc.connect(isa, 5000)
-
-		val (in, out) = (new ObjectInputStream(soc.getInputStream), new ObjectOutputStream(soc.getOutputStream))
-		val conRequest = ConnectionRequest(HostComms.hostIdTag, HostComms.hostName, HostComms.hostPort)
-		logger.info("Sending connection request: " + conRequest + " to " + peerHost + ":" + peerPort)
-		out.writeObject(conRequest)
-		in.readObject match {
-			case cr: ConnectionResponse =>
-			logger.info("Peer acknowledged: " + cr)
-			val peerLocation = Location(Path(PeerPrefixPath, cr.hostTag))
-			transport.registerLocation(peerLocation, peerLink)
-			PeerConnection(cr.hostTag, cr.host, cr.hostPort, peerLocation, in, out)
-			case PeerAlreadyKnown(peerTag) =>
-			logger.info(s"PeerLink.ConnectionRequestor: Peer[$peerTag] already known")
-			NoPeer
-			case x: AnyRef =>
-			logger.error(s"PeerLink.ConnecttionRequestor: received an unexpected message = $x")
-			NoPeer
-			// Comms outbound will access the out stream in the Peer instance
-			// Comms inbound will be redirected through the Peer instance from the ConnectionHandler
-		}
-		} catch {
-		case e: ConnectException =>
-			NoPeer
-		case _: SocketTimeoutException =>
-			NoPeer
-		// expected, no peer found
-		case e: Exception =>
-			logger.warn(s"ConnectionRequestor [$peerHost, $peerPort] error: ${e}")
-			NoPeer
-		}
-		peers.entrySet().removeIf(e => e.getValue == NoPeer)
-	}
-
-	// ------------------------------ Inbound connection responses ------------------------------
-
-	def startConnectionHandler(): Unit = DaemonThread(autoStart = true) { () =>
-		val ss: ServerSocket = new ServerSocket(port)
-		while (continue(())) {
-		handleConnection(ss.accept)
-		}
-	}
-
-	def handleConnection(socket: Socket): Unit = {
-		logger.info(s"Received peer connection attempt from ${socket.getRemoteSocketAddress}")
-		DaemonThread(autoStart = true) { ConnectionHandler(socket, transport, continue, this) }
-	}
-
-	// TODO: Add protection and Peer removal on failure as appropriate
-
-	/** Handles ConnectionRequests and subsequently any messages sent from connected peers
-		*
-		* @param soc         The Socket from the ServerSocket.accept
-		* @param transport   The Transport instance to register Peer Locations with
-		* @param continue    A high level external predicate to shut down all PeerLink activity
-		* @param peerLink    The parent PeerLink so it can be referenced in the Peer Location
-		*/
-	case class ConnectionHandler(soc: Socket, transport: SimpleTransport, continue: Unit => Boolean, peerLink: PeerLink)
-		extends Startable
-		with LazyLogging {
-		def start(): Unit = {
-		val out = new ObjectOutputStream(soc.getOutputStream)
-		val in = new ObjectInputStream(soc.getInputStream)
-		while (true) {
-			in.readObject() match {
-			case req: ConnectionRequest =>
-				logger.info(s"Peer requested connection from ${req.peerTag} - ${req.peerHost}:${req.peerPort}")
-				peers.computeIfAbsent((req.peerHost, req.peerPort), _ => PendingInPeer)
-				peers.compute(
-				(req.peerHost, req.peerPort),
-				(_, peer) =>
-					if (peer == PendingInPeer) {
-					logger.info(s"Accepted connection ${req.peerTag} ${req.peerHost}, ${req.peerPort}")
-					out.writeObject(ConnectionResponse(HostComms.hostIdTag, HostComms.hostName, HostComms.hostPort))
-					val peerLocation = Location(Path(PeerPrefixPath, req.peerTag))
-					transport.registerLocation(peerLocation, peerLink)
-					PeerConnection(req.peerTag, req.peerHost, req.peerPort, peerLocation, in, out)
-					} else {
-					logger.info(s"Telling the requestor that already had a peer: $peer")
-					out.writeObject(PeerAlreadyKnown(req.peerTag))
-					peer
-					}
-				)
-
-			case msg: AnyRef =>
-			// TODO: Add forwarding of other messages from connected peers
-			}
-		}
-		logger.warn(s"Connection handler is closing")
-		}
-	}
-
-	startConnectionHandler()
-	logger.info("Connection handler started ...")
-	}
-
+}
 }
 					
 					`,
@@ -526,22 +373,12 @@ object PeerLink extends LazyLogging {
 							},
 						},
 						Names: []string{
-							"AnyRef",
 							"ConcurrentHashMap",
-							"ConnectException",
-							"ConnectionHandler",
 							"ConnectionRequest",
-							"ConnectionRequestor",
 							"ConnectionResponse",
-							"DaemonThread",
-							"Exception",
-							"InetSocketAddress",
 							"LazyLogging",
 							"List",
-							"Location",
 							"NoPeer",
-							"ObjectInputStream",
-							"ObjectOutputStream",
 							"Peer",
 							"PeerAlreadyKnown",
 							"PeerConnection",
@@ -549,39 +386,10 @@ object PeerLink extends LazyLogging {
 							"PendingInPeer",
 							"PendingOutPeer",
 							"Response",
-							"ScanTask",
-							"Socket",
-							"SocketTimeoutException",
-							"Startable",
 							"Timer",
-							"TimerTask",
-							"Unit",
-							"connect",
-							"continue",
-							"handleConnection",
-							"in.readObject",
 							"listPeers",
-							"logger.error",
-							"logger.info",
-							"logger.warn",
-							"newScanTask",
-							"out.writeObject",
-							"peerConnectionRequest",
-							"peerHost",
-							"peerPort",
-							"peers.compute",
-							"peers.computeIfAbsent",
-							"run",
-							"scanForPeers",
 							"send",
 							"sendHostSignal",
-							"soc.connect",
-							"soc.getInputStream",
-							"soc.getOutputStream",
-							"start",
-							"startConnectionHandler",
-							"timer.schedule",
-							"transport.registerLocation",
 							"trumid.common.truscale.core.linkage",
 						},
 					},
