@@ -217,6 +217,7 @@ object Main {
 							"example.MainContext",
 						},
 						Imports: []string{
+							"MainContext._",
 							"akka.actor.ActorSystem",
 						},
 						Names: []string{"ActorSystem", "Main", "MainContext", "Unit", "example", "makeRequest"},
@@ -397,8 +398,59 @@ object PeerLink extends LazyLogging {
 				},
 			},
 		},
+		"not-scalameta": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package trumid.common.truscale.core
+
+object MetaData {
+	val NoMetaData: MetaData = MetaData(Map())
+	val NoMD: MetaData = NoMetaData
+
+	val AckResponse = "AckResponse"
+	val UnexpectedResponse = "UnexpectedResponse"
+
+	// Standard keys
+	val FailureReason = "FailureReason"
+}
+
+case class MetaData(meta: Map[String, Any] = Map()) {
+	def keys: Iterable[String] = meta.keys
+	def this(k: String, v: Any) = this(Map(k -> v))
+	def update(key: String, value: Any): MetaData = MetaData(meta.updated(key, value))
+	def apply(key: String): Any = meta(key)
+}					
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Classes:  []string{"trumid.common.truscale.core.MetaData"},
+						Objects:  []string{"trumid.common.truscale.core.MetaData"},
+						Packages: []string{"trumid.common.truscale.core"},
+						Names: []string{
+							"Any",
+							"Iterable",
+							"Map",
+							"MetaData",
+							"NoMetaData",
+							"apply",
+							"keys",
+							"meta",
+							"meta.keys",
+							"trumid.common.truscale.core",
+							"update",
+						},
+					},
+				},
+			},
+		},
 	} {
-		if name != "peerlink" {
+		if name != "not-scalameta" {
 			continue
 		}
 		t.Run(name,
@@ -430,14 +482,6 @@ object PeerLink extends LazyLogging {
 						got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
 					}
 				}
-
-				// if diff := cmp.Diff(&tc.want.Files[0].Imports, got.Files[0].Imports, cmpopts.IgnoreUnexported(
-				// 	sppb.ParseResponse{},
-				// 	sppb.File{},
-				// 	sppb.ClassList{},
-				// )); diff != "" {
-				// 	t.Errorf(".Imports (-want +got):\n%s", diff)
-				// }
 
 				if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
 					sppb.ParseResponse{},
