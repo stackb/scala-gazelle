@@ -268,13 +268,13 @@ class Main {
 				{
 					Path: "Main.scala",
 					Content: `
-package trumid.common.truscale.core.linkage
+package corp.core.linkage
 
-import trumid.common.truscale.core.linkage.Transport.Response
-import trumid.common.truscale.core.vm.HostComms
-import trumid.common.truscale.core.vm.HostComms.PeerPrefixPath
-import trumid.common.truscale.core.vm.utils.{DaemonThread, Startable}
-import trumid.common.truscale.core.{HostSignal, Location, Path}
+import corp.core.linkage.Transport.Response
+import corp.core.vm.HostComms
+import corp.core.vm.HostComms.PeerPrefixPath
+import corp.core.vm.utils.{DaemonThread, Startable}
+import corp.core.{HostSignal, Location, Path}
 import java.io.{ObjectInputStream, ObjectOutputStream}
 import java.net.{ConnectException, InetSocketAddress, ServerSocket, Socket, SocketTimeoutException}
 import java.util.concurrent.ConcurrentHashMap
@@ -344,6 +344,14 @@ object PeerLink extends LazyLogging {
 						Filename: "Main.scala",
 						Imports: []string{
 							"com.typesafe.scalalogging.LazyLogging",
+							"corp.core.HostSignal",
+							"corp.core.Location",
+							"corp.core.Path",
+							"corp.core.linkage.Transport.Response",
+							"corp.core.vm.HostComms",
+							"corp.core.vm.HostComms.PeerPrefixPath",
+							"corp.core.vm.utils.DaemonThread",
+							"corp.core.vm.utils.Startable",
 							"java.io.ObjectInputStream",
 							"java.io.ObjectOutputStream",
 							"java.net.ConnectException",
@@ -354,19 +362,12 @@ object PeerLink extends LazyLogging {
 							"java.util.Timer",
 							"java.util.TimerTask",
 							"java.util.concurrent.ConcurrentHashMap",
-							"trumid.common.truscale.core.HostSignal",
-							"trumid.common.truscale.core.Location",
-							"trumid.common.truscale.core.Path",
-							"trumid.common.truscale.core.linkage.Transport.Response",
-							"trumid.common.truscale.core.vm.HostComms",
-							"trumid.common.truscale.core.vm.HostComms.PeerPrefixPath",
-							"trumid.common.truscale.core.vm.utils.DaemonThread",
-							"trumid.common.truscale.core.vm.utils.Startable",
+							"scala.jdk.CollectionConverters._",
 						},
-						Objects:  []string{"trumid.common.truscale.core.linkage.PeerLink"},
-						Packages: []string{"trumid.common.truscale.core.linkage"},
+						Objects:  []string{"corp.core.linkage.PeerLink"},
+						Packages: []string{"corp.core.linkage"},
 						Extends: map[string]*parse.ClassList{
-							"object trumid.common.truscale.core.linkage.PeerLink": {
+							"object corp.core.linkage.PeerLink": {
 								Classes: []string{
 									"com.typesafe.scalalogging.LazyLogging",
 								},
@@ -387,10 +388,10 @@ object PeerLink extends LazyLogging {
 							"PendingOutPeer",
 							"Response",
 							"Timer",
+							"corp.core.linkage",
 							"listPeers",
 							"send",
 							"sendHostSignal",
-							"trumid.common.truscale.core.linkage",
 						},
 					},
 				},
