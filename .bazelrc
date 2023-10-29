@@ -1,4 +1,7 @@
 # Keep until @io_bazel_rules_scala is upgraded
 build --incompatible_java_common_parameters=false
 
+# See https://github.com/bazelbuild/bazel/issues/16421
+build --jvmopt=-Djava.security.manager=allow
+
 query --output=label_kind
