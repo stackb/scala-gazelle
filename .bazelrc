@@ -1,9 +1,4 @@
 # Keep until @io_bazel_rules_scala is upgraded
 build --incompatible_java_common_parameters=false
 
-# See https://github.com/bazelbuild/bazel/issues/16421
-# See http://www.bigsoft.co.uk/blog/2022/04/13/groovy-could-not-create-securitymanager
-# build --jvmopt=-Djava.security.manager=allow
-build --jvmopt=-Djava.security.SecurityManager=allow
-
 query --output=label_kind
