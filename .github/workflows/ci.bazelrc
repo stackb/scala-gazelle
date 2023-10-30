@@ -12,6 +12,3 @@ build --repository_cache=$HOME/.cache/bazel-repo
 test --test_env=XDG_CACHE_HOME
 # Keep until @io_bazel_rules_scala is upgraded
 build --incompatible_java_common_parameters=false
-# Allow security manager for java 17+ / junitrunner
-# Also see http://www.bigsoft.co.uk/blog/2022/04/13/groovy-could-not-create-securitymanager
-build --jvmopt=-Djava.security.SecurityManager=allow
