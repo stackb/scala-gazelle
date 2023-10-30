@@ -56,7 +56,7 @@ func (sl *scalaLang) Resolve(
 	}
 
 	if r.Kind() == packageMarkerRuleKind {
-		resolvePackageMarkerRule(sl.progress, r, len(sl.packages))
+		resolvePackageMarkerRule(sl.progress, r, len(sl.packages), sl.wantProgress)
 		sl.remainingPackages--
 	} else {
 		pkg.Resolve(c, ix, rc, r, importsRaw, from)
