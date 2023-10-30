@@ -1,6 +1,12 @@
 package scalarule
 
-import grule "github.com/bazelbuild/bazel-gazelle/rule"
+import (
+	"fmt"
+
+	grule "github.com/bazelbuild/bazel-gazelle/rule"
+)
+
+var ErrRuleHasNoSrcs = fmt.Errorf("rule has no source files")
 
 // Package is responsible for instantiating a Rule interface for the given
 // gazelle.Rule, parsing the attribute name given (typically 'srcs').

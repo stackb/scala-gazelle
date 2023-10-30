@@ -179,6 +179,9 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 	if err != nil {
 		return nil, err
 	}
+	if len(srcs) == 0 {
+		return nil, scalarule.ErrRuleHasNoSrcs
+	}
 
 	from := s.cfg.maybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
 
