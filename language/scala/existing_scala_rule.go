@@ -65,7 +65,7 @@ func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scala
 func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
 	scalaRule, err := pkg.ParseRule(r, "srcs")
 	if err != nil {
-		if err == scalarule.ErrRuleHasNoSrcs {
+		if err == ErrRuleHasNoSrcs {
 			return nil // no need to print a warning
 		}
 		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)

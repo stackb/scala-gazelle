@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 
@@ -19,6 +20,8 @@ import (
 const (
 	ruleProviderKey = "_scala_rule_provider"
 )
+
+var ErrRuleHasNoSrcs = fmt.Errorf("rule has no source files")
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
@@ -180,7 +183,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		return nil, err
 	}
 	if len(srcs) == 0 {
-		return nil, scalarule.ErrRuleHasNoSrcs
+		return nil, ErrRuleHasNoSrcs
 	}
 
 	from := s.cfg.maybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
