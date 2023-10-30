@@ -20,7 +20,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 
 	t1 := time.Now()
 
-	if sl.cache.PackageCount > 0 {
+	if sl.wantProgress && sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 

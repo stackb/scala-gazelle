@@ -17,8 +17,10 @@ func generatePackageMarkerRule(pkgNum int) *rule.Rule {
 }
 
 // resolvePackageMarkerRule is called when a package marker rule is resolved.
-func resolvePackageMarkerRule(output mobyprogress.Output, r *rule.Rule, total int) {
+func resolvePackageMarkerRule(output mobyprogress.Output, r *rule.Rule, total int, wantProgress bool) {
 	current := r.PrivateAttr("n").(int)
-	writeResolveProgress(output, current, total, current == total)
+	if wantProgress {
+		writeResolveProgress(output, current, total, current == total)
+	}
 	r.Delete()
 }

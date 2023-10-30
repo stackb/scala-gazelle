@@ -2,6 +2,7 @@ package scala
 
 import (
 	"os"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -24,6 +25,8 @@ type scalaLang struct {
 	// debugProcessFlagValue halts processing and prints the PID for attaching a
 	// delve debugger.
 	debugProcessFlagValue bool
+	// wantProgress is a flag that prints docker style progress messages if enabled
+	wantProgress bool
 	// cacheFileFlagValue is the main cache file, if enabled
 	cacheFileFlagValue string
 	// cacheKeyFlagValue is the main cache key, if enabled
@@ -93,6 +96,7 @@ func NewLanguage() language.Language {
 	packages := make(map[string]*scalaPackage)
 
 	lang := &scalaLang{
+		wantProgress:         wantProgress(),
 		cache:                scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
@@ -103,7 +107,9 @@ func NewLanguage() language.Language {
 	}
 
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
-		writeParseProgress(lang.progress, msg)
+		if lang.wantProgress {
+			writeParseProgress(lang.progress, msg)
+		}
 	})
 	lang.parser = parser.NewMemoParser(lang.sourceProvider)
 
@@ -113,4 +119,17 @@ func NewLanguage() language.Language {
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
 
 	return lang
+}
+
+func wantProgress() bool {
+	if val, ok := os.LookupEnv("SCALA_GAZELLE_SHOW_PROGRESS"); ok {
+		switch strings.ToLower(val) {
+		case "true", "1":
+			return true
+		case "false", "0":
+			return false
+		}
+	}
+	// default to true
+	return true
 }
