@@ -186,7 +186,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
-				log.Printf("warning: invalid wildcard import: symbol %q: was not found' ", name)
+				log.Printf("warning: invalid wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
 			}
 
 			// collect the scope

@@ -58,10 +58,16 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 	if debugMemoParser {
 		log.Printf("rule cache miss: %s (%s)", from, sha256)
 	}
+	if len(srcs) == 0 {
+		log.Panicf(`while parsing %s %s: no files to parse! (this is a bug)`, kind, from)
+	}
 
 	rule, err := p.next.ParseScalaRule(kind, from, dir, srcs...)
 	if err != nil {
 		return nil, err
+	}
+	if rule == nil {
+		log.Panicf(`while parsing %s %s: ParseScalaRule did not return an error, but the returned rule was nil! (this is a bug) [%v]`, kind, from, srcs)
 	}
 	rule.Sha256 = sha256
 	p.rules[from] = rule

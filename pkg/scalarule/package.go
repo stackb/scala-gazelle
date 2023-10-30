@@ -1,6 +1,8 @@
 package scalarule
 
-import grule "github.com/bazelbuild/bazel-gazelle/rule"
+import (
+	grule "github.com/bazelbuild/bazel-gazelle/rule"
+)
 
 // Package is responsible for instantiating a Rule interface for the given
 // gazelle.Rule, parsing the attribute name given (typically 'srcs').
