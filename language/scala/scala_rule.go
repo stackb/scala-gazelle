@@ -233,8 +233,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
 		}
 
-		// kind := parts[0]
-		name := parts[1]
+		name := parts[1] // note: parts[0] is the 'kind'
 
 		// assume the name if fully-qualified, so resolve it from the "root"
 		// scope rather than involving package scopes.

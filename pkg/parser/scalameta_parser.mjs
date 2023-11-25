@@ -443,7 +443,7 @@ class ScalaFile {
                     scope.addImport([ref, importee.name.value].join('.'), importee.name.value)
                     break;
                 case 'Importee.Rename':
-                    scope.addImport([ref, importee.name.value].join('.'), importee.name.value)
+                    scope.addImport([ref, importee.rename.value].join('.'), importee.rename.value)
                     break;
                 case 'Importee.Unimport':
                     // an unimport is specifically excluded from the scala
