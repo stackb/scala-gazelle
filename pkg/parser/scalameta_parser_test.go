@@ -175,7 +175,7 @@ object Palette {
 						Objects:  []string{"color.Palette"},
 						Imports: []string{
 							"java.awt.Color",
-							"scala.util.Random.nextInt",
+							"scala.util.Random.rint",
 						},
 						Names: []string{
 							"MandelPalette",
