@@ -163,6 +163,7 @@ func TestScalaRuleImports(t *testing.T) {
 			},
 			want: []string{
 				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				"✅ akka.actor._<> (DIRECT of A.scala)",
 			},
 		},
 		"resolve_with via extends": {
@@ -248,13 +249,14 @@ func TestScalaRuleImports(t *testing.T) {
 			},
 			want: []string{
 				`✅ com.foo.proto.FooMessage<CLASS> //proto:foo_proto_scala_library<protobuf> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				"✅ com.foo.proto._<> (DIRECT of A.scala)",
 			},
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			universe := newMockGlobalScope(t, tc.globalSymbols)
 
-			global := resolver.NewTrieScope("mockGlobal")
+			global := resolver.NewTrieScope()
 			for _, symbol := range tc.globalSymbols {
 				global.PutSymbol(symbol)
 			}
@@ -308,7 +310,7 @@ type mockGlobalScope struct {
 func newMockGlobalScope(t *testing.T, known []*resolver.Symbol) *mockGlobalScope {
 	scope := &mockGlobalScope{
 		Universe: mocks.NewUniverse(t),
-		Global:   resolver.NewTrieScope("mockGlobal"),
+		Global:   resolver.NewTrieScope(),
 	}
 	for _, symbol := range known {
 		scope.Global.PutSymbol(symbol)

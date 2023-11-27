@@ -205,7 +205,7 @@ func (r *scalaRule) Exports() resolver.ImportMap {
 // fileExports gathers needed imports for the given file.
 func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 	var scopes []resolver.Scope
-	direct := resolver.NewTrieScope("direct")
+	direct := resolver.NewTrieScope()
 
 	putExport := func(imp *resolver.Import) {
 		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
@@ -250,7 +250,9 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 					resolved.Require(sym)
 				}
 			} else if debugExtendsNameNotFound {
-				putExport(resolver.NewDirectImport(imp, file))
+				// putExport(resolver.NewDirectImport(imp, file))
+				putExport(resolver.NewExtendsImport(imp, file, name, nil))
+
 				// log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
 			}
 		}
@@ -261,7 +263,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	var scopes []resolver.Scope
-	direct := resolver.NewTrieScope("direct")
+	direct := resolver.NewTrieScope()
 
 	putImport := func(imp *resolver.Import) {
 		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
@@ -347,7 +349,8 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 					resolved.Require(sym)
 				}
 			} else if debugExtendsNameNotFound {
-				putImport(resolver.NewDirectImport(imp, file))
+				putImport(resolver.NewExtendsImport(imp, file, name, nil))
+				// putImport(resolver.NewDirectImport(imp, file))
 				// log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
 			}
 		}

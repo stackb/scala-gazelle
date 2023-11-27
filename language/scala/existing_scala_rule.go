@@ -9,7 +9,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -174,15 +173,4 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefi
 func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
 	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
 	return comment
-}
-
-func getExtendsImports(imports resolver.ImportMap) resolver.ImportMap {
-	exports := resolver.NewImportMap()
-	for name, imp := range imports {
-		if imp.Kind != sppb.ImportKind_EXTENDS {
-			continue
-		}
-		exports[name] = imp
-	}
-	return exports
 }

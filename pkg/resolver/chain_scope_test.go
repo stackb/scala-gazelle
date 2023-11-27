@@ -18,7 +18,7 @@ func TestChainScope(t *testing.T) {
 		"miss": {
 			name: "examples.helloworld.greeter.GreeterServiceImpl",
 			scopes: func() []Scope {
-				root := NewTrieScope("test")
+				root := NewTrieScope()
 				root.PutSymbol(
 					makeSymbol(sppb.ImportType_PROTO_PACKAGE, "examples.helloworld.greeter.proto", label.Label{Pkg: "examples/helloworld/greeter/proto", Name: "examples_helloworld_greeter_proto_grpc_scala_library"}),
 				)

@@ -33,7 +33,7 @@ func TestScalaSourceProviderParseScalaRule(t *testing.T) {
 	}
 	t.Log("dir:", dir)
 
-	scope := resolver.NewTrieScope("source")
+	scope := resolver.NewTrieScope()
 
 	provider := provider.NewSourceProvider(func(msg string) {})
 

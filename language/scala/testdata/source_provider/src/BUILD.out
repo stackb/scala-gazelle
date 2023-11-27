@@ -2,18 +2,14 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", 
 
 scala_library(
     name = "lib",
-    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
+    # export: ✅ java.util.LinkedList<OVERRIDE> @java//util<override> (EXTENDS of Lib.scala via "a.b.c.Lib")
     srcs = ["a/b/c/Lib.scala"],
+    exports = ["@java//util"],
     deps = ["@java//util"],
 )
 
 scala_binary(
     name = "app",
-    # import: ❌ Unit<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # import: ✅ a.b.c.Lib<OBJECT> //src:lib<scala_library> (DIRECT of Main.scala)
-    # import: ✅ a.b.c.Main<OBJECT> //src:app<scala_binary> (MAIN_CLASS)
-    # import: ❌ main<ERROR> name not found (IMPORT_KIND_UNKNOWN)
     srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
     deps = [":lib"],

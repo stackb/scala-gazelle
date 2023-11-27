@@ -62,7 +62,7 @@ func TestTrieScope(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			scope := NewTrieScope(name)
+			scope := NewTrieScope()
 			for _, known := range tc.symbols {
 				if err := scope.PutSymbol(known); err != nil {
 					t.Fatal(err)
@@ -101,7 +101,7 @@ func TestTrieScopeGetSymbols(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			scope := NewTrieScope(name)
+			scope := NewTrieScope()
 			for _, known := range tc.symbols {
 				if err := scope.PutSymbol(known); err != nil {
 					t.Fatal(err)
@@ -138,7 +138,7 @@ func TestTrieScopeGetScope(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			var scope Scope
-			scope = NewTrieScope(name)
+			scope = NewTrieScope()
 			for _, known := range tc.symbols {
 				if err := scope.PutSymbol(known); err != nil {
 					t.Fatal(err)
@@ -241,14 +241,14 @@ func TestImportSegmenter(t *testing.T) {
 }
 
 func ExampleTrieScope_String_empty() {
-	scope := NewTrieScope("example")
+	scope := NewTrieScope()
 	fmt.Println(scope)
 	// output:
 	//
 }
 
 func ExampleTrieScope_String() {
-	scope := NewTrieScope("example")
+	scope := NewTrieScope()
 
 	for _, symbol := range []*Symbol{
 		{
