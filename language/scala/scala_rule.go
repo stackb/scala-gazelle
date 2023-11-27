@@ -20,7 +20,7 @@ import (
 const (
 	debugSelfImports         = false
 	debugNameNotFound        = false
-	debugUnresolvedImport    = false
+	debugUnresolved          = false
 	debugExtendsNameNotFound = false
 	debugFileScope           = false
 )
@@ -87,7 +87,9 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
 		} else {
-			log.Println("unresolved export:", imp)
+			if debugUnresolved {
+				log.Println("unresolved export:", imp)
+			}
 			imp.Error = resolver.ErrSymbolNotFound
 		}
 	}
@@ -112,7 +114,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
 		} else {
-			if debugUnresolvedImport {
+			if debugUnresolved {
 				log.Println("unresolved import:", imp)
 			}
 			imp.Error = resolver.ErrSymbolNotFound
@@ -276,7 +278,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
-				if debugUnresolvedImport {
+				if debugUnresolved {
 					log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
 				}
 				imp := resolver.NewDirectImport(name, file)
