@@ -85,7 +85,7 @@ func TestScalaRuleExports(t *testing.T) {
 				Files: tc.files,
 			})
 
-			got := scalaRule.Exports()
+			got := scalaRule.Provides()
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -254,7 +254,7 @@ func TestScalaRuleImports(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			universe := newMockGlobalScope(t, tc.globalSymbols)
 
-			global := resolver.NewTrieScope()
+			global := resolver.NewTrieScope("mockGlobal")
 			for _, symbol := range tc.globalSymbols {
 				global.PutSymbol(symbol)
 			}
@@ -308,7 +308,7 @@ type mockGlobalScope struct {
 func newMockGlobalScope(t *testing.T, known []*resolver.Symbol) *mockGlobalScope {
 	scope := &mockGlobalScope{
 		Universe: mocks.NewUniverse(t),
-		Global:   resolver.NewTrieScope(),
+		Global:   resolver.NewTrieScope("mockGlobal"),
 	}
 	for _, symbol := range known {
 		scope.Global.PutSymbol(symbol)

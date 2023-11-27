@@ -10,7 +10,9 @@ import (
 type Rule interface {
 	// Exports returns the list of provided symbols that are importable by other
 	// rules.
-	Exports() []resolve.ImportSpec
+	Provides() []resolve.ImportSpec
 	// Import returns the list of required imports for the rule.
 	Imports() resolver.ImportMap
+	// Import returns the list of required exports for the rule.
+	Exports() resolver.ImportMap
 }

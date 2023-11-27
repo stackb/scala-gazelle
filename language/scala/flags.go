@@ -65,7 +65,7 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		fmt.Println("Press ENTER to continue.")
 		fmt.Scanln()
 	}
-	sl.symbolResolver = newUniverseResolver(sl)
+	sl.symbolResolver = newUniverseResolver(sl, sl.globalPackages)
 
 	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {
 		return err

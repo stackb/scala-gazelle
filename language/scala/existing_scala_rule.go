@@ -2,12 +2,14 @@ package scala
 
 import (
 	"log"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -105,7 +107,7 @@ func (s *existingScalaRule) Rule() *rule.Rule {
 
 // Imports implements part of the scalarule.RuleProvider interface.
 func (s *existingScalaRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	return s.scalaRule.Exports()
+	return s.scalaRule.Provides()
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
@@ -115,30 +117,72 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		return
 	}
 
-	imports := scalaRule.Resolve(rctx)
+	imports := scalaRule.ResolveImports(rctx)
+	exports := scalaRule.ResolveExports(rctx)
+	// exports := getExtendsImports(imports)
+
 	r := rctx.Rule
 	sc := getScalaConfig(rctx.Config)
 
-	// part 1: deps
+	// part 1a: deps
 
-	deps := sc.cleanDeps(r.Attr("deps"))
-	sc.mergeDeps(r.Kind(), deps, imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
-	r.SetAttr("deps", deps)
-
-	// part 2: srcs
+	depLabels := sc.cleanDeps(r.Attr("deps"))
+	mergeDeps(r.Kind(), depLabels, imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
+	if len(depLabels.List) > 0 {
+		r.SetAttr("deps", depLabels)
+	} else {
+		r.DelAttr("deps")
+	}
 
 	if sc.shouldAnnotateImports() {
 		comments := r.AttrComments("srcs")
 		if comments != nil {
-			annotateImports(imports, comments)
+			annotateImports(imports, comments, "import: ")
 		}
 	}
+
+	// part 1b: exports
+	if strings.HasSuffix(r.Kind(), "_library") {
+		exportLabels := sc.cleanExports(r.Attr("exports"))
+		mergeDeps(r.Kind(), exportLabels, exports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
+		if len(exportLabels.List) > 0 {
+			r.SetAttr("exports", exportLabels)
+		} else {
+			r.DelAttr("exports")
+		}
+
+		if sc.shouldAnnotateExports() {
+			comments := r.AttrComments("srcs")
+			if comments != nil {
+				annotateImports(exports, comments, "export: ")
+			}
+		}
+
+	}
+
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments) {
+func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
 	comments.Before = nil
 	for _, key := range imports.Keys() {
 		imp := imports[key]
-		comments.Before = append(comments.Before, imp.Comment())
+		comment := setCommentPrefix(imp.Comment(), prefix)
+		comments.Before = append(comments.Before, comment)
 	}
+}
+
+func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
+	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
+	return comment
+}
+
+func getExtendsImports(imports resolver.ImportMap) resolver.ImportMap {
+	exports := resolver.NewImportMap()
+	for name, imp := range imports {
+		if imp.Kind != sppb.ImportKind_EXTENDS {
+			continue
+		}
+		exports[name] = imp
+	}
+	return exports
 }

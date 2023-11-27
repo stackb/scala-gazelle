@@ -5,7 +5,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
 
 scala_binary(
     name = "app",
-    # ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # ✅ java.util.Map<INTERFACE> NO-LABEL<java> (DIRECT of Main.scala)
+    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
+    # import: ✅ java.util.Map<INTERFACE> NO-LABEL<java> (DIRECT of Main.scala)
     srcs = ["Main.scala"],
 )

@@ -62,16 +62,16 @@ func (s *Symbol) String() string {
 	return fmt.Sprintf("(%s<%v> %s<%v>)", s.Name, s.Type, s.Label, s.Provider)
 }
 
-func SymbolConfictMessage(symbol *Symbol, from label.Label) string {
+func SymbolConfictMessage(symbol *Symbol, imp *Import, from label.Label) string {
 	if len(symbol.Conflicts) == 0 {
 		return ""
 	}
 	lines := make([]string, 0, len(symbol.Conflicts)+3)
-	lines = append(lines, fmt.Sprintf("Unresolved symbol conflict: %v %q has multiple providers!", symbol.Type, symbol.Name))
+	lines = append(lines, fmt.Sprintf("Ambiguous resolve of %v %q (symbol is provided by %d labels) [%s]", symbol.Type, symbol.Name, len(symbol.Conflicts)+1, imp))
 	if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
-		lines = append(lines, " - Maybe remove a wildcard import (if one exists)")
+		lines = append(lines, " - Possible action: remove wildcard or package import")
 	}
-	lines = append(lines, fmt.Sprintf(" - Maybe add one of the following to %s:", label.Label{Repo: from.Repo, Pkg: from.Pkg, Name: "BUILD.bazel"}))
+	lines = append(lines, fmt.Sprintf(" - Possible action: add a resolve directive to %s:", label.Label{Repo: from.Repo, Pkg: from.Pkg, Name: "BUILD.bazel"}))
 	for _, conflict := range append(symbol.Conflicts, symbol) {
 		lines = append(lines, fmt.Sprintf("     # gazelle:resolve scala scala %s %s:", symbol.Name, conflict.Label))
 	}

@@ -13,7 +13,7 @@ import (
 )
 
 func Example_newScalaScope_String() {
-	scope := resolver.NewTrieScope()
+	scope := resolver.NewTrieScope("test")
 
 	for _, symbol := range []*resolver.Symbol{
 		{
@@ -143,7 +143,7 @@ func TestScalaScope(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			known := resolver.NewTrieScope()
+			known := resolver.NewTrieScope("test")
 			for _, symbol := range tc.known {
 				if err := known.PutSymbol(symbol); err != nil {
 					t.Fatal(err)

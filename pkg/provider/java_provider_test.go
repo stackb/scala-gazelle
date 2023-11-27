@@ -87,7 +87,7 @@ func TestJavaProviderOnResolve(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			scope := resolver.NewTrieScope()
+			scope := resolver.NewTrieScope(name)
 			for _, known := range tc.known {
 				scope.PutSymbol(known)
 			}
@@ -147,7 +147,7 @@ func TestJavaProviderCanProvide(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			scope := resolver.NewTrieScope()
+			scope := resolver.NewTrieScope(name)
 
 			if err := p.CheckFlags(fs, c, scope); err != nil {
 				t.Fatal(err)

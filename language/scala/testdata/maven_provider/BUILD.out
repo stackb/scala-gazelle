@@ -6,12 +6,12 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "app",
-    # ❌ Unit<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # ✅ javax.inject<PACKAGE> @maven//:javax_inject_javax_inject<maven> (IMPLICIT via "javax.xml")
-    # ✅ javax.xml<PACKAGE> @maven//:xml_apis_xml_apis<maven> (RESOLVED_NAME of Main.scala via "javax.xml._")
-    # ❌ main<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # ❌ org.junit.rules.TemporaryFolder<ERROR> symbol not found (DIRECT of Main.scala)
+    # import: ❌ Unit<ERROR> name not found (IMPORT_KIND_UNKNOWN)
+    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
+    # import: ✅ javax.inject<PACKAGE> @maven//:javax_inject_javax_inject<maven> (IMPLICIT via "javax.xml")
+    # import: ✅ javax.xml._<PACKAGE> @maven//:xml_apis_xml_apis<maven> (RESOLVED_NAME of Main.scala via "javax.xml._")
+    # import: ❌ main<ERROR> name not found (IMPORT_KIND_UNKNOWN)
+    # import: ❌ org.junit.rules.TemporaryFolder<ERROR> symbol not found (DIRECT of Main.scala)
     srcs = ["Main.scala"],
     deps = [
         # junit is required for compilation but we haven't specified

@@ -16,12 +16,14 @@ var scopePathTrieConfig = &collections.PathTrieConfig{
 
 // TrieScope implements Scope using a trie.
 type TrieScope struct {
+	name string
 	trie *collections.PathTrie
 }
 
 // TrieScope constructs a new TrieScope.
-func NewTrieScope() *TrieScope {
+func NewTrieScope(name string) *TrieScope {
 	return &TrieScope{
+		name: name,
 		trie: collections.NewPathTrieWithConfig(scopePathTrieConfig),
 	}
 }
@@ -46,7 +48,7 @@ func (r *TrieScope) GetScope(name string) (Scope, bool) {
 	if node == nil {
 		return nil, false
 	}
-	return &TrieScope{node}, true
+	return &TrieScope{r.name, node}, true
 }
 
 // GetSymbols implements part of the resolver.Scope interface.
