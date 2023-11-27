@@ -124,8 +124,9 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 	// part 1a: deps
 
-	depLabels := sc.cleanDeps(r.Attr("deps"))
-	mergeDeps(r.Kind(), depLabels, imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
+	newImports := imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From))
+	depLabels := sc.cleanDeps(rctx.From, r.Attr("deps"), newImports)
+	mergeDeps(r.Kind(), depLabels, newImports)
 	if len(depLabels.List) > 0 {
 		r.SetAttr("deps", depLabels)
 	} else {
@@ -141,8 +142,9 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 	// part 1b: exports
 	if strings.HasSuffix(r.Kind(), "_library") {
-		exportLabels := sc.cleanExports(r.Attr("exports"))
-		mergeDeps(r.Kind(), exportLabels, exports.Deps(sc.maybeRewrite(r.Kind(), rctx.From)))
+		newExports := exports.Deps(sc.maybeRewrite(r.Kind(), rctx.From))
+		exportLabels := sc.cleanExports(rctx.From, r.Attr("exports"), newExports)
+		mergeDeps(r.Kind(), exportLabels, newExports)
 		if len(exportLabels.List) > 0 {
 			r.SetAttr("exports", exportLabels)
 		} else {
