@@ -29,10 +29,10 @@ func Parse(file *rule.File, call *build.CallExpr) (glob rule.GlobValue) {
 						}
 						glob.Excludes = append(glob.Excludes, values...)
 					default:
-						log.Printf("skipping glob assign exclude (only list expressions are supported): %s = %T", ident.Name, e.RHS)
+						log.Printf("%s: skipping glob assignment exclude expression (only list expressions are supported): %s = %T", file.Path, ident.Name, e.RHS)
 					}
 				default:
-					log.Printf("skipping glob assignment: %s (unrecognized property)", ident.Name)
+					log.Printf("%s: skipping glob assignment: %s (unrecognized property)", file.Path, ident.Name)
 				}
 			}
 		case *build.ListExpr:
@@ -40,14 +40,14 @@ func Parse(file *rule.File, call *build.CallExpr) (glob rule.GlobValue) {
 		case *build.Ident:
 			values, err := globalStringList(file, e)
 			if err != nil {
-				log.Printf("skipping list expression elem: %v", err)
+				log.Printf("%s: skipping list expression elem: %v", file.Path, err)
 				break
 			}
 			glob.Patterns = append(glob.Patterns, values...)
 		default:
 			if false {
 				spew.Dump(call)
-				log.Printf("skipping glob list expression %d: %T in %+v", i, e, call)
+				log.Printf("%s: skipping glob list expression %d: %T in %+v", file.Path, i, e, call)
 			}
 		}
 	}
