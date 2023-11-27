@@ -10,7 +10,6 @@ import (
 // resolve phase
 func (sl *scalaLang) onResolve() {
 	for _, provider := range sl.symbolProviders {
-		log.Println("finalizing symbol provider:", provider.Name())
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
 		}

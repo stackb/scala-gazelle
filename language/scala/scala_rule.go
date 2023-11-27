@@ -20,7 +20,8 @@ import (
 const (
 	debugSelfImports         = false
 	debugNameNotFound        = false
-	debugExtendsNameNotFound = true
+	debugUnresolvedImport    = false
+	debugExtendsNameNotFound = false
 	debugFileScope           = false
 )
 
@@ -108,17 +109,14 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 		if imp.Error != nil {
 			continue
 		}
-		// if imp.Symbol == nil {
-		// if strings.HasPrefix(imp.Imp, "org.json4s") {
-		// log.Println(rctx.From, "scalaRule.Resolve", imp.Imp)
-		// }
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
 		} else {
-			log.Println("unresolved import:", imp)
+			if debugUnresolvedImport {
+				log.Println("unresolved import:", imp)
+			}
 			imp.Error = resolver.ErrSymbolNotFound
 		}
-		// }
 		if imp.Symbol != nil {
 			transitive.Push(imp, imp.Symbol)
 		}
@@ -194,7 +192,6 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 func (r *scalaRule) Exports() resolver.ImportMap {
 	exports := resolver.NewImportMap()
 
-	// direct
 	for _, file := range r.files {
 		r.fileExports(file, exports)
 	}
@@ -210,7 +207,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 	putExport := func(imp *resolver.Import) {
 		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
 			if debugSelfImports {
-				log.Println("skipping import from current", imp.Imp)
+				log.Println("skipping export from current", imp.Imp)
 			}
 			return
 		}
@@ -239,9 +236,6 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 		// assume the name if fully-qualified, so resolve it from the "root"
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
-		// if !resolvedOK {
-		// 	log.Printf("warning: invalid extends token: symbol %q: was not found' ", name)
-		// }
 
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
@@ -249,11 +243,11 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 				if resolvedOK && resolved != sym {
 					resolved.Require(sym)
 				}
-			} else if debugExtendsNameNotFound {
-				// putExport(resolver.NewDirectImport(imp, file))
+			} else {
 				putExport(resolver.NewExtendsImport(imp, file, name, nil))
-
-				// log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
+				if debugExtendsNameNotFound {
+					log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
+				}
 			}
 		}
 	}
@@ -280,10 +274,11 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		if wimp, ok := isWildcardImport(name); ok {
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
-				// log.Printf("resolved wildcard import: symbol %q: %v", name, sym)
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
-				// log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+				if debugUnresolvedImport {
+					log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+				}
 				imp := resolver.NewDirectImport(name, file)
 				putImport(imp)
 			}
@@ -297,7 +292,6 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		} else {
 			imp := resolver.NewDirectImport(name, file)
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
-				// log.Printf("resolved direct import: symbol %q: %v (%T)", name, sym, r.ctx.scope)
 				imp.Symbol = sym
 				direct.Put(importBasename(name), sym)
 			} else if debugNameNotFound {
@@ -350,8 +344,6 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 				}
 			} else if debugExtendsNameNotFound {
 				putImport(resolver.NewExtendsImport(imp, file, name, nil))
-				// putImport(resolver.NewDirectImport(imp, file))
-				// log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
 			}
 		}
 	}

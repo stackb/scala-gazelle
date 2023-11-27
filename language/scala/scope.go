@@ -22,14 +22,9 @@ func (sl *scalaLang) GetSymbols(prefix string) []*resolver.Symbol {
 
 // PutSymbol implements part of the resolver.Scope interface.
 func (sl *scalaLang) PutSymbol(symbol *resolver.Symbol) error {
-	// TODO: can we collect package symbols and somehow use that as a scope of
-	// last resort?
-	// if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
+	// collect package symbols and put them in a separate container that
+	// resolves only if everything else fails.
 	if symbol.Type == sppb.ImportType_PACKAGE {
-		// copy := &resolver.Symbol{
-		// 	Type: symbol.Type,
-		// 	Name: symbol.Name,
-		// }
 		if err := sl.globalPackages.PutSymbol(symbol); err != nil {
 			return err
 		}

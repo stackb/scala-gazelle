@@ -118,7 +118,6 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 	imports := scalaRule.ResolveImports(rctx)
 	exports := scalaRule.ResolveExports(rctx)
-	// exports := getExtendsImports(imports)
 
 	r := rctx.Rule
 	sc := getScalaConfig(rctx.Config)

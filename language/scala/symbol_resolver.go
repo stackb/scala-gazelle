@@ -23,8 +23,5 @@ func newUniverseResolver(scope resolver.Scope, packages resolver.Scope) resolver
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
 func (sl *scalaLang) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
-	// if strings.HasPrefix(imp, "org.json4s") {
-	// 	log.Println(from, "scalaLang.ResolveSymbol", imp)
-	// }
 	return sl.symbolResolver.ResolveSymbol(c, ix, from, lang, imp)
 }
