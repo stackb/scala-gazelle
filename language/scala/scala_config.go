@@ -353,12 +353,22 @@ func mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
 
 // cleanExports takes the given list of exports and removes those that are expected to
 // be provided again.
-func (c *scalaConfig) cleanExports(current build.Expr) *build.ListExpr {
+func (c *scalaConfig) cleanExports(from label.Label, current build.Expr, newExports []label.Label) *build.ListExpr {
+	incoming := make(map[label.Label]bool)
+	for _, l := range newExports {
+		incoming[l] = true
+	}
+
 	exports := &build.ListExpr{}
 	if current != nil {
 		if listExpr, ok := current.(*build.ListExpr); ok {
 			for _, expr := range listExpr.List {
 				if c.shouldKeepExport(expr) {
+					dep := labelFromDepExpr(expr)
+					if rule.ShouldKeep(expr) && incoming[dep] {
+						log.Printf(`%v: in attr 'exports', "%v" does not need a '# keep' directive (fixed)`, from, dep)
+						continue
+					}
 					exports.List = append(exports.List, expr)
 				}
 			}
@@ -369,12 +379,22 @@ func (c *scalaConfig) cleanExports(current build.Expr) *build.ListExpr {
 
 // cleanDeps takes the given list of deps and removes those that are expected to
 // be provided again.
-func (c *scalaConfig) cleanDeps(current build.Expr) *build.ListExpr {
+func (c *scalaConfig) cleanDeps(from label.Label, current build.Expr, newImports []label.Label) *build.ListExpr {
+	incoming := make(map[label.Label]bool)
+	for _, l := range newImports {
+		incoming[l] = true
+	}
+
 	deps := &build.ListExpr{}
 	if current != nil {
 		if listExpr, ok := current.(*build.ListExpr); ok {
 			for _, expr := range listExpr.List {
 				if c.shouldKeepDep(expr) {
+					dep := labelFromDepExpr(expr)
+					if rule.ShouldKeep(expr) && incoming[dep] {
+						log.Printf(`%v: in attr 'deps', "%v" does not need a '# keep' directive (fixed)`, from, dep)
+						continue
+					}
 					deps.List = append(deps.List, expr)
 				}
 			}

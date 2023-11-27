@@ -9,4 +9,8 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "app",
     srcs = ["Main.scala"],
+    deps = [
+        # demonstrate that scala-gazelle removes un-necessary 'keep' directives
+        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",  # keep
+    ],
 )
