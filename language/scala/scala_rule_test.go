@@ -85,7 +85,7 @@ func TestScalaRuleExports(t *testing.T) {
 				Files: tc.files,
 			})
 
-			got := scalaRule.Exports()
+			got := scalaRule.Provides()
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -163,6 +163,7 @@ func TestScalaRuleImports(t *testing.T) {
 			},
 			want: []string{
 				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				"✅ akka.actor._<> (DIRECT of A.scala)",
 			},
 		},
 		"resolve_with via extends": {
@@ -248,6 +249,7 @@ func TestScalaRuleImports(t *testing.T) {
 			},
 			want: []string{
 				`✅ com.foo.proto.FooMessage<CLASS> //proto:foo_proto_scala_library<protobuf> (EXTENDS of A.scala via "com.foo.ClassA")`,
+				"✅ com.foo.proto._<> (DIRECT of A.scala)",
 			},
 		},
 	} {

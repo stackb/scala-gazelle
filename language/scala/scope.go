@@ -1,6 +1,9 @@
 package scala
 
-import "github.com/stackb/scala-gazelle/pkg/resolver"
+import (
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
+)
 
 // GetScope implements part of the resolver.Scope interface.
 func (sl *scalaLang) GetScope(imp string) (resolver.Scope, bool) {
@@ -19,6 +22,14 @@ func (sl *scalaLang) GetSymbols(prefix string) []*resolver.Symbol {
 
 // PutSymbol implements part of the resolver.Scope interface.
 func (sl *scalaLang) PutSymbol(symbol *resolver.Symbol) error {
+	// collect package symbols and put them in a separate container that
+	// resolves only if everything else fails.
+	if symbol.Type == sppb.ImportType_PACKAGE {
+		if err := sl.globalPackages.PutSymbol(symbol); err != nil {
+			return err
+		}
+		return sl.globalPackages.PutSymbol(symbol)
+	}
 	return sl.globalScope.PutSymbol(symbol)
 }
 

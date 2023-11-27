@@ -9,12 +9,13 @@ import (
 )
 
 // newUniverseResolver constructs the top-level symbol resolver.
-func newUniverseResolver(scope resolver.Scope) resolver.SymbolResolver {
+func newUniverseResolver(scope resolver.Scope, packages resolver.Scope) resolver.SymbolResolver {
 	chain := resolver.NewChainSymbolResolver(
 		// override resolver is the least performant!
 		resolver.NewMemoSymbolResolver(resolver.NewOverrideSymbolResolver(scalaLangName)),
 		resolver.NewScopeSymbolResolver(scope),
 		resolver.NewCrossSymbolResolver(scalaLangName),
+		resolver.NewScalaSymbolResolver(resolver.NewScopeSymbolResolver(packages)),
 	)
 	scala := resolver.NewScalaSymbolResolver(chain)
 	return resolver.NewMemoSymbolResolver(scala)

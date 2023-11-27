@@ -22,6 +22,7 @@ type annotation int
 const (
 	AnnotateUnknown annotation = 0
 	AnnotateImports annotation = 1
+	AnnotateExports annotation = 2
 )
 
 const (
@@ -312,6 +313,11 @@ func (c *scalaConfig) shouldAnnotateImports() bool {
 	return ok
 }
 
+func (c *scalaConfig) shouldAnnotateExports() bool {
+	_, ok := c.annotations[AnnotateExports]
+	return ok
+}
+
 func (c *scalaConfig) Comment() build.Comment {
 	return build.Comment{Token: "# " + c.String()}
 }
@@ -329,8 +335,7 @@ func (c *scalaConfig) maybeRewrite(kind string, from label.Label) label.Label {
 
 // mergeDeps takes the given list of existing deps and a list of dependency
 // labels and merges it into a final list.
-func (c *scalaConfig) mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
-
+func mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
 	for _, dep := range deps {
 		str := &build.StringExpr{Value: dep.String()}
 		target.List = append(target.List, str)
@@ -344,6 +349,22 @@ func (c *scalaConfig) mergeDeps(kind string, target *build.ListExpr, deps []labe
 		}
 		return false
 	})
+}
+
+// cleanExports takes the given list of exports and removes those that are expected to
+// be provided again.
+func (c *scalaConfig) cleanExports(current build.Expr) *build.ListExpr {
+	exports := &build.ListExpr{}
+	if current != nil {
+		if listExpr, ok := current.(*build.ListExpr); ok {
+			for _, expr := range listExpr.List {
+				if c.shouldKeepExport(expr) {
+					exports.List = append(exports.List, expr)
+				}
+			}
+		}
+	}
+	return exports
 }
 
 // cleanDeps takes the given list of deps and removes those that are expected to
@@ -360,6 +381,23 @@ func (c *scalaConfig) cleanDeps(current build.Expr) *build.ListExpr {
 		}
 	}
 	return deps
+}
+
+func (c *scalaConfig) shouldKeepExport(expr build.Expr) bool {
+	// does it have a '# keep' directive?
+	if rule.ShouldKeep(expr) {
+		return true
+	}
+
+	// is the expression something we can parse as a label? If not, just leave
+	// it be.
+	from := labelFromDepExpr(expr)
+	if from == label.NoLabel {
+		return true
+	}
+
+	// delete exports by default, expect caller to have 'keep' comments
+	return false
 }
 
 func (c *scalaConfig) shouldKeepDep(expr build.Expr) bool {
@@ -433,6 +471,8 @@ func parseAnnotation(val string) annotation {
 	switch val {
 	case "imports":
 		return AnnotateImports
+	case "exports":
+		return AnnotateExports
 	default:
 		return AnnotateUnknown
 	}

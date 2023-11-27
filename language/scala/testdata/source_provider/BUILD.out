@@ -1,3 +1,4 @@
-# gazelle:scala_annotate imports
+# gazelle:resolve scala scala java.util.LinkedList @java//util
+# gazelle:scala_annotate exports
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
 # gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary

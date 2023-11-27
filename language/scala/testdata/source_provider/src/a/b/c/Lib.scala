@@ -1,4 +1,6 @@
 package a.b.c
 
-object Lib {
+import java.util.LinkedList;
+
+object Lib extends LinkedList {
 }

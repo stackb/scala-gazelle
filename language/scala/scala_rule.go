@@ -20,6 +20,7 @@ import (
 const (
 	debugSelfImports         = false
 	debugNameNotFound        = false
+	debugUnresolvedImport    = false
 	debugExtendsNameNotFound = false
 	debugFileScope           = false
 )
@@ -72,8 +73,30 @@ func newScalaRule(
 	return scalaRule
 }
 
-// Resolve performs symbol resolution for imports of the rule.
-func (r *scalaRule) Resolve(rctx *scalarule.ResolveContext) resolver.ImportMap {
+// ResolveExports performs symbol resolution for exports of the rule.
+func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.ImportMap {
+	exports := r.Exports()
+
+	//
+	// part 1: resolve any unsettled imports and populate the transitive stack.
+	//
+	for _, imp := range exports.Values() {
+		if imp.Error != nil {
+			continue
+		}
+		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
+			imp.Symbol = symbol
+		} else {
+			log.Println("unresolved export:", imp)
+			imp.Error = resolver.ErrSymbolNotFound
+		}
+	}
+
+	return exports
+}
+
+// ResolveImports performs symbol resolution for imports of the rule.
+func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.ImportMap {
 	imports := r.Imports()
 	sc := getScalaConfig(rctx.Config)
 
@@ -86,12 +109,13 @@ func (r *scalaRule) Resolve(rctx *scalarule.ResolveContext) resolver.ImportMap {
 		if imp.Error != nil {
 			continue
 		}
-		if imp.Symbol == nil {
-			if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
-				imp.Symbol = symbol
-			} else {
-				imp.Error = resolver.ErrSymbolNotFound
+		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
+			imp.Symbol = symbol
+		} else {
+			if debugUnresolvedImport {
+				log.Println("unresolved import:", imp)
 			}
+			imp.Error = resolver.ErrSymbolNotFound
 		}
 		if imp.Symbol != nil {
 			transitive.Push(imp, imp.Symbol)
@@ -108,7 +132,7 @@ func (r *scalaRule) Resolve(rctx *scalarule.ResolveContext) resolver.ImportMap {
 			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
 				item.imp.Symbol = resolved
 			} else {
-				fmt.Println(resolver.SymbolConfictMessage(item.sym, rctx.From))
+				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
 			}
 		}
 
@@ -148,7 +172,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	// imports. Include all symbols that are defined in the rule too (a
 	// gazelle:resolve_with directive should apply to them too).
 	required := collections.StringStack(imports.Keys())
-	for _, export := range r.Exports() {
+	for _, export := range r.Provides() {
 		required = append(required, export.Imp)
 	}
 
@@ -162,6 +186,72 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	}
 
 	return imports
+}
+
+// Exports implements part of the scalarule.Rule interface.
+func (r *scalaRule) Exports() resolver.ImportMap {
+	exports := resolver.NewImportMap()
+
+	for _, file := range r.files {
+		r.fileExports(file, exports)
+	}
+
+	return exports
+}
+
+// fileExports gathers needed imports for the given file.
+func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
+	var scopes []resolver.Scope
+	direct := resolver.NewTrieScope()
+
+	putExport := func(imp *resolver.Import) {
+		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+			if debugSelfImports {
+				log.Println("skipping export from current", imp.Imp)
+			}
+			return
+		}
+		exports.Put(imp)
+	}
+
+	// add in outer scope
+	scopes = append(scopes, r.ctx.scope, direct)
+	// build final scope used to resolve names in the file.
+	scope := resolver.NewChainScope(scopes...)
+
+	if debugFileScope {
+		log.Printf("%s scope:\n%s", file.Filename, scope.String())
+	}
+
+	// resolve extends clauses in the file.  While these are probably duplicated
+	// in the 'Names' slice, do it anyway.
+	for token, extends := range file.Extends {
+		parts := strings.SplitN(token, " ", 2)
+		if len(parts) != 2 {
+			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
+		}
+
+		name := parts[1] // note: parts[0] is the 'kind'
+
+		// assume the name if fully-qualified, so resolve it from the "root"
+		// scope rather than involving package scopes.
+		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
+
+		for _, imp := range extends.Classes {
+			if sym, ok := scope.GetSymbol(imp); ok {
+				putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
+				if resolvedOK && resolved != sym {
+					resolved.Require(sym)
+				}
+			} else {
+				putExport(resolver.NewExtendsImport(imp, file, name, nil))
+				if debugExtendsNameNotFound {
+					log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
+				}
+			}
+		}
+	}
+
 }
 
 // fileImports gathers needed imports for the given file.
@@ -186,7 +276,11 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
-				log.Printf("warning: invalid wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+				if debugUnresolvedImport {
+					log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+				}
+				imp := resolver.NewDirectImport(name, file)
+				putImport(imp)
 			}
 
 			// collect the scope
@@ -249,7 +343,7 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 					resolved.Require(sym)
 				}
 			} else if debugExtendsNameNotFound {
-				log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
+				putImport(resolver.NewExtendsImport(imp, file, name, nil))
 			}
 		}
 	}
@@ -264,8 +358,8 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 	}
 }
 
-// Exports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Exports() []resolve.ImportSpec {
+// Provides implements part of the scalarule.Rule interface.
+func (r *scalaRule) Provides() []resolve.ImportSpec {
 	exports := make([]resolve.ImportSpec, 0, len(r.exports))
 	for _, v := range r.exports {
 		exports = append(exports, v)
