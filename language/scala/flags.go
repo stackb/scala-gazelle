@@ -23,6 +23,7 @@ const (
 	scalaGazelleCacheFileFlagName        = "scala_gazelle_cache_file"
 	scalaGazelleDebugProcessFileFlagName = "scala_gazelle_debug_process"
 	scalaGazelleCacheKeyFlagName         = "scala_gazelle_cache_key"
+	scalaGazellePrintCacheKeyFlagName    = "scala_gazelle_print_cache_key"
 	cpuprofileFileFlagName               = "cpuprofile_file"
 	memprofileFileFlagName               = "memprofile_file"
 )
@@ -30,6 +31,7 @@ const (
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
 	flags.BoolVar(&sl.debugProcessFlagValue, scalaGazelleDebugProcessFileFlagName, false, "if true, prints the process ID and waits for debugger to attach")
+	flags.BoolVar(&sl.printCacheKey, scalaGazellePrintCacheKeyFlagName, true, "if a cache key is set, print the version for auditing purposes")
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
@@ -58,6 +60,9 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	if sl.printCacheKey && sl.cacheKeyFlagValue != "" {
+		fmt.Printf("scala-gazelle: cache v.%s\n", sl.cacheKeyFlagValue)
+	}
 	if sl.debugProcessFlagValue {
 		fmt.Printf("Debugging session requested (Process ID: %d)\n", os.Getpid())
 		fmt.Printf("NOTE: binary must be built with debug symbols for this to work (e.g 'bazel run -c dbg //:gazelle')\n")
