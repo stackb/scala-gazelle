@@ -48,6 +48,30 @@ func TestCacheFlags(t *testing.T) {
 				}
 			},
 		},
+		"scala_gazelle_print_cache_key_on": {
+			args: []string{
+				"-scala_gazelle_cache_key=12345",
+				"-scala_gazelle_print_cache_key=true",
+			},
+			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
+				if diff := cmp.Diff("12345", lang.cacheKeyFlagValue); diff != "" {
+					t.Errorf("cacheKeyFlagValue (-want got):\n%s", diff)
+				}
+				if diff := cmp.Diff(true, lang.printCacheKey); diff != "" {
+					t.Errorf("printCacheKey (-want got):\n%s", diff)
+				}
+			},
+		},
+		"scala_gazelle_print_cache_key_off": {
+			args: []string{
+				"-scala_gazelle_print_cache_key=false",
+			},
+			check: func(t *testing.T, tmpDir string, lang *scalaLang) {
+				if diff := cmp.Diff(false, lang.printCacheKey); diff != "" {
+					t.Errorf("printCacheKey (-want got):\n%s", diff)
+				}
+			},
+		},
 		"scala_gazelle_cache_key__valid": {
 			files: []testtools.FileSpec{
 				{

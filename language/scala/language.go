@@ -25,6 +25,8 @@ type scalaLang struct {
 	// debugProcessFlagValue halts processing and prints the PID for attaching a
 	// delve debugger.
 	debugProcessFlagValue bool
+	// optional flag to print the cache key version
+	printCacheKey bool
 	// wantProgress is a flag that prints docker style progress messages if enabled
 	wantProgress bool
 	// cacheFileFlagValue is the main cache file, if enabled
