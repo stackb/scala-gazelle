@@ -11,6 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
+	"github.com/bmatcuk/doublestar/v4"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -31,20 +32,22 @@ const (
 	resolveGlobDirective            = "resolve_glob"
 	resolveConflictsDirective       = "resolve_conflicts"
 	resolveWithDirective            = "resolve_with"
+	resolveFileSymbolName           = "resolve_file_symbol_name"
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
 // scalaConfig represents the config extension for the a scala package.
 type scalaConfig struct {
-	config            *config.Config
-	rel               string
-	universe          resolver.Universe
-	overrides         []*overrideSpec
-	implicitImports   []*implicitImportSpec
-	rules             map[string]*scalarule.Config
-	labelNameRewrites map[string]resolver.LabelNameRewriteSpec
-	annotations       map[annotation]interface{}
-	conflictResolvers []resolver.ConflictResolver
+	config                 *config.Config
+	rel                    string
+	universe               resolver.Universe
+	overrides              []*overrideSpec
+	implicitImports        []*implicitImportSpec
+	resolveFileSymbolNames []*resolveFileSymbolNameSpec
+	rules                  map[string]*scalarule.Config
+	labelNameRewrites      map[string]resolver.LabelNameRewriteSpec
+	annotations            map[annotation]interface{}
+	conflictResolvers      []resolver.ConflictResolver
 }
 
 // newScalaConfig initializes a new scalaConfig.
@@ -102,6 +105,9 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	if c.conflictResolvers != nil {
 		clone.conflictResolvers = c.conflictResolvers[:]
 	}
+	if c.resolveFileSymbolNames != nil {
+		clone.resolveFileSymbolNames = c.resolveFileSymbolNames[:]
+	}
 	return clone
 }
 
@@ -149,6 +155,8 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
 			c.parseResolveWithDirective(d)
+		case resolveFileSymbolName:
+			c.parseResolveFileSymbolNames(d)
 		case resolveKindRewriteNameDirective:
 			c.parseResolveKindRewriteNameDirective(d)
 		case resolveConflictsDirective:
@@ -213,6 +221,23 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 		imp:  parts[1],
 		deps: parts[2:],
 	})
+}
+
+func (c *scalaConfig) parseResolveFileSymbolNames(d rule.Directive) {
+	parts := strings.Fields(d.Value)
+	if len(parts) < 2 {
+		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveKindRewriteNameDirective, parts)
+		return
+	}
+	pattern := parts[0]
+
+	for _, part := range parts[1:] {
+		intent := collections.ParseIntent(part)
+		c.resolveFileSymbolNames = append(c.resolveFileSymbolNames, &resolveFileSymbolNameSpec{
+			pattern:    pattern,
+			symbolName: *intent,
+		})
+	}
 }
 
 func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
@@ -316,6 +341,23 @@ func (c *scalaConfig) shouldAnnotateImports() bool {
 func (c *scalaConfig) shouldAnnotateExports() bool {
 	_, ok := c.annotations[AnnotateExports]
 	return ok
+}
+
+// ShouldResolveFileSymbolName tests whether the given symbol name pattern
+// should be resolved within the scope of the given filename pattern.
+// resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
+// is returned.
+func (c *scalaConfig) ShouldResolveFileSymbolName(filename, name string) bool {
+	for _, spec := range c.resolveFileSymbolNames {
+		if ok, _ := doublestar.Match(spec.pattern, filename); !ok {
+			continue
+		}
+		if ok, _ := doublestar.Match(spec.symbolName.Value, name); !ok {
+			continue
+		}
+		return spec.symbolName.Want
+	}
+	return false
 }
 
 func (c *scalaConfig) Comment() build.Comment {
@@ -485,6 +527,13 @@ type implicitImportSpec struct {
 	imp string
 	// dep is the "destination" dependencies (e.g. org.slf4j.Logger)
 	deps []string
+}
+
+type resolveFileSymbolNameSpec struct {
+	// pattern is the filename glob pattern to test
+	pattern string
+	// symbol is the symbol name to resolve
+	symbolName collections.Intent
 }
 
 func parseAnnotation(val string) annotation {

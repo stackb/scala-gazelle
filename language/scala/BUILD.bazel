@@ -51,6 +51,7 @@ go_library(
         "@bazel_gazelle//rule:go_default_library",
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_bmatcuk_doublestar_v4//:doublestar",
         "@com_github_pcj_mobyprogress//:mobyprogress",
     ],
 )
@@ -83,6 +84,7 @@ go_test(
         "language_test.go",
         "loads_test.go",
         "scala_config_test.go",
+        "scala_package_test.go",
         "scala_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),

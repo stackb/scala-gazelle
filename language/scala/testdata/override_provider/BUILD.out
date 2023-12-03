@@ -8,7 +8,6 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "app",
-    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
     # import: ✅ com.typesafe.scalalogging.LazyLogging<OVERRIDE> @maven//:com_typesafe_scala_logging_scala_logging_2_12<override> (DIRECT of Main.scala)
     # import: ✅ org.slf4j.Logger<OVERRIDE> @maven//:org_slf4j_slf4j_api<override> (IMPLICIT via "com.typesafe.scalalogging.LazyLogging")
     srcs = ["Main.scala"],

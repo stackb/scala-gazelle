@@ -87,12 +87,13 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {
 	return []string{
-		scalaRuleDirective,
-		resolveGlobDirective,
-		resolveWithDirective,
 		resolveConflictsDirective,
-		scalaAnnotateDirective,
+		resolveFileSymbolName,
+		resolveGlobDirective,
 		resolveKindRewriteNameDirective,
+		resolveWithDirective,
+		scalaAnnotateDirective,
+		scalaRuleDirective,
 	}
 }
 

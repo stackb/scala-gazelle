@@ -49,8 +49,10 @@
     - [`gazelle:resolve`](#gazelleresolve)
     - [`gazelle:resolve_with`](#gazelleresolve_with)
     - [`gazelle:resolve_kind_rewrite_name`](#gazelleresolve_kind_rewrite_name)
+    - [`gazelle:resolve_file_symbol_name`](#gazelleresolve_file_symbol_name)
     - [`gazelle:annotate`](#gazelleannotate)
       - [`imports`](#imports)
+      - [`exports`](#exports)
 - [Import Resolution Procedure](#import-resolution-procedure)
   - [How Required Imports are Calculated](#how-required-imports-are-calculated)
     - [Rule](#rule)
@@ -832,6 +834,70 @@ This tells the extension _"if you find a rule with kind `my_scala_app`, rewrite
 the label name to name + `"_lib"`, using the magic token `%{name}` as a
 placeholder."_
 
+### `gazelle:resolve_file_symbol_name`
+
+This directive can be used to resolve free names listed in a scala file against
+the current file symbol scope.  To inspect the `names` of a file, take a look at the file parse cache.  For example:
+
+```json
+{
+    "label": "//common/utils/logging/scala",
+    "kind": "scala_library",
+    "files": [
+        {
+            "filename": "src/LogField.scala",
+            "imports": [
+                "com.typesafe.scalalogging.LazyLogging",
+                "net.logstash.logback.marker.MapEntriesAppendingMarker",
+                "net.logstash.logback.marker.ObjectAppendingMarker",
+                "scala.jdk.CollectionConverters._"
+            ],
+            "packages": [
+                "common.utils.logging"
+            ],
+            "objects": [
+                "common.utils.logging.LogField",
+                "common.utils.logging.LogFields"
+            ],
+            "traits": [
+                "common.utils.logging.LogField"
+            ],
+            "names": [
+                "LazyLogging",
+                "LogField",
+                "LogFields",
+                "MapEntriesAppendingMarker",
+                "ObjectAppendingMarker",
+                "String",
+                "apply",
+                "fieldName",
+                "fieldValue",
+                "fieldValue.toString",
+                "name",
+            ],
+            "extends": {
+                "object trumid.common.utils.logging.LogField": {
+                    "classes": [
+                        "com.typesafe.scalalogging.LazyLogging"
+                    ]
+                }
+            }
+        }
+    ],
+    "sha256": "3ee80930372ea846ebb48e55eb76d55fed89b6af5f05d08f98b38045eb0464d6",
+    "parseTimeMillis": "3"
+},
+```
+
+In this case, if a dependency was missing from the `deps` list, but would be
+corrected by resolving `ObjectAppendingMarker` (but not
+`MapEntriesAppendingMarker`, for example purposes), one could instruct the
+resolver to try and resolve it selectively via:
+
+```
+# gazelle:resolve_file_symbol_name LogField.scala +ObjectAppendingMarker -MapEntriesAppendingMarker
+```
+
 
 ### `gazelle:annotate`
 
@@ -852,13 +918,22 @@ Generates:
 ```bazel
 scala_binary(
     name = "app",
-    # ❌ AbstractServiceBase<ERROR> symbol not found (EXTENDS of foo.allocation.Main)
-    # ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
-    # ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
-    # ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
+    # import: ❌ AbstractServiceBase<ERROR> symbol not found (EXTENDS of foo.allocation.Main)
+    # import: ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
+    # import: ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
+    # import: ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
     srcs = glob(["src/main/**/*.scala"]),
     main_class = "foo.allocation.Main",
 )
+```
+
+#### `exports`
+
+This adds a list of comments to the `srcs` attribute detailing the provided
+exports and how they resolved.  Example:
+
+```
+# gazelle:annotate exports
 ```
 
 # Import Resolution Procedure
@@ -867,11 +942,14 @@ scala_binary(
 
 ### Rule 
 
-If the rule has `main_class` attribute, that name is added to the imports (type `MAIN_CLASS`).
+If the rule has `main_class` attribute, that name is added to the imports (type
+`MAIN_CLASS`).
 
-The remainder of rule imports are collected from file imports for all `.scala` source files in the rule.
+The remainder of rule imports are collected from file imports for all `.scala`
+source files in the rule.
 
-Once this initial set of imports are gathered, the transitive set of required symbol are collected from:
+Once this initial set of imports are gathered, the transitive set of required
+symbol are collected from:
 
 - `extends` clauses (type `EXTENDS`)
 - imports matching a `gazelle:resolve_with` directive (type `IMPLICIT`).
@@ -885,7 +963,8 @@ The imports for a file are collected as follows:
 The `.scala` file is parsed:
 
 - Import statements are collected, including nested imports.
-- a set of *names* are collected by traversing the body of the AST.  Some of these names are function calls, some of them are types, etc.
+- a set of *names* are collected by traversing the body of the AST.  Some of
+  these names are function calls, some of them are types, etc.
 
 Symbols named in import statements are added to imports (type `DIRECT`).
 
@@ -896,7 +975,19 @@ A trie of the symbols in scope for the file is built from:
 - the file package(s)
 - wildcard imports
 
-Then, all *names* in the file are tested against the file scope.  Matching symbols are added to the imports (type `RESOLVED_NAME`).
+"Names" represent a variety of things in a scala file.  It might be a class
+instatiation (e.g `new Foo()`), a static method call `doSomething()`, and other
+similar names.
+
+In an earlier implementation of scala-gazelle, all *names* in the file were
+tested against the file scope and matching symbols are added to the imports
+list (of type `RESOLVED_NAME`).
+
+The drawback of that approach is that it was imprecise, potentially leading to
+false positive import resolutions (and unnecessary and/or incorrect `deps`
+list).
+
+Now, name resolution is an opt-in feature using the gazelle directive `gazelle:resolve_file_symbol_name` directive.
 
 ## How Required Imports are Resolved
 

@@ -14,9 +14,6 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "app",
-    # import: ❌ Unit<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # import: ❌ a.b.c<ERROR> name not found (IMPORT_KIND_UNKNOWN)
-    # import: ❌ main<ERROR> name not found (IMPORT_KIND_UNKNOWN)
     # import: ❌ not.Exists<ERROR> symbol not found (DIRECT of Main.scala)
     # import: ✅ proto.Customer<PROTO_MESSAGE> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
     srcs = ["Main.scala"],
