@@ -239,6 +239,58 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 	}
 }
 
+func TestScalaConfigParseResolveFileSymbolName(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		filename   string
+		names      []string
+		want       []bool
+		wantErr    error
+	}{
+		"degenerate": {
+			want: []bool{},
+		},
+		"exact matches": {
+			directives: []rule.Directive{
+				{Key: resolveFileSymbolName, Value: "filename.scala +foo -bar"},
+			},
+			filename: "filename.scala",
+			names:    []string{"foo", "bar"},
+			want:     []bool{true, false},
+		},
+		"glob matches": {
+			directives: []rule.Directive{
+				{Key: resolveFileSymbolName, Value: "*.scala +foo* -bar*"},
+			},
+			filename: "filename.scala",
+			names:    []string{"foo", "foox", "bar", "barx"},
+			want:     []bool{true, true, false, false},
+		},
+		"no match": {
+			directives: []rule.Directive{
+				{Key: resolveFileSymbolName, Value: "*.scala +foo* -bar*"},
+			},
+			filename: "filename.scala",
+			names:    []string{"baz"},
+			want:     []bool{false},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			if testutil.ExpectError(t, tc.wantErr, err) {
+				return
+			}
+			got := []bool{}
+			for _, name := range tc.names {
+				got = append(got, sc.ShouldResolveFileSymbolName(tc.filename, name))
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
