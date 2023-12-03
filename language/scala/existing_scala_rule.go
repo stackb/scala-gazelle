@@ -29,9 +29,10 @@ func init() {
 	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
 }
 
-// existingScalaRuleProvider implements RuleResolver for scala-like rules that are
-// already in the build file.  It does not create any new rules.  This rule
-// implementation is used to parse files named in 'srcs' and update 'deps'.
+// existingScalaRuleProvider implements RuleResolver for scala-like rules that
+// are already in the build file.  It does not create any new rules.  This rule
+// implementation is used to parse files named in 'srcs' and update 'deps' (and
+// optionally, exports).
 type existingScalaRuleProvider struct {
 	load, name string
 }
