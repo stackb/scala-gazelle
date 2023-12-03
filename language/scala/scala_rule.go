@@ -352,6 +352,9 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 
 	// resolve symbols named in the file.  For each one we find, add an import.
 	for _, name := range file.Names {
+		if !r.ctx.scalaConfig.ShouldResolveFileSymbolName(file.Filename, name) {
+			continue
+		}
 		if sym, ok := scope.GetSymbol(name); ok {
 			putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {
