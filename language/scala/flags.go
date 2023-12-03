@@ -19,7 +19,9 @@ import (
 const (
 	scalaSymbolProviderFlagName          = "scala_symbol_provider"
 	scalaConflictResolverFlagName        = "scala_conflict_resolver"
-	existingScalaRulesFlagName           = "existing_scala_rule"
+	existingScalaBinaryRuleFlagName      = "existing_scala_binary_rule"
+	existingScalaLibraryRuleFlagName     = "existing_scala_library_rule"
+	existingScalaTestRuleFlagName        = "existing_scala_test_rule"
 	scalaGazelleCacheFileFlagName        = "scala_gazelle_cache_file"
 	scalaGazelleDebugProcessFileFlagName = "scala_gazelle_debug_process"
 	scalaGazelleCacheKeyFlagName         = "scala_gazelle_cache_key"
@@ -38,7 +40,9 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")
 	flags.Var(&sl.conflictResolverNamesFlagValue, scalaConflictResolverFlagName, "name of a conflict resolver implementation to enable")
-	flags.Var(&sl.existingScalaRulesFlagValue, existingScalaRulesFlagName, "LOAD%NAME mapping for a custom existing_scala_rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
+	flags.Var(&sl.existingScalaBinaryRulesFlagValue, existingScalaBinaryRuleFlagName, "LOAD%NAME mapping for a custom existing scala binary rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scalabinary'")
+	flags.Var(&sl.existingScalaLibraryRulesFlagValue, existingScalaLibraryRuleFlagName, "LOAD%NAME mapping for a custom existing scala library rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
+	flags.Var(&sl.existingScalaTestRulesFlagValue, existingScalaTestRuleFlagName, "LOAD%NAME mapping for a custom existing scala test rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_test'")
 
 	sl.registerSymbolProviders(flags, cmd, c)
 	sl.registerConflictResolvers(flags, cmd, c)
@@ -78,7 +82,13 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if err := sl.setupConflictResolvers(flags, c, sl.conflictResolverNamesFlagValue); err != nil {
 		return err
 	}
-	if err := sl.setupExistingScalaRules(sl.existingScalaRulesFlagValue); err != nil {
+	if err := sl.setupExistingScalaBinaryRules(sl.existingScalaBinaryRulesFlagValue); err != nil {
+		return err
+	}
+	if err := sl.setupExistingScalaLibraryRules(sl.existingScalaLibraryRulesFlagValue); err != nil {
+		return err
+	}
+	if err := sl.setupExistingScalaTestRules(sl.existingScalaTestRulesFlagValue); err != nil {
 		return err
 	}
 	if err := sl.setupCache(); err != nil {
@@ -122,21 +132,75 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 	return nil
 }
 
-func (sl *scalaLang) setupExistingScalaRules(rules []string) error {
+func (sl *scalaLang) setupExistingScalaBinaryRules(rules []string) error {
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
-			return fmt.Errorf("invalid -existing_scala_rule flag value: wanted '%%' separated string, got %q", fqn)
+			return fmt.Errorf("invalid -existing_scala_binary_rule flag value: wanted '%%' separated string, got %q", fqn)
 		}
-		if err := sl.setupExistingScalaRule(fqn, parts[0], parts[1]); err != nil {
+		if err := sl.setupExistingScalaBinaryRule(fqn, parts[0], parts[1]); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (sl *scalaLang) setupExistingScalaRule(fqn, load, kind string) error {
-	provider := &existingScalaRuleProvider{load, kind}
+func (sl *scalaLang) setupExistingScalaLibraryRules(rules []string) error {
+	for _, fqn := range rules {
+		parts := strings.SplitN(fqn, "%", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid -existing_scala_library_rule flag value: wanted '%%' separated string, got %q", fqn)
+		}
+		if err := sl.setupExistingScalaLibraryRule(fqn, parts[0], parts[1]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupExistingScalaTestRules(rules []string) error {
+	for _, fqn := range rules {
+		parts := strings.SplitN(fqn, "%", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid -existing_scala_test_rule flag value: wanted '%%' separated string, got %q", fqn)
+		}
+		if err := sl.setupExistingScalaTestRule(fqn, parts[0], parts[1]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupExistingScalaBinaryRule(fqn, load, kind string) error {
+	provider := &existingScalaRuleProvider{
+		load:      load,
+		name:      kind,
+		isBinary:  true,
+		isLibrary: false,
+		isTest:    false,
+	}
+	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
+}
+
+func (sl *scalaLang) setupExistingScalaLibraryRule(fqn, load, kind string) error {
+	provider := &existingScalaRuleProvider{
+		load:      load,
+		name:      kind,
+		isBinary:  false,
+		isLibrary: true,
+		isTest:    false,
+	}
+	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
+}
+
+func (sl *scalaLang) setupExistingScalaTestRule(fqn, load, kind string) error {
+	provider := &existingScalaRuleProvider{
+		load:      load,
+		name:      kind,
+		isBinary:  false,
+		isLibrary: false,
+		isTest:    true,
+	}
 	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
 }
 

@@ -1,2 +1,2 @@
 -scala_symbol_provider=source
--existing_scala_rule=//rules:scala.bzl%scala_helper_library
+-existing_scala_library_rule=//rules:scala.bzl%scala_helper_library

@@ -159,7 +159,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 		"degenerate": {},
 		"invalid flag value": {
 			providerNames: []string{"@io_bazel_rules_scala//scala:scala.bzl#scala_binary"},
-			wantErr:       fmt.Errorf(`invalid -existing_scala_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
+			wantErr:       fmt.Errorf(`invalid -existing_scala_binary_rule flag value: wanted '%%' separated string, got "@io_bazel_rules_scala//scala:scala.bzl#scala_binary"`),
 		},
 		"valid flag value": {
 			providerNames: []string{"//custom/scala:scala.bzl%scala_binary"},
@@ -175,7 +175,7 @@ func TestParseScalaExistingRules(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			lang := NewLanguage().(*scalaLang)
 			lang.ruleProviderRegistry = scalarule.NewProviderRegistryMap() // don't use global one
-			if testutil.ExpectError(t, tc.wantErr, lang.setupExistingScalaRules(tc.providerNames)) {
+			if testutil.ExpectError(t, tc.wantErr, lang.setupExistingScalaBinaryRules(tc.providerNames)) {
 				return
 			}
 			if tc.check != nil {

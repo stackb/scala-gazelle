@@ -38,11 +38,17 @@ type scalaLang struct {
 	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
 	// to enable
 	conflictResolverNamesFlagValue collections.StringSlice
-	// existingScalaRulesFlagValue is the value of the existing_scala_rule
-	// repeatable flag
-	existingScalaRulesFlagValue collections.StringSlice
-	cpuprofileFlagValue         string
-	memprofileFlagValue         string
+	// existingScalaLibraryRulesFlagValue is the value of the
+	// existing_scala_binary_rule repeatable flag
+	existingScalaBinaryRulesFlagValue collections.StringSlice
+	// existingScalaLibraryRulesFlagValue is the value of the
+	// existing_scala_library_rule repeatable flag
+	existingScalaLibraryRulesFlagValue collections.StringSlice
+	// existingScalaLibraryRulesFlagValue is the value of the
+	// existing_scala_test_rule repeatable flag
+	existingScalaTestRulesFlagValue collections.StringSlice
+	cpuprofileFlagValue             string
+	memprofileFlagValue             string
 	// cache is the loaded cache, if configured
 	cache scpb.Cache
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
