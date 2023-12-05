@@ -14,19 +14,19 @@ import (
 )
 
 func init() {
-	mustRegister := func(load, kind string) {
+	mustRegister := func(load, kind string, isBinary, isLibrary, isTest bool) {
 		fqn := load + "%" + kind
 		if err := scalarule.
 			GlobalProviderRegistry().
-			RegisterProvider(fqn, &existingScalaRuleProvider{load, kind}); err != nil {
+			RegisterProvider(fqn, &existingScalaRuleProvider{load, kind, isBinary, isLibrary, isTest}); err != nil {
 			log.Fatalf("registering scala_rule providers: %v", err)
 		}
 	}
 
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library")
-	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test")
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", true, false, false)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", false, true, false)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_macro_library", false, true, false)
+	mustRegister("@io_bazel_rules_scala//scala:scala.bzl", "scala_test", false, false, true)
 }
 
 // existingScalaRuleProvider implements RuleResolver for scala-like rules that
@@ -35,6 +35,9 @@ func init() {
 // optionally, exports).
 type existingScalaRuleProvider struct {
 	load, name string
+	isBinary   bool
+	isLibrary  bool
+	isTest     bool
 }
 
 // Name implements part of the scalarule.Provider interface.
@@ -79,7 +82,7 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 
-	return &existingScalaRule{cfg, pkg, r, scalaRule}
+	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinary, s.isLibrary, s.isTest}
 }
 
 // existingScalaRule implements scalarule.RuleProvider for existing scala rules.
@@ -88,6 +91,9 @@ type existingScalaRule struct {
 	pkg       scalarule.Package
 	rule      *rule.Rule
 	scalaRule scalarule.Rule
+	isBinary  bool
+	isLibrary bool
+	isTest    bool
 }
 
 // Kind implements part of the ruleProvider interface.
@@ -142,7 +148,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	// part 1b: exports
-	if strings.HasSuffix(r.Kind(), "_library") {
+	if s.isLibrary {
 		newExports := exports.Deps(sc.maybeRewrite(r.Kind(), rctx.From))
 		exportLabels := sc.cleanExports(rctx.From, r.Attr("exports"), newExports)
 		mergeDeps(r.Kind(), exportLabels, newExports)

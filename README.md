@@ -206,13 +206,13 @@ To enable a provider, instantiate a "rule provider config":
 You may have your own scala rule macros that look like a `scala_library` or
 `scala_binary`, but have their own rule kinds and loads.  To register these
 rules/macros as provider implementations, use the
-`-existing_scala_rule=LOAD%KIND` flag.  For example:
+`-existing_scala_{type}_rule=LOAD%KIND` flag (where type is one of `binary|library|test`).  For example:
 
 ```bazel
 gazelle(
     name = "gazelle",
     args = [
-        "-existing_scala_rule=//bazel_tools:scala.bzl%scala_app",
+        "-existing_scala_library_rule=//bazel_tools:scala.bzl%scala_app",
         ...
     ],
     ...
