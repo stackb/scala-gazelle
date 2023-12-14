@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
@@ -84,6 +85,8 @@ func Apply(glob rule.GlobValue, fs fs.FS) (srcs []string) {
 	} else {
 		srcs = append(srcs, includes...)
 	}
+
+	sort.Strings(srcs)
 
 	return
 }
