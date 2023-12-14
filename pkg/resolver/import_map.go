@@ -43,7 +43,15 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 		label.NoLabel: true,
 		from:          true,
 	}
-	for _, imp := range imports {
+
+	keys := make([]string, 0, len(imports))
+	for k := range imports {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		imp := imports[k]
 		if imp.Symbol == nil || imp.Error != nil {
 			continue
 		}
