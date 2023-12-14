@@ -227,7 +227,9 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
-	for token, extends := range file.Extends {
+	tokens := extendsKeysSorted(file.Extends)
+	for _, token := range tokens {
+		extends := file.Extends[token]
 		parts := strings.SplitN(token, " ", 2)
 		if len(parts) != 2 {
 			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
@@ -323,7 +325,9 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
-	for token, extends := range file.Extends {
+	tokens := extendsKeysSorted(file.Extends)
+	for _, token := range tokens {
+		extends := file.Extends[token]
 		parts := strings.SplitN(token, " ", 2)
 		if len(parts) != 2 {
 			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
@@ -473,4 +477,13 @@ func (s *importSymbols) Pop() (*importSymbol, bool) {
 	*s = (*s)[:i]
 
 	return x, true
+}
+
+func extendsKeysSorted(collection map[string]*sppb.ClassList) []string {
+	keys := make([]string, 0, len(collection))
+	for token := range collection {
+		keys = append(keys, token)
+	}
+	sort.Strings(keys)
+	return keys
 }
