@@ -50,24 +50,8 @@ func (p *ProtobufProvider) RegisterFlags(fs *flag.FlagSet, cmd string, c *config
 func (p *ProtobufProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
 	p.scope = scope
 
-	// if !filepath.IsAbs(p.indexFile) {
-	// 	p.indexFile = filepath.Join(c.WorkDir, p.indexFile)
-	// }
-	// if err := p.readProtobufIndex(p.indexFile); err != nil {
-	// 	return err
-	// }
-
 	return nil
 }
-
-// func (p *ProtobufProvider) readProtobufIndex(filename string) error {
-// 	var index jipb.JarIndex
-// 	if err := protobuf.ReadFile(filename, &index); err != nil {
-// 		return fmt.Errorf("reading %s: %v", filename, err)
-// 	}
-
-// 	return nil
-// }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
 func (p *ProtobufProvider) OnResolve() error {
@@ -106,28 +90,6 @@ func (p *ProtobufProvider) OnResolve() error {
 	}
 	return nil
 }
-
-// func (p *ProtobufProvider) resolveScalapbMessageRequires() (requires []*resolver.Symbol) {
-// 	if sym, ok := p.scope.GetSymbol("scalapb.GeneratedMessage"); ok {
-// 		requires = append(requires, sym)
-// 	} else {
-// 		log.Println("warning: scalapb.GeneratedMessage not found.  Transitive scalapb dependencies may not resolve fully.")
-// 	}
-
-// 	if sym, ok := p.scope.GetSymbol("scalapb.GeneratedMessageCompanion"); ok {
-// 		requires = append(requires, sym)
-// 	} else {
-// 		log.Println("warning: scalapb.GeneratedMessageCompanion not found.  Transitive scalapb dependencies may not resolve fully.")
-// 	}
-
-// 	if sym, ok := p.scope.GetSymbol("scalapb.lenses.Updatable"); ok {
-// 		requires = append(requires, sym)
-// 	} else {
-// 		log.Println("warning: scalapb.lenses.Updatable not found.  Transitive scalapb dependencies may not resolve fully.")
-// 	}
-
-// 	return
-// }
 
 // OnEnd implements part of the resolver.SymbolProvider interface.
 func (p *ProtobufProvider) OnEnd() error {

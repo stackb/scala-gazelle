@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -66,7 +67,9 @@ func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope reso
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
 func (p *JavaProvider) OnResolve() error {
-	for classFile, symbol := range p.classSymbols {
+	classFiles := sortedSymbolClassfiles(p.classSymbols)
+	for _, classFile := range classFiles {
+		symbol := p.classSymbols[classFile]
 		for _, superclass := range append(classFile.Superclasses, classFile.Interfaces...) {
 			if resolved, ok := p.scope.GetSymbol(superclass); ok {
 				symbol.Require(resolved)
@@ -160,4 +163,17 @@ func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label
 	symbol := resolver.NewSymbol(impType, imp, p.Name(), from)
 	p.scope.PutSymbol(symbol)
 	return symbol
+}
+
+func sortedSymbolClassfiles(classSymbols map[*jipb.ClassFile]*resolver.Symbol) []*jipb.ClassFile {
+	classFiles := make([]*jipb.ClassFile, 0, len(classSymbols))
+	for classFile := range classSymbols {
+		classFiles = append(classFiles, classFile)
+	}
+	sort.Slice(classFiles, func(i, j int) bool {
+		a := classFiles[i]
+		b := classFiles[j]
+		return a.Name < b.Name
+	})
+	return classFiles
 }
