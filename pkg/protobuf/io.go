@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
@@ -17,12 +18,18 @@ func unmarshalerForFilename(filename string) unmarshaler {
 	if filepath.Ext(filename) == ".json" {
 		return protojson.Unmarshal
 	}
+	if filepath.Ext(filename) == ".pbtext" {
+		return prototext.Unmarshal
+	}
 	return proto.Unmarshal
 }
 
 func marshalerForFilename(filename string) marshaler {
 	if filepath.Ext(filename) == ".json" {
 		return protojson.Marshal
+	}
+	if filepath.Ext(filename) == ".pbtext" {
+		return prototext.Marshal
 	}
 	return proto.Marshal
 }
