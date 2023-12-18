@@ -102,6 +102,7 @@ func SortRules(rules []*sppb.Rule) {
 		return a.Label < b.Label
 	})
 	for _, rule := range rules {
+		rule.ParseTimeMillis = 0 // reset for easier diff
 		sortRuleFiles(rule.Files)
 	}
 }
