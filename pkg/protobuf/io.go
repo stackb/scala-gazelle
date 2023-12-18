@@ -46,6 +46,9 @@ func ReadFile(filename string, message protoreflect.ProtoMessage) error {
 }
 
 func WriteFile(filename string, message protoreflect.ProtoMessage) error {
+	if filepath.Ext(filename) == ".json" {
+		return WritePrettyJSONFile(filename, message)
+	}
 	data, err := marshalerForFilename(filename)(message)
 	if err != nil {
 		return fmt.Errorf("marshal: %w", err)
