@@ -91,10 +91,35 @@ func (p *MemoParser) ScalaRules() []*sppb.Rule {
 	for _, rule := range p.rules {
 		rules = append(rules, rule)
 	}
+	SortRules(rules)
+	return rules
+}
+
+func SortRules(rules []*sppb.Rule) {
 	sort.Slice(rules, func(i, j int) bool {
 		a := rules[i]
 		b := rules[j]
 		return a.Label < b.Label
 	})
-	return rules
+	for _, rule := range rules {
+		sortRuleFiles(rule.Files)
+	}
+}
+
+func sortRuleFiles(files []*sppb.File) {
+	sort.Slice(files, func(i, j int) bool {
+		a := files[i]
+		b := files[j]
+		return a.Filename < b.Filename
+	})
+	for _, file := range files {
+		sort.Strings(file.Imports)
+		sort.Strings(file.Packages)
+		sort.Strings(file.Classes)
+		sort.Strings(file.Objects)
+		sort.Strings(file.Traits)
+		sort.Strings(file.Types)
+		sort.Strings(file.Vals)
+		sort.Strings(file.Names)
+	}
 }

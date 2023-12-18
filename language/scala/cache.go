@@ -6,6 +6,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
+	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
 
@@ -25,6 +26,8 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 		sl.cache = scpb.Cache{}
 		return nil
 	}
+
+	parser.SortRules(sl.cache.Rules)
 
 	for _, rule := range sl.cache.Rules {
 		from, err := label.Parse(rule.Label)
