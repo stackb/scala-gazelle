@@ -56,15 +56,11 @@ func (sl *scalaLang) Resolve(
 		return
 	}
 	pkg := pkgVal.(*scalaPackage)
+	sl.packages.Remove(from.Pkg)
 
-	if r.Kind() == packageMarkerRuleKind {
-		resolvePackageMarkerRule(sl.progress, r, sl.packages.Size(), sl.wantProgress)
-		sl.remainingPackages--
-	} else {
-		pkg.Resolve(c, ix, rc, r, importsRaw, from)
-	}
+	pkg.Resolve(c, ix, rc, r, importsRaw, from)
 
-	if sl.remainingPackages == 0 {
+	if sl.packages.Empty() {
 		sl.onEnd()
 	}
 }

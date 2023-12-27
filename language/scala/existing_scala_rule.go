@@ -143,7 +143,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	if sc.shouldAnnotateImports() {
 		comments := r.AttrComments("srcs")
 		if comments != nil {
-			annotateImports(imports, comments, "import: ")
+			annotateImportMap(imports, comments, "import: ")
 		}
 	}
 
@@ -161,7 +161,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		if sc.shouldAnnotateExports() {
 			comments := r.AttrComments("srcs")
 			if comments != nil {
-				annotateImports(exports, comments, "export: ")
+				annotateImportMap(exports, comments, "export: ")
 			}
 		}
 
@@ -169,7 +169,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
+func annotateImportMap(imports resolver.ImportMap, comments *build.Comments, prefix string) {
 	comments.Before = nil
 	for _, key := range imports.Keys() {
 		imp := imports[key]

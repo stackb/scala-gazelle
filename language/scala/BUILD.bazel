@@ -21,7 +21,6 @@ go_library(
         "language.go",
         "lifecycle.go",
         "loads.go",
-        "package_marker_rule.go",
         "progress.go",
         "resolve.go",
         "scala_config.go",

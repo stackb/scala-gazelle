@@ -30,15 +30,12 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	sc := getScalaConfig(args.Config)
 	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages.Put(args.Rel, pkg)
-	sl.remainingPackages++
 
 	rules := pkg.Rules()
 	for _, r := range rules {
 		from := label.Label{Pkg: args.Rel, Name: r.Name()}
 		sl.PutKnownRule(from, r)
 	}
-
-	rules = append(rules, generatePackageMarkerRule(sl.packages.Size()))
 
 	if sc.shouldAnnotateGeneration() {
 		rules = append(rules, annotateGeneration(args.File, *sl.packages))
