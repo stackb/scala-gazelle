@@ -65,7 +65,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule {
 	tags := []string{}
 	for i, k := range packages.Keys() {
-		tags = append(tags, fmt.Sprintf("%d: %v", i, k))
+		tags = append(tags, fmt.Sprintf("%06d: %v", i, k))
 	}
 	r := rule.NewRule("filegroup", "_gazelle_generate")
 	r.SetAttr("srcs", []string{"BUILD.bazel"})
