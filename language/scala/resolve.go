@@ -60,7 +60,12 @@ func (sl *scalaLang) Resolve(
 
 	pkg.Resolve(c, ix, rc, r, importsRaw, from)
 
+	if sl.wantProgress {
+		writeResolveProgress(sl.progress, sl.packages.Size(), sl.packageCountTotal)
+	}
+
 	if sl.packages.Empty() {
 		sl.onEnd()
 	}
+
 }
