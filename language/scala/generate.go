@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
 const debugGenerate = false
@@ -49,8 +50,16 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		}
 	}
 
+	if sc.shouldAnnotateGeneration() {
+		annotateGeneration(args.File)
+	}
+
 	return language.GenerateResult{
 		Gen:     rules,
 		Imports: imports,
 	}
+}
+
+func annotateGeneration(file *rule.File) {
+
 }

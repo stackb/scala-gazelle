@@ -21,9 +21,10 @@ import (
 type annotation int
 
 const (
-	AnnotateUnknown annotation = 0
-	AnnotateImports annotation = 1
-	AnnotateExports annotation = 2
+	AnnotateUnknown    annotation = 0
+	AnnotateImports    annotation = 1
+	AnnotateExports    annotation = 2
+	AnnotateGeneration annotation = 3
 )
 
 const (
@@ -90,6 +91,9 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
+	// generation annotation is not inherited
+	delete(clone.annotations, AnnotateGeneration)
+
 	for k, v := range c.rules {
 		clone.rules[k] = v.Clone()
 	}
@@ -343,6 +347,11 @@ func (c *scalaConfig) shouldAnnotateExports() bool {
 	return ok
 }
 
+func (c *scalaConfig) shouldAnnotateGeneration() bool {
+	_, ok := c.annotations[AnnotateGeneration]
+	return ok
+}
+
 // ShouldResolveFileSymbolName tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -542,6 +551,8 @@ func parseAnnotation(val string) annotation {
 		return AnnotateImports
 	case "exports":
 		return AnnotateExports
+	case "generation":
+		return AnnotateGeneration
 	default:
 		return AnnotateUnknown
 	}
