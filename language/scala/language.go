@@ -59,11 +59,6 @@ type scalaLang struct {
 	// workspace-relative package name.
 	packages          *linkedhashmap.Map
 	packageCountTotal int // total number of packages
-	// isResolvePhase is a flag that is tracks if at least one Resolve() call
-	// has occurred.  It can be used to determine when the rule indexing phase
-	// has completed and deps resolution phase has started (it calls
-	// onResolvePhase).
-	isResolvePhase bool
 	// progress is the progress interface
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules

@@ -53,6 +53,10 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		}
 	}
 
+	if args.Rel == "" {
+		sl.onResolve()
+	}
+
 	return language.GenerateResult{
 		Gen:     rules,
 		Imports: imports,

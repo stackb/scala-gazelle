@@ -46,11 +46,6 @@ func (sl *scalaLang) Resolve(
 		from.Repo = ""
 	}
 
-	if !sl.isResolvePhase {
-		sl.isResolvePhase = true
-		sl.onResolve()
-	}
-
 	pkgVal, ok := sl.packages.Get(from.Pkg)
 	if !ok {
 		return
