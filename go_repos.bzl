@@ -227,6 +227,14 @@ def go_repositories():
         version = "v1.9.0",
     )
     go_repository(
+        name = "com_github_emirpasic_gods",
+        build_file_proto_mode = "disable_global",
+        importpath = "github.com/emirpasic/gods",
+        sum = "h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=",
+        version = "v1.18.1",
+    )
+
+    go_repository(
         name = "com_github_envoyproxy_go_control_plane",
         build_file_proto_mode = "disable_global",
         importpath = "github.com/envoyproxy/go-control-plane",

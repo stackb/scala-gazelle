@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/maps/linkedhashmap"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
@@ -56,7 +57,7 @@ type scalaLang struct {
 	ruleProviderRegistry scalarule.ProviderRegistry
 	// packages is map from the config.Rel to *scalaPackage for the
 	// workspace-relative package name.
-	packages map[string]*scalaPackage
+	packages *linkedhashmap.Map
 	// isResolvePhase is a flag that is tracks if at least one Resolve() call
 	// has occurred.  It can be used to determine when the rule indexing phase
 	// has completed and deps resolution phase has started (it calls
@@ -106,7 +107,7 @@ func (*scalaLang) KnownDirectives() []string {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	packages := make(map[string]*scalaPackage)
+	packages := linkedhashmap.New()
 
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),

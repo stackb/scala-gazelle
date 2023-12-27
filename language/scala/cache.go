@@ -48,7 +48,7 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 }
 
 func (sl *scalaLang) writeScalaRuleCacheFile() error {
-	sl.cache.PackageCount = int32(len(sl.packages))
+	sl.cache.PackageCount = int32(sl.packages.Size())
 	sl.cache.Rules = sl.parser.ScalaRules()
 	sl.cache.Key = sl.cacheKeyFlagValue
 

@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/maps/linkedhashmap"
 )
 
 const debugGenerate = false
@@ -22,12 +24,12 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	t1 := time.Now()
 
 	if sl.wantProgress && sl.cache.PackageCount > 0 {
-		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
+		writeGenerateProgress(sl.progress, sl.packages.Size(), int(sl.cache.PackageCount))
 	}
 
 	sc := getScalaConfig(args.Config)
 	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl)
-	sl.packages[args.Rel] = pkg
+	sl.packages.Put(args.Rel, pkg)
 	sl.remainingPackages++
 
 	rules := pkg.Rules()
@@ -36,7 +38,11 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		sl.PutKnownRule(from, r)
 	}
 
-	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
+	rules = append(rules, generatePackageMarkerRule(sl.packages.Size()))
+
+	if sc.shouldAnnotateGeneration() {
+		rules = append(rules, annotateGeneration(args.File, *sl.packages))
+	}
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {
@@ -50,16 +56,19 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		}
 	}
 
-	if sc.shouldAnnotateGeneration() {
-		annotateGeneration(args.File)
-	}
-
 	return language.GenerateResult{
 		Gen:     rules,
 		Imports: imports,
 	}
 }
 
-func annotateGeneration(file *rule.File) {
-
+func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule {
+	tags := []string{}
+	for i, k := range packages.Keys() {
+		tags = append(tags, fmt.Sprintf("%d: %v", i, k))
+	}
+	r := rule.NewRule("filegroup", "_gazelle_generate")
+	r.SetAttr("srcs", []string{"BUILD.bazel"})
+	r.SetAttr("tags", tags)
+	return r
 }

@@ -12,10 +12,11 @@ import (
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	from := label.Label{Pkg: f.Pkg, Name: r.Name()}
 
-	pkg, ok := sl.packages[from.Pkg]
+	pkgVal, ok := sl.packages.Get(from.Pkg)
 	if !ok {
 		return nil
 	}
+	pkg := pkgVal.(*scalaPackage)
 
 	provider := pkg.ruleProvider(r)
 	if provider == nil {
@@ -50,13 +51,14 @@ func (sl *scalaLang) Resolve(
 		sl.onResolve()
 	}
 
-	pkg, ok := sl.packages[from.Pkg]
+	pkgVal, ok := sl.packages.Get(from.Pkg)
 	if !ok {
 		return
 	}
+	pkg := pkgVal.(*scalaPackage)
 
 	if r.Kind() == packageMarkerRuleKind {
-		resolvePackageMarkerRule(sl.progress, r, len(sl.packages), sl.wantProgress)
+		resolvePackageMarkerRule(sl.progress, r, sl.packages.Size(), sl.wantProgress)
 		sl.remainingPackages--
 	} else {
 		pkg.Resolve(c, ix, rc, r, importsRaw, from)
