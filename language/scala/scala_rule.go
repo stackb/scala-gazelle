@@ -119,7 +119,6 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 			imp.Error = resolver.ErrSymbolNotFound
 		}
-		resolved.Add(imp)
 		if imp.Symbol != nil {
 			transitive.Push(imp, imp.Symbol)
 		}
@@ -153,7 +152,12 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
 func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from label.Label, lang string, imp string) (*resolver.Symbol, bool) {
-	return r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
+
+	sym, ok := r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
+	if ok {
+		resolved.Add(fmt.Sprintf("%s -> %v", imp, sym))
+	}
+	return sym, ok
 }
 
 // Imports implements part of the scalarule.Rule interface.

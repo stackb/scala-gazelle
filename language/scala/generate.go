@@ -79,9 +79,9 @@ func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule 
 }
 
 func annotateResolve(resolved *arraylist.List) *rule.Rule {
-	tags := []string{}
+	tags := make([]string, resolved.Size())
 	for i, k := range resolved.Values() {
-		tags = append(tags, fmt.Sprintf("%07d: %v", i, k))
+		tags[i] = fmt.Sprintf("%07d: %v", i, k)
 	}
 	r := rule.NewRule("filegroup", "_gazelle_resolve")
 	r.SetAttr("srcs", []string{"BUILD.bazel"})
