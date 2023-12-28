@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/emirpasic/gods/maps/linkedhashmap"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const debugGenerate = false
@@ -37,8 +38,11 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		sl.PutKnownRule(from, r)
 	}
 
-	if sc.shouldAnnotateGeneration() {
+	if sc.shouldAnnotateGenerate() {
 		rules = append(rules, annotateGeneration(args.File, *sl.packages))
+	}
+	if sc.shouldAnnotateResolve() {
+		rules = append(rules, annotateResolve(resolved))
 	}
 
 	imports := make([]interface{}, len(rules))
@@ -69,6 +73,17 @@ func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule 
 		tags = append(tags, fmt.Sprintf("%06d: %v", i, k))
 	}
 	r := rule.NewRule("filegroup", "_gazelle_generate")
+	r.SetAttr("srcs", []string{"BUILD.bazel"})
+	r.SetAttr("tags", tags)
+	return r
+}
+
+func annotateResolve(resolved []*resolver.Import) *rule.Rule {
+	tags := []string{}
+	for i, k := range resolved {
+		tags = append(tags, fmt.Sprintf("%07d: %v", i, k))
+	}
+	r := rule.NewRule("filegroup", "_gazelle_resolve")
 	r.SetAttr("srcs", []string{"BUILD.bazel"})
 	r.SetAttr("tags", tags)
 	return r

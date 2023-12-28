@@ -6,7 +6,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
+
+var resolved = make([]*resolver.Import, 0)
 
 // Imports implements part of the language.Language interface
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {

@@ -21,10 +21,11 @@ import (
 type annotation int
 
 const (
-	AnnotateUnknown    annotation = 0
-	AnnotateImports    annotation = 1
-	AnnotateExports    annotation = 2
-	AnnotateGeneration annotation = 3
+	AnnotateUnknown  annotation = 0
+	AnnotateImports  annotation = 1
+	AnnotateExports  annotation = 2
+	AnnotateGenerate annotation = 3
+	AnnotateResolve  annotation = 4
 )
 
 const (
@@ -91,8 +92,10 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
-	// generation annotation is not inherited
-	delete(clone.annotations, AnnotateGeneration)
+	// generate annotation is not inherited
+	delete(clone.annotations, AnnotateGenerate)
+	// resolve annotation is not inherited
+	delete(clone.annotations, AnnotateResolve)
 
 	for k, v := range c.rules {
 		clone.rules[k] = v.Clone()
@@ -347,8 +350,13 @@ func (c *scalaConfig) shouldAnnotateExports() bool {
 	return ok
 }
 
-func (c *scalaConfig) shouldAnnotateGeneration() bool {
-	_, ok := c.annotations[AnnotateGeneration]
+func (c *scalaConfig) shouldAnnotateGenerate() bool {
+	_, ok := c.annotations[AnnotateGenerate]
+	return ok
+}
+
+func (c *scalaConfig) shouldAnnotateResolve() bool {
+	_, ok := c.annotations[AnnotateResolve]
 	return ok
 }
 
@@ -551,8 +559,10 @@ func parseAnnotation(val string) annotation {
 		return AnnotateImports
 	case "exports":
 		return AnnotateExports
-	case "generation":
-		return AnnotateGeneration
+	case "generate":
+		return AnnotateGenerate
+	case "resolve":
+		return AnnotateResolve
 	default:
 		return AnnotateUnknown
 	}
