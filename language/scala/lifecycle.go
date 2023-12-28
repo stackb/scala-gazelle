@@ -39,6 +39,10 @@ func (sl *scalaLang) onEnd() {
 		}
 	}
 
+	if resolveRule != nil {
+		annotateResolveTags(resolveRule, sl.resolved)
+	}
+
 	sl.stopCpuProfiling()
 	sl.stopMemoryProfiling()
 }

@@ -15,6 +15,8 @@ import (
 
 const debugGenerate = false
 
+var resolveRule *rule.Rule
+
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
 
@@ -42,7 +44,8 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		rules = append(rules, annotateGeneration(args.File, *sl.packages))
 	}
 	if sc.shouldAnnotateResolve() {
-		rules = append(rules, annotateResolve(sl.resolved))
+		resolveRule = createResolveRule()
+		rules = append(rules, resolveRule)
 	}
 
 	imports := make([]interface{}, len(rules))
@@ -78,13 +81,17 @@ func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule 
 	return r
 }
 
-func annotateResolve(resolved *arraylist.List) *rule.Rule {
+func createResolveRule() *rule.Rule {
+	r := rule.NewRule("filegroup", "_gazelle_resolve")
+	r.SetAttr("srcs", []string{"BUILD.bazel"})
+	return r
+}
+
+func annotateResolveTags(r *rule.Rule, resolved *arraylist.List) *rule.Rule {
 	tags := make([]string, resolved.Size())
 	for i, k := range resolved.Values() {
 		tags[i] = fmt.Sprintf("%07d: %v", i, k)
 	}
-	r := rule.NewRule("filegroup", "_gazelle_resolve")
-	r.SetAttr("srcs", []string{"BUILD.bazel"})
 	r.SetAttr("tags", tags)
 	return r
 }
