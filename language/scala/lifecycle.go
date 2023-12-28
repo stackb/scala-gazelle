@@ -9,6 +9,8 @@ import (
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
+	sl.packageCountTotal = sl.packages.Size()
+
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
