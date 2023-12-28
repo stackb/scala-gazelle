@@ -119,7 +119,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 			imp.Error = resolver.ErrSymbolNotFound
 		}
-		resolved = append(resolved, imp)
+		resolved.Add(imp)
 		if imp.Symbol != nil {
 			transitive.Push(imp, imp.Symbol)
 		}

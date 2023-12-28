@@ -9,8 +9,8 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/maps/linkedhashmap"
-	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 const debugGenerate = false
@@ -78,9 +78,9 @@ func annotateGeneration(file *rule.File, packages linkedhashmap.Map) *rule.Rule 
 	return r
 }
 
-func annotateResolve(resolved []*resolver.Import) *rule.Rule {
+func annotateResolve(resolved *arraylist.List) *rule.Rule {
 	tags := []string{}
-	for i, k := range resolved {
+	for i, k := range resolved.Values() {
 		tags = append(tags, fmt.Sprintf("%07d: %v", i, k))
 	}
 	r := rule.NewRule("filegroup", "_gazelle_resolve")
