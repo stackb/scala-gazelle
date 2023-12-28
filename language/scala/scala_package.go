@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/lists/arraylist"
 
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
@@ -39,8 +40,10 @@ type scalaPackage struct {
 	cfg *scalaConfig
 	// the generated and empty rule providers
 	gen, empty []scalarule.RuleProvider
-	// resolved is the final state of generated rules, by name.
+	// rules is the final state of generated rules, by name.
 	rules map[string]*rule.Rule
+	// resolved master list
+	resolved *arraylist.List
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -50,6 +53,7 @@ func newScalaPackage(
 	cfg *scalaConfig,
 	providerRegistry scalarule.ProviderRegistry,
 	parser parser.Parser,
+	resolved *arraylist.List,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
 		rel:              rel,
@@ -59,6 +63,7 @@ func newScalaPackage(
 		file:             file,
 		cfg:              cfg,
 		rules:            make(map[string]*rule.Rule),
+		resolved:         resolved,
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -200,7 +205,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scope:       s.universe,
 	}
 
-	return newScalaRule(ctx, rule), nil
+	return newScalaRule(ctx, rule, s.resolved), nil
 }
 
 // repoRootDir return the root directory of the repo.

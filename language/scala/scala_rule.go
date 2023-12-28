@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/lists/arraylist"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -45,17 +46,21 @@ type scalaRule struct {
 	ctx *scalaRuleContext
 	// exports keyed by their import
 	exports map[string]resolve.ImportSpec
+	// resolved master list
+	resolved *arraylist.List
 }
 
 func newScalaRule(
 	ctx *scalaRuleContext,
 	rule *sppb.Rule,
+	resolved *arraylist.List,
 ) *scalaRule {
 	scalaRule := &scalaRule{
-		pb:      rule,
-		files:   rule.Files,
-		ctx:     ctx,
-		exports: make(map[string]resolve.ImportSpec),
+		pb:       rule,
+		files:    rule.Files,
+		ctx:      ctx,
+		exports:  make(map[string]resolve.ImportSpec),
+		resolved: resolved,
 	}
 
 	sort.Slice(scalaRule.files, func(i, j int) bool {
@@ -155,7 +160,7 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 
 	sym, ok := r.ctx.resolver.ResolveSymbol(c, ix, from, lang, imp)
 	if ok {
-		resolved.Add(fmt.Sprintf("%s -> %v", imp, sym))
+		r.resolved.Add(fmt.Sprintf("%s -> %v", imp, sym))
 	}
 	return sym, ok
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/emirpasic/gods/lists/arraylist"
 	"github.com/emirpasic/gods/maps/linkedhashmap"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/rules_proto/pkg/protoc"
@@ -79,6 +80,8 @@ type scalaLang struct {
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
 	parser *parser.MemoParser
+	// resolved is alist of resolved symbols
+	resolved *arraylist.List
 }
 
 // Name implements part of the language.Language interface
@@ -112,6 +115,7 @@ func NewLanguage() language.Language {
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
+		resolved:             arraylist.New(),
 	}
 
 	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {

@@ -29,7 +29,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	sc := getScalaConfig(args.Config)
-	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl)
+	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl.resolved, sl)
 	sl.packages.Put(args.Rel, pkg)
 
 	rules := pkg.Rules()
@@ -42,7 +42,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		rules = append(rules, annotateGeneration(args.File, *sl.packages))
 	}
 	if sc.shouldAnnotateResolve() {
-		rules = append(rules, annotateResolve(resolved))
+		rules = append(rules, annotateResolve(sl.resolved))
 	}
 
 	imports := make([]interface{}, len(rules))
