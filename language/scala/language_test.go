@@ -20,6 +20,6 @@ func ExampleLanguage_KnownDirectives() {
 	// resolve_glob
 	// resolve_kind_rewrite_name
 	// resolve_with
-	// scala_annotate
+	// scala_debug
 	// scala_rule
 }

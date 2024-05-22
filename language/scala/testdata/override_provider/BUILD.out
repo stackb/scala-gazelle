@@ -4,7 +4,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 # gazelle:resolve scala scala com.typesafe.scalalogging.LazyLogging @maven//:com_typesafe_scala_logging_scala_logging_2_12
 # gazelle:resolve scala scala org.slf4j.Logger @maven//:org_slf4j_slf4j_api
 # gazelle:resolve_with scala com.typesafe.scalalogging.LazyLogging org.slf4j.Logger
-# gazelle:scala_annotate imports
+# gazelle:scala_debug imports
 
 scala_library(
     name = "app",

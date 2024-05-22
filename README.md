@@ -50,7 +50,7 @@
     - [`gazelle:resolve_with`](#gazelleresolve_with)
     - [`gazelle:resolve_kind_rewrite_name`](#gazelleresolve_kind_rewrite_name)
     - [`gazelle:resolve_file_symbol_name`](#gazelleresolve_file_symbol_name)
-    - [`gazelle:annotate`](#gazelleannotate)
+    - [`gazelle:scala_debug`](#gazellescala_debug)
       - [`imports`](#imports)
       - [`exports`](#exports)
 - [Import Resolution Procedure](#import-resolution-procedure)
@@ -899,10 +899,10 @@ resolver to try and resolve it selectively via:
 ```
 
 
-### `gazelle:annotate`
+### `gazelle:scala_debug`
 
-The `annotate` directive is a debugging aid that adds comments to the generated
-rules detailing what the symbols are and how they resolved.
+The `scala_debug` directive is a debugging aid that adds comments to the
+generated rules detailing what the symbols are and how they resolved.
 
 #### `imports`
 
@@ -910,7 +910,7 @@ This adds a list of comments to the `srcs` attribute detailing the required
 imports and how they resolved.  For example:
 
 ```
-# gazelle:annotate imports
+# gazelle:scala_debug imports
 ```
 
 Generates:
@@ -933,7 +933,7 @@ This adds a list of comments to the `srcs` attribute detailing the provided
 exports and how they resolved.  Example:
 
 ```
-# gazelle:annotate exports
+# gazelle:scala_debug exports
 ```
 
 # Import Resolution Procedure
