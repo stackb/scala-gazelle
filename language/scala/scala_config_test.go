@@ -308,6 +308,22 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 				DebugImports: nil,
 			},
 		},
+		"exports": {
+			directives: []rule.Directive{
+				{Key: scalaDebugDirective, Value: "exports"},
+			},
+			want: map[debugAnnotation]interface{}{
+				DebugExports: nil,
+			},
+		},
+		"wildcards": {
+			directives: []rule.Directive{
+				{Key: scalaDebugDirective, Value: "wildcard-imports"},
+			},
+			want: map[debugAnnotation]interface{}{
+				DebugWildcardImports: nil,
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
