@@ -6,6 +6,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
@@ -26,25 +27,25 @@ var serviceSuffixes = []string{
 }
 
 func init() {
-	cr := &scalaProtoPackageConflictResolver{}
+	cr := &ScalaProtoPackageConflictResolver{}
 	GlobalConflictResolverRegistry().PutConflictResolver(cr.Name(), cr)
 }
 
-// scalaProtoPackageConflictResolver implements a strategy where
-type scalaProtoPackageConflictResolver struct {
+// ScalaProtoPackageConflictResolver implements a strategy where
+type ScalaProtoPackageConflictResolver struct {
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *scalaProtoPackageConflictResolver) Name() string {
+func (s *ScalaProtoPackageConflictResolver) Name() string {
 	return "scala_proto_package"
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *scalaProtoPackageConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (s *ScalaProtoPackageConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
 }
 
 // CheckFlags implements part of the resolver.ConflictResolver interface.
-func (s *scalaProtoPackageConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
+func (s *ScalaProtoPackageConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Config) error {
 	return nil
 }
 
@@ -55,9 +56,8 @@ func (s *scalaProtoPackageConflictResolver) CheckFlags(fs *flag.FlagSet, c *conf
 // referencing *any* grpc-like symbols from the conflicting rule.  If they are
 // using grpc, always resolve to conflict in favor of the grpc label, because
 // that rule will include the protos anyway.  If they aren't using grpc, take
-// the proto rule so that the rule does not take on additional un-necessary
-// deps.
-func (s *scalaProtoPackageConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool) {
+// the proto rule so that the rule does not take on additional unnecessary deps.
+func (s *ScalaProtoPackageConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool) {
 	if len(symbol.Conflicts) != 1 {
 		return nil, false
 	}
