@@ -226,6 +226,7 @@ class ScalaFile {
         // this.printNode(tree);
 
         if (tree.error) {
+            this.console.log('Parse error:', this.filename);
             this.visitError(tree);
         } else {
             this.traverse(this.root, this.root.name, tree, undefined /* parent */, [], (propName, node, parent, stack) => {

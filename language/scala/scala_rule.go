@@ -377,18 +377,16 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 }
 
 func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-	// resolved := make([]*resolver.Symbol, 0)
 	names := make([]string, 0)
 	for _, name := range file.Names {
 		if _, ok := scope.GetSymbol(name); ok {
-			// resolved = append(resolved, sym)
 			names = append(names, name)
 		}
 	}
-	// if len(resolved) > 0 {
-	sort.Strings(names)
-	log.Printf("[%s]: import %s.{%s}: %v", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "), file.Names)
-	// }
+	if len(names) > 0 {
+		sort.Strings(names)
+		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
+	}
 }
 
 // Provides implements part of the scalarule.Rule interface.
