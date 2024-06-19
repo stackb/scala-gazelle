@@ -10,9 +10,10 @@ const packageMarkerRuleKind = "_package_marker"
 // generatePackageMarkerRule creates a dummy rule that forces gazelle to run the
 // resolve phase at least once per package; used for tracking progress during
 // the resolve phase.
-func generatePackageMarkerRule(pkgNum int) *rule.Rule {
+func generatePackageMarkerRule(pkgNum int, pkg *scalaPackage) *rule.Rule {
 	r := rule.NewRule(packageMarkerRuleKind, packageMarkerRuleKind)
 	r.SetPrivateAttr("n", pkgNum)
+	r.SetPrivateAttr("pkg", pkg)
 	return r
 }
 
@@ -22,5 +23,9 @@ func resolvePackageMarkerRule(output mobyprogress.Output, r *rule.Rule, total in
 	if wantProgress {
 		writeResolveProgress(output, current, total, current == total)
 	}
+
+	pkg := r.PrivateAttr("pkg").(*scalaPackage)
+	pkg.Finalize()
+
 	r.Delete()
 }

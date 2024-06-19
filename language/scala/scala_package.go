@@ -39,8 +39,11 @@ type scalaPackage struct {
 	cfg *scalaConfig
 	// the generated and empty rule providers
 	gen, empty []scalarule.RuleProvider
-	// resolved is the final state of generated rules, by name.
+	// rules is the final state of generated rules, by name.
 	rules map[string]*rule.Rule
+	// resolveFuncs is a list of resolve work that needs to be deferred until
+	// all rules in a package have been processed.
+	resolveWork []func()
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -59,6 +62,7 @@ func newScalaPackage(
 		file:             file,
 		cfg:              cfg,
 		rules:            make(map[string]*rule.Rule),
+		resolveWork:      make([]func(), 0),
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -92,12 +96,25 @@ func (s *scalaPackage) Resolve(
 		log.Printf("no known rule provider for %v", from)
 		return
 	}
-	provider.Resolve(&scalarule.ResolveContext{
-		Config:    c,
-		RuleIndex: ix,
-		Rule:      r,
-		From:      from,
-	}, importsRaw)
+	fn := func() {
+		provider.Resolve(&scalarule.ResolveContext{
+			Config:    c,
+			RuleIndex: ix,
+			Rule:      r,
+			From:      from,
+		}, importsRaw)
+	}
+	// the first resolve cycle populates the symbol scopes with
+	fn()
+	s.resolveWork = append(s.resolveWork, fn)
+}
+
+// Finalize is called when all rules in the package have been resolved.
+func (s *scalaPackage) Finalize() {
+	// log.Println("scalaPackage.Finalize!", s.rel)
+	for _, fn := range s.resolveWork {
+		fn()
+	}
 }
 
 // generateRules constructs a list of rules based on the configured set of rule

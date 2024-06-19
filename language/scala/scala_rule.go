@@ -175,7 +175,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 	// direct
 	for _, file := range r.files {
-		r.fileImports(file, imports)
+		r.fileImports(imports, file)
 	}
 
 	// Initialize a list of symbols to find implicits for from all known
@@ -245,7 +245,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 		name := parts[1] // note: parts[0] is the 'kind'
 
-		// assume the name if fully-qualified, so resolve it from the "root"
+		// assume the name is fully-qualified so resolve it from the "root"
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 
@@ -267,7 +267,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 }
 
 // fileImports gathers needed imports for the given file.
-func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
+func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
@@ -368,9 +368,14 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		if !r.ctx.scalaConfig.ShouldResolveFileSymbolName(file.Filename, name) {
 			continue
 		}
+		// log.Println("🔥 resolving file symbol name:", file.Filename, name)
 		if sym, ok := scope.GetSymbol(name); ok {
+			// log.Println("🔥 resolved file symbol name:", file.Filename, name, sym)
 			putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {
+			// log.Println("💩 failed to resolve file symbol name:", file.Filename, name)
+			// log.Printf("%s scope:\n%s", file.Filename, scope.String())
+
 			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
 	}
