@@ -175,7 +175,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 	// direct
 	for _, file := range r.files {
-		r.fileImports(file, imports)
+		r.fileImports(imports, file)
 	}
 
 	// Initialize a list of symbols to find implicits for from all known
@@ -245,7 +245,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 		name := parts[1] // note: parts[0] is the 'kind'
 
-		// assume the name if fully-qualified, so resolve it from the "root"
+		// assume the name is fully-qualified so resolve it from the "root"
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 
@@ -267,7 +267,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 }
 
 // fileImports gathers needed imports for the given file.
-func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
+func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
@@ -377,18 +377,16 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 }
 
 func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-	// resolved := make([]*resolver.Symbol, 0)
 	names := make([]string, 0)
 	for _, name := range file.Names {
 		if _, ok := scope.GetSymbol(name); ok {
-			// resolved = append(resolved, sym)
 			names = append(names, name)
 		}
 	}
-	// if len(resolved) > 0 {
-	sort.Strings(names)
-	log.Printf("[%s]: import %s.{%s}: %v", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "), file.Names)
-	// }
+	if len(names) > 0 {
+		sort.Strings(names)
+		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
+	}
 }
 
 // Provides implements part of the scalarule.Rule interface.

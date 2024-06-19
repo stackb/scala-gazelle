@@ -227,7 +227,7 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 func (c *scalaConfig) parseResolveFileSymbolNames(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 2 {
-		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveKindRewriteNameDirective, parts)
+		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveFileSymbolName, parts)
 		return
 	}
 	pattern := parts[0]
