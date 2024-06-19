@@ -111,7 +111,6 @@ func (s *scalaPackage) Resolve(
 
 // Finalize is called when all rules in the package have been resolved.
 func (s *scalaPackage) Finalize() {
-	// log.Println("scalaPackage.Finalize!", s.rel)
 	for _, fn := range s.resolveWork {
 		fn()
 	}

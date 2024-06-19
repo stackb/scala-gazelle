@@ -368,14 +368,9 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 		if !r.ctx.scalaConfig.ShouldResolveFileSymbolName(file.Filename, name) {
 			continue
 		}
-		// log.Println("🔥 resolving file symbol name:", file.Filename, name)
 		if sym, ok := scope.GetSymbol(name); ok {
-			// log.Println("🔥 resolved file symbol name:", file.Filename, name, sym)
 			putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 		} else {
-			// log.Println("💩 failed to resolve file symbol name:", file.Filename, name)
-			// log.Printf("%s scope:\n%s", file.Filename, scope.String())
-
 			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
 	}

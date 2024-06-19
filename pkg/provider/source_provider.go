@@ -64,8 +64,6 @@ func (r *SourceProvider) OnResolve() error {
 
 // OnEnd implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) OnEnd() error {
-	// All rules have been parsed/resolved.  We now need to link symbols across
-	// rules that are in the same package.  For this we need to have a list of packages.
 	return nil
 }
 
