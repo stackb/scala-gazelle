@@ -10,8 +10,13 @@ import (
 // ImportMap is a map if imports keyed by the import string.
 type ImportMap map[string]*Import
 
-func NewImportMap() ImportMap {
-	return make(ImportMap)
+// NewImportMap initializes a new ImportMap with an optional list of Imports.
+func NewImportMap(imports ...*Import) ImportMap {
+	m := make(ImportMap)
+	for _, imp := range imports {
+		m.Put(imp)
+	}
+	return m
 }
 
 // Keys returns a sorted list of imports.

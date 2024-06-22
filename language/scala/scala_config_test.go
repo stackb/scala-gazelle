@@ -27,14 +27,14 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 		"degenerate": {
 			want: &scalaConfig{
 				rules:             map[string]*scalarule.Config{},
-				annotations:       map[annotation]any{},
+				annotations:       map[debugAnnotation]any{},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
 		},
 		"annotation after rule": {
 			directives: []rule.Directive{
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
-				{Key: "scala_annotate", Value: "imports"},
+				{Key: "scala_debug", Value: "imports"},
 			},
 			want: &scalaConfig{
 				rules: map[string]*scalarule.Config{
@@ -47,15 +47,15 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 						Name:           "scala_binary",
 					},
 				},
-				annotations: map[annotation]any{
-					AnnotateImports: nil,
+				annotations: map[debugAnnotation]any{
+					DebugImports: nil,
 				},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
 		},
 		"rule after annotation": {
 			directives: []rule.Directive{
-				{Key: "scala_annotate", Value: "imports"},
+				{Key: "scala_debug", Value: "imports"},
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
 			},
 			want: &scalaConfig{
@@ -69,8 +69,8 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 						Name:           "scala_binary",
 					},
 				},
-				annotations: map[annotation]any{
-					AnnotateImports: nil,
+				annotations: map[debugAnnotation]any{
+					DebugImports: nil,
 				},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
@@ -295,17 +295,33 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       map[annotation]interface{}
+		want       map[debugAnnotation]interface{}
 	}{
 		"degenerate": {
-			want: map[annotation]interface{}{},
+			want: map[debugAnnotation]interface{}{},
 		},
 		"imports": {
 			directives: []rule.Directive{
-				{Key: scalaAnnotateDirective, Value: "imports"},
+				{Key: scalaDebugDirective, Value: "imports"},
 			},
-			want: map[annotation]interface{}{
-				AnnotateImports: nil,
+			want: map[debugAnnotation]interface{}{
+				DebugImports: nil,
+			},
+		},
+		"exports": {
+			directives: []rule.Directive{
+				{Key: scalaDebugDirective, Value: "exports"},
+			},
+			want: map[debugAnnotation]interface{}{
+				DebugExports: nil,
+			},
+		},
+		"wildcards": {
+			directives: []rule.Directive{
+				{Key: scalaDebugDirective, Value: "wildcard-imports"},
+			},
+			want: map[debugAnnotation]interface{}{
+				DebugWildcardImports: nil,
 			},
 		},
 	} {

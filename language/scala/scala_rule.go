@@ -134,6 +134,14 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
 				item.imp.Symbol = resolved
 			} else {
+				if r.ctx.scalaConfig.shouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
+					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
+						wildcardImport := item.imp.Src // original symbol name having underscore suffix
+						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
+					} else {
+
+					}
+				}
 				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
 			}
 		}
@@ -167,7 +175,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 	// direct
 	for _, file := range r.files {
-		r.fileImports(file, imports)
+		r.fileImports(imports, file)
 	}
 
 	// Initialize a list of symbols to find implicits for from all known
@@ -237,7 +245,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 		name := parts[1] // note: parts[0] is the 'kind'
 
-		// assume the name if fully-qualified, so resolve it from the "root"
+		// assume the name is fully-qualified so resolve it from the "root"
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 
@@ -259,7 +267,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 }
 
 // fileImports gathers needed imports for the given file.
-func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
+func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
@@ -365,6 +373,19 @@ func (r *scalaRule) fileImports(file *sppb.File, imports resolver.ImportMap) {
 		} else {
 			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
+	}
+}
+
+func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
+	names := make([]string, 0)
+	for _, name := range file.Names {
+		if _, ok := scope.GetSymbol(name); ok {
+			names = append(names, name)
+		}
+	}
+	if len(names) > 0 {
+		sort.Strings(names)
+		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
 	}
 }
 

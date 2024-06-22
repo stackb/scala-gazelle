@@ -18,16 +18,17 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
-type annotation int
+type debugAnnotation int
 
 const (
-	AnnotateUnknown annotation = 0
-	AnnotateImports annotation = 1
-	AnnotateExports annotation = 2
+	DebugUnknown         debugAnnotation = 0
+	DebugImports         debugAnnotation = 1
+	DebugExports         debugAnnotation = 2
+	DebugWildcardImports debugAnnotation = 3
 )
 
 const (
-	scalaAnnotateDirective          = "scala_annotate"
+	scalaDebugDirective             = "scala_debug"
 	scalaRuleDirective              = "scala_rule"
 	resolveGlobDirective            = "resolve_glob"
 	resolveConflictsDirective       = "resolve_conflicts"
@@ -46,7 +47,7 @@ type scalaConfig struct {
 	resolveFileSymbolNames []*resolveFileSymbolNameSpec
 	rules                  map[string]*scalarule.Config
 	labelNameRewrites      map[string]resolver.LabelNameRewriteSpec
-	annotations            map[annotation]interface{}
+	annotations            map[debugAnnotation]interface{}
 	conflictResolvers      []resolver.ConflictResolver
 }
 
@@ -56,7 +57,7 @@ func newScalaConfig(universe resolver.Universe, config *config.Config, rel strin
 		config:            config,
 		rel:               rel,
 		universe:          universe,
-		annotations:       make(map[annotation]interface{}),
+		annotations:       make(map[debugAnnotation]interface{}),
 		labelNameRewrites: make(map[string]resolver.LabelNameRewriteSpec),
 		rules:             make(map[string]*scalarule.Config),
 	}
@@ -163,7 +164,7 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 			if err := c.parseResolveConflictsDirective(d); err != nil {
 				return err
 			}
-		case scalaAnnotateDirective:
+		case scalaDebugDirective:
 			if err := c.parseScalaAnnotation(d); err != nil {
 				return err
 			}
@@ -226,7 +227,7 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 func (c *scalaConfig) parseResolveFileSymbolNames(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 2 {
-		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveKindRewriteNameDirective, parts)
+		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveFileSymbolName, parts)
 		return
 	}
 	pattern := parts[0]
@@ -282,7 +283,7 @@ func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
 		annot := parseAnnotation(intent.Value)
-		if annot == AnnotateUnknown {
+		if annot == DebugUnknown {
 			return fmt.Errorf("invalid directive gazelle:%s: unknown annotation value '%v'", d.Key, intent.Value)
 		}
 		if intent.Want {
@@ -333,13 +334,18 @@ func (c *scalaConfig) configuredRules() []*scalarule.Config {
 	return rules
 }
 
+func (c *scalaConfig) shouldAnnotateWildcardImports() bool {
+	_, ok := c.annotations[DebugWildcardImports]
+	return ok
+}
+
 func (c *scalaConfig) shouldAnnotateImports() bool {
-	_, ok := c.annotations[AnnotateImports]
+	_, ok := c.annotations[DebugImports]
 	return ok
 }
 
 func (c *scalaConfig) shouldAnnotateExports() bool {
-	_, ok := c.annotations[AnnotateExports]
+	_, ok := c.annotations[DebugExports]
 	return ok
 }
 
@@ -536,14 +542,16 @@ type resolveFileSymbolNameSpec struct {
 	symbolName collections.Intent
 }
 
-func parseAnnotation(val string) annotation {
+func parseAnnotation(val string) debugAnnotation {
 	switch val {
+	case "wildcard-imports":
+		return DebugWildcardImports
 	case "imports":
-		return AnnotateImports
+		return DebugImports
 	case "exports":
-		return AnnotateExports
+		return DebugExports
 	default:
-		return AnnotateUnknown
+		return DebugUnknown
 	}
 }
 

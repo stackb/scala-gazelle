@@ -55,7 +55,7 @@ class Foo extends HashMap {
 								Classes: []string{"java.util.HashMap"},
 							},
 						},
-						Names: []string{"Foo", "HashMap", "a"},
+						Names: []string{"Foo", "HashMap"},
 					},
 				},
 			},
@@ -97,13 +97,15 @@ object Main extends LazyLogging {
 							},
 						},
 						Names: []string{
+							"ArgProcessor",
 							"ArgProcessor.process",
+							"Array",
+							"BlendTestService",
+							"DotFormatReport",
 							"LazyLogging",
 							"Main",
+							"String",
 							"Unit",
-							"example",
-							"logger.info",
-							"main",
 						},
 					},
 				},
@@ -144,7 +146,11 @@ class FooTest extends FlatSpec with Matchers {
 								},
 							},
 						},
-						Names: []string{"FlatSpec", "FooTest", "Matchers", "foo.test"},
+						Names: []string{
+							"FlatSpec",
+							"FooTest",
+							"Matchers",
+						},
 					},
 				},
 			},
@@ -178,9 +184,11 @@ object Palette {
 							"scala.util.Random.nextInt",
 						},
 						Names: []string{
+							"Color",
 							"MandelPalette",
 							"Palette",
-							"color",
+							"Seq",
+							"Seq.tabulate",
 						},
 					},
 				},
@@ -220,7 +228,14 @@ object Main {
 							"MainContext._",
 							"akka.actor.ActorSystem",
 						},
-						Names: []string{"ActorSystem", "Main", "MainContext", "Unit", "example", "makeRequest"},
+						Names: []string{
+							"ActorSystem",
+							"Main",
+							"MainContext",
+							"Map",
+							"String",
+							"Unit",
+						},
 					},
 				},
 			},
@@ -255,10 +270,11 @@ class Main {
 						},
 						Names: []string{
 							"Future",
+							"HelloHopRequest",
+							"HelloReply",
+							"HelloRequest",
 							"Main",
-							"actions.instrumented",
-							"example",
-							"sayHello",
+							"Metadata",
 						},
 					},
 				},
@@ -375,12 +391,19 @@ object PeerLink extends LazyLogging {
 							},
 						},
 						Names: []string{
+							"AnyRef",
+							"Boolean",
 							"ConcurrentHashMap",
 							"ConnectionRequest",
 							"ConnectionResponse",
+							"HostSignal",
+							"Int",
 							"LazyLogging",
 							"List",
+							"Location",
 							"NoPeer",
+							"ObjectInputStream",
+							"ObjectOutputStream",
 							"Peer",
 							"PeerAlreadyKnown",
 							"PeerConnection",
@@ -388,11 +411,10 @@ object PeerLink extends LazyLogging {
 							"PendingInPeer",
 							"PendingOutPeer",
 							"Response",
+							"SimpleTransport",
+							"String",
 							"Timer",
-							"corp.core.linkage",
-							"listPeers",
-							"send",
-							"sendHostSignal",
+							"Unit",
 						},
 					},
 				},
@@ -433,24 +455,97 @@ case class MetaData(meta: Map[String, Any] = Map()) {
 						Objects:  []string{"trumid.common.truscale.core.MetaData"},
 						Packages: []string{"trumid.common.truscale.core"},
 						Names: []string{
+							"AckResponse",
 							"Any",
+							"FailureReason",
 							"Iterable",
 							"Map",
 							"MetaData",
+							"NoMD",
 							"NoMetaData",
-							"apply",
-							"keys",
-							"meta",
-							"meta.keys",
-							"trumid.common.truscale.core",
-							"update",
+							"String",
+							"UnexpectedResponse",
+						},
+					},
+				},
+			},
+		},
+		"parameter-type-names": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+package gum.entity
+
+case class CounterpartyUser(user: UserRecord[ActorId, EntityId])
+	extends UserComposition[ActorId, EntityId]
+	with HasIsOpsAdmin[ActorId, EntityId] {
+
+	def toProto(userNameProvider: Int => Option[String], counterparty: Counterparty): UserProto = {
+	}
+}
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Packages: []string{"gum.entity"},
+						Classes:  []string{"gum.entity.CounterpartyUser"},
+						Names: []string{
+							"ActorId",
+							"Counterparty",
+							"CounterpartyUser",
+							"EntityId",
+							"HasIsOpsAdmin",
+							"Int",
+							"Option",
+							"String",
+							"UserComposition",
+							"UserProto",
+							"UserRecord",
+						},
+						Extends: map[string]*parse.ClassList{
+							"class gum.entity.CounterpartyUser": {
+								Classes: []string{
+									"UserComposition",
+									"HasIsOpsAdmin",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		"option-parameter-type-name": {
+			files: []testtools.FileSpec{
+				{
+					Path: "Main.scala",
+					Content: `
+case class TradingAccountUser(
+	preferences: Option[TradingAccountUserPreferences] = None,
+)			
+					`,
+				},
+			},
+			want: sppb.ParseResponse{
+				Files: []*sppb.File{
+					{
+						Filename: "Main.scala",
+						Classes:  []string{"TradingAccountUser"},
+						Names: []string{
+							"None",
+							"Option",
+							"TradingAccountUser",
+							"TradingAccountUserPreferences",
 						},
 					},
 				},
 			},
 		},
 	} {
-		// if name != "not-scalameta" {
+		// if name != "option-parameter-type-name" {
 		// 	continue
 		// }
 		t.Run(name,

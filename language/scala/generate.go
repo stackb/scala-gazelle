@@ -35,7 +35,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		sl.PutKnownRule(from, r)
 	}
 
-	rules = append(rules, generatePackageMarkerRule(len(sl.packages)))
+	rules = append(rules, generatePackageMarkerRule(len(sl.packages), pkg))
 
 	imports := make([]interface{}, len(rules))
 	for i, r := range rules {

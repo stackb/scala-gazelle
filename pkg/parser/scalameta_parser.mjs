@@ -193,6 +193,7 @@ class ScalaFile {
     addName(name) {
         switch (name) {
             case "-":
+            case "->":
             case "::":
             case ":=":
             case "!":
@@ -212,6 +213,9 @@ class ScalaFile {
         if (name.startsWith(".")) {
             return;
         }
+        if (isAllLowerCaseName(name)) {
+            return;
+        }
         this.names.add(name);
     }
     /**
@@ -224,40 +228,33 @@ class ScalaFile {
         const buffer = fs.readFileSync(this.filename);
         const tree = parseSource(buffer.toString());
         // this.printNode(tree);
-
         if (tree.error) {
+            this.console.log('Parse error:', this.filename);
             this.visitError(tree);
-        } else {
-            this.traverse(this.root, this.root.name, tree, undefined /* parent */, [], (propName, node, parent, stack) => {
-                if (!node) {
-                    return false
-                }
-                // skip parameter names (#96)
-                if (parent && parent.type === 'Term.Apply' && propName === 'args') {
-                    return false;
-                }
-                if (wantNameInContext(stack)) {
-                    let name = this.parseName(node);
-                    if (name) {
-                        if (wantNameTypes) {
-                            const type = this.stackTypeName(node, stack);
-                            name = `${name}<${type}>`;
-                        }
-                        this.addName(name);
-                        return false;
-                    }
-                }
-                if (enableNestedImports) {
-                    if (node.type === 'Import') {
-                        this.visitImport(node);
-                        return false;
-                    }
-                }
-                return true;
-            });
-
-            this.visitNode(tree);
+            return;
         }
+
+        this.traverse(this.root, this.root.name, tree, undefined /* parent */, [], (propName, node, parent, stack) => {
+            if (!node) {
+                return false
+            }
+            if (enableNestedImports && node.type === 'Import') {
+                this.visitImport(node);
+                return false;
+            }
+
+            let name = this.parseName(node);
+            if (name) {
+                if (wantNameTypes) {
+                    const type = this.stackTypeName(node, stack);
+                    name = `${name}<${type}>`;
+                }
+                this.addName(name);
+            }
+            return true;
+        });
+
+        this.visitNode(tree);
     }
 
     /**
@@ -307,8 +304,9 @@ class ScalaFile {
      */
     traverse(scope, prop, obj, parent, stack, visit) {
         if (typeof obj !== 'object' || obj === null) {
-            return;
+            return; // scalar values like numbers and strings...
         }
+
         if (obj.type) {
             stack.push(obj);
             scope = this.pushScope(prop, scope);
@@ -473,7 +471,7 @@ class ScalaFile {
         const qName = this.packageQualifiedName(name);
         this.topClasses.add(qName);
         this.parseExtends('class', qName, node);
-        this.visitStats(node.stats)
+        this.visitStats(node.stats);
     }
 
     visitDefnTrait(node) {
@@ -481,7 +479,7 @@ class ScalaFile {
         const qName = this.packageQualifiedName(name);
         this.topTraits.add(qName);
         this.parseExtends('trait', qName, node);
-        this.visitStats(node.stats)
+        this.visitStats(node.stats);
     }
 
     visitDefnVal(node) {
@@ -599,6 +597,12 @@ class ScalaFile {
                 return ref.value;
             case 'Term.Name':
                 return ref.value;
+            case 'Term.Param': {
+                if (ref.decltpe) {
+                    return this.parseName(ref.decltpe);
+                }
+                break;
+            }
             case 'Term.Select': {
                 const names = [];
                 if (ref.qual) {
@@ -619,11 +623,10 @@ class ScalaFile {
                 }
                 return names.join('.');
             }
-            default:
-                if (debug && ref.type) {
-                    this.console.warn('unhandled ref type:', ref.type);
-                    this.printNode(ref);
-                }
+        }
+        if (debug && ref.type) {
+            this.console.warn('parseName: unhandled ref type:', ref.type);
+            this.printNode(ref);
         }
     }
 
@@ -742,27 +745,34 @@ if (isMainThread) {
 }
 
 /**
- * Determine if we we should collect this name.
- * @param {!Array<Node>} stack 
+ * Determine if the given string starts with a lowercase letter.
+ *
+ * @param {string} name
  * @returns {boolean}
  */
-function wantNameInContext(stack) {
-    if (stack.length == 0) {
-        return false;
-    }
-
-    for (let i = stack.length - 1; i >= 0; i--) {
-        switch (stack[i].type) {
-            // if the immediate parent is a parameter
-            case 'Term.Param':
-            case 'Term.Interpolate':
-            case 'Pat.Var':
-                return false;
-            // any infix or unary context
-            case 'Term.ApplyUnary':
-            case 'Term.ApplyInfix':
-                return false;
+function isAllLowerCaseName(name) {
+    const parts = name.split(".");
+    for (const part of parts) {
+        if (!isLowerCaseName(part)) {
+            return false;
         }
     }
     return true;
+}
+
+/**
+ * Determine if the given string starts with a lowercase letter.
+ *
+ * @param {string} name
+ * @returns {boolean}
+ */
+function isLowerCaseName(name) {
+    if (name.length === 0) {
+        return false;
+    }
+    const first = name.charAt(0);
+    if (first === first.toLowerCase() && first !== first.toUpperCase()) {
+        return true;
+    }
+    return false;
 }
