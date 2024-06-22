@@ -14,11 +14,12 @@
         "foo.Main"
       ],
       "names": [
+        "Array",
         "Main",
+        "Map",
+        "String",
         "Unit",
-        "foo",
-        "java.dx.Map",
-        "main"
+        "java.dx.Map"
       ]
     }
   ]

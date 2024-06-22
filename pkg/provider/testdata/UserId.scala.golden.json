@@ -16,8 +16,8 @@
       "names": [
         "AnyVal",
         "Int",
+        "TypeMapper",
         "UserId",
-        "common.types",
         "scalapb.TypeMapper"
       ],
       "extends": {
