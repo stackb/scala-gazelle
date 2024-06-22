@@ -13,9 +13,7 @@
       "names": [
         "PostgresAccess",
         "String",
-        "auth.dao",
-        "common.postgres.PostgresAccess",
-        "dbConfigKey"
+        "common.postgres.PostgresAccess"
       ],
       "extends": {
         "object auth.dao.PostgresAccess": {
