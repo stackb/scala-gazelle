@@ -14,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 )
 
 func TestScalaRuleExports(t *testing.T) {
@@ -70,7 +71,7 @@ func TestScalaRuleExports(t *testing.T) {
 				Return(nil)
 
 			c := config.New()
-			sc := newScalaConfig(universe, c, "")
+			sc := scalaconfig.New(universe, c, "")
 
 			ctx := &scalaRuleContext{
 				rule:        tc.rule,
@@ -261,7 +262,7 @@ func TestScalaRuleImports(t *testing.T) {
 				global.PutSymbol(symbol)
 			}
 
-			sc, err := newTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)
+			sc, err := scalaconfig.NewTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)
 			if err != nil {
 				t.Fatal(err)
 			}

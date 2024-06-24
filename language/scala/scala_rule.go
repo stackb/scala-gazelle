@@ -14,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -27,7 +28,7 @@ const (
 
 type scalaRuleContext struct {
 	// the parent config
-	scalaConfig *scalaConfig
+	scalaConfig *scalaconfig.Config
 	// rule (lowercase) is the parent gazelle rule
 	rule *rule.Rule
 	// scope is a map of symbols that are outside the rule.
@@ -100,7 +101,7 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 // ResolveImports performs symbol resolution for imports of the rule.
 func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.ImportMap {
 	imports := r.Imports()
-	sc := getScalaConfig(rctx.Config)
+	sc := scalaconfig.Get(rctx.Config)
 
 	transitive := newImportSymbols()
 
@@ -131,7 +132,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 		item, _ := transitive.Pop()
 
 		if len(item.sym.Conflicts) > 0 {
-			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym, rctx.From); ok {
+			if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, item.imp, item.sym, rctx.From); ok {
 				if resolved != nil {
 					item.imp.Symbol = resolved
 				} else {
@@ -140,12 +141,10 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 					continue // skip this item if conflict strategy says "ok" but returns nil (it's a wildcard import)
 				}
 			} else {
-				if r.ctx.scalaConfig.shouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
+				if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
 					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
 						wildcardImport := item.imp.Src // original symbol name having underscore suffix
 						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
-					} else {
-
 					}
 				}
 				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
@@ -199,7 +198,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	// Gather implicit imports transitively.
 	for !required.IsEmpty() {
 		src, _ := required.Pop()
-		for _, dst := range r.ctx.scalaConfig.getImplicitImports(impLang, src) {
+		for _, dst := range r.ctx.scalaConfig.GetImplicitImports(impLang, src) {
 			required.Push(dst)
 			imports.Put(resolver.NewImplicitImport(dst, src))
 		}
@@ -227,7 +226,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 	direct := resolver.NewTrieScope()
 
 	putExport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping export from current", imp.Imp)
 			}
@@ -284,7 +283,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	direct := resolver.NewTrieScope()
 
 	putImport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping import from current", imp.Imp)
 			}

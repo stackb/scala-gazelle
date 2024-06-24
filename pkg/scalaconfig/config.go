@@ -1,4 +1,4 @@
-package scala
+package scalaconfig
 
 import (
 	"fmt"
@@ -25,6 +25,7 @@ const (
 	DebugImports         debugAnnotation = 1
 	DebugExports         debugAnnotation = 2
 	DebugWildcardImports debugAnnotation = 3
+	scalaLangName                        = "scala"
 )
 
 const (
@@ -37,8 +38,20 @@ const (
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
-// scalaConfig represents the config extension for the a scala package.
-type scalaConfig struct {
+func DirectiveNames() []string {
+	return []string{
+		scalaDebugDirective,
+		scalaRuleDirective,
+		resolveGlobDirective,
+		resolveConflictsDirective,
+		resolveWithDirective,
+		resolveFileSymbolName,
+		resolveKindRewriteNameDirective,
+	}
+}
+
+// Config represents the config extension for the a scala package.
+type Config struct {
 	config                 *config.Config
 	rel                    string
 	universe               resolver.Universe
@@ -51,9 +64,9 @@ type scalaConfig struct {
 	conflictResolvers      []resolver.ConflictResolver
 }
 
-// newScalaConfig initializes a new scalaConfig.
-func newScalaConfig(universe resolver.Universe, config *config.Config, rel string) *scalaConfig {
-	return &scalaConfig{
+// newScalaConfig initializes a new Config.
+func New(universe resolver.Universe, config *config.Config, rel string) *Config {
+	return &Config{
 		config:            config,
 		rel:               rel,
 		universe:          universe,
@@ -63,10 +76,10 @@ func newScalaConfig(universe resolver.Universe, config *config.Config, rel strin
 	}
 }
 
-// getScalaConfig returns the scala config.  Can be nil.
-func getScalaConfig(config *config.Config) *scalaConfig {
+// Get returns the scala config.  Can be nil.
+func Get(config *config.Config) *Config {
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
-		return existingExt.(*scalaConfig)
+		return existingExt.(*Config)
 	} else {
 		return nil
 	}
@@ -74,20 +87,20 @@ func getScalaConfig(config *config.Config) *scalaConfig {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func getOrCreateScalaConfig(universe resolver.Universe, config *config.Config, rel string) *scalaConfig {
-	var cfg *scalaConfig
+func GetOrCreate(universe resolver.Universe, config *config.Config, rel string) *Config {
+	var cfg *Config
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
-		cfg = existingExt.(*scalaConfig).clone(config, rel)
+		cfg = existingExt.(*Config).clone(config, rel)
 	} else {
-		cfg = newScalaConfig(universe, config, rel)
+		cfg = New(universe, config, rel)
 	}
 	config.Exts[scalaLangName] = cfg
 	return cfg
 }
 
 // clone copies this config to a new one.
-func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
-	clone := newScalaConfig(c.universe, config, rel)
+func (c *Config) clone(config *config.Config, rel string) *Config {
+	clone := New(c.universe, config, rel)
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
@@ -112,7 +125,17 @@ func (c *scalaConfig) clone(config *config.Config, rel string) *scalaConfig {
 	return clone
 }
 
-func (c *scalaConfig) canProvide(from label.Label) bool {
+// Config returns the parent gazelle configuration
+func (c *Config) Config() *config.Config {
+	return c.config
+}
+
+// Rel returns the parent gazelle relative path
+func (c *Config) Rel() string {
+	return c.rel
+}
+
+func (c *Config) CanProvide(from label.Label) bool {
 	for _, provider := range c.universe.SymbolProviders() {
 		if provider.CanProvide(from, c.universe.GetKnownRule) {
 			return true
@@ -121,7 +144,7 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 	return false
 }
 
-func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol, from label.Label) (*resolver.Symbol, bool) {
+func (c *Config) ResolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol, from label.Label) (*resolver.Symbol, bool) {
 	for _, resolver := range c.conflictResolvers {
 		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol, from); ok {
 			return resolved, true
@@ -131,7 +154,7 @@ func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, 
 }
 
 // GetKnownRule translates relative labels into their absolute form.
-func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
+func (c *Config) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	if from.Name == "" {
 		return nil, false
 	}
@@ -144,7 +167,7 @@ func (c *scalaConfig) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 // parseDirectives is called in each directory visited by gazelle.  The relative
 // directory name is given by 'rel' and the list of directives in the BUILD file
 // are specified by 'directives'.
-func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
+func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 	for _, d := range directives {
 		switch d.Key {
 		case scalaRuleDirective:
@@ -173,7 +196,7 @@ func (c *scalaConfig) parseDirectives(directives []rule.Directive) (err error) {
 	return
 }
 
-func (c *scalaConfig) parseScalaRuleDirective(d rule.Directive) error {
+func (c *Config) parseScalaRuleDirective(d rule.Directive) error {
 	fields := strings.Fields(d.Value)
 	if len(fields) < 3 {
 		return fmt.Errorf("expected three or more fields, got %d", len(fields))
@@ -186,7 +209,7 @@ func (c *scalaConfig) parseScalaRuleDirective(d rule.Directive) error {
 	return r.ParseDirective(name, param, value)
 }
 
-func (c *scalaConfig) parseResolveGlobDirective(d rule.Directive) {
+func (c *Config) parseResolveGlobDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	o := overrideSpec{}
 	var lbl string
@@ -211,7 +234,7 @@ func (c *scalaConfig) parseResolveGlobDirective(d rule.Directive) {
 	c.overrides = append(c.overrides, &o)
 }
 
-func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
+func (c *Config) parseResolveWithDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 3 {
 		log.Printf("invalid gazelle:%s directive: expected 3+ parts, got %d (%v)", resolveWithDirective, len(parts), parts)
@@ -224,7 +247,7 @@ func (c *scalaConfig) parseResolveWithDirective(d rule.Directive) {
 	})
 }
 
-func (c *scalaConfig) parseResolveFileSymbolNames(d rule.Directive) {
+func (c *Config) parseResolveFileSymbolNames(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) < 2 {
 		log.Printf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]SYMBOLS...], got %v", resolveFileSymbolName, parts)
@@ -241,7 +264,7 @@ func (c *scalaConfig) parseResolveFileSymbolNames(d rule.Directive) {
 	}
 }
 
-func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
+func (c *Config) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 3 {
 		log.Printf("invalid gazelle:%s directive: expected [KIND SRC_NAME DST_NAME], got %v", resolveKindRewriteNameDirective, parts)
@@ -254,7 +277,7 @@ func (c *scalaConfig) parseResolveKindRewriteNameDirective(d rule.Directive) {
 	c.labelNameRewrites[kind] = resolver.LabelNameRewriteSpec{Src: src, Dst: dst}
 }
 
-func (c *scalaConfig) parseResolveConflictsDirective(d rule.Directive) error {
+func (c *Config) parseResolveConflictsDirective(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
 		if intent.Want {
@@ -279,7 +302,7 @@ func (c *scalaConfig) parseResolveConflictsDirective(d rule.Directive) error {
 	return nil
 }
 
-func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
+func (c *Config) parseScalaAnnotation(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
 		annot := parseAnnotation(intent.Value)
@@ -296,7 +319,7 @@ func (c *scalaConfig) parseScalaAnnotation(d rule.Directive) error {
 	return nil
 }
 
-func (c *scalaConfig) getOrCreateScalaRuleConfig(config *config.Config, name string) (*scalarule.Config, error) {
+func (c *Config) getOrCreateScalaRuleConfig(config *config.Config, name string) (*scalarule.Config, error) {
 	r, ok := c.rules[name]
 	if !ok {
 		r = scalarule.NewConfig(config, name)
@@ -306,7 +329,7 @@ func (c *scalaConfig) getOrCreateScalaRuleConfig(config *config.Config, name str
 	return r, nil
 }
 
-func (c *scalaConfig) getImplicitImports(lang, imp string) (deps []string) {
+func (c *Config) GetImplicitImports(lang, imp string) (deps []string) {
 	for _, d := range c.implicitImports {
 		if d.lang != lang {
 			continue
@@ -319,8 +342,8 @@ func (c *scalaConfig) getImplicitImports(lang, imp string) (deps []string) {
 	return
 }
 
-// configuredRules returns an ordered list of configured rules
-func (c *scalaConfig) configuredRules() []*scalarule.Config {
+// ConfiguredRules returns an ordered list of configured rules
+func (c *Config) ConfiguredRules() []*scalarule.Config {
 
 	names := make([]string, 0)
 	for name := range c.rules {
@@ -334,17 +357,17 @@ func (c *scalaConfig) configuredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *scalaConfig) shouldAnnotateWildcardImports() bool {
+func (c *Config) ShouldAnnotateWildcardImports() bool {
 	_, ok := c.annotations[DebugWildcardImports]
 	return ok
 }
 
-func (c *scalaConfig) shouldAnnotateImports() bool {
+func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
 }
 
-func (c *scalaConfig) shouldAnnotateExports() bool {
+func (c *Config) ShouldAnnotateExports() bool {
 	_, ok := c.annotations[DebugExports]
 	return ok
 }
@@ -353,7 +376,7 @@ func (c *scalaConfig) shouldAnnotateExports() bool {
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
 // is returned.
-func (c *scalaConfig) ShouldResolveFileSymbolName(filename, name string) bool {
+func (c *Config) ShouldResolveFileSymbolName(filename, name string) bool {
 	for _, spec := range c.resolveFileSymbolNames {
 		if ok, _ := doublestar.Match(spec.pattern, filename); !ok {
 			continue
@@ -366,24 +389,24 @@ func (c *scalaConfig) ShouldResolveFileSymbolName(filename, name string) bool {
 	return false
 }
 
-func (c *scalaConfig) Comment() build.Comment {
+func (c *Config) Comment() build.Comment {
 	return build.Comment{Token: "# " + c.String()}
 }
 
-func (c *scalaConfig) String() string {
-	return fmt.Sprintf("scalaConfig rel=%q, annotations=%+v", c.rel, c.annotations)
+func (c *Config) String() string {
+	return fmt.Sprintf("Config rel=%q, annotations=%+v", c.rel, c.annotations)
 }
 
-func (c *scalaConfig) maybeRewrite(kind string, from label.Label) label.Label {
+func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	if spec, ok := c.labelNameRewrites[kind]; ok {
 		return spec.Rewrite(from)
 	}
 	return from
 }
 
-// mergeDeps takes the given list of existing deps and a list of dependency
+// MergeDeps takes the given list of existing deps and a list of dependency
 // labels and merges it into a final list.
-func mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
+func MergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
 	for _, dep := range deps {
 		str := &build.StringExpr{Value: dep.String()}
 		target.List = append(target.List, str)
@@ -401,7 +424,7 @@ func mergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
 
 // cleanExports takes the given list of exports and removes those that are expected to
 // be provided again.
-func (c *scalaConfig) cleanExports(from label.Label, current build.Expr, newExports []label.Label) *build.ListExpr {
+func (c *Config) CleanExports(from label.Label, current build.Expr, newExports []label.Label) *build.ListExpr {
 	incoming := make(map[label.Label]bool)
 	for _, l := range newExports {
 		incoming[l] = true
@@ -427,7 +450,7 @@ func (c *scalaConfig) cleanExports(from label.Label, current build.Expr, newExpo
 
 // cleanDeps takes the given list of deps and removes those that are expected to
 // be provided again.
-func (c *scalaConfig) cleanDeps(from label.Label, current build.Expr, newImports []label.Label) *build.ListExpr {
+func (c *Config) CleanDeps(from label.Label, current build.Expr, newImports []label.Label) *build.ListExpr {
 	incoming := make(map[label.Label]bool)
 	for _, l := range newImports {
 		incoming[l] = true
@@ -451,7 +474,7 @@ func (c *scalaConfig) cleanDeps(from label.Label, current build.Expr, newImports
 	return deps
 }
 
-func (c *scalaConfig) shouldKeepExport(expr build.Expr) bool {
+func (c *Config) shouldKeepExport(expr build.Expr) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
@@ -468,7 +491,7 @@ func (c *scalaConfig) shouldKeepExport(expr build.Expr) bool {
 	return false
 }
 
-func (c *scalaConfig) shouldKeepDep(expr build.Expr) bool {
+func (c *Config) shouldKeepDep(expr build.Expr) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
@@ -483,7 +506,7 @@ func (c *scalaConfig) shouldKeepDep(expr build.Expr) bool {
 
 	// if we can find a provider for this label, remove it (it should have been
 	// resolved again if still wanted)
-	if c.canProvide(from) {
+	if c.CanProvide(from) {
 		return false
 	}
 
