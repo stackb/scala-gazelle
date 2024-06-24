@@ -8,6 +8,7 @@ go_library(
         "memo_parser.go",
         "parser.go",
         "scalameta_parser.go",
+        "wildcard_import_expanding_parser.go",
     ],
     embedsrcs = [
         "node_modules/scalameta-parsers/index.js",
@@ -19,6 +20,8 @@ go_library(
     deps = [
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
+        "//pkg/resolver",
+        "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@io_bazel_rules_go//go/tools/bazel:go_default_library",

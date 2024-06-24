@@ -85,7 +85,7 @@ func (r *SourceProvider) start() error {
 }
 
 // ParseScalaRule implements scalarule.Parser
-func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
+func (r *SourceProvider) ParseScalaRule(c *config.Config, kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
 	if len(srcs) == 0 {
 		return nil, nil
 	}

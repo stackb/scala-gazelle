@@ -128,7 +128,7 @@ func NewLanguage() language.Language {
 			writeParseProgress(lang.progress, msg)
 		}
 	})
-	lang.parser = parser.NewMemoParser(lang.sourceProvider)
+	lang.parser = parser.NewMemoParser(parser.NewWildcardExpandingParser(lang.sourceProvider))
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())

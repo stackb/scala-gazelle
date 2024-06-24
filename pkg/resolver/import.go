@@ -177,3 +177,10 @@ func IsSelfImport(imp *Import, repo, pkg, name string) bool {
 	}
 	return true
 }
+
+func IsWildcardImport(imp string) (string, bool) {
+	if !strings.HasSuffix(imp, "._") {
+		return "", false
+	}
+	return imp[:len(imp)-len("._")], true
+}

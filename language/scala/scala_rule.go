@@ -152,6 +152,8 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 		}
 
+		// do something here to augment requires?
+
 		for _, req := range item.sym.Requires {
 			if _, ok := imports[req.Name]; ok {
 				continue
@@ -293,7 +295,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
-		if wimp, ok := isWildcardImport(name); ok {
+		if wimp, ok := resolver.IsWildcardImport(name); ok {
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
@@ -435,13 +437,6 @@ func (r *scalaRule) putExports(file *sppb.File) {
 
 func (r *scalaRule) putExport(imp string) {
 	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
-}
-
-func isWildcardImport(imp string) (string, bool) {
-	if !strings.HasSuffix(imp, "._") {
-		return "", false
-	}
-	return imp[:len(imp)-len("._")], true
 }
 
 func isBinaryRule(kind string) bool {
