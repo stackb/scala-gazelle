@@ -135,6 +135,8 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 				if resolved != nil {
 					item.imp.Symbol = resolved
 				} else {
+					log.Println("deleting import!", item.imp.Imp)
+					delete(imports, item.imp.Imp)
 					continue // skip this item if conflict strategy says "ok" but returns nil (it's a wildcard import)
 				}
 			} else {
@@ -158,6 +160,8 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			transitive.Push(item.imp, req)
 		}
 	}
+
+	r.pb.ResolvedImports = imports.ProtoList()
 
 	return imports
 }
@@ -209,6 +213,8 @@ func (r *scalaRule) Exports() resolver.ImportMap {
 	for _, file := range r.files {
 		r.fileExports(file, exports)
 	}
+
+	r.pb.ResolvedImports = exports.ProtoList()
 
 	return exports
 }

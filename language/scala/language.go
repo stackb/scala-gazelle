@@ -69,6 +69,8 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
+	// knownFiles is map of the parent File for knownRules
+	knownFiles map[string]*rule.File
 	// conflictResolvers is a map of all known generated rules
 	conflictResolvers map[string]resolver.ConflictResolver
 	// globalScope includes all known symbols in the universe (minus package
@@ -114,6 +116,7 @@ func NewLanguage() language.Language {
 		globalScope:          resolver.NewTrieScope(),
 		globalPackages:       resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
+		knownFiles:           make(map[string]*rule.File),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),

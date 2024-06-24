@@ -17,6 +17,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	if args.File == nil {
 		return language.GenerateResult{}
 	}
+	sl.PutKnownFile(args.Rel, args.File)
 
 	t1 := time.Now()
 

@@ -17,6 +17,7 @@ go_library(
         "flags.go",
         "generate.go",
         "kinds.go",
+        "known_file_registry.go",
         "known_rule_registry.go",
         "language.go",
         "lifecycle.go",

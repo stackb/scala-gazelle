@@ -62,6 +62,12 @@ func (s *Symbol) String() string {
 	return fmt.Sprintf("(%s<%v> %s<%v>)", s.Name, s.Type, s.Label, s.Provider)
 }
 
+func (s *Symbol) Proto() *sppb.Symbol {
+	return &sppb.Symbol{
+		Name: s.Name,
+	}
+}
+
 func SymbolConfictMessage(symbol *Symbol, imp *Import, from label.Label) string {
 	if len(symbol.Conflicts) == 0 {
 		return ""

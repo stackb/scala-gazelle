@@ -20,5 +20,9 @@ message Rule {
     string sha256 = 4;
     // parse_time_millis is the time taken to collect filesnames and parse the files.
     int64 parse_time_millis = 5;
+    // resolved_imports is a list of imports that were resolved
+    repeated Import resolved_imports = 6;
+    // resolved_imports is a list of exports that were resolved
+    repeated Import resolved_exports = 7;    
 }
 
