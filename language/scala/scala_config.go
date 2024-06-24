@@ -121,9 +121,9 @@ func (c *scalaConfig) canProvide(from label.Label) bool {
 	return false
 }
 
-func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol) (*resolver.Symbol, bool) {
+func (c *scalaConfig) resolveConflict(r *rule.Rule, imports resolver.ImportMap, imp *resolver.Import, symbol *resolver.Symbol, from label.Label) (*resolver.Symbol, bool) {
 	for _, resolver := range c.conflictResolvers {
-		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol); ok {
+		if resolved, ok := resolver.ResolveConflict(c.universe, r, imports, imp, symbol, from); ok {
 			return resolved, true
 		}
 	}

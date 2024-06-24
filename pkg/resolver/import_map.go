@@ -70,6 +70,12 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 	return
 }
 
+// Has checks if the given import key is already present in the map.
+func (imports ImportMap) Has(imp string) bool {
+	_, ok := imports[imp]
+	return ok
+}
+
 // Put the given import in the map.
 func (imports ImportMap) Put(imp *Import) {
 	// TODO: should we record *all* imports for a given key?  Does priority matter?

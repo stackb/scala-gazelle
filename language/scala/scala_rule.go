@@ -131,8 +131,12 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 		item, _ := transitive.Pop()
 
 		if len(item.sym.Conflicts) > 0 {
-			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
-				item.imp.Symbol = resolved
+			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym, rctx.From); ok {
+				if resolved != nil {
+					item.imp.Symbol = resolved
+				} else {
+					continue // skip this item if conflict strategy says "ok" but returns nil (it's a wildcard import)
+				}
 			} else {
 				if r.ctx.scalaConfig.shouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
 					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
@@ -215,7 +219,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 	direct := resolver.NewTrieScope()
 
 	putExport := func(imp *resolver.Import) {
-		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping export from current", imp.Imp)
 			}
@@ -272,7 +276,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	direct := resolver.NewTrieScope()
 
 	putImport := func(imp *resolver.Import) {
-		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping import from current", imp.Imp)
 			}
@@ -436,22 +440,6 @@ func isWildcardImport(imp string) (string, bool) {
 
 func isBinaryRule(kind string) bool {
 	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
-}
-
-func isSelfImport(imp *resolver.Import, repo, pkg, name string) bool {
-	if imp.Symbol == nil {
-		return false
-	}
-	if repo != "" {
-		return false
-	}
-	if pkg != imp.Symbol.Label.Pkg {
-		return false
-	}
-	if name != imp.Symbol.Label.Name {
-		return false
-	}
-	return true
 }
 
 func importBasename(imp string) string {

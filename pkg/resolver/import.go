@@ -145,3 +145,19 @@ func (imp *Import) String() string {
 	}
 	return strings.Join(parts, " ")
 }
+
+func IsSelfImport(imp *Import, repo, pkg, name string) bool {
+	if imp.Symbol == nil {
+		return false
+	}
+	if repo != "" {
+		return false
+	}
+	if pkg != imp.Symbol.Label.Pkg {
+		return false
+	}
+	if name != imp.Symbol.Label.Name {
+		return false
+	}
+	return true
+}

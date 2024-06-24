@@ -17,6 +17,7 @@ func TestPredefinedLabelConflictResolver(t *testing.T) {
 		imports resolver.ImportMap
 		imp     resolver.Import
 		name    string
+		from    label.Label
 		want    *resolver.Symbol
 		wantOk  bool
 	}{
@@ -47,7 +48,7 @@ func TestPredefinedLabelConflictResolver(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			universe := mocks.NewUniverse(t)
 			resolver := resolver.PredefinedLabelConflictResolver{}
-			got, gotOk := resolver.ResolveConflict(universe, &tc.rule, tc.imports, &tc.imp, &tc.symbol)
+			got, gotOk := resolver.ResolveConflict(universe, &tc.rule, tc.imports, &tc.imp, &tc.symbol, tc.from)
 			if diff := cmp.Diff(tc.wantOk, gotOk); diff != "" {
 				t.Errorf("ok (-want +got):\n%s", diff)
 			}

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
@@ -43,7 +44,7 @@ func (s *ScalaGrpcZioConflictResolver) CheckFlags(fs *flag.FlagSet, c *config.Co
 // using grpc, always resolve to conflict in favor of the grpc label, because
 // that rule will include the protos anyway.  If they aren't using grpc, take
 // the proto rule so that the rule does not take on additional unnecessary deps.
-func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool) {
+func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol, from label.Label) (*Symbol, bool) {
 	if len(symbol.Conflicts) != 1 {
 		return nil, false
 	}

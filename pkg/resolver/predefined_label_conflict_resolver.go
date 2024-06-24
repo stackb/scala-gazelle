@@ -35,7 +35,7 @@ func (s *PredefinedLabelConflictResolver) CheckFlags(fs *flag.FlagSet, c *config
 // This implementation chooses symbols that have symbol.Label == label.NoLabel,
 // which is the scenario when a symbol is provided by the platform / compiler,
 // like "java.lang.String".
-func (s *PredefinedLabelConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool) {
+func (s *PredefinedLabelConflictResolver) ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol, from label.Label) (*Symbol, bool) {
 	if symbol.Label == label.NoLabel {
 		return symbol, true
 	}
