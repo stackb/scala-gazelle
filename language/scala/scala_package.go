@@ -217,7 +217,9 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scope:       s.universe,
 	}
 
-	return newScalaRule(ctx, rule), nil
+	sr := newScalaRule(ctx, rule)
+
+	return sr, nil
 }
 
 // repoRootDir return the root directory of the repo.

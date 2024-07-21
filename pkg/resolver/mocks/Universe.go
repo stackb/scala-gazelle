@@ -57,6 +57,29 @@ func (_m *Universe) GetConflictResolver(name string) (resolver.ConflictResolver,
 	return r0, r1
 }
 
+// GetKnownFile provides a mock function with given fields: pkg
+func (_m *Universe) GetKnownFile(pkg string) (*rule.File, bool) {
+	ret := _m.Called(pkg)
+
+	var r0 *rule.File
+	if rf, ok := ret.Get(0).(func(string) *rule.File); ok {
+		r0 = rf(pkg)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*rule.File)
+		}
+	}
+
+	var r1 bool
+	if rf, ok := ret.Get(1).(func(string) bool); ok {
+		r1 = rf(pkg)
+	} else {
+		r1 = ret.Get(1).(bool)
+	}
+
+	return r0, r1
+}
+
 // GetKnownRule provides a mock function with given fields: from
 func (_m *Universe) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	ret := _m.Called(from)
@@ -149,6 +172,20 @@ func (_m *Universe) PutConflictResolver(name string, r resolver.ConflictResolver
 	var r0 error
 	if rf, ok := ret.Get(0).(func(string, resolver.ConflictResolver) error); ok {
 		r0 = rf(name, r)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// PutKnownFile provides a mock function with given fields: pkg, r
+func (_m *Universe) PutKnownFile(pkg string, r *rule.File) error {
+	ret := _m.Called(pkg, r)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, *rule.File) error); ok {
+		r0 = rf(pkg, r)
 	} else {
 		r0 = ret.Error(0)
 	}

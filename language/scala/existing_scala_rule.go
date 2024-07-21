@@ -130,6 +130,12 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	r := rctx.Rule
 	sc := scalaconfig.Get(rctx.Config)
 
+	if sc.ShouldAnnotateWildcardImports() {
+		if err := scalaRule.fixWildcardImports(); err != nil {
+			log.Fatalf("failed to fix wildcard imports: %v", err)
+		}
+	}
+
 	// part 1a: deps
 
 	newImports := imports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))

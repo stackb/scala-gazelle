@@ -14,6 +14,7 @@ go_library(
         "cross_resolve.go",
         "existing_scala_rule.go",
         "fix.go",
+        "fix_wildcard_imports.go",
         "flags.go",
         "generate.go",
         "kinds.go",
@@ -79,6 +80,7 @@ go_test(
     name = "scala_test",
     srcs = [
         "existing_scala_rule_test.go",
+        "fix_wildcard_imports_test.go",
         "flags_test.go",
         "golden_test.go",
         "language_test.go",

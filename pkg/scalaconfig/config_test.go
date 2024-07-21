@@ -318,7 +318,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 		"wildcards": {
 			directives: []rule.Directive{
-				{Key: scalaDebugDirective, Value: "wildcard-imports"},
+				{Key: scalaDebugDirective, Value: "wildcardimports"},
 			},
 			want: map[debugAnnotation]interface{}{
 				DebugWildcardImports: nil,

@@ -21,6 +21,7 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/resolver",
+        "//pkg/scalaconfig",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",

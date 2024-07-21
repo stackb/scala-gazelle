@@ -141,12 +141,6 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 					continue // skip this item if conflict strategy says "ok" but returns nil (it's a wildcard import)
 				}
 			} else {
-				if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
-					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
-						wildcardImport := item.imp.Src // original symbol name having underscore suffix
-						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
-					}
-				}
 				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
 			}
 		}
@@ -387,19 +381,6 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	}
 }
 
-func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-	names := make([]string, 0)
-	for _, name := range file.Names {
-		if _, ok := scope.GetSymbol(name); ok {
-			names = append(names, name)
-		}
-	}
-	if len(names) > 0 {
-		sort.Strings(names)
-		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
-	}
-}
-
 // Provides implements part of the scalarule.Rule interface.
 func (r *scalaRule) Provides() []resolve.ImportSpec {
 	exports := make([]resolve.ImportSpec, 0, len(r.exports))
@@ -436,6 +417,10 @@ func (r *scalaRule) putExports(file *sppb.File) {
 
 func (r *scalaRule) putExport(imp string) {
 	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
+}
+
+func (r *scalaRule) fixWildcardImports() error {
+	return fixWildcardRuleImports(r.ctx.scalaConfig, r.pb)
 }
 
 func isBinaryRule(kind string) bool {

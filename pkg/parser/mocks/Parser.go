@@ -3,7 +3,9 @@
 package mocks
 
 import (
+	config "github.com/bazelbuild/bazel-gazelle/config"
 	label "github.com/bazelbuild/bazel-gazelle/label"
+
 	mock "github.com/stretchr/testify/mock"
 
 	parse "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -28,20 +30,20 @@ func (_m *Parser) LoadScalaRule(from label.Label, rule *parse.Rule) error {
 	return r0
 }
 
-// ParseScalaRule provides a mock function with given fields: kind, from, dir, srcs
-func (_m *Parser) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*parse.Rule, error) {
+// ParseScalaRule provides a mock function with given fields: cfg, kind, from, dir, srcs
+func (_m *Parser) ParseScalaRule(cfg *config.Config, kind string, from label.Label, dir string, srcs ...string) (*parse.Rule, error) {
 	_va := make([]interface{}, len(srcs))
 	for _i := range srcs {
 		_va[_i] = srcs[_i]
 	}
 	var _ca []interface{}
-	_ca = append(_ca, kind, from, dir)
+	_ca = append(_ca, cfg, kind, from, dir)
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
 	var r0 *parse.Rule
-	if rf, ok := ret.Get(0).(func(string, label.Label, string, ...string) *parse.Rule); ok {
-		r0 = rf(kind, from, dir, srcs...)
+	if rf, ok := ret.Get(0).(func(*config.Config, string, label.Label, string, ...string) *parse.Rule); ok {
+		r0 = rf(cfg, kind, from, dir, srcs...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*parse.Rule)
@@ -49,8 +51,8 @@ func (_m *Parser) ParseScalaRule(kind string, from label.Label, dir string, srcs
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, label.Label, string, ...string) error); ok {
-		r1 = rf(kind, from, dir, srcs...)
+	if rf, ok := ret.Get(1).(func(*config.Config, string, label.Label, string, ...string) error); ok {
+		r1 = rf(cfg, kind, from, dir, srcs...)
 	} else {
 		r1 = ret.Error(1)
 	}

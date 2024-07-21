@@ -567,7 +567,7 @@ type resolveFileSymbolNameSpec struct {
 
 func parseAnnotation(val string) debugAnnotation {
 	switch val {
-	case "wildcard-imports":
+	case "wildcardimports":
 		return DebugWildcardImports
 	case "imports":
 		return DebugImports
