@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestScanOutputForNotFound(t *testing.T) {
+func TestOutputScanner(t *testing.T) {
 	for name, tc := range map[string]struct {
 		output  string
 		wantErr string
@@ -104,7 +104,8 @@ java.lang.RuntimeException: Build failed
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got, err := scanOutputForNotFoundSymbols([]byte(tc.output))
+			scanner := &outputScanner{}
+			got, err := scanner.scan([]byte(tc.output))
 			var gotErr string
 			if err != nil {
 				gotErr = err.Error()

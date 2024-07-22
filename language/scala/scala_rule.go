@@ -135,14 +135,6 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
 				item.imp.Symbol = resolved
 			} else {
-				if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
-					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
-						wildcardImport := item.imp.Src // original symbol name having underscore suffix
-						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
-					} else {
-
-					}
-				}
 				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
 			}
 		}
@@ -374,19 +366,6 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 		} else {
 			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
 		}
-	}
-}
-
-func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-	names := make([]string, 0)
-	for _, name := range file.Names {
-		if _, ok := scope.GetSymbol(name); ok {
-			names = append(names, name)
-		}
-	}
-	if len(names) > 0 {
-		sort.Strings(names)
-		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
 	}
 }
 
