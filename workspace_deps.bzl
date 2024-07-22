@@ -29,6 +29,7 @@ def workspace_deps():
     rules_jvm_external()
     io_bazel_rules_scala()
     protobuf_core_deps()
+    hermetic_cc_toolchain()
 
 def protobuf_core_deps():
     bazel_skylib()  # via com_google_protobuf
@@ -270,3 +271,15 @@ filegroup(
 )
             """.format(executable = data.executable),
         )
+
+def hermetic_cc_toolchain():
+    HERMETIC_CC_TOOLCHAIN_VERSION = "v3.1.0"
+    _maybe(
+        http_archive,
+        name = "hermetic_cc_toolchain",
+        sha256 = "df091afc25d73b0948ed371d3d61beef29447f690508e02bc24e7001ccc12d38",
+        urls = [
+            "https://mirror.bazel.build/github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+            "https://github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+        ],
+    )
