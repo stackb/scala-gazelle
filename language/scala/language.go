@@ -15,6 +15,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -92,15 +93,7 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {
-	return []string{
-		resolveConflictsDirective,
-		resolveFileSymbolName,
-		resolveGlobDirective,
-		resolveKindRewriteNameDirective,
-		resolveWithDirective,
-		scalaDebugDirective,
-		scalaRuleDirective,
-	}
+	return scalaconfig.DirectiveNames()
 }
 
 // NewLanguage is called by Gazelle to install this language extension in a

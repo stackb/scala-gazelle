@@ -14,6 +14,7 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -27,7 +28,7 @@ const (
 
 type scalaRuleContext struct {
 	// the parent config
-	scalaConfig *scalaConfig
+	scalaConfig *scalaconfig.Config
 	// rule (lowercase) is the parent gazelle rule
 	rule *rule.Rule
 	// scope is a map of symbols that are outside the rule.
@@ -100,7 +101,7 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 // ResolveImports performs symbol resolution for imports of the rule.
 func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.ImportMap {
 	imports := r.Imports()
-	sc := getScalaConfig(rctx.Config)
+	sc := scalaconfig.Get(rctx.Config)
 
 	transitive := newImportSymbols()
 
@@ -131,10 +132,10 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 		item, _ := transitive.Pop()
 
 		if len(item.sym.Conflicts) > 0 {
-			if resolved, ok := sc.resolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
+			if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
 				item.imp.Symbol = resolved
 			} else {
-				if r.ctx.scalaConfig.shouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
+				if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
 					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
 						wildcardImport := item.imp.Src // original symbol name having underscore suffix
 						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
@@ -189,7 +190,7 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 	// Gather implicit imports transitively.
 	for !required.IsEmpty() {
 		src, _ := required.Pop()
-		for _, dst := range r.ctx.scalaConfig.getImplicitImports(impLang, src) {
+		for _, dst := range r.ctx.scalaConfig.GetImplicitImports(impLang, src) {
 			required.Push(dst)
 			imports.Put(resolver.NewImplicitImport(dst, src))
 		}
@@ -215,7 +216,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 	direct := resolver.NewTrieScope()
 
 	putExport := func(imp *resolver.Import) {
-		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping export from current", imp.Imp)
 			}
@@ -272,7 +273,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	direct := resolver.NewTrieScope()
 
 	putImport := func(imp *resolver.Import) {
-		if isSelfImport(imp, "", r.ctx.scalaConfig.rel, r.ctx.rule.Name()) {
+		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
 			if debugSelfImports {
 				log.Println("skipping import from current", imp.Imp)
 			}
@@ -283,7 +284,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
-		if wimp, ok := isWildcardImport(name); ok {
+		if wimp, ok := resolver.IsWildcardImport(name); ok {
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
@@ -427,31 +428,8 @@ func (r *scalaRule) putExport(imp string) {
 	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
 }
 
-func isWildcardImport(imp string) (string, bool) {
-	if !strings.HasSuffix(imp, "._") {
-		return "", false
-	}
-	return imp[:len(imp)-len("._")], true
-}
-
 func isBinaryRule(kind string) bool {
 	return strings.Contains(kind, "binary") || strings.Contains(kind, "test")
-}
-
-func isSelfImport(imp *resolver.Import, repo, pkg, name string) bool {
-	if imp.Symbol == nil {
-		return false
-	}
-	if repo != "" {
-		return false
-	}
-	if pkg != imp.Symbol.Label.Pkg {
-		return false
-	}
-	if name != imp.Symbol.Label.Name {
-		return false
-	}
-	return true
 }
 
 func importBasename(imp string) string {

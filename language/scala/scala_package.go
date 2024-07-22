@@ -14,6 +14,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -36,7 +37,7 @@ type scalaPackage struct {
 	// the build file
 	file *rule.File
 	// the config for this package
-	cfg *scalaConfig
+	cfg *scalaconfig.Config
 	// the generated and empty rule providers
 	gen, empty []scalarule.RuleProvider
 	// rules is the final state of generated rules, by name.
@@ -50,7 +51,7 @@ type scalaPackage struct {
 func newScalaPackage(
 	rel string,
 	file *rule.File,
-	cfg *scalaConfig,
+	cfg *scalaconfig.Config,
 	providerRegistry scalarule.ProviderRegistry,
 	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
@@ -71,7 +72,7 @@ func newScalaPackage(
 }
 
 // Config returns the the underlying config.
-func (s *scalaPackage) Config() *scalaConfig {
+func (s *scalaPackage) Config() *scalaconfig.Config {
 	return s.cfg
 }
 
@@ -129,7 +130,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 		}
 	}
 
-	configuredRules := s.cfg.configuredRules()
+	configuredRules := s.cfg.ConfiguredRules()
 
 	for _, rc := range configuredRules {
 		// if enabled != rc.Enabled {
@@ -202,7 +203,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		return nil, ErrRuleHasNoSrcs
 	}
 
-	from := s.cfg.maybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
+	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
 
 	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
 	if err != nil {
@@ -221,7 +222,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 
 // repoRootDir return the root directory of the repo.
 func (s *scalaPackage) repoRootDir() string {
-	return s.cfg.config.RepoRoot
+	return s.cfg.Config().RepoRoot
 }
 
 // Rules provides the aggregated rule list for the package.
