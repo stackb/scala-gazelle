@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 )
 
 const debugGenerate = false
@@ -24,7 +25,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	sc := getScalaConfig(args.Config)
+	sc := scalaconfig.Get(args.Config)
 	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++

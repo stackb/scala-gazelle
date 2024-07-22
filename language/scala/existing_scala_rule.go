@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -127,20 +128,20 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	exports := scalaRule.ResolveExports(rctx)
 
 	r := rctx.Rule
-	sc := getScalaConfig(rctx.Config)
+	sc := scalaconfig.Get(rctx.Config)
 
 	// part 1a: deps
 
-	newImports := imports.Deps(sc.maybeRewrite(r.Kind(), rctx.From))
-	depLabels := sc.cleanDeps(rctx.From, r.Attr("deps"), newImports)
-	mergeDeps(r.Kind(), depLabels, newImports)
+	newImports := imports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))
+	depLabels := sc.CleanDeps(rctx.From, r.Attr("deps"), newImports)
+	scalaconfig.MergeDeps(r.Kind(), depLabels, newImports)
 	if len(depLabels.List) > 0 {
 		r.SetAttr("deps", depLabels)
 	} else {
 		r.DelAttr("deps")
 	}
 
-	if sc.shouldAnnotateImports() {
+	if sc.ShouldAnnotateImports() {
 		comments := r.AttrComments("srcs")
 		if comments != nil {
 			annotateImports(imports, comments, "import: ")
@@ -149,16 +150,16 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 	// part 1b: exports
 	if s.isLibrary {
-		newExports := exports.Deps(sc.maybeRewrite(r.Kind(), rctx.From))
-		exportLabels := sc.cleanExports(rctx.From, r.Attr("exports"), newExports)
-		mergeDeps(r.Kind(), exportLabels, newExports)
+		newExports := exports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))
+		exportLabels := sc.CleanExports(rctx.From, r.Attr("exports"), newExports)
+		scalaconfig.MergeDeps(r.Kind(), exportLabels, newExports)
 		if len(exportLabels.List) > 0 {
 			r.SetAttr("exports", exportLabels)
 		} else {
 			r.DelAttr("exports")
 		}
 
-		if sc.shouldAnnotateExports() {
+		if sc.ShouldAnnotateExports() {
 			comments := r.AttrComments("srcs")
 			if comments != nil {
 				annotateImports(exports, comments, "export: ")
