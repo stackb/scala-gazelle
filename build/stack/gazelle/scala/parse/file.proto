@@ -3,6 +3,7 @@ syntax = "proto3";
 package build.stack.gazelle.scala.parse;
 
 import "build/stack/gazelle/scala/parse/symbol.proto";
+import "build/stack/gazelle/scala/parse/import.proto";
 
 option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
 option java_package = "build.stack.gazelle.scala.parse";
@@ -39,4 +40,20 @@ message File {
 // ClassList represents a set of files.
 message ClassList {
     repeated string classes = 1;
+}
+
+// Import represents a resolved import/export.
+message Import {
+	// Kind is the import type
+	ImportKind kind = 1;
+	// Imp is the name of the import
+	string imp = 2;
+	// File is the source file (when this is a direct import).
+	string source_file = 3;
+	// Src is the name of the parent import (when this is an implicit import)
+	string src = 4;
+	// Symbol is the resolved symbol of the import, or nil if not resolved.
+	Symbol symbol = 5;
+	// Error is assiged if there is a resolution error.
+	string error = 6;
 }

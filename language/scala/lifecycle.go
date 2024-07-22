@@ -21,12 +21,6 @@ func (sl *scalaLang) onResolve() {
 	} else {
 		sl.globalScope = scalaScope
 	}
-
-	if sl.cacheFileFlagValue != "" {
-		if err := sl.writeScalaRuleCacheFile(); err != nil {
-			log.Fatalf("failed to write cache: %v", err)
-		}
-	}
 }
 
 // onEnd is called when the last rule has been resolved.
@@ -34,6 +28,18 @@ func (sl *scalaLang) onEnd() {
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnEnd(); err != nil {
 			log.Fatalf("provider.OnEnd transition error %s: %v", provider.Name(), err)
+		}
+	}
+
+	if false {
+		if err := sl.emitKnownFiles(); err != nil {
+			log.Fatalf("failed to write known files: %v", err)
+		}
+	}
+
+	if sl.cacheFileFlagValue != "" {
+		if err := sl.writeScalaRuleCacheFile(); err != nil {
+			log.Fatalf("failed to write cache: %v", err)
 		}
 	}
 

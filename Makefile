@@ -26,8 +26,14 @@ scalacache_protos:
 	mv build/stack/gazelle/scala/cache/build/stack/gazelle/scala/cache/*.go build/stack/gazelle/scala/cache/
 	rm -rf build/stack/gazelle/scala/cache/build
 
+.PHONY: autokeep_protos
+autokeep_protos:
+	bazel run //build/stack/gazelle/scala/autokeep:autokeep_go_compiled_sources.update
+	mv build/stack/gazelle/scala/autokeep/build/stack/gazelle/scala/autokeep/*.go build/stack/gazelle/scala/autokeep/
+	rm -rf build/stack/gazelle/scala/autokeep/build
+
 .PHONY: protos
-protos: jarindex_protos parser_protos scalacache_protos 
+protos: jarindex_protos parser_protos scalacache_protos autokeep_protos
 	echo "Done."
 
 .PHONY: tidy

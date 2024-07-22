@@ -1,4 +1,4 @@
-package scala
+package scalaconfig
 
 import (
 	"fmt"
@@ -22,10 +22,10 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
 		wantErr    error
-		want       *scalaConfig
+		want       *Config
 	}{
 		"degenerate": {
-			want: &scalaConfig{
+			want: &Config{
 				rules:             map[string]*scalarule.Config{},
 				annotations:       map[debugAnnotation]any{},
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
@@ -36,7 +36,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
 				{Key: "scala_debug", Value: "imports"},
 			},
-			want: &scalaConfig{
+			want: &Config{
 				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
@@ -58,7 +58,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				{Key: "scala_debug", Value: "imports"},
 				{Key: "scala_rule", Value: "scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary"},
 			},
-			want: &scalaConfig{
+			want: &Config{
 				rules: map[string]*scalarule.Config{
 					"scala_binary": {
 						Deps:           map[string]bool{},
@@ -77,14 +77,14 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
 			got := sc
 			if diff := cmp.Diff(tc.want, got,
-				cmp.AllowUnexported(scalaConfig{}),
-				cmpopts.IgnoreFields(scalaConfig{}, "config", "universe"),
+				cmp.AllowUnexported(Config{}),
+				cmpopts.IgnoreFields(Config{}, "config", "universe"),
 				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -137,7 +137,7 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -182,7 +182,7 @@ func TestScalaConfigParseOverrideDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -227,7 +227,7 @@ func TestScalaConfigParseImplicitImportDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -276,7 +276,7 @@ func TestScalaConfigParseResolveFileSymbolName(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -318,7 +318,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 		"wildcards": {
 			directives: []rule.Directive{
-				{Key: scalaDebugDirective, Value: "wildcard-imports"},
+				{Key: scalaDebugDirective, Value: "wildcardimports"},
 			},
 			want: map[debugAnnotation]interface{}{
 				DebugWildcardImports: nil,
@@ -326,7 +326,7 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -357,7 +357,7 @@ func TestScalaConfigParseResolveKindRewriteNameDirective(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			sc, err := newTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
 			if testutil.ExpectError(t, tc.wantErr, err) {
 				return
 			}
@@ -422,7 +422,7 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 				Times(tc.wantTimes).
 				Return(nil, false)
 
-			sc := newScalaConfig(universe, c, tc.rel)
+			sc := New(universe, c, tc.rel)
 
 			sc.GetKnownRule(tc.from)
 
@@ -434,9 +434,67 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 	}
 }
 
-func newTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*scalaConfig, error) {
-	c := config.New()
-	sc := newScalaConfig(universe, c, rel)
-	err := sc.parseDirectives(dd)
-	return sc, err
+func TestScalaDepLabel(t *testing.T) {
+	for name, tc := range map[string]struct {
+		in   string
+		want label.Label
+	}{
+		"degenerate": {
+			in: `
+test(
+	expr = "",
+)
+			`,
+			want: label.NoLabel,
+		},
+		"invalid label": {
+			in: `
+test(
+	expr = "@@@",
+)
+			`,
+			want: label.NoLabel,
+		},
+		"valid label": {
+			in: `
+test(
+	expr = "@foo//bar:baz",
+)
+			`,
+			want: label.New("foo", "bar", "baz"),
+		},
+		"invalid callexpr": {
+			in: `
+test(
+	expr = fn("@foo//bar:baz"),
+)
+			`,
+			want: label.NoLabel,
+		},
+		"valid callexpr": {
+			in: `
+test(
+	expr = scala_dep("@foo//bar:baz"),
+)
+			`,
+			want: label.New("foo", "bar", "baz"),
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			file, err := rule.LoadData("<in-memory>", "BUILD", []byte(tc.in))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(file.Rules) != 1 {
+				t.Fatalf("expected single in rule, got %d", len(file.Rules))
+			}
+			target := file.Rules[0]
+			expr := target.Attr("expr")
+			got := labelFromDepExpr(expr)
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("label (-want +got):\n%s", diff)
+			}
+		})
+	}
 }

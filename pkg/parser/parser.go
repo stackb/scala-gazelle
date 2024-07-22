@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -13,5 +14,5 @@ type Parser interface {
 
 	// ParseScalaRule is used to parse a list of source files.  The srcs list
 	// is expected to be relative to dir.
-	ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error)
+	ParseScalaRule(cfg *config.Config, kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error)
 }

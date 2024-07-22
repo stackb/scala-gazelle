@@ -22,6 +22,7 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 func TestScalaSourceProviderParseScalaRule(t *testing.T) {
+
 	rel := "pkg/provider"
 	dir, err := os.Getwd()
 	if err != nil {
@@ -63,7 +64,7 @@ func TestScalaSourceProviderParseScalaRule(t *testing.T) {
 		t.Run(src, func(t *testing.T) {
 			goldenFile := filepath.Join(dir, src+".golden.json")
 			from := label.Label{Pkg: rel, Name: src}
-			got, err := provider.ParseScalaRule("scala_library", from, dir, src)
+			got, err := provider.ParseScalaRule(c, "scala_library", from, dir, src)
 			if err != nil {
 				t.Fatal(err)
 			}

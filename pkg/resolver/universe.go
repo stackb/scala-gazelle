@@ -5,6 +5,7 @@ package resolver
 type Universe interface {
 	SymbolProviderRegistry
 	KnownRuleRegistry
+	KnownFileRegistry
 	ConflictResolverRegistry
 	Scope
 	SymbolResolver

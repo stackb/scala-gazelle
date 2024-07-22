@@ -588,7 +588,7 @@ Another way to resolve the conflict is to use a `resolver.ConflictResolver` impl
 type ConflictResolver interface {  
 	// ResolveConflict takes the context rule and imports, and the target symbol
 	// with conflicts to resolve.
-	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool)
+	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol, from label.Label) (*Symbol, bool)
 }
 ```
 

@@ -15,11 +15,11 @@ func ExampleLanguage_KnownDirectives() {
 		fmt.Println(d)
 	}
 	// output:
-	// resolve_conflicts
-	// resolve_file_symbol_name
-	// resolve_glob
-	// resolve_kind_rewrite_name
-	// resolve_with
 	// scala_debug
 	// scala_rule
+	// resolve_glob
+	// resolve_conflicts
+	// resolve_with
+	// resolve_file_symbol_name
+	// resolve_kind_rewrite_name
 }

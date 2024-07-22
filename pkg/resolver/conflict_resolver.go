@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 )
 
@@ -19,6 +20,8 @@ type ConflictResolver interface {
 	// if the resolver is enabled.
 	CheckFlags(fs *flag.FlagSet, c *config.Config) error
 	// ResolveConflict takes the context rule and imports, and the target symbol
-	// with conflicts to resolve.
-	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol) (*Symbol, bool)
+	// with conflicts to resolve. The ImportMap MAY be modified during the
+	// operation.  The function MAY return (nil, true) in which case the symbol
+	// should be elided from further processing.
+	ResolveConflict(universe Universe, r *rule.Rule, imports ImportMap, imp *Import, symbol *Symbol, from label.Label) (*Symbol, bool)
 }

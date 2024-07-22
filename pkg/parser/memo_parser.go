@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -29,7 +30,7 @@ func NewMemoParser(next Parser) *MemoParser {
 }
 
 // ParseScalaRule implements parser.Parser
-func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
+func (p *MemoParser) ParseScalaRule(c *config.Config, kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
 	sort.Strings(srcs)
 
 	var hash bytes.Buffer
@@ -62,7 +63,7 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 		log.Panicf(`while parsing %s %s: no files to parse! (this is a bug)`, kind, from)
 	}
 
-	rule, err := p.next.ParseScalaRule(kind, from, dir, srcs...)
+	rule, err := p.next.ParseScalaRule(c, kind, from, dir, srcs...)
 	if err != nil {
 		return nil, err
 	}

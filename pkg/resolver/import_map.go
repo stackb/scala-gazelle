@@ -5,6 +5,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/buildtools/build"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 // ImportMap is a map if imports keyed by the import string.
@@ -70,6 +71,12 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 	return
 }
 
+// Has checks if the given import key is already present in the map.
+func (imports ImportMap) Has(imp string) bool {
+	_, ok := imports[imp]
+	return ok
+}
+
 // Put the given import in the map.
 func (imports ImportMap) Put(imp *Import) {
 	// TODO: should we record *all* imports for a given key?  Does priority matter?
@@ -86,4 +93,12 @@ func (imports ImportMap) Annotate(comments *build.Comments, accept func(imp *Imp
 		}
 		comments.Before = append(comments.Before, build.Comment{Token: "# " + imp.String()})
 	}
+}
+
+func (imports ImportMap) ProtoList() []*sppb.Import {
+	list := make([]*sppb.Import, len(imports))
+	for i, imp := range imports.Values() {
+		list[i] = imp.Proto()
+	}
+	return list
 }

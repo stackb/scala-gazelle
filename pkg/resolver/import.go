@@ -145,3 +145,42 @@ func (imp *Import) String() string {
 	}
 	return strings.Join(parts, " ")
 }
+
+func (imp *Import) Proto() *sppb.Import {
+	pb := &sppb.Import{
+		Kind:   imp.Kind,
+		Imp:    imp.Imp,
+		Src:    imp.Src,
+		Symbol: nil,
+	}
+	if imp.Source != nil {
+		pb.SourceFile = imp.Source.Filename
+	}
+	if imp.Symbol != nil {
+		pb.Symbol = imp.Symbol.Proto()
+	}
+	return pb
+}
+
+func IsSelfImport(imp *Import, repo, pkg, name string) bool {
+	if imp.Symbol == nil {
+		return false
+	}
+	if repo != "" {
+		return false
+	}
+	if pkg != imp.Symbol.Label.Pkg {
+		return false
+	}
+	if name != imp.Symbol.Label.Name {
+		return false
+	}
+	return true
+}
+
+func IsWildcardImport(imp string) (string, bool) {
+	if !strings.HasSuffix(imp, "._") {
+		return "", false
+	}
+	return imp[:len(imp)-len("._")], true
+}

@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -35,7 +36,7 @@ func TestScalaPackageParseRule(t *testing.T) {
 				Return(nil)
 
 			c := config.New()
-			cfg := newScalaConfig(universe, c, "")
+			cfg := scalaconfig.New(universe, c, "")
 
 			pkg := scalaPackage{
 				cfg: cfg,

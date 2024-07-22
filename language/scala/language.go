@@ -15,6 +15,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -69,6 +70,8 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
+	// knownFiles is map of the parent File for knownRules
+	knownFiles map[string]*rule.File
 	// conflictResolvers is a map of all known generated rules
 	conflictResolvers map[string]resolver.ConflictResolver
 	// globalScope includes all known symbols in the universe (minus package
@@ -92,15 +95,7 @@ func (sl *scalaLang) Name() string { return scalaLangName }
 
 // KnownDirectives implements part of the language.Language interface
 func (*scalaLang) KnownDirectives() []string {
-	return []string{
-		resolveConflictsDirective,
-		resolveFileSymbolName,
-		resolveGlobDirective,
-		resolveKindRewriteNameDirective,
-		resolveWithDirective,
-		scalaDebugDirective,
-		scalaRuleDirective,
-	}
+	return scalaconfig.DirectiveNames()
 }
 
 // NewLanguage is called by Gazelle to install this language extension in a
@@ -114,6 +109,7 @@ func NewLanguage() language.Language {
 		globalScope:          resolver.NewTrieScope(),
 		globalPackages:       resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
+		knownFiles:           make(map[string]*rule.File),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
