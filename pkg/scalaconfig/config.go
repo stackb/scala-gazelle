@@ -21,11 +21,10 @@ import (
 type debugAnnotation int
 
 const (
-	DebugUnknown         debugAnnotation = 0
-	DebugImports         debugAnnotation = 1
-	DebugExports         debugAnnotation = 2
-	DebugWildcardImports debugAnnotation = 3
-	scalaLangName                        = "scala"
+	DebugUnknown  debugAnnotation = 0
+	DebugImports  debugAnnotation = 1
+	DebugExports  debugAnnotation = 2
+	scalaLangName                 = "scala"
 )
 
 const (
@@ -357,11 +356,6 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *Config) ShouldAnnotateWildcardImports() bool {
-	_, ok := c.annotations[DebugWildcardImports]
-	return ok
-}
-
 func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
@@ -567,8 +561,6 @@ type resolveFileSymbolNameSpec struct {
 
 func parseAnnotation(val string) debugAnnotation {
 	switch val {
-	case "wildcardimports":
-		return DebugWildcardImports
 	case "imports":
 		return DebugImports
 	case "exports":
