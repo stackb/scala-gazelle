@@ -9,10 +9,6 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/wildcardimport"
 )
 
-// autokeep is a program that consumes a scala-gazelle cache file, runs 'bazel
-// build' on the output, parses it, scans for errors related to missing
-// dependencies, and add to deps with "keep" commands where needed.
-
 const (
 	executableName = "wildcardimportfixer"
 )

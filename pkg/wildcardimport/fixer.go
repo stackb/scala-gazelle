@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const debug = true
+
 type FixerOptions struct {
 	BazelExecutable string
 }
@@ -31,8 +33,6 @@ func NewFixer(options *FixerOptions) *Fixer {
 func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) {
 	targetLine := fmt.Sprintf("import %s._", importPrefix)
 
-	// log.Fatalln("!!!fixing:", ruleLabel, filename, importPrefix)
-
 	tf, err := NewTextFileFromFilename(filename, targetLine)
 	if err != nil {
 		return nil, err
@@ -48,15 +48,8 @@ func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) 
 
 func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]string, error) {
 
-	// TODO: refactoring this so that we keep a map of completion symbols rather
-	// than a list.
-
 	// the complete list of not found symbols
 	completion := map[string]bool{}
-
-	// on each build, parse the output for notFound symbols.  Stop the loop when
-	// the output is the same as the previous one (nothing more actionable).
-	// previousOutputs := map[string]bool{}
 
 	// initialize the scanner
 	scanner := &outputScanner{}
@@ -96,8 +89,10 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 			return keys, nil
 		}
 
-		log.Printf(">>> fixing %s [%s] (iteration %d)\n", tf.filename, importPrefix, iteration)
-		log.Println(">>>", string(output), cmdErr)
+		if debug {
+			log.Printf(">>> fixing %s [%s] (iteration %d)\n", tf.filename, importPrefix, iteration)
+			log.Println(">>>", string(output), cmdErr)
+		}
 
 		// scan the output for symbols that were not found
 		symbols, err := scanner.scan(output)
@@ -105,7 +100,9 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 			return nil, fmt.Errorf("scanning output: %w", err)
 		}
 
-		log.Printf("iteration %d symbols: %v", iteration, symbols)
+		if debug {
+			log.Printf("iteration %d symbols: %v", iteration, symbols)
+		}
 
 		var hasNewResult bool
 		for _, sym := range symbols {
