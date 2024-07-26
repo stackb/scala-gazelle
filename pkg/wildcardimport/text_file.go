@@ -66,7 +66,7 @@ func NewTextFileFromReader(filename string, info fs.FileInfo, in io.Reader, targ
 	return file, nil
 }
 
-func (f *TextFile) WriteClean() error {
+func (f *TextFile) WriteOriginal() error {
 	return f.Write(f.targetLine)
 }
 

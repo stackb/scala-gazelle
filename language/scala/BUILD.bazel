@@ -43,6 +43,7 @@ go_library(
         "//pkg/resolver",
         "//pkg/scalaconfig",
         "//pkg/scalarule",
+        "//pkg/wildcardimport",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",

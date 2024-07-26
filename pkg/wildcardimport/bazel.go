@@ -11,9 +11,9 @@ func execBazelBuild(bazelExe string, label string) ([]byte, int, error) {
 	args := []string{"build", label}
 
 	command := exec.Command(bazelExe, args...)
-	command.Dir = getCommandDir()
+	command.Dir = GetBuildWorkspaceDirectory()
 
-	// log.Println("!!!", command.String())
+	log.Println("!!!", command.String())
 	output, err := command.CombinedOutput()
 	if err != nil {
 		log.Println("cmdErr:", err)
@@ -29,7 +29,7 @@ func execBazelBuild(bazelExe string, label string) ([]byte, int, error) {
 	return output, 0, nil
 }
 
-func getCommandDir() string {
+func GetBuildWorkspaceDirectory() string {
 	if bwd, ok := os.LookupEnv("BUILD_WORKSPACE_DIRECTORY"); ok {
 		return bwd
 	} else {

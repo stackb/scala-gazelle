@@ -396,12 +396,25 @@ func (c *Config) ShouldAnnotateExports() bool {
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
 // is returned.
-func (c *Config) ShouldFixWildcardImport(filename, imp string) bool {
+func (c *Config) ShouldFixWildcardImport(filename, wimp string) bool {
+	if len(c.fixWildcardImportSpecs) > 0 {
+		log.Println("should fix wildcard import?", filename, wimp)
+	}
 	for _, spec := range c.fixWildcardImportSpecs {
-		if ok, _ := doublestar.Match(spec.filenamePattern, filename); !ok {
-			continue
+		hasStarChar := strings.Contains(spec.filenamePattern, "*")
+		if hasStarChar {
+			if ok, _ := doublestar.Match(spec.filenamePattern, filename); !ok {
+				log.Println("should fix wildcard import? FILENAME GLOB MATCH FAILED", filename, spec.filenamePattern)
+				continue
+			}
+		} else {
+			if !strings.HasSuffix(filename, spec.filenamePattern) {
+				log.Println("should fix wildcard import? FILENAME SUFFIX MATCH FAILED", filename, spec.filenamePattern)
+				continue
+			}
 		}
-		if ok, _ := doublestar.Match(spec.importPattern.Value, imp); !ok {
+		if ok, _ := doublestar.Match(spec.importPattern.Value, wimp); !ok {
+			log.Println("should fix wildcard import? IMPORT PATTERN MATCH FAILED", filename, spec.importPattern.Value, wimp)
 			continue
 		}
 		return spec.importPattern.Want

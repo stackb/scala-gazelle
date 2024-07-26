@@ -10,7 +10,7 @@ import (
 )
 
 // omnistac/gum/testutils/DbDataInitUtils.scala:98: error: [rewritten by -quickfix] not found: value FixSessionDao
-var notFoundLine = regexp.MustCompile(`^(.*):\d+: error: .*not found: (value|type) (.*)$`)
+var notFoundLine = regexp.MustCompile(`^(.*):\d+: error: .*not found: (value|type) ([A-Z].*)$`)
 
 type outputScanner struct {
 	debug bool

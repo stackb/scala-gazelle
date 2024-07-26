@@ -3,7 +3,7 @@ package wildcardimport
 import (
 	"fmt"
 	"log"
-	"reflect"
+	"sort"
 	"strings"
 )
 
@@ -31,25 +31,32 @@ func NewFixer(options *FixerOptions) *Fixer {
 func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) {
 	targetLine := fmt.Sprintf("import %s._", importPrefix)
 
+	// log.Fatalln("!!!fixing:", ruleLabel, filename, importPrefix)
+
 	tf, err := NewTextFileFromFilename(filename, targetLine)
 	if err != nil {
 		return nil, err
 	}
+
 	symbols, err := w.fixFile(ruleLabel, tf, importPrefix)
 	if err != nil {
 		return nil, err
 	}
+
 	return symbols, nil
 }
 
 func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]string, error) {
 
+	// TODO: refactoring this so that we keep a map of completion symbols rather
+	// than a list.
+
 	// the complete list of not found symbols
-	allNotFound := make(map[string]bool)
+	completion := map[string]bool{}
 
 	// on each build, parse the output for notFound symbols.  Stop the loop when
 	// the output is the same as the previous one (nothing more actionable).
-	previouslyNotFound := []string{}
+	// previousOutputs := map[string]bool{}
 
 	// initialize the scanner
 	scanner := &outputScanner{}
@@ -57,8 +64,9 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 	var iteration int
 	for {
 		if iteration == 0 {
-			// rewrite the file clean on the first iteration
-			if err := tf.WriteClean(); err != nil {
+			// rewrite the file clean on the first iteration, in case the
+			// previous run edited it.
+			if err := tf.WriteOriginal(); err != nil {
 				return nil, err
 			}
 		} else if iteration == 1 {
@@ -72,53 +80,68 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 		output, exitCode, cmdErr := execBazelBuild(w.bazelExe, ruleLabel)
 
 		// must build clean first time
-		if iteration == 0 && exitCode != 0 {
-			return nil, fmt.Errorf("%v: target must build first time: %v (%v)", ruleLabel, string(output), cmdErr)
-		}
-
-		// on subsequent iterations if the exitCode is 0, the process is successful.
-		if exitCode == 0 {
-			if iteration == 0 {
+		if iteration == 0 {
+			if exitCode != 0 {
+				return nil, fmt.Errorf("%v: target must build first time: %v (%v)", ruleLabel, string(output), cmdErr)
+			} else {
 				iteration++
 				continue
 			}
-			// SUCCESS!
-			// TODO(pcj): format multiline if too long
-			symbols := make([]string, 0, len(allNotFound))
-			for sym := range allNotFound {
-				symbols = append(symbols, sym)
-			}
-			return symbols, nil
+		}
+
+		// on subsequent iterations if the exitCode is 0, the process is
+		// successful.
+		if exitCode == 0 {
+			keys := mapKeys(completion)
+			return keys, nil
 		}
 
 		log.Printf(">>> fixing %s [%s] (iteration %d)\n", tf.filename, importPrefix, iteration)
 		log.Println(">>>", string(output), cmdErr)
 
 		// scan the output for symbols that were not found
-		notFounds, err := scanner.scan(output)
+		symbols, err := scanner.scan(output)
 		if err != nil {
 			return nil, fmt.Errorf("scanning output: %w", err)
 		}
 
+		log.Printf("iteration %d symbols: %v", iteration, symbols)
+
+		var hasNewResult bool
+		for _, sym := range symbols {
+			if _, ok := completion[sym]; !ok {
+				completion[sym] = true
+				hasNewResult = true
+			}
+		}
+
 		// if no notFound symbols were found, the process failed, but we have
 		// nothing actionable.
-		if reflect.DeepEqual(previouslyNotFound, notFounds) {
-			return nil, fmt.Errorf("expand wildcard failed: final set of notFound symbols: %v", notFounds)
+		if !hasNewResult {
+			return nil, fmt.Errorf("expand wildcard failed: final set of notFound symbols: %v", mapKeys(completion))
 		}
 
 		// rewrite the file with the updated import (and continue)
-		if err := tf.Write(makeImportLine(importPrefix, notFounds)); err != nil {
+		if err := tf.Write(makeImportLine(importPrefix, mapKeys(completion))); err != nil {
 			return nil, fmt.Errorf("failed to write split file: %v", err)
 		}
 
-		previouslyNotFound = notFounds
-		for _, sym := range notFounds {
-			allNotFound[sym] = true
-		}
 		iteration++
 	}
 }
 
 func makeImportLine(importPrefix string, symbols []string) string {
 	return fmt.Sprintf("import %s.{%s}", importPrefix, strings.Join(symbols, ", "))
+}
+
+// mapKeys sorts the list of map keys
+func mapKeys(in map[string]bool) (out []string) {
+	if len(in) == 0 {
+		return nil
+	}
+	for k := range in {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return
 }
