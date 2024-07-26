@@ -317,6 +317,38 @@ func TestScalaConfigParseFixWildcardImports(t *testing.T) {
 			imports:  []string{"omnistac.core.entity._"},
 			want:     []bool{true},
 		},
+		"recursive glob matches non-recursive path": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "**/*.scala omnistac.core.entity._"},
+			},
+			filename: "filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"recursive glob matches": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "**/*.scala omnistac.core.entity._"},
+			},
+			filename: "path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"recursive glob matches only absolute path (absolute version)": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "/**/*.scala omnistac.core.entity._"},
+			},
+			filename: "path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{false},
+		},
+		"recursive glob matches absolute path (absolute version)": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "/**/*.scala omnistac.core.entity._"},
+			},
+			filename: "/path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
 		"no match": {
 			directives: []rule.Directive{
 				{Key: scalaFixWildcardImportDirective, Value: "*.scala -omnistac.core.entity._"},
