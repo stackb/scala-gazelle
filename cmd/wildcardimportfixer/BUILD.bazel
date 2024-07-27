@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "wildcardimportfixer_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/wildcardimportfixer",
+    visibility = ["//visibility:private"],
+    deps = ["//pkg/wildcardimport"],
+)
+
+go_binary(
+    name = "wildcardimportfixer",
+    embed = [":wildcardimportfixer_lib"],
+    visibility = ["//visibility:public"],
+)

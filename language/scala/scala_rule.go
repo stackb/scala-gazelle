@@ -3,6 +3,8 @@ package scala
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -16,6 +18,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/wildcardimport"
 )
 
 const (
@@ -46,6 +49,14 @@ type scalaRule struct {
 	ctx *scalaRuleContext
 	// exports keyed by their import
 	exports map[string]resolve.ImportSpec
+}
+
+var bazel = "bazel"
+
+func init() {
+	if bazelExe, ok := os.LookupEnv("SCALA_GAZELLE_BAZEL_EXECUTABLE"); ok {
+		bazel = bazelExe
+	}
 }
 
 func newScalaRule(
@@ -135,14 +146,6 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
 				item.imp.Symbol = resolved
 			} else {
-				if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
-					if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
-						wildcardImport := item.imp.Src // original symbol name having underscore suffix
-						r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
-					} else {
-
-					}
-				}
 				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
 			}
 		}
@@ -285,6 +288,23 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
 		if wimp, ok := resolver.IsWildcardImport(name); ok {
+			filename := filepath.Join(r.ctx.scalaConfig.Rel(), file.Filename)
+			if r.ctx.scalaConfig.ShouldFixWildcardImport(filename, name) {
+				symbolNames, err := r.fixWildcardImport(filename, wimp)
+				if err != nil {
+					log.Fatalf("fixing wildcard imports for %s (%s): %v", file.Filename, wimp, err)
+				}
+				for _, symName := range symbolNames {
+					fqn := wimp + "." + symName
+					if sym, ok := r.ctx.scope.GetSymbol(fqn); ok {
+						putImport(resolver.NewResolvedNameImport(sym.Name, file, fqn, sym))
+					} else {
+						if debugUnresolved {
+							log.Printf("warning: unresolved fix wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+						}
+					}
+				}
+			}
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
@@ -377,19 +397,6 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	}
 }
 
-func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-	names := make([]string, 0)
-	for _, name := range file.Names {
-		if _, ok := scope.GetSymbol(name); ok {
-			names = append(names, name)
-		}
-	}
-	if len(names) > 0 {
-		sort.Strings(names)
-		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
-	}
-}
-
 // Provides implements part of the scalarule.Rule interface.
 func (r *scalaRule) Provides() []resolve.ImportSpec {
 	exports := make([]resolve.ImportSpec, 0, len(r.exports))
@@ -426,6 +433,21 @@ func (r *scalaRule) putExports(file *sppb.File) {
 
 func (r *scalaRule) putExport(imp string) {
 	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
+}
+
+func (r *scalaRule) fixWildcardImport(filename, wimp string) ([]string, error) {
+	fixer := wildcardimport.NewFixer(&wildcardimport.FixerOptions{
+		BazelExecutable: bazel,
+	})
+
+	absFilename := filepath.Join(wildcardimport.GetBuildWorkspaceDirectory(), filename)
+	ruleLabel := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()).String()
+	symbols, err := fixer.Fix(ruleLabel, absFilename, wimp)
+	if err != nil {
+		return nil, err
+	}
+
+	return symbols, nil
 }
 
 func isBinaryRule(kind string) bool {

@@ -21,15 +21,15 @@ import (
 type debugAnnotation int
 
 const (
-	DebugUnknown         debugAnnotation = 0
-	DebugImports         debugAnnotation = 1
-	DebugExports         debugAnnotation = 2
-	DebugWildcardImports debugAnnotation = 3
-	scalaLangName                        = "scala"
+	DebugUnknown  debugAnnotation = 0
+	DebugImports  debugAnnotation = 1
+	DebugExports  debugAnnotation = 2
+	scalaLangName                 = "scala"
 )
 
 const (
 	scalaDebugDirective             = "scala_debug"
+	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
 	scalaRuleDirective              = "scala_rule"
 	resolveGlobDirective            = "resolve_glob"
 	resolveConflictsDirective       = "resolve_conflicts"
@@ -41,6 +41,7 @@ const (
 func DirectiveNames() []string {
 	return []string{
 		scalaDebugDirective,
+		scalaFixWildcardImportDirective,
 		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveConflictsDirective,
@@ -58,6 +59,7 @@ type Config struct {
 	overrides              []*overrideSpec
 	implicitImports        []*implicitImportSpec
 	resolveFileSymbolNames []*resolveFileSymbolNameSpec
+	fixWildcardImportSpecs []*fixWildcardImportSpec
 	rules                  map[string]*scalarule.Config
 	labelNameRewrites      map[string]resolver.LabelNameRewriteSpec
 	annotations            map[debugAnnotation]interface{}
@@ -122,6 +124,9 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 	if c.resolveFileSymbolNames != nil {
 		clone.resolveFileSymbolNames = c.resolveFileSymbolNames[:]
 	}
+	if c.fixWildcardImportSpecs != nil {
+		clone.fixWildcardImportSpecs = c.fixWildcardImportSpecs[:]
+	}
 	return clone
 }
 
@@ -175,6 +180,8 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			if err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
+		case scalaFixWildcardImportDirective:
+			c.parseFixWildcardImport(d)
 		case resolveGlobDirective:
 			c.parseResolveGlobDirective(d)
 		case resolveWithDirective:
@@ -202,7 +209,7 @@ func (c *Config) parseScalaRuleDirective(d rule.Directive) error {
 		return fmt.Errorf("expected three or more fields, got %d", len(fields))
 	}
 	name, param, value := fields[0], fields[1], strings.Join(fields[2:], " ")
-	r, err := c.getOrCreateScalaRuleConfig(c.config, name)
+	r, err := c.getOrCreateScalaRuleConfig(name)
 	if err != nil {
 		return err
 	}
@@ -245,6 +252,24 @@ func (c *Config) parseResolveWithDirective(d rule.Directive) {
 		imp:  parts[1],
 		deps: parts[2:],
 	})
+}
+
+func (c *Config) parseFixWildcardImport(d rule.Directive) {
+	parts := strings.Fields(d.Value)
+	if len(parts) < 2 {
+		log.Fatalf("invalid gazelle:%s directive: expected [FILENAME_PATTERN [+|-]IMPORT_PATTERN...], got %v", scalaFixWildcardImportDirective, parts)
+		return
+	}
+	filenamePattern := parts[0]
+
+	for _, part := range parts[1:] {
+		intent := collections.ParseIntent(part)
+		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, &fixWildcardImportSpec{
+			filenamePattern: filenamePattern,
+			importPattern:   *intent,
+		})
+	}
+
 }
 
 func (c *Config) parseResolveFileSymbolNames(d rule.Directive) {
@@ -319,10 +344,10 @@ func (c *Config) parseScalaAnnotation(d rule.Directive) error {
 	return nil
 }
 
-func (c *Config) getOrCreateScalaRuleConfig(config *config.Config, name string) (*scalarule.Config, error) {
+func (c *Config) getOrCreateScalaRuleConfig(name string) (*scalarule.Config, error) {
 	r, ok := c.rules[name]
 	if !ok {
-		r = scalarule.NewConfig(config, name)
+		r = scalarule.NewConfig(c.config, name)
 		r.Implementation = name
 		c.rules[name] = r
 	}
@@ -357,11 +382,6 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *Config) ShouldAnnotateWildcardImports() bool {
-	_, ok := c.annotations[DebugWildcardImports]
-	return ok
-}
-
 func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
@@ -370,6 +390,36 @@ func (c *Config) ShouldAnnotateImports() bool {
 func (c *Config) ShouldAnnotateExports() bool {
 	_, ok := c.annotations[DebugExports]
 	return ok
+}
+
+// ShouldFixWildcardImport tests whether the given symbol name pattern
+// should be resolved within the scope of the given filename pattern.
+// resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
+// is returned.
+func (c *Config) ShouldFixWildcardImport(filename, wimp string) bool {
+	if len(c.fixWildcardImportSpecs) > 0 {
+		log.Println("should fix wildcard import?", filename, wimp)
+	}
+	for _, spec := range c.fixWildcardImportSpecs {
+		hasStarChar := strings.Contains(spec.filenamePattern, "*")
+		if hasStarChar {
+			if ok, _ := doublestar.Match(spec.filenamePattern, filename); !ok {
+				log.Println("should fix wildcard import? FILENAME GLOB MATCH FAILED", filename, spec.filenamePattern)
+				continue
+			}
+		} else {
+			if !strings.HasSuffix(filename, spec.filenamePattern) {
+				log.Println("should fix wildcard import? FILENAME SUFFIX MATCH FAILED", filename, spec.filenamePattern)
+				continue
+			}
+		}
+		if ok, _ := doublestar.Match(spec.importPattern.Value, wimp); !ok {
+			log.Println("should fix wildcard import? IMPORT PATTERN MATCH FAILED", filename, spec.importPattern.Value, wimp)
+			continue
+		}
+		return spec.importPattern.Want
+	}
+	return false
 }
 
 // ShouldResolveFileSymbolName tests whether the given symbol name pattern
@@ -565,10 +615,14 @@ type resolveFileSymbolNameSpec struct {
 	symbolName collections.Intent
 }
 
+type fixWildcardImportSpec struct {
+	// filenamePattern is the filename glob wildcard filenamePattern to test
+	filenamePattern string
+	importPattern   collections.Intent
+}
+
 func parseAnnotation(val string) debugAnnotation {
 	switch val {
-	case "wildcardimports":
-		return DebugWildcardImports
 	case "imports":
 		return DebugImports
 	case "exports":

@@ -290,6 +290,89 @@ func TestScalaConfigParseResolveFileSymbolName(t *testing.T) {
 		})
 	}
 }
+func TestScalaConfigParseFixWildcardImports(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		filename   string
+		imports    []string
+		want       []bool
+		wantErr    error
+	}{
+		"degenerate": {
+			want: []bool{},
+		},
+		"exact matches": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "filename.scala omnistac.core.entity._"},
+			},
+			filename: "filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"glob matches": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "*.scala omnistac.core.entity._"},
+			},
+			filename: "filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"recursive glob matches non-recursive path": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "**/*.scala omnistac.core.entity._"},
+			},
+			filename: "filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"recursive glob matches": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "**/*.scala omnistac.core.entity._"},
+			},
+			filename: "path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"recursive glob matches only absolute path (absolute version)": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "/**/*.scala omnistac.core.entity._"},
+			},
+			filename: "path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{false},
+		},
+		"recursive glob matches absolute path (absolute version)": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "/**/*.scala omnistac.core.entity._"},
+			},
+			filename: "/path/to/filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{true},
+		},
+		"no match": {
+			directives: []rule.Directive{
+				{Key: scalaFixWildcardImportDirective, Value: "*.scala -omnistac.core.entity._"},
+			},
+			filename: "filename.scala",
+			imports:  []string{"omnistac.core.entity._"},
+			want:     []bool{false},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			if testutil.ExpectError(t, tc.wantErr, err) {
+				return
+			}
+			got := []bool{}
+			for _, imp := range tc.imports {
+				got = append(got, sc.ShouldFixWildcardImport(tc.filename, imp))
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
 
 func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 	for name, tc := range map[string]struct {
@@ -314,14 +397,6 @@ func TestScalaConfigParseScalaAnnotate(t *testing.T) {
 			},
 			want: map[debugAnnotation]interface{}{
 				DebugExports: nil,
-			},
-		},
-		"wildcards": {
-			directives: []rule.Directive{
-				{Key: scalaDebugDirective, Value: "wildcardimports"},
-			},
-			want: map[debugAnnotation]interface{}{
-				DebugWildcardImports: nil,
 			},
 		},
 	} {

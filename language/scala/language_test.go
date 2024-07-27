@@ -16,6 +16,7 @@ func ExampleLanguage_KnownDirectives() {
 	}
 	// output:
 	// scala_debug
+	// scala_fix_wildcard_imports
 	// scala_rule
 	// resolve_glob
 	// resolve_conflicts
