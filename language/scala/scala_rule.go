@@ -26,6 +26,7 @@ const (
 	debugNameNotFound        = false
 	debugUnresolved          = false
 	debugExtendsNameNotFound = false
+	debugConflictedExport    = false
 	debugFileScope           = false
 )
 
@@ -255,9 +256,16 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 		for _, imp := range extends.Classes {
 			if sym, ok := scope.GetSymbol(imp); ok {
-				putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
-				if resolvedOK && resolved != sym {
-					resolved.Require(sym)
+				// if the symbol has conflicts, don't export it
+				if len(sym.Conflicts) > 0 {
+					if debugConflictedExport {
+						log.Printf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp)
+					}
+				} else {
+					putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
+					if resolvedOK && resolved != sym {
+						resolved.Require(sym)
+					}
 				}
 			} else {
 				putExport(resolver.NewExtendsImport(imp, file, name, nil))
