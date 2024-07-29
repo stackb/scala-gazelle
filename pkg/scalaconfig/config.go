@@ -33,6 +33,7 @@ const (
 	scalaRuleDirective              = "scala_rule"
 	resolveGlobDirective            = "resolve_glob"
 	resolveConflictsDirective       = "resolve_conflicts"
+	depsCleanerDirective            = "deps_cleaner"
 	resolveWithDirective            = "resolve_with"
 	resolveFileSymbolName           = "resolve_file_symbol_name"
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
@@ -45,6 +46,7 @@ func DirectiveNames() []string {
 		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveConflictsDirective,
+		depsCleanerDirective,
 		resolveWithDirective,
 		resolveFileSymbolName,
 		resolveKindRewriteNameDirective,
@@ -64,6 +66,7 @@ type Config struct {
 	labelNameRewrites      map[string]resolver.LabelNameRewriteSpec
 	annotations            map[debugAnnotation]interface{}
 	conflictResolvers      []resolver.ConflictResolver
+	depsCleaners           []resolver.DepsCleaner
 }
 
 // newScalaConfig initializes a new Config.
@@ -120,6 +123,9 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 	}
 	if c.conflictResolvers != nil {
 		clone.conflictResolvers = c.conflictResolvers[:]
+	}
+	if c.depsCleaners != nil {
+		clone.depsCleaners = c.depsCleaners[:]
 	}
 	if c.resolveFileSymbolNames != nil {
 		clone.resolveFileSymbolNames = c.resolveFileSymbolNames[:]
@@ -192,6 +198,10 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			c.parseResolveKindRewriteNameDirective(d)
 		case resolveConflictsDirective:
 			if err := c.parseResolveConflictsDirective(d); err != nil {
+				return err
+			}
+		case depsCleanerDirective:
+			if err := c.parseDepsCleanerDirective(d); err != nil {
 				return err
 			}
 		case scalaDebugDirective:
@@ -320,6 +330,31 @@ func (c *Config) parseResolveConflictsDirective(d rule.Directive) error {
 			for i, cr := range c.conflictResolvers {
 				if cr.Name() == intent.Value {
 					c.conflictResolvers = removeConflictResolver(c.conflictResolvers, i)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func (c *Config) parseDepsCleanerDirective(d rule.Directive) error {
+	for _, key := range strings.Fields(d.Value) {
+		intent := collections.ParseIntent(key)
+		if intent.Want {
+			resolver, ok := c.universe.GetDepsCleaner(intent.Value)
+			if !ok {
+				return fmt.Errorf("invalid directive gazelle:%s: unknown deps cleaner %q", d.Key, intent.Value)
+			}
+			for _, cr := range c.depsCleaners {
+				if cr.Name() == intent.Value {
+					break
+				}
+			}
+			c.depsCleaners = append(c.depsCleaners, resolver)
+		} else {
+			for i, cr := range c.depsCleaners {
+				if cr.Name() == intent.Value {
+					c.depsCleaners = removeDepsCleaner(c.depsCleaners, i)
 				}
 			}
 		}
@@ -633,5 +668,9 @@ func parseAnnotation(val string) debugAnnotation {
 }
 
 func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {
+	return append(slice[:index], slice[index+1:]...)
+}
+
+func removeDepsCleaner(slice []resolver.DepsCleaner, index int) []resolver.DepsCleaner {
 	return append(slice[:index], slice[index+1:]...)
 }

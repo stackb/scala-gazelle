@@ -12,6 +12,7 @@ go_library(
         "configure.go",
         "conflict_resolver_registry.go",
         "cross_resolve.go",
+        "deps_cleaner_registry.go",
         "existing_scala_rule.go",
         "fix.go",
         "flags.go",

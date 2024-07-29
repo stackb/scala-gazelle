@@ -39,6 +39,9 @@ type scalaLang struct {
 	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
 	// to enable
 	conflictResolverNamesFlagValue collections.StringSlice
+	// depsCleanerNamesFlagValue is a repeatable list of deps cleaners
+	// to enable
+	depsCleanerNamesFlagValue collections.StringSlice
 	// existingScalaLibraryRulesFlagValue is the value of the
 	// existing_scala_binary_rule repeatable flag
 	existingScalaBinaryRulesFlagValue collections.StringSlice
@@ -70,8 +73,10 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
-	// conflictResolvers is a map of all known generated rules
+	// conflictResolvers is a map of all known conflict resolver implementations
 	conflictResolvers map[string]resolver.ConflictResolver
+	// depsCleaners is a map of all known deps cleaner implementations
+	depsCleaners map[string]resolver.DepsCleaner
 	// globalScope includes all known symbols in the universe (minus package
 	// symbols)
 	globalScope resolver.Scope

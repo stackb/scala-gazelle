@@ -19,6 +19,7 @@ import (
 const (
 	scalaSymbolProviderFlagName          = "scala_symbol_provider"
 	scalaConflictResolverFlagName        = "scala_conflict_resolver"
+	scalaDepsCleanerFlagName             = "scala_deps_cleaner"
 	existingScalaBinaryRuleFlagName      = "existing_scala_binary_rule"
 	existingScalaLibraryRuleFlagName     = "existing_scala_library_rule"
 	existingScalaTestRuleFlagName        = "existing_scala_test_rule"
@@ -40,6 +41,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")
 	flags.Var(&sl.conflictResolverNamesFlagValue, scalaConflictResolverFlagName, "name of a conflict resolver implementation to enable")
+	flags.Var(&sl.depsCleanerNamesFlagValue, scalaDepsCleanerFlagName, "name of a deps cleaner implementation to enable")
 	flags.Var(&sl.existingScalaBinaryRulesFlagValue, existingScalaBinaryRuleFlagName, "LOAD%NAME mapping for a custom existing scala binary rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scalabinary'")
 	flags.Var(&sl.existingScalaLibraryRulesFlagValue, existingScalaLibraryRuleFlagName, "LOAD%NAME mapping for a custom existing scala library rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 	flags.Var(&sl.existingScalaTestRulesFlagValue, existingScalaTestRuleFlagName, "LOAD%NAME mapping for a custom existing scala test rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_test'")
@@ -128,6 +130,20 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 			return err
 		}
 		sl.conflictResolvers[name] = resolver
+	}
+	return nil
+}
+
+func (sl *scalaLang) setupDepsCleaners(flags *flag.FlagSet, c *config.Config, names []string) error {
+	for _, name := range sl.depsCleanerNamesFlagValue {
+		cleaner, ok := resolver.GlobalDepsCleanerRegistry().GetDepsCleaner(name)
+		if !ok {
+			return fmt.Errorf("-%s not found: %q", scalaDepsCleanerFlagName, name)
+		}
+		if err := cleaner.CheckFlags(flags, c); err != nil {
+			return err
+		}
+		sl.depsCleaners[name] = cleaner
 	}
 	return nil
 }

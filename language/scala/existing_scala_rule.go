@@ -134,6 +134,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 	newImports := imports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))
 	depLabels := sc.CleanDeps(rctx.From, r.Attr("deps"), newImports)
+
 	scalaconfig.MergeDeps(r.Kind(), depLabels, newImports)
 	if len(depLabels.List) > 0 {
 		r.SetAttr("deps", depLabels)
