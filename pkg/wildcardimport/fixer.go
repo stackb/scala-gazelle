@@ -118,8 +118,13 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 			return nil, fmt.Errorf("expand wildcard failed: final set of notFound symbols: %v", mapKeys(completion))
 		}
 
+		impLine, err := makeImportLine(importPrefix, mapKeys(completion))
+		if err != nil {
+			return nil, err
+		}
+
 		// rewrite the file with the updated import (and continue)
-		if err := tf.Write(makeImportLine(importPrefix, mapKeys(completion))); err != nil {
+		if err := tf.Write(impLine); err != nil {
 			return nil, fmt.Errorf("failed to write split file: %v", err)
 		}
 
@@ -127,8 +132,18 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 	}
 }
 
-func makeImportLine(importPrefix string, symbols []string) string {
-	return fmt.Sprintf("import %s.{%s}", importPrefix, strings.Join(symbols, ", "))
+func makeImportLine(importPrefix string, symbols []string) (string, error) {
+	if importPrefix == "" {
+		return "", fmt.Errorf("importPrefix must not be empty")
+	}
+	if len(symbols) == 0 {
+		return "", fmt.Errorf("must have at least one symbol in list")
+	}
+	if len(symbols) == 1 {
+		return fmt.Sprintf("import %s.%s", importPrefix, symbols[0]), nil
+	}
+	sort.Strings(symbols)
+	return fmt.Sprintf("import %s.{%s}", importPrefix, strings.Join(symbols, ", ")), nil
 }
 
 // mapKeys sorts the list of map keys
@@ -139,6 +154,5 @@ func mapKeys(in map[string]bool) (out []string) {
 	for k := range in {
 		out = append(out, k)
 	}
-	sort.Strings(out)
 	return
 }
