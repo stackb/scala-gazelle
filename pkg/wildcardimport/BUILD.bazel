@@ -14,7 +14,10 @@ go_library(
 
 go_test(
     name = "wildcardimport_test",
-    srcs = ["scanner_test.go"],
+    srcs = [
+        "fixer_test.go",
+        "scanner_test.go",
+    ],
     embed = [":wildcardimport"],
     deps = ["@com_github_google_go_cmp//cmp"],
 )
