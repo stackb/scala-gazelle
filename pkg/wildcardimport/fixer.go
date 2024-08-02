@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const debug = true
+const debug = false
 
 type FixerOptions struct {
 	BazelExecutable string
