@@ -20,6 +20,7 @@ func ExampleLanguage_KnownDirectives() {
 	// scala_rule
 	// resolve_glob
 	// resolve_conflicts
+	// scala_deps_cleaner
 	// resolve_with
 	// resolve_file_symbol_name
 	// resolve_kind_rewrite_name

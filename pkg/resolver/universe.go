@@ -6,6 +6,7 @@ type Universe interface {
 	SymbolProviderRegistry
 	KnownRuleRegistry
 	ConflictResolverRegistry
+	DepsCleanerRegistry
 	Scope
 	SymbolResolver
 }
