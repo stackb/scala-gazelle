@@ -40,6 +40,7 @@
     - [`scala_proto_package` conflict resolver](#scala_proto_package-conflict-resolver)
     - [`predefined_label` conflict resolver](#predefined_label-conflict-resolver)
     - [Custom conflict resolvers](#custom-conflict-resolvers)
+    - [Dependency List Cleanup](#dependency-list-cleanup)
   - [Cache](#cache)
   - [Profiling](#profiling)
     - [CPU](#cpu)
@@ -714,6 +715,20 @@ type customConflictResolver struct {}
 
 ...
 ```
+
+### Dependency List Cleanup
+
+In some cases it is necessary to visit the resolved dependency list for a rule
+and apply custom logic to cleanup labels.  The `resolver.DepsCleaner` interface
+should be implemented and registered to a global cache, similar to how it is
+done with "Custom confict resolvers".  
+
+To use a deps cleaner, you'll need to do the following:
+
+- implement the `resolver.DepsCleaner` interface (see code for details).
+- register your implementation in an init function via `resolver.GlobalDepsCleanerRegistry().PutDepsCleaner(name, impl)` using a unique name (e.g. a hypothetical `proto_deps_cleaner`).
+- Make the deps cleaner available in your gazelle rule via arguments `--scala_deps_cleaner=proto_deps_cleaner`.
+- Enable the deps cleaner in a BUILD file via the directive `# gazelle:scala_deps_cleaner proto_deps_cleaner`.
 
 ## Cache
 

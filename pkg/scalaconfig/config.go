@@ -33,7 +33,7 @@ const (
 	scalaRuleDirective              = "scala_rule"
 	resolveGlobDirective            = "resolve_glob"
 	resolveConflictsDirective       = "resolve_conflicts"
-	depsCleanerDirective            = "deps_cleaner"
+	scalaDepsCleanerDirective       = "scala_deps_cleaner"
 	resolveWithDirective            = "resolve_with"
 	resolveFileSymbolName           = "resolve_file_symbol_name"
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
@@ -46,7 +46,7 @@ func DirectiveNames() []string {
 		scalaRuleDirective,
 		resolveGlobDirective,
 		resolveConflictsDirective,
-		depsCleanerDirective,
+		scalaDepsCleanerDirective,
 		resolveWithDirective,
 		resolveFileSymbolName,
 		resolveKindRewriteNameDirective,
@@ -200,8 +200,8 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			if err := c.parseResolveConflictsDirective(d); err != nil {
 				return err
 			}
-		case depsCleanerDirective:
-			if err := c.parseDepsCleanerDirective(d); err != nil {
+		case scalaDepsCleanerDirective:
+			if err := c.parseScalaDepsCleanerDirective(d); err != nil {
 				return err
 			}
 		case scalaDebugDirective:
@@ -337,13 +337,13 @@ func (c *Config) parseResolveConflictsDirective(d rule.Directive) error {
 	return nil
 }
 
-func (c *Config) parseDepsCleanerDirective(d rule.Directive) error {
+func (c *Config) parseScalaDepsCleanerDirective(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
 		if intent.Want {
 			resolver, ok := c.universe.GetDepsCleaner(intent.Value)
 			if !ok {
-				return fmt.Errorf("invalid directive gazelle:%s: unknown deps cleaner %q", d.Key, intent.Value)
+				return fmt.Errorf("invalid directive gazelle:%s: unknown scala deps cleaner %q", d.Key, intent.Value)
 			}
 			for _, cr := range c.depsCleaners {
 				if cr.Name() == intent.Value {
