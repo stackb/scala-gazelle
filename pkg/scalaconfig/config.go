@@ -479,6 +479,13 @@ func (c *Config) String() string {
 	return fmt.Sprintf("Config rel=%q, annotations=%+v", c.rel, c.annotations)
 }
 
+// MaybeRewrite takes a rule kind and a from label and possibly transforms the
+// label name based on the configuration of label name rewrites. For example,
+// consider a  rule macro `my_scala_app` having a label name ':app', and a file
+// Helper.scala, and the definition of the macro passes `srcs` to an an internal
+// scala_library named ':lib' (that includes Helper.scala).  For other scala
+// rules that import 'Helper', we want to depend on `//somepkg:lib` rather than
+// `somepkg:app`.
 func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	if spec, ok := c.labelNameRewrites[kind]; ok {
 		return spec.Rewrite(from)
@@ -486,12 +493,14 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
-// MergeDeps takes the given list of existing deps and a list of dependency
-// labels and merges it into a final list.
-func MergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
-	for _, dep := range deps {
-		str := &build.StringExpr{Value: dep.String()}
-		target.List = append(target.List, str)
+// mergeListExpr takes the given list of existing deps and a list of dependency
+// labels and merges it into a final sorted list.
+func mergeListExpr(target *build.ListExpr, deps map[label.Label]bool) {
+	for dep, want := range deps {
+		if !want {
+			continue
+		}
+		target.List = append(target.List, &build.StringExpr{Value: dep.String()})
 	}
 
 	sort.Slice(target.List, func(i, j int) bool {
@@ -504,59 +513,73 @@ func MergeDeps(kind string, target *build.ListExpr, deps []label.Label) {
 	})
 }
 
-// cleanExports takes the given list of exports and removes those that are expected to
-// be provided again.
-func (c *Config) CleanExports(from label.Label, current build.Expr, newExports []label.Label) *build.ListExpr {
-	incoming := make(map[label.Label]bool)
-	for _, l := range newExports {
-		incoming[l] = true
+func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
+	c.ruleAttrMergeDeps(imports, r, c.shouldKeepDep, c.ShouldAnnotateImports(), attrName, from)
+}
+
+func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
+	c.ruleAttrMergeDeps(exports, r, shouldKeepExport, c.ShouldAnnotateExports(), attrName, from)
+}
+
+func (c *Config) ruleAttrMergeDeps(
+	imports resolver.ImportMap,
+	r *rule.Rule,
+	shouldKeep func(build.Expr) bool,
+	shouldAnnotateSrcs bool,
+	attrName string,
+	from label.Label,
+) {
+	labels := imports.Deps(c.MaybeRewrite(r.Kind(), from))
+	deps := make(map[label.Label]bool)
+	for _, l := range labels {
+		deps[l] = true
 	}
 
-	exports := &build.ListExpr{}
-	if current != nil {
-		if listExpr, ok := current.(*build.ListExpr); ok {
-			for _, expr := range listExpr.List {
-				if c.shouldKeepExport(expr) {
-					dep := labelFromDepExpr(expr)
-					if rule.ShouldKeep(expr) && incoming[dep] {
-						log.Printf(`%v: in attr 'exports', "%v" does not need a '# keep' directive (fixed)`, from, dep)
-						continue
-					}
-					exports.List = append(exports.List, expr)
+	// for _, impl := range c.depsCleaners {
+	// 	impl.CleanDeps(deps, r, from)
+	// }
+
+	next := cleanDepsList(r.Attr(attrName), deps, shouldKeep, attrName, from)
+
+	mergeListExpr(next, deps)
+	if len(next.List) > 0 {
+		r.SetAttr(attrName, next)
+	} else {
+		r.DelAttr(attrName)
+	}
+
+	if shouldAnnotateSrcs {
+		comments := r.AttrComments("srcs")
+		if comments != nil {
+			prefix := attrName + ": "
+			annotateImports(imports, comments, prefix)
+		}
+	}
+}
+
+// cleanDepsList takes the AST state of a (deps or exports) attr, processes each
+// expr in the list
+func cleanDepsList(attrValue build.Expr, deps map[label.Label]bool, keep func(expr build.Expr) bool, attrName string, from label.Label) *build.ListExpr {
+	next := new(build.ListExpr)
+	if attrValue == nil {
+		return next
+	}
+	if listExpr, ok := attrValue.(*build.ListExpr); ok {
+		for _, expr := range listExpr.List {
+			if keep(expr) {
+				dep := labelFromDepExpr(expr)
+				if rule.ShouldKeep(expr) && deps[dep] {
+					log.Printf(`%v: in attr %q, "%v" does not need a '# keep' directive (fixed)`, attrName, from, dep)
+					continue
 				}
+				next.List = append(next.List, expr)
 			}
 		}
 	}
-	return exports
+	return next
 }
 
-// cleanDeps takes the given list of deps and removes those that are expected to
-// be provided again.
-func (c *Config) CleanDeps(from label.Label, current build.Expr, newImports []label.Label) *build.ListExpr {
-	incoming := make(map[label.Label]bool)
-	for _, l := range newImports {
-		incoming[l] = true
-	}
-
-	deps := &build.ListExpr{}
-	if current != nil {
-		if listExpr, ok := current.(*build.ListExpr); ok {
-			for _, expr := range listExpr.List {
-				if c.shouldKeepDep(expr) {
-					dep := labelFromDepExpr(expr)
-					if rule.ShouldKeep(expr) && incoming[dep] {
-						log.Printf(`%v: in attr 'deps', "%v" does not need a '# keep' directive (fixed)`, from, dep)
-						continue
-					}
-					deps.List = append(deps.List, expr)
-				}
-			}
-		}
-	}
-	return deps
-}
-
-func (c *Config) shouldKeepExport(expr build.Expr) bool {
+func shouldKeepExport(expr build.Expr) bool {
 	// does it have a '# keep' directive?
 	if rule.ShouldKeep(expr) {
 		return true
@@ -565,6 +588,7 @@ func (c *Config) shouldKeepExport(expr build.Expr) bool {
 	// is the expression something we can parse as a label? If not, just leave
 	// it be.
 	from := labelFromDepExpr(expr)
+
 	if from == label.NoLabel {
 		return true
 	}
@@ -670,4 +694,18 @@ func removeConflictResolver(slice []resolver.ConflictResolver, index int) []reso
 
 func removeDepsCleaner(slice []resolver.DepsCleaner, index int) []resolver.DepsCleaner {
 	return append(slice[:index], slice[index+1:]...)
+}
+
+func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
+	comments.Before = nil
+	for _, key := range imports.Keys() {
+		imp := imports[key]
+		comment := setCommentPrefix(imp.Comment(), prefix)
+		comments.Before = append(comments.Before, comment)
+	}
+}
+
+func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
+	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
+	return comment
 }

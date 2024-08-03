@@ -2,14 +2,11 @@ package scala
 
 import (
 	"log"
-	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/bazelbuild/buildtools/build"
 
-	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -124,63 +121,12 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		return
 	}
 
-	imports := scalaRule.ResolveImports(rctx)
-	exports := scalaRule.ResolveExports(rctx)
-
-	r := rctx.Rule
 	sc := scalaconfig.Get(rctx.Config)
 
-	// part 1a: deps
-
-	newImports := imports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))
-	depLabels := sc.CleanDeps(rctx.From, r.Attr("deps"), newImports)
-
-	scalaconfig.MergeDeps(r.Kind(), depLabels, newImports)
-	if len(depLabels.List) > 0 {
-		r.SetAttr("deps", depLabels)
-	} else {
-		r.DelAttr("deps")
+	sc.Imports(scalaRule.ResolveImports(rctx), rctx.Rule, "deps", rctx.From)
+	if !s.isLibrary {
+		return
 	}
 
-	if sc.ShouldAnnotateImports() {
-		comments := r.AttrComments("srcs")
-		if comments != nil {
-			annotateImports(imports, comments, "import: ")
-		}
-	}
-
-	// part 1b: exports
-	if s.isLibrary {
-		newExports := exports.Deps(sc.MaybeRewrite(r.Kind(), rctx.From))
-		exportLabels := sc.CleanExports(rctx.From, r.Attr("exports"), newExports)
-		scalaconfig.MergeDeps(r.Kind(), exportLabels, newExports)
-		if len(exportLabels.List) > 0 {
-			r.SetAttr("exports", exportLabels)
-		} else {
-			r.DelAttr("exports")
-		}
-
-		if sc.ShouldAnnotateExports() {
-			comments := r.AttrComments("srcs")
-			if comments != nil {
-				annotateImports(exports, comments, "export: ")
-			}
-		}
-
-	}
-
-}
-
-func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
-	comments.Before = nil
-	for _, key := range imports.Keys() {
-		imp := imports[key]
-		comment := setCommentPrefix(imp.Comment(), prefix)
-		comments.Before = append(comments.Before, comment)
-	}
-}
-
-func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
-	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
-	return comment
+	sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
 }

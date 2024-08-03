@@ -19,8 +19,8 @@ type DepsCleaner interface {
 	// CheckFlags asserts that the flags are correct.  CheckFlags is only called
 	// if the resolver is enabled.
 	CheckFlags(fs *flag.FlagSet, c *config.Config) error
-	// CleanDeps takes the context rule and imports, and a map of labels that
-	// represent the incoming deps.  The cleaner implementation should remove
-	// unwanted deps from the map.
-	CleanDeps(r *rule.Rule, imports ImportMap, deps map[label.Label]bool)
+	// CleanDeps takes the context rule and a map of labels that represent the
+	// incoming deps.  The cleaner implementation should assign the value under
+	// the dep label as false if the dep is not wanted.
+	CleanDeps(deps map[label.Label]bool, r *rule.Rule, from label.Label)
 }
