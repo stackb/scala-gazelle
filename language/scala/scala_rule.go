@@ -128,7 +128,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			imp.Symbol = symbol
 		} else {
 			if debugUnresolved {
-				log.Println("unresolved import:", imp)
+				log.Println("unresolved deps:", imp)
 			}
 			imp.Error = resolver.ErrSymbolNotFound
 		}
@@ -308,7 +308,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 						putImport(resolver.NewResolvedNameImport(sym.Name, file, fqn, sym))
 					} else {
 						if debugUnresolved {
-							log.Printf("warning: unresolved fix wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+							log.Printf("warning: unresolved fix wildcard deps: symbol %q: was not found' (%s)", name, file.Filename)
 						}
 					}
 				}
@@ -318,7 +318,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
 				if debugUnresolved {
-					log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
+					log.Printf("warning: unresolved wildcard deps: symbol %q: was not found' (%s)", name, file.Filename)
 				}
 				imp := resolver.NewDirectImport(name, file)
 				putImport(imp)

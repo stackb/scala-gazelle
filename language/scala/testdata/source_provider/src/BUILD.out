@@ -2,7 +2,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", 
 
 scala_library(
     name = "lib",
-    # export: ✅ java.util.LinkedList<OVERRIDE> @java//util<override> (EXTENDS of Lib.scala via "a.b.c.Lib")
+    # exports: ✅ java.util.LinkedList<OVERRIDE> @java//util<override> (EXTENDS of Lib.scala via "a.b.c.Lib")
     srcs = ["a/b/c/Lib.scala"],
     exports = ["@java//util"],
     deps = ["@java//util"],
