@@ -75,6 +75,18 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
 			},
 		},
+		"debug deps": {
+			directives: []rule.Directive{
+				{Key: "scala_debug", Value: "deps"},
+			},
+			want: &Config{
+				rules:             map[string]*scalarule.Config{},
+				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
+				annotations: map[debugAnnotation]any{
+					DebugDeps: nil,
+				},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
