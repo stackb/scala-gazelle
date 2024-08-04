@@ -146,7 +146,7 @@ func (c *Config) Rel() string {
 	return c.rel
 }
 
-func (c *Config) CanProvide(from label.Label) bool {
+func (c *Config) hasSymbolProvider(from label.Label) bool {
 	for _, provider := range c.universe.SymbolProviders() {
 		if provider.CanProvide(from, c.universe.GetKnownRule) {
 			return true
@@ -417,12 +417,12 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *Config) ShouldAnnotateImports() bool {
+func (c *Config) shouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
 }
 
-func (c *Config) ShouldAnnotateExports() bool {
+func (c *Config) shouldAnnotateExports() bool {
 	_, ok := c.annotations[DebugExports]
 	return ok
 }
@@ -493,61 +493,44 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
-// mergeListExpr takes the given list of existing deps and a list of dependency
-// labels and merges it into a final sorted list.
-func mergeListExpr(target *build.ListExpr, deps map[label.Label]bool) {
-	for dep, want := range deps {
-		if !want {
-			continue
-		}
-		target.List = append(target.List, &build.StringExpr{Value: dep.String()})
-	}
-
-	sort.Slice(target.List, func(i, j int) bool {
-		a, aIsString := target.List[i].(*build.StringExpr)
-		b, bIsString := target.List[j].(*build.StringExpr)
-		if aIsString && bIsString {
-			return a.Token < b.Token
-		}
-		return false
-	})
-}
-
 func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(imports, r, c.shouldKeepDep, c.ShouldAnnotateImports(), attrName, from)
+	c.ruleAttrMergeDeps(imports, r, c.shouldAnnotateImports(), attrName, from)
 }
 
 func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(exports, r, shouldKeepExport, c.ShouldAnnotateExports(), attrName, from)
+	c.ruleAttrMergeDeps(exports, r, c.shouldAnnotateExports(), attrName, from)
 }
 
 func (c *Config) ruleAttrMergeDeps(
 	imports resolver.ImportMap,
 	r *rule.Rule,
-	shouldKeep func(build.Expr) bool,
 	shouldAnnotateSrcs bool,
 	attrName string,
 	from label.Label,
 ) {
+	// gather the list of dependency labels from the import list
 	labels := imports.Deps(c.MaybeRewrite(r.Kind(), from))
+
+	// initialize a map with all true values.  Apply depsCleaners that can set
+	// those to false if they are not wanted deps.
 	deps := make(map[label.Label]bool)
 	for _, l := range labels {
 		deps[l] = true
 	}
+	for _, impl := range c.depsCleaners {
+		impl.CleanDeps(deps, r, from)
+	}
 
-	// for _, impl := range c.depsCleaners {
-	// 	impl.CleanDeps(deps, r, from)
-	// }
-
-	next := cleanDepsList(r.Attr(attrName), deps, shouldKeep, attrName, from)
-
-	mergeListExpr(next, deps)
+	// Merge the current list against the new incoming ones.  If no deps remain,
+	// delete the attr.
+	next := c.mergeDeps(r.Attr(attrName), deps, attrName, from)
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
 	} else {
 		r.DelAttr(attrName)
 	}
 
+	// Apply annotations if requested
 	if shouldAnnotateSrcs {
 		comments := r.AttrComments("srcs")
 		if comments != nil {
@@ -557,67 +540,82 @@ func (c *Config) ruleAttrMergeDeps(
 	}
 }
 
-// cleanDepsList takes the AST state of a (deps or exports) attr, processes each
-// expr in the list
-func cleanDepsList(attrValue build.Expr, deps map[label.Label]bool, keep func(expr build.Expr) bool, attrName string, from label.Label) *build.ListExpr {
-	next := new(build.ListExpr)
+// mergeDeps filters out a `deps` list.  Extries are removed from the
+// list if they can be parsed as dependency labels that have a provider.  Others
+// types of expressions are left as-is.  Dependency labels that have no known
+// provider are also left as-is.
+func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, attrName string, from label.Label) *build.ListExpr {
+	var src *build.ListExpr
 	if attrValue == nil {
-		return next
-	}
-	if listExpr, ok := attrValue.(*build.ListExpr); ok {
-		for _, expr := range listExpr.List {
-			if keep(expr) {
-				dep := labelFromDepExpr(expr)
-				if rule.ShouldKeep(expr) && deps[dep] {
-					log.Printf(`%v: in attr %q, "%v" does not need a '# keep' directive (fixed)`, attrName, from, dep)
-					continue
-				}
-				next.List = append(next.List, expr)
-			}
+		src = new(build.ListExpr)
+	} else {
+		if current, ok := attrValue.(*build.ListExpr); ok {
+			// the value of 'deps' is currently a list, use it.
+			src = current
+		} else {
+			// the current value of 'deps' is not a list.  Override src so we
+			// don't have to check nil later.
+			src = new(build.ListExpr)
 		}
 	}
-	return next
-}
+	var dst = new(build.ListExpr)
 
-func shouldKeepExport(expr build.Expr) bool {
-	// does it have a '# keep' directive?
-	if rule.ShouldKeep(expr) {
-		return true
+	// process each element in the list
+	for _, expr := range src.List {
+		// try and parse the expression as a label
+		dep := labelFromDepExpr(expr)
+
+		// if it wasn't a label, just leave it be (copy it to dst).
+		if dep == label.NoLabel {
+			dst.List = append(dst.List, expr)
+			continue
+		}
+
+		// does it have a '# keep' directive?
+		if rule.ShouldKeep(expr) {
+			// if it does have a keep directive, was the 'keep' unnecessary?  If
+			// we have this dep in the incoming deps list, that annotation isn't
+			// needed.  Skip it (we'll make a new build.StringExpr in the next loop)
+			if want, exists := deps[dep]; exists {
+				if want {
+					log.Printf(`%v: in attr %q, "%v" does not need a '# keep' directive (fixed)`, attrName, from, dep)
+				}
+				continue
+			}
+			// the expression is still wanted
+			dst.List = append(dst.List, expr)
+			continue
+		}
+
+		// do we have a known provider for the dependency?  If not, this
+		// dependency is not "managed", so leave it alone.
+		if !c.hasSymbolProvider(dep) {
+			dst.List = append(dst.List, expr)
+			continue
+		}
+
+		// all other remaining deps should be added in the next loop
 	}
 
-	// is the expression something we can parse as a label? If not, just leave
-	// it be.
-	from := labelFromDepExpr(expr)
-
-	if from == label.NoLabel {
-		return true
+	// add managed deps that are wanted
+	for dep, want := range deps {
+		if !want {
+			continue
+		}
+		dst.List = append(dst.List, &build.StringExpr{Value: dep.String()})
 	}
 
-	// delete exports by default, expect caller to have 'keep' comments
-	return false
-}
-
-func (c *Config) shouldKeepDep(expr build.Expr) bool {
-	// does it have a '# keep' directive?
-	if rule.ShouldKeep(expr) {
-		return true
-	}
-
-	// is the expression something we can parse as a label? If not, just leave
-	// it be.
-	from := labelFromDepExpr(expr)
-	if from == label.NoLabel {
-		return true
-	}
-
-	// if we can find a provider for this label, remove it (it should have been
-	// resolved again if still wanted)
-	if c.CanProvide(from) {
+	// Sort the list
+	sort.Slice(dst.List, func(i, j int) bool {
+		a, aIsString := dst.List[i].(*build.StringExpr)
+		b, bIsString := dst.List[j].(*build.StringExpr)
+		if aIsString && bIsString {
+			return a.Token < b.Token
+		}
 		return false
-	}
+	})
 
-	// we didn't find an owner so keep just it, it's not a managed dependency.
-	return true
+	return dst
 }
 
 // labelFromDepExpr returns the label from an expression like "@maven//:guava"
@@ -645,7 +643,6 @@ func labelFromDepExpr(expr build.Expr) label.Label {
 			}
 		}
 	}
-
 	return label.NoLabel
 }
 

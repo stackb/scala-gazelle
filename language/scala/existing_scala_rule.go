@@ -122,11 +122,8 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	sc := scalaconfig.Get(rctx.Config)
-
 	sc.Imports(scalaRule.ResolveImports(rctx), rctx.Rule, "deps", rctx.From)
-	if !s.isLibrary {
-		return
+	if s.isLibrary {
+		sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
 	}
-
-	sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
 }
