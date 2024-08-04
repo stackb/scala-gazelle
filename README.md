@@ -54,6 +54,7 @@
     - [`gazelle:scala_debug`](#gazellescala_debug)
       - [`imports`](#imports)
       - [`exports`](#exports)
+      - [`deps`](#deps)
 - [Import Resolution Procedure](#import-resolution-procedure)
   - [How Required Imports are Calculated](#how-required-imports-are-calculated)
     - [Rule](#rule)
@@ -949,6 +950,14 @@ exports and how they resolved.  Example:
 
 ```
 # gazelle:scala_debug exports
+```
+
+#### `deps`
+
+This adds a suffix comment to each resolved item in `deps` and `exports` showing how the depency resolved.
+
+```
+# gazelle:scala_debug deps
 ```
 
 # Import Resolution Procedure

@@ -17,7 +17,9 @@ func TestImportMapDeps(t *testing.T) {
 		want    []label.Label
 		wantErr error
 	}{
-		"degenerate": {},
+		"degenerate": {
+			want: []label.Label{},
+		},
 		"removes duplicates": {
 			imports: []*resolver.Import{
 				{
@@ -102,7 +104,11 @@ func TestImportMapDeps(t *testing.T) {
 			for _, imp := range tc.imports {
 				importMap.Put(imp)
 			}
-			got := importMap.Deps(tc.from)
+			labels := importMap.Deps(tc.from)
+			got := make([]label.Label, len(labels))
+			for i, v := range labels {
+				got[i] = v.Label
+			}
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
