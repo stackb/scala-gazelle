@@ -10,6 +10,12 @@ import (
 // ImportMap is a map if imports keyed by the import string.
 type ImportMap map[string]*Import
 
+// ImportLabel is a pair of (Import,Label)
+type ImportLabel struct {
+	Import *Import
+	Label  label.Label
+}
+
 // NewImportMap initializes a new ImportMap with an optional list of Imports.
 func NewImportMap(imports ...*Import) ImportMap {
 	m := make(ImportMap)
@@ -43,7 +49,7 @@ func (imports ImportMap) Values() []*Import {
 // Deps returns a de-duplicated list of labels that represent the from-relative
 // final deps. The list is not sorted under the expectation that sorting will be
 // done elsewhere.
-func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
+func (imports ImportMap) Deps(from label.Label) (deps []*ImportLabel) {
 	seen := map[label.Label]bool{
 		label.NoLabel: true,
 		from:          true,
@@ -65,7 +71,7 @@ func (imports ImportMap) Deps(from label.Label) (deps []label.Label) {
 		if relDep.Relative && relDep.Name == from.Name {
 			continue
 		}
-		deps = append(deps, relDep)
+		deps = append(deps, &ImportLabel{Import: imp, Label: relDep})
 	}
 	return
 }

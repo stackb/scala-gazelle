@@ -92,7 +92,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 
 	t1 := time.Now()
 
-	files, err := r.parseFiles(from, dir, srcs)
+	files, err := r.parseFiles(dir, srcs)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 
 	t2 := time.Since(t1).Round(1 * time.Millisecond)
 	if true {
-		log.Printf("Parsed %s (%d files, %v)", from, len(files), t2)
+		log.Printf("Parsed %s%%%s (%d files, %v)", from, kind, len(files), t2)
 	}
 
 	return &sppb.Rule{
@@ -116,7 +116,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 	}, nil
 }
 
-func (r *SourceProvider) parseFiles(from label.Label, dir string, srcs []string) ([]*sppb.File, error) {
+func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, error) {
 	filenames := make([]string, len(srcs))
 	for i, src := range srcs {
 		filenames[i] = filepath.Join(dir, src)
@@ -167,13 +167,6 @@ func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb
 	for _, imp := range file.Vals {
 		r.putSymbol(from, kind, imp, sppb.ImportType_VALUE)
 	}
-	// TODO(pcj): should sources advertise their package symbols?  Currently
-	// this leads the sitations where a lib will erroneously take on a dep to
-	// a binary rule.
-	//
-	// for _, imp := range file.Packages {
-	// 	r.putSymbol(from, kind, imp, sppb.ImportType_PACKAGE)
-	// }
 	return nil
 }
 

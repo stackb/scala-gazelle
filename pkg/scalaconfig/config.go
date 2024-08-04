@@ -24,6 +24,7 @@ const (
 	DebugUnknown  debugAnnotation = 0
 	DebugImports  debugAnnotation = 1
 	DebugExports  debugAnnotation = 2
+	DebugDeps     debugAnnotation = 3
 	scalaLangName                 = "scala"
 )
 
@@ -427,6 +428,11 @@ func (c *Config) shouldAnnotateExports() bool {
 	return ok
 }
 
+func (c *Config) shouldAnnotateDeps() bool {
+	_, ok := c.annotations[DebugDeps]
+	return ok
+}
+
 // ShouldFixWildcardImport tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -515,7 +521,7 @@ func (c *Config) ruleAttrMergeDeps(
 	// those to false if they are not wanted deps.
 	deps := make(map[label.Label]bool)
 	for _, l := range labels {
-		deps[l] = true
+		deps[l.Label] = true
 	}
 	for _, impl := range c.depsCleaners {
 		impl.CleanDeps(deps, r, from)
@@ -523,7 +529,7 @@ func (c *Config) ruleAttrMergeDeps(
 
 	// Merge the current list against the new incoming ones.  If no deps remain,
 	// delete the attr.
-	next := c.mergeDeps(r.Attr(attrName), deps, attrName, from)
+	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from)
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
 	} else {
@@ -544,7 +550,7 @@ func (c *Config) ruleAttrMergeDeps(
 // list if they can be parsed as dependency labels that have a provider.  Others
 // types of expressions are left as-is.  Dependency labels that have no known
 // provider are also left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, attrName string, from label.Label) *build.ListExpr {
+func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels []*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue == nil {
 		src = new(build.ListExpr)
@@ -602,7 +608,11 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, attr
 		if !want {
 			continue
 		}
-		dst.List = append(dst.List, &build.StringExpr{Value: dep.String()})
+		depExpr := &build.StringExpr{Value: dep.String()}
+		if c.shouldAnnotateDeps() {
+			depExpr.Suffix = append(depExpr.Suffix, depComment(dep, importLabels))
+		}
+		dst.List = append(dst.List, depExpr)
 	}
 
 	// Sort the list
@@ -680,6 +690,8 @@ func parseAnnotation(val string) debugAnnotation {
 		return DebugImports
 	case "exports":
 		return DebugExports
+	case "deps":
+		return DebugDeps
 	default:
 		return DebugUnknown
 	}
@@ -699,6 +711,27 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefi
 		imp := imports[key]
 		comment := setCommentPrefix(imp.Comment(), prefix)
 		comments.Before = append(comments.Before, comment)
+	}
+}
+
+func depComment(dep label.Label, importLabels []*resolver.ImportLabel) build.Comment {
+	for _, imp := range importLabels {
+		if dep != imp.Label {
+			continue
+		}
+		return depCommentFor(imp.Import)
+	}
+	panic(fmt.Sprintf("dependency %v was not found in the import label list", dep))
+}
+
+func depCommentFor(imp *resolver.Import) build.Comment {
+	source := ""
+	if imp.Source != nil {
+		source = imp.Source.Filename
+	}
+	token := fmt.Sprintf("# imp=%s, type=%v, provider=%s, label=%v, kind=%v, source=%s", imp.Imp, imp.Symbol.Type, imp.Symbol.Provider, imp.Symbol.Label, imp.Kind, source)
+	return build.Comment{
+		Token: token,
 	}
 }
 
