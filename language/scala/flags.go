@@ -84,6 +84,9 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if err := sl.setupConflictResolvers(flags, c, sl.conflictResolverNamesFlagValue); err != nil {
 		return err
 	}
+	if err := sl.setupDepsCleaners(flags, c, sl.depsCleanerNamesFlagValue); err != nil {
+		return err
+	}
 	if err := sl.setupExistingScalaBinaryRules(sl.existingScalaBinaryRulesFlagValue); err != nil {
 		return err
 	}
@@ -107,7 +110,7 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 }
 
 func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config, names []string) error {
-	providers, err := resolver.GetNamedSymbolProviders(sl.symbolProviderNamesFlagValue)
+	providers, err := resolver.GetNamedSymbolProviders(names)
 	if err != nil {
 		return err
 	}
@@ -121,7 +124,7 @@ func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config,
 }
 
 func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Config, names []string) error {
-	for _, name := range sl.conflictResolverNamesFlagValue {
+	for _, name := range names {
 		resolver, ok := resolver.GlobalConflictResolverRegistry().GetConflictResolver(name)
 		if !ok {
 			return fmt.Errorf("-%s not found: %q", scalaConflictResolverFlagName, name)
@@ -135,7 +138,7 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 }
 
 func (sl *scalaLang) setupDepsCleaners(flags *flag.FlagSet, c *config.Config, names []string) error {
-	for _, name := range sl.depsCleanerNamesFlagValue {
+	for _, name := range names {
 		cleaner, ok := resolver.GlobalDepsCleanerRegistry().GetDepsCleaner(name)
 		if !ok {
 			return fmt.Errorf("-%s not found: %q", scalaDepsCleanerFlagName, name)

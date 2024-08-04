@@ -113,6 +113,7 @@ func NewLanguage() language.Language {
 		globalPackages:       resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
+		depsCleaners:         make(map[string]resolver.DepsCleaner),
 		packages:             packages,
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
