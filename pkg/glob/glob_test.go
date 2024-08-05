@@ -2,7 +2,6 @@ package glob
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -134,7 +133,7 @@ func TestApplyGlob(t *testing.T) {
 					t.Fatal(err)
 				}
 				if !file.NotExist {
-					if err := ioutil.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
+					if err := os.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
 						t.Fatal(err)
 					}
 				}

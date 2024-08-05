@@ -522,6 +522,9 @@ class ScalaFile {
     }
 
     toObject() {
+        if (this.filename.includes(',')) {
+            throw new Error(`bad filename: ${this.filename}`);
+        }
         const obj = {
             filename: this.filename,
         };
@@ -658,7 +661,7 @@ function parseFile(filename) {
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
  * @returns {!Array<ScalaFile>}
  */
-async function parseFiles(inputs) {
+function parseFiles(inputs) {
     return inputs.map(parseFile);
 }
 
@@ -666,7 +669,7 @@ async function parseFiles(inputs) {
  * parse takes a list of input files and returns a list of .
  * 
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
- * @returns {!Array<ScalaFile>}
+ * @returns {!Promise<!Array<ScalaFile>>}
  */
 async function parseFilesParallel(inputs) {
     const work = inputs.map(filename => {
@@ -688,18 +691,25 @@ async function processJSONRequest(request) {
     if (!Array.isArray(request.filenames)) {
         throw new Error(`bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`);
     }
+    request.filenames.forEach(filename => {
+        if (filename.includes(',')) {
+            throw new Error(`bad filename! ${filename}`);
+        }
+    });
 
     let files = [];
     if (process.env.PARALLEL_MODE) {
+        throw new Error(`PARALLEL_MODE is discouraged`);
         files = await parseFilesParallel(request.filenames);
     } else {
-        files = await parseFiles(request.filenames);
+        files = parseFiles(request.filenames);
     }
 
     return { files };
 }
 
 function processApplicationJSON(data) {
+    console.log(`processing request:\n${data}`);
     return processJSONRequest(JSON.parse(data));
 }
 
