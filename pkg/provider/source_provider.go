@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -89,6 +90,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 	if len(srcs) == 0 {
 		return nil, nil
 	}
+	sort.Strings(srcs)
 
 	t1 := time.Now()
 
@@ -96,6 +98,11 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 	if err != nil {
 		return nil, err
 	}
+	sort.Slice(files, func(i, j int) bool {
+		a := files[i]
+		b := files[j]
+		return a.Filename < b.Filename
+	})
 
 	for _, file := range files {
 		if err := r.loadScalaFile(from, kind, file); err != nil {
