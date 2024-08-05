@@ -3,6 +3,7 @@ package scala
 import (
 	"bufio"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -144,6 +145,8 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 }
 
+var re = regexp.MustCompile(`[a-zA-Z0-9]+:(\s+)"`)
+
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 	pb.ParseTimeMillis = 0
 	json, err := protobuf.PrettyText(pb)
@@ -154,6 +157,10 @@ func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 	scanner := bufio.NewScanner(strings.NewReader(json))
 	for scanner.Scan() {
 		line := scanner.Text()
+		parts := re.Split(line, -1)
+		if len(parts) > 1 {
+			line = strings.Join(parts, " ")
+		}
 		comments = append(comments, build.Comment{
 			Token: "# " + line,
 		})
