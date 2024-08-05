@@ -8,6 +8,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
@@ -131,27 +132,35 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
 	}
 
+	srcs := rctx.Rule.Attr("srcs")
 	if sc.ShouldAnnotateRule() {
-		if err := addRuleComment(rctx.Rule, scalaRule.pb); err != nil {
+		if comments, err := makeRuleComments(scalaRule.pb); err != nil {
 			log.Fatalln("annotating rule:", err)
+		} else {
+			srcs.Comment().Before = comments
 		}
+	} else {
+		srcs.Comment().Before = nil
 	}
 }
 
-func addRuleComment(r *rule.Rule, pb *sppb.Rule) error {
+func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 	pb.ParseTimeMillis = 0
 	json, err := protobuf.PrettyJSONString(pb)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	scanner := bufio.NewScanner(strings.NewReader(json))
 	for scanner.Scan() {
 		line := scanner.Text()
-		r.AddComment("# " + line)
+		comments = append(comments, build.Comment{
+			Token: "# " + line,
+		})
 	}
 	if err := scanner.Err(); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return
 }
