@@ -1,12 +1,16 @@
 package scala
 
 import (
+	"bufio"
 	"log"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -126,4 +130,27 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	if s.isLibrary {
 		sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
 	}
+
+	if sc.ShouldAnnotateRule() {
+		if err := addRuleComment(rctx.Rule, scalaRule.pb); err != nil {
+			log.Fatalln("annotating rule:", err)
+		}
+	}
+}
+
+func addRuleComment(r *rule.Rule, pb *sppb.Rule) error {
+	json, err := protobuf.PrettyJSONString(pb)
+	if err != nil {
+		return err
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(json))
+	for scanner.Scan() {
+		line := scanner.Text()
+		r.AddComment("# " + line)
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+	return nil
 }

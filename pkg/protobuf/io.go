@@ -74,3 +74,16 @@ func WritePrettyJSONFile(filename string, message protoreflect.ProtoMessage) err
 	}
 	return nil
 }
+
+func PrettyJSONString(message protoreflect.ProtoMessage) (string, error) {
+	marshaler := protojson.MarshalOptions{
+		Multiline:       true,
+		Indent:          "  ",
+		EmitUnpopulated: false,
+	}
+	data, err := marshaler.Marshal(message)
+	if err != nil {
+		return "", fmt.Errorf("marshal: %w", err)
+	}
+	return string(data), nil
+}

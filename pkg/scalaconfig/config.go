@@ -25,6 +25,7 @@ const (
 	DebugImports  debugAnnotation = 1
 	DebugExports  debugAnnotation = 2
 	DebugDeps     debugAnnotation = 3
+	DebugRule     debugAnnotation = 4
 	scalaLangName                 = "scala"
 )
 
@@ -433,6 +434,11 @@ func (c *Config) shouldAnnotateDeps() bool {
 	return ok
 }
 
+func (c *Config) ShouldAnnotateRule() bool {
+	_, ok := c.annotations[DebugRule]
+	return ok
+}
+
 // ShouldFixWildcardImport tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -552,21 +558,17 @@ func (c *Config) ruleAttrMergeDeps(
 // provider are also left as-is.
 func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels []*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
-	if attrValue == nil {
-		src = new(build.ListExpr)
-	} else {
+	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
 			// the value of 'deps' is currently a list, use it.
 			src = current
-		} else {
-			// the current value of 'deps' is not a list.  Override src so we
-			// don't have to check nil later.
-			src = new(build.ListExpr)
 		}
 	}
-	var dst = new(build.ListExpr)
+	if src == nil {
+		src = new(build.ListExpr)
+	}
 
-	// process each element in the list
+	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
 		// try and parse the expression as a label
 		dep := labelFromDepExpr(expr)
@@ -616,7 +618,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 	}
 
 	// Sort the list
-	sort.Slice(dst.List, func(i, j int) bool {
+	sort.SliceStable(dst.List, func(i, j int) bool {
 		a, aIsString := dst.List[i].(*build.StringExpr)
 		b, bIsString := dst.List[j].(*build.StringExpr)
 		if aIsString && bIsString {
@@ -692,6 +694,8 @@ func parseAnnotation(val string) debugAnnotation {
 		return DebugExports
 	case "deps":
 		return DebugDeps
+	case "rule":
+		return DebugRule
 	default:
 		return DebugUnknown
 	}
