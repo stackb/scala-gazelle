@@ -146,7 +146,7 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 	pb.ParseTimeMillis = 0
-	json, err := protobuf.PrettyJSONString(pb)
+	json, err := protobuf.PrettyText(pb)
 	if err != nil {
 		return nil, err
 	}
