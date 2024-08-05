@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"sort"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
@@ -68,7 +69,12 @@ func Apply(glob rule.GlobValue, fs fs.FS) (srcs []string) {
 			log.Printf("error during doublestar.Glob: %v (pattern invalid: %v)", err, pattern)
 			continue
 		}
-		includes = append(includes, names...)
+		for _, name := range names {
+			if strings.ContainsRune(name, ',') {
+				panic("glob resolved to a filename with a semicolon? " + name)
+			}
+			includes = append(includes, name)
+		}
 	}
 
 	// part 2: filter candidates
