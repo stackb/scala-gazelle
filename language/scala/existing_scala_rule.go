@@ -149,7 +149,7 @@ var re = regexp.MustCompile(`[a-zA-Z0-9]+:(\s+)"`)
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 	pb.ParseTimeMillis = 0
-	json, err := protobuf.PrettyText(pb)
+	json, err := protobuf.StableJSON(pb)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package protobuf
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -86,6 +87,24 @@ func PrettyJSON(message protoreflect.ProtoMessage) (string, error) {
 		return "", fmt.Errorf("marshal: %w", err)
 	}
 	return string(data), nil
+}
+
+func StableJSON(message protoreflect.ProtoMessage) (string, error) {
+	marshaler := protojson.MarshalOptions{
+		Multiline:       false,
+		Indent:          "",
+		EmitUnpopulated: false,
+	}
+	data, err := marshaler.Marshal(message)
+	if err != nil {
+		return "", fmt.Errorf("marshal: %w", err)
+	}
+	var rm json.RawMessage = data
+	data2, err := json.MarshalIndent(rm, "", " ")
+	if err != nil {
+		return "", fmt.Errorf("json marshal: %w", err)
+	}
+	return string(data2), nil
 }
 
 func PrettyText(message protoreflect.ProtoMessage) (string, error) {
