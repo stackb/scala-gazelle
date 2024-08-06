@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	"go.starlark.net/starlark"
 )
@@ -52,7 +51,7 @@ func (i *Interpreter) handleDepset(thread *starlark.Thread, b *starlark.Builtin,
 }
 
 func (i *Interpreter) Exec(filename string, src io.Reader) error {
-	data, err := ioutil.ReadAll(src)
+	data, err := io.ReadAll(src)
 	if err != nil {
 		return err
 	}

@@ -658,7 +658,7 @@ function parseFile(filename) {
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
  * @returns {!Array<ScalaFile>}
  */
-async function parseFiles(inputs) {
+function parseFiles(inputs) {
     return inputs.map(parseFile);
 }
 
@@ -666,7 +666,7 @@ async function parseFiles(inputs) {
  * parse takes a list of input files and returns a list of .
  * 
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
- * @returns {!Array<ScalaFile>}
+ * @returns {!Promise<!Array<ScalaFile>>}
  */
 async function parseFilesParallel(inputs) {
     const work = inputs.map(filename => {
@@ -693,14 +693,10 @@ async function processJSONRequest(request) {
     if (process.env.PARALLEL_MODE) {
         files = await parseFilesParallel(request.filenames);
     } else {
-        files = await parseFiles(request.filenames);
+        files = parseFiles(request.filenames);
     }
 
     return { files };
-}
-
-function processApplicationJSON(data) {
-    return processJSONRequest(JSON.parse(data));
 }
 
 const requestHandler = (req, res) => {
@@ -710,14 +706,14 @@ const requestHandler = (req, res) => {
         return;
     }
 
-    const data = [];
+    let body = "";
     req.on('data', (chunk) => {
-        data.push(chunk);
+        body += chunk.toString();
     });
 
     req.on('end', async () => {
         try {
-            const result = await processApplicationJSON(data);
+            const result = await processJSONRequest(JSON.parse(body));
             res.writeHead(200, { "Content-type": "application/json" });;
             res.end(JSON.stringify(result));
         } catch (err) {

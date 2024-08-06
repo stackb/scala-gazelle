@@ -1,7 +1,6 @@
 package testutil
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -47,7 +46,7 @@ func MustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec)
 			t.Fatal(err)
 		}
 		if !file.NotExist {
-			if err := ioutil.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
+			if err := os.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
 				t.Fatal(err)
 			}
 		}
@@ -57,7 +56,7 @@ func MustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec)
 }
 
 func MustReadTestFile(t *testing.T, dir string, filename string) string {
-	data, err := ioutil.ReadFile(filepath.Join(dir, filename))
+	data, err := os.ReadFile(filepath.Join(dir, filename))
 	if err != nil {
 		ListFiles(t, dir)
 		t.Fatal("reading", filename, ":", err)

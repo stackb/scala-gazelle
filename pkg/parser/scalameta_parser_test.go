@@ -3,7 +3,7 @@ package parser
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -629,7 +629,7 @@ func TestNewHttpScalaParseRequest(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			body, err := ioutil.ReadAll(got.Body)
+			body, err := io.ReadAll(got.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -692,7 +692,7 @@ func mustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec)
 			t.Fatal(err)
 		}
 		if !file.NotExist {
-			if err := ioutil.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
+			if err := os.WriteFile(abs, []byte(file.Content), os.ModePerm); err != nil {
 				t.Fatal(err)
 			}
 		}

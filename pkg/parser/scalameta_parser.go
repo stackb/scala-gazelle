@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -86,10 +86,10 @@ func (s *ScalametaParser) Start() error {
 	if err := os.MkdirAll(filepath.Dir(parserPath), os.ModePerm); err != nil {
 		return fmt.Errorf("mkdir process tmpdir: %w", err)
 	}
-	if err := ioutil.WriteFile(scriptPath, []byte(parserrMjs), os.ModePerm); err != nil {
+	if err := os.WriteFile(scriptPath, []byte(parserrMjs), os.ModePerm); err != nil {
 		return fmt.Errorf("writing %s: %w", parserrMjs, err)
 	}
-	if err := ioutil.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
+	if err := os.WriteFile(parserPath, []byte(scalametaParsersIndexJs), os.ModePerm); err != nil {
 		return fmt.Errorf("writing %s: %w", scalametaParsersIndexJs, err)
 	}
 
@@ -196,7 +196,7 @@ func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sp
 		return nil, status.Errorf(codes.Internal, "response content-type error, want %q, got: %q", contentTypeJSON, contentType)
 	}
 
-	data, err := ioutil.ReadAll(w.Body)
+	data, err := io.ReadAll(w.Body)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "response data error: %v", err)
 	}

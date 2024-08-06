@@ -1,8 +1,9 @@
 package protobuf
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -35,7 +36,7 @@ func marshalerForFilename(filename string) marshaler {
 }
 
 func ReadFile(filename string, message protoreflect.ProtoMessage) error {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return fmt.Errorf("read %q: %w", filename, err)
 	}
@@ -53,7 +54,7 @@ func WriteFile(filename string, message protoreflect.ProtoMessage) error {
 	if err != nil {
 		return fmt.Errorf("marshal: %w", err)
 	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("write: %w", err)
 	}
 	return nil
@@ -69,8 +70,26 @@ func WritePrettyJSONFile(filename string, message protoreflect.ProtoMessage) err
 	if err != nil {
 		return fmt.Errorf("marshal: %w", err)
 	}
-	if err := ioutil.WriteFile(filename, data, 0644); err != nil {
+	if err := os.WriteFile(filename, data, 0644); err != nil {
 		return fmt.Errorf("write: %w", err)
 	}
 	return nil
+}
+
+func StableJSON(message protoreflect.ProtoMessage) (string, error) {
+	marshaler := protojson.MarshalOptions{
+		Multiline:       false,
+		Indent:          "",
+		EmitUnpopulated: false,
+	}
+	data, err := marshaler.Marshal(message)
+	if err != nil {
+		return "", fmt.Errorf("marshal: %w", err)
+	}
+	var rm json.RawMessage = data
+	data2, err := json.MarshalIndent(rm, "", " ")
+	if err != nil {
+		return "", fmt.Errorf("json marshal: %w", err)
+	}
+	return string(data2), nil
 }
