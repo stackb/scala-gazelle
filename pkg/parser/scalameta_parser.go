@@ -241,8 +241,6 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 		return nil, status.Errorf(codes.InvalidArgument, "marshaling request: %v", err)
 	}
 
-	log.Println("parse request:", string(json))
-
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(json))
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "creating request: %v", err)

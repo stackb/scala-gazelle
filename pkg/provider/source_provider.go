@@ -127,9 +127,6 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 	filenames := make([]string, len(srcs))
 	for i, src := range srcs {
 		filenames[i] = filepath.Join(dir, src)
-		if strings.ContainsRune(filenames[i], ',') {
-			log.Panicln("parseFiles input filename contains a comma:", filenames[i])
-		}
 	}
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
@@ -144,9 +141,6 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 
 	// remove dir prefixes
 	for _, file := range response.Files {
-		if strings.ContainsRune(file.Filename, ',') {
-			log.Panicln("parseFiles output filename contains a comma:", file.Filename)
-		}
 		// TODO(pcj): isn't there a stdlib function that does this?
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}

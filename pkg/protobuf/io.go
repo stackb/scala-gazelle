@@ -76,19 +76,6 @@ func WritePrettyJSONFile(filename string, message protoreflect.ProtoMessage) err
 	return nil
 }
 
-func PrettyJSON(message protoreflect.ProtoMessage) (string, error) {
-	marshaler := protojson.MarshalOptions{
-		Multiline:       true,
-		Indent:          "  ",
-		EmitUnpopulated: false,
-	}
-	data, err := marshaler.Marshal(message)
-	if err != nil {
-		return "", fmt.Errorf("marshal: %w", err)
-	}
-	return string(data), nil
-}
-
 func StableJSON(message protoreflect.ProtoMessage) (string, error) {
 	marshaler := protojson.MarshalOptions{
 		Multiline:       false,
@@ -105,16 +92,4 @@ func StableJSON(message protoreflect.ProtoMessage) (string, error) {
 		return "", fmt.Errorf("json marshal: %w", err)
 	}
 	return string(data2), nil
-}
-
-func PrettyText(message protoreflect.ProtoMessage) (string, error) {
-	marshaler := prototext.MarshalOptions{
-		Multiline: true,
-		Indent:    " ",
-	}
-	data, err := marshaler.Marshal(message)
-	if err != nil {
-		return "", fmt.Errorf("marshal: %w", err)
-	}
-	return string(data), nil
 }

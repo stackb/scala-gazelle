@@ -522,9 +522,6 @@ class ScalaFile {
     }
 
     toObject() {
-        if (this.filename.includes(',')) {
-            throw new Error(`bad filename: ${this.filename}`);
-        }
         const obj = {
             filename: this.filename,
         };
@@ -691,15 +688,9 @@ async function processJSONRequest(request) {
     if (!Array.isArray(request.filenames)) {
         throw new Error(`bad request: expected '{ "filenames": [LIST OF FILES TO PARSE] }', but filenames list was not present`);
     }
-    request.filenames.forEach(filename => {
-        if (filename.includes(',')) {
-            throw new Error(`bad filename! ${filename}`);
-        }
-    });
 
     let files = [];
     if (process.env.PARALLEL_MODE) {
-        throw new Error(`PARALLEL_MODE is discouraged`);
         files = await parseFilesParallel(request.filenames);
     } else {
         files = parseFiles(request.filenames);
