@@ -144,11 +144,11 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 
 	// remove dir prefixes
 	for _, file := range response.Files {
-		// TODO(pcj): isn't there a stdlib function that does this?
-		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 		if strings.ContainsRune(file.Filename, ',') {
 			log.Panicln("parseFiles output filename contains a comma:", file.Filename)
 		}
+		// TODO(pcj): isn't there a stdlib function that does this?
+		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}
 
 	return response.Files, nil
