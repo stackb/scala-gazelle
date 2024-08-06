@@ -139,9 +139,11 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 		return nil, fmt.Errorf("parser error: %s", response.Error)
 	}
 
-	// remove dir prefixes
+	// check for errors and remove dir prefixes
 	for _, file := range response.Files {
-		// TODO(pcj): isn't there a stdlib function that does this?
+		if file.Error != "" {
+			return nil, fmt.Errorf("%s parse error: %s", file.Filename, file.Error)
+		}
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}
 
