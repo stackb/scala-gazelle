@@ -708,11 +708,6 @@ async function processJSONRequest(request) {
     return { files };
 }
 
-function processApplicationJSON(data) {
-    console.log(`processing request:\n${data}`);
-    return processJSONRequest(JSON.parse(data));
-}
-
 const requestHandler = (req, res) => {
     if (req.method != 'POST') {
         res.writeHead(400, { "Content-type": "application/json" });
@@ -720,14 +715,14 @@ const requestHandler = (req, res) => {
         return;
     }
 
-    const data = [];
+    let body = "";
     req.on('data', (chunk) => {
-        data.push(chunk);
+        body += chunk.toString();
     });
 
     req.on('end', async () => {
         try {
-            const result = await processApplicationJSON(data);
+            const result = await processJSONRequest(JSON.parse(body));
             res.writeHead(200, { "Content-type": "application/json" });;
             res.end(JSON.stringify(result));
         } catch (err) {
