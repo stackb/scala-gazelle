@@ -29,12 +29,14 @@ const (
 	scalaGazellePrintCacheKeyFlagName    = "scala_gazelle_print_cache_key"
 	cpuprofileFileFlagName               = "cpuprofile_file"
 	memprofileFileFlagName               = "memprofile_file"
+	coverageFlagName                     = "coverage"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
 	flags.BoolVar(&sl.debugProcessFlagValue, scalaGazelleDebugProcessFileFlagName, false, "if true, prints the process ID and waits for debugger to attach")
 	flags.BoolVar(&sl.printCacheKey, scalaGazellePrintCacheKeyFlagName, true, "if a cache key is set, print the version for auditing purposes")
+	flags.BoolVar(&sl.reportCoverageFlagValue, coverageFlagName, true, "report coverage statistics")
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")

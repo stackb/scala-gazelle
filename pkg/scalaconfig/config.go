@@ -406,7 +406,6 @@ func (c *Config) GetImplicitImports(lang, imp string) (deps []string) {
 
 // ConfiguredRules returns an ordered list of configured rules
 func (c *Config) ConfiguredRules() []*scalarule.Config {
-
 	names := make([]string, 0)
 	for name := range c.rules {
 		names = append(names, name)

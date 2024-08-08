@@ -45,6 +45,8 @@ type scalaPackage struct {
 	// resolveFuncs is a list of resolve work that needs to be deferred until
 	// all rules in a package have been processed.
 	resolveWork []func()
+	// used for tracking coverage
+	packageRuleCoverage *packageRuleCoverage
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -56,14 +58,15 @@ func newScalaPackage(
 	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
-		rel:              rel,
-		parser:           parser,
-		universe:         universe,
-		providerRegistry: providerRegistry,
-		file:             file,
-		cfg:              cfg,
-		rules:            make(map[string]*rule.Rule),
-		resolveWork:      make([]func(), 0),
+		rel:                 rel,
+		parser:              parser,
+		universe:            universe,
+		providerRegistry:    providerRegistry,
+		file:                file,
+		cfg:                 cfg,
+		rules:               make(map[string]*rule.Rule),
+		resolveWork:         make([]func(), 0),
+		packageRuleCoverage: &packageRuleCoverage{},
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -127,31 +130,35 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 		for _, r := range s.file.Rules {
 			fqn := fullyQualifiedLoadName(s.file.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
+			if _, ok := s.providerRegistry.LookupProvider(fqn); ok {
+				s.packageRuleCoverage.total += 1
+			}
 		}
 	}
 
 	configuredRules := s.cfg.ConfiguredRules()
 
-	for _, rc := range configuredRules {
+	for _, ruleConfig := range configuredRules {
 		// if enabled != rc.Enabled {
-		if !rc.Enabled {
+		if !ruleConfig.Enabled {
 			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
 			continue
 		}
-		rule := s.provideRule(rc)
+		rule := s.provideRule(ruleConfig)
 		if rule != nil {
 			rules = append(rules, rule)
 		}
-		existing := existingRulesByFQN[rc.Implementation]
+		existing := existingRulesByFQN[ruleConfig.Implementation]
 		if len(existing) > 0 {
 			for _, r := range existing {
-				rule := s.resolveRule(rc, r)
+				rule := s.resolveRule(ruleConfig, r)
 				if rule != nil {
+					s.packageRuleCoverage.managed += 1
 					rules = append(rules, rule)
 				}
 			}
 		}
-		delete(existingRulesByFQN, rc.Implementation)
+		delete(existingRulesByFQN, ruleConfig.Implementation)
 	}
 
 	return rules
@@ -260,4 +267,8 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 		rules = append(rules, r)
 	}
 	return rules
+}
+
+func (s *scalaPackage) ruleCoverage() *packageRuleCoverage {
+	return s.packageRuleCoverage
 }

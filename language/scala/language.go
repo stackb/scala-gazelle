@@ -52,6 +52,7 @@ type scalaLang struct {
 	// existing_scala_test_rule repeatable flag
 	existingScalaTestRulesFlagValue collections.StringSlice
 	cpuprofileFlagValue             string
+	reportCoverageFlagValue         bool
 	memprofileFlagValue             string
 	// cache is the loaded cache, if configured
 	cache scpb.Cache

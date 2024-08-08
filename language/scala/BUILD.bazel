@@ -11,6 +11,7 @@ go_library(
         "cache.go",
         "configure.go",
         "conflict_resolver_registry.go",
+        "coverage.go",
         "cross_resolve.go",
         "deps_cleaner_registry.go",
         "existing_scala_rule.go",
@@ -79,6 +80,7 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
+        "coverage_test.go",
         "existing_scala_rule_test.go",
         "flags_test.go",
         "golden_test.go",
