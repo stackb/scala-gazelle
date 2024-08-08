@@ -10,7 +10,7 @@ type packageRuleCoverage struct {
 }
 
 func (sl *scalaLang) reportCoverage(printf func(format string, v ...any)) {
-	if !sl.reportCoverageFlagValue {
+	if !sl.existingScalaRuleCoverageFlagValue {
 		return
 	}
 
