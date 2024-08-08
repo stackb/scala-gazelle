@@ -16,11 +16,9 @@ func (sl *scalaLang) reportCoverage(printf func(format string, v ...any)) {
 
 	var managed int
 	var total int
-
 	for _, pkg := range sl.packages {
-		coverage := pkg.ruleCoverage()
-		managed += coverage.managed
-		total += coverage.total
+		managed += pkg.ruleCoverage.managed
+		total += pkg.ruleCoverage.total
 	}
 
 	percent := float32(managed) / float32(total) * 100

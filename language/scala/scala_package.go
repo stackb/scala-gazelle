@@ -46,7 +46,7 @@ type scalaPackage struct {
 	// all rules in a package have been processed.
 	resolveWork []func()
 	// used for tracking coverage
-	packageRuleCoverage *packageRuleCoverage
+	ruleCoverage *packageRuleCoverage
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -58,15 +58,15 @@ func newScalaPackage(
 	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
-		rel:                 rel,
-		parser:              parser,
-		universe:            universe,
-		providerRegistry:    providerRegistry,
-		file:                file,
-		cfg:                 cfg,
-		rules:               make(map[string]*rule.Rule),
-		resolveWork:         make([]func(), 0),
-		packageRuleCoverage: &packageRuleCoverage{},
+		rel:              rel,
+		parser:           parser,
+		universe:         universe,
+		providerRegistry: providerRegistry,
+		file:             file,
+		cfg:              cfg,
+		rules:            make(map[string]*rule.Rule),
+		resolveWork:      make([]func(), 0),
+		ruleCoverage:     &packageRuleCoverage{},
 	}
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
@@ -131,7 +131,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 			fqn := fullyQualifiedLoadName(s.file.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
 			if _, ok := s.providerRegistry.LookupProvider(fqn); ok {
-				s.packageRuleCoverage.total += 1
+				s.ruleCoverage.total += 1
 			}
 		}
 	}
@@ -153,7 +153,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 			for _, r := range existing {
 				rule := s.resolveRule(ruleConfig, r)
 				if rule != nil {
-					s.packageRuleCoverage.managed += 1
+					s.ruleCoverage.managed += 1
 					rules = append(rules, rule)
 				}
 			}
@@ -267,8 +267,4 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 		rules = append(rules, r)
 	}
 	return rules
-}
-
-func (s *scalaPackage) ruleCoverage() *packageRuleCoverage {
-	return s.packageRuleCoverage
 }
