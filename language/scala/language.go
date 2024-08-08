@@ -50,9 +50,10 @@ type scalaLang struct {
 	existingScalaLibraryRulesFlagValue collections.StringSlice
 	// existingScalaLibraryRulesFlagValue is the value of the
 	// existing_scala_test_rule repeatable flag
-	existingScalaTestRulesFlagValue collections.StringSlice
-	cpuprofileFlagValue             string
-	memprofileFlagValue             string
+	existingScalaTestRulesFlagValue    collections.StringSlice
+	cpuprofileFlagValue                string
+	existingScalaRuleCoverageFlagValue bool
+	memprofileFlagValue                string
 	// cache is the loaded cache, if configured
 	cache scpb.Cache
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
