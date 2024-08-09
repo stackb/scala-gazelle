@@ -1,0 +1,19 @@
+{
+ "imports": [
+  "omnistac.common.pubsub.kafka.topics.LimitsPlacementLogIngress",
+  "omnistac.common.pubsub.kafka.topics.MamNotificationsHistoryLogIngress",
+  "omnistac.common.pubsub.kafka.topics.MicroswarmOrderbookLogIngress",
+  "omnistac.common.pubsub.kafka.topics.MicroswarmSessionInfoLogIngress",
+  "omnistac.common.pubsub.kafka.topics.OmniGumAccountlimitLogIngress",
+  "omnistac.common.pubsub.kafka.topics.OmniGumFirmlimitLogIngress",
+  "omnistac.common.pubsub.kafka.topics.OmniGumRelationshipLimitLogIngress",
+  "omnistac.common.pubsub.kafka.topics.OmniGumUserlimitLogIngress",
+  "omnistac.common.pubsub.kafka.topics.PlatformStateLogIngress",
+  "omnistac.common.pubsub.kafka.topics.PostswarmSwarmstatusLogIngress",
+  "omnistac.common.pubsub.kafka.topics.SauceRawMidLogIngress",
+  "omnistac.common.pubsub.kafka.topics.SpokUsageAccountLogIngress",
+  "omnistac.common.pubsub.kafka.topics.SpokUsageFirmLogIngress",
+  "omnistac.common.pubsub.kafka.topics.SpokUsageRelationshipLogIngress",
+  "omnistac.common.pubsub.kafka.topics.SpokUsageUserLogIngress"
+ ]
+}

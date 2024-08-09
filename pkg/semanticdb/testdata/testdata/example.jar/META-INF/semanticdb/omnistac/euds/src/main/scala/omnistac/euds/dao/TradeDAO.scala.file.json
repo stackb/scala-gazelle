@@ -1,0 +1,7 @@
+{
+ "imports": [
+  "omnistac.core.message.TradingProtocol.ANONYMOUS_PROTOCOL",
+  "omnistac.core.util.postgres.ExtendedSlickPostgresDriver",
+  "omnistac.core.util.serialization.SerializationUtils"
+ ]
+}

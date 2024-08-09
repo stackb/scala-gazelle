@@ -1,0 +1,6 @@
+{
+ "imports": [
+  "omnistac.core.message.ServiceGroup.EUDS",
+  "omnistac.euds.dao.EudsPostgresAccess"
+ ]
+}

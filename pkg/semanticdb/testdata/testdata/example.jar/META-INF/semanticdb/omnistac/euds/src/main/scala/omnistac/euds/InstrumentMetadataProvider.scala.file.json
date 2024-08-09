@@ -1,0 +1,5 @@
+{
+ "imports": [
+  "trumid.ats.secmaster.refdata.proto.InstrumentMetadataOptions.CREDIT_RATINGS"
+ ]
+}

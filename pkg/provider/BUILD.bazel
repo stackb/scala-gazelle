@@ -8,6 +8,7 @@ go_library(
         "java_provider.go",
         "maven_provider.go",
         "protobuf_provider.go",
+        "semanticdb_provider.go",
         "source_provider.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/provider",
@@ -20,9 +21,12 @@ go_library(
         "//pkg/parser",
         "//pkg/protobuf",
         "//pkg/resolver",
+        "//pkg/semanticdb",
+        "//scala/meta/semanticdb",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
+        "@com_github_google_go_cmp//cmp",
     ],
 )
 

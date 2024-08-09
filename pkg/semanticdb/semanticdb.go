@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
 
@@ -65,4 +66,10 @@ func ReadTextDocument(in io.ReadCloser) (*spb.TextDocuments, error) {
 		return nil, err
 	}
 	return &doc, nil
+}
+
+func ToFile(in *spb.TextDocument) (*sppb.File, error) {
+	visitor := NewTextDocumentVisitor()
+	visitor.VisitTextDocument(in)
+	return visitor.File(in.Uri), nil
 }

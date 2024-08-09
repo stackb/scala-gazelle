@@ -1,0 +1,6 @@
+{
+ "imports": [
+  "omnistac.microswarm.message.OrderPathSourceType.FIX",
+  "omnistac.microswarm.message.OrderProductType.ORDER_PRODUCT_PLACEMENT"
+ ]
+}

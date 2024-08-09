@@ -1,0 +1,5 @@
+{
+ "imports": [
+  "scala.None"
+ ]
+}

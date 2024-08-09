@@ -90,6 +90,8 @@ type scalaLang struct {
 	symbolResolver resolver.SymbolResolver
 	// sourceProvider is the sourceProvider implementation.
 	sourceProvider *provider.SourceProvider
+	// semanticProvider is the semanticProvider implementation.
+	semanticProvider *provider.SemanticdbProvider
 	// parser is the parser instance
 	parser *parser.MemoParser
 }
@@ -125,9 +127,11 @@ func NewLanguage() language.Language {
 			writeParseProgress(lang.progress, msg)
 		}
 	})
-	lang.parser = parser.NewMemoParser(lang.sourceProvider)
+	lang.semanticProvider = provider.NewSemanticdbProvider(lang.sourceProvider)
+	lang.parser = parser.NewMemoParser(lang.semanticProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
+	lang.AddSymbolProvider(lang.semanticProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())
 	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
