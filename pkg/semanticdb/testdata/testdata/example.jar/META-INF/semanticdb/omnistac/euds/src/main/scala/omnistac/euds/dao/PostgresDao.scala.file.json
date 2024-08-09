@@ -1,8 +1,0 @@
-{
- "imports": [
-  "omnistac.core.util.postgres.ExtendedSlickPostgresDriver",
-  "omnistac.euds.dao.PostgresDao",
-  "slick.jdbc.JdbcProfile",
-  "slick.jdbc.PostgresProfile"
- ]
-}

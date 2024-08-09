@@ -1,6 +1,0 @@
-{
- "imports": [
-  "slick.jdbc.JdbcProfile",
-  "slick.jdbc.PostgresProfile"
- ]
-}
