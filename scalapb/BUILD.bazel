@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "scalapb_proto",
+    srcs = ["scalapb.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["@com_google_protobuf//:descriptor_proto"],
+)
+
+proto_compiled_sources(
+    name = "scalapb_go_compiled_sources",
+    srcs = ["scalapb.pb.go"],
+    output_mappings = ["scalapb.pb.go=github.com/stackb/scala-gazelle/scalapb/scalapb.pb.go"],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "scalapb_proto",
+)
+
+go_library(
+    name = "scalapb",
+    srcs = ["scalapb.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/scalapb",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+        "@org_golang_google_protobuf//types/descriptorpb",
+    ],
+)
