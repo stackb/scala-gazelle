@@ -1,0 +1,23 @@
+@startuml sequence
+
+title scala-gazelle run sequence
+
+skinparam Shadowing false
+
+hide footbox
+
+participant Gazelle as G
+participant Scala as S
+participant Protobuf as P
+
+== Configuration ==
+
+== Generation ==
+
+== Resolve ==
+
+== Cleanup ==
+
+== Emit ==
+
+@enduml

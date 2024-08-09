@@ -1,0 +1,76 @@
+
+@startuml components
+
+skinparam Shadowing false
+
+frame "gazelle" {
+
+  frame "protobuf" as C {
+    [GlobalResolver] #f8c8a4
+  }
+
+  frame "scala" as S {
+    database Scope {
+
+    }
+    [MavenProvider] #ff6f61
+    [JavaProvider] #ff6f61
+    component SourceProvider {
+        [ScalaMetaParser] #f4a6a6
+        [Imports] #f4a6a6
+        [SemanticDBProvider] #fa8072
+    }
+    [ProtobufProvider] #f8c8a4
+    [Resolver]
+  }
+
+}
+
+frame "WORKSPACE Rules" {
+    [maven_install] #ff6f61
+    [maven_install.json] as MavenInstallJson #ff6f61
+}
+
+frame "BUILD Rules" {
+    [proto_scala_library] #f8c8a4
+    [java_index] #ff6f61
+    [scala_library] #f4a6a6
+
+    [jar_index.json] as JarIndexJson #ff6f61
+    [scala.jar] as ScalaJar #fa8072
+    [App.scala] as AppScala #f4a6a6
+}
+
+proto_scala_library --> GlobalResolver
+java_index --> JarIndexJson: "@maven//:com_google_json"
+JarIndexJson --> JavaProvider
+maven_install --> MavenInstallJson
+MavenInstallJson --> MavenProvider
+scala_library --> AppScala: srcs
+AppScala --> ScalaMetaParser
+ScalaMetaParser --> Imports
+SemanticDBProvider --> Imports
+scala_library --> ScalaJar: scalac
+ScalaJar --> SemanticDBProvider: META-INF/semanticdb
+
+MavenProvider --> Scope: com.google.gson
+ProtobufProvider --> Scope: myapp.proto.UserMessage
+JavaProvider --> Scope: java.lang.*, com.google.gson.GSON
+Imports --> Scope: myapp.util.Helper
+
+GlobalResolver --> ProtobufProvider
+Scope --> Resolver
+
+' Resolve --> Resolver
+' Export --> CSVFile: write
+' CSVFile ..> [Topic]: " notify file created"
+' [Topic] -> [Subscription]: notify
+' [Subscription] ..> EventGridHandler: " send file created event"
+' EventGridHandler --> [ProcessCSV]: " start"
+' [ProcessCSV] <.. CSVFile: "read"
+' [ProcessCSV] --> JSONFile: "\n write"
+' [FunctionApp] - [API]
+' [HttpClient] <..> [API]: " request/response"
+' [CostExportClient] ..> Export: " create"
+
+@enduml

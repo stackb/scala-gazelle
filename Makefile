@@ -41,6 +41,12 @@ semanticdb_protos:
 protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos
 	echo "Done."
 
+.PHONY: docs
+docs:
+	bazel build //docs/architecture:all
+	cp -f bazel-bin/docs/architecture/components.png docs/architecture
+	cp -f bazel-bin/docs/architecture/sequence.png docs/architecture
+
 .PHONY: tidy
 gazelle:
 	bazel run //:gazelle
