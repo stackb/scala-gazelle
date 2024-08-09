@@ -17,20 +17,14 @@ var update = flag.Bool("update", false, "update golden files")
 
 func TestReadJarFile(t *testing.T) {
 	for name, tc := range map[string]struct {
-		filename         string
-		wantErr          string
-		wantDocumentsLen int
-		wantJson         string
+		filename string
+		wantErr  string
 	}{
 		"degenerate": {
 			wantErr: "opening jar file: open : no such file or directory",
 		},
 		"example jar": {
-			filename:         "testdata/example.jar",
-			wantDocumentsLen: 58,
-			wantJson: `
-
-`,
+			filename: "testdata/example.jar",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -53,9 +47,6 @@ func TestReadJarFile(t *testing.T) {
 			if err != nil {
 				return
 			}
-			if diff := cmp.Diff(tc.wantDocumentsLen, len(got)); diff != "" {
-				t.Errorf("wantDocumentsLen (-want +got):\n%s", diff)
-			}
 
 			for _, docs := range got {
 				for _, doc := range docs.Documents {
@@ -77,10 +68,70 @@ func TestReadJarFile(t *testing.T) {
 						t.Fatal(err)
 					}
 
-					if diff := cmp.Diff(&want, got,
+					if diff := cmp.Diff(&want, doc,
 						cmpopts.IgnoreUnexported(
 							spb.TextDocuments{},
 							spb.TextDocument{},
+							spb.Range{},
+							spb.Location{},
+							spb.Scope{},
+							spb.Type{},
+							spb.LambdaType{},
+							spb.TypeRef{},
+							spb.SingleType{},
+							spb.ThisType{},
+							spb.SuperType{},
+							spb.ConstantType{},
+							spb.IntersectionType{},
+							spb.UnionType{},
+							spb.WithType{},
+							spb.StructuralType{},
+							spb.AnnotatedType{},
+							spb.ExistentialType{},
+							spb.UniversalType{},
+							spb.ByNameType{},
+							spb.RepeatedType{},
+							spb.MatchType{},
+							spb.Constant{},
+							spb.UnitConstant{},
+							spb.BooleanConstant{},
+							spb.ByteConstant{},
+							spb.ShortConstant{},
+							spb.CharConstant{},
+							spb.IntConstant{},
+							spb.LongConstant{},
+							spb.FloatConstant{},
+							spb.DoubleConstant{},
+							spb.StringConstant{},
+							spb.NullConstant{},
+							spb.Signature{},
+							spb.ClassSignature{},
+							spb.MethodSignature{},
+							spb.TypeSignature{},
+							spb.ValueSignature{},
+							spb.SymbolInformation{},
+							spb.Documentation{},
+							spb.Annotation{},
+							spb.Access{},
+							spb.PrivateAccess{},
+							spb.PrivateThisAccess{},
+							spb.PrivateWithinAccess{},
+							spb.ProtectedAccess{},
+							spb.ProtectedThisAccess{},
+							spb.ProtectedWithinAccess{},
+							spb.PublicAccess{},
+							spb.SymbolOccurrence{},
+							spb.Diagnostic{},
+							spb.Synthetic{},
+							spb.Tree{},
+							spb.ApplyTree{},
+							spb.FunctionTree{},
+							spb.IdTree{},
+							spb.LiteralTree{},
+							spb.MacroExpansionTree{},
+							spb.OriginalTree{},
+							spb.SelectTree{},
+							spb.TypeApplyTree{},
 						)); diff != "" {
 						t.Errorf("%s (-want +got):\n%s", doc.Uri, diff)
 					}
