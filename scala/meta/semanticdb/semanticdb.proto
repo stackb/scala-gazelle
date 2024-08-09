@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package scala.meta.internal.semanticdb;
+package scala.meta.semanticdb;
 
-option go_package = "github.com/stackb/scala-gazelle/scala/meta/internal/semanticdb;semanticdb";
+option go_package = "github.com/stackb/scala-gazelle/scala/meta/semanticdb;semanticdb";
 
 import "scalapb/scalapb.proto";
 

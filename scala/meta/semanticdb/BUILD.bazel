@@ -12,7 +12,7 @@ proto_library(
 proto_compiled_sources(
     name = "semanticdb_go_compiled_sources",
     srcs = ["semanticdb.pb.go"],
-    output_mappings = ["semanticdb.pb.go=github.com/stackb/scala-gazelle/scala/meta/internal/semanticdb/semanticdb.pb.go"],
+    output_mappings = ["semanticdb.pb.go=github.com/stackb/scala-gazelle/scala/meta/semanticdb/semanticdb.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "semanticdb_proto",
 )
@@ -20,8 +20,8 @@ proto_compiled_sources(
 go_library(
     name = "semanticdb",
     srcs = ["semanticdb.pb.go"],
-    importpath = "github.com/stackb/scala-gazelle/scala/meta/internal/semanticdb",
-    visibility = ["//scala/meta:__subpackages__"],
+    importpath = "github.com/stackb/scala-gazelle/scala/meta/semanticdb",
+    visibility = ["//visibility:public"],
     deps = [
         "//scalapb",
         "@org_golang_google_protobuf//reflect/protoreflect",

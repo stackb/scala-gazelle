@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "semanticdb",
+    srcs = ["semanticdb.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/semanticdb",
+    visibility = ["//visibility:public"],
+    deps = ["//scala/meta/semanticdb"],
+)
