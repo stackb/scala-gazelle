@@ -1,0 +1,4138 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/BestExSnapshotDAO.scala",
+ "md5": "A36205AF105E07706F08CB0A04A68C9D",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#price.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "price",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/package.Rational#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(originatorTraderId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "originatorTraderId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$4().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$4",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#equals().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "BestExInfoDbRecord",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractFunction7#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/Predef.String#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/core/entity/package.Rational#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Option#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "scala/Long#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Option#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "scala/Int#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Int#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Boolean#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Int#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/BestExInfoDbRecord.toString().",
+       "omnistac/euds/dao/BestExInfoDbRecord.apply().",
+       "omnistac/euds/dao/BestExInfoDbRecord.unapply().",
+       "omnistac/euds/dao/BestExInfoDbRecord.writeReplace()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#bestExTableQuery.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "bestExTableQuery",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/lifted/TableQuery#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(isManual)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "isManual",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(quantity)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "quantity",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Long#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/package.Rational#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#rank.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "rank",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/package.Rational#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getBestExSnapshotAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().(trade)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+        }
+       },
+       "symbol": "slick/jdbc/JdbcActionComponent#StreamingProfileAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "prefix": {
+              "typeRef": {
+               "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#"
+              }
+             },
+             "symbol": "slick/relational/RelationalTableComponent#Table#TableElementType#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "prefix": {
+           "typeRef": {
+            "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#"
+           }
+          },
+          "symbol": "slick/relational/RelationalTableComponent#Table#TableElementType#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect.Read#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorTraderId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "originatorTraderId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorAccountId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "originatorAccountId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(originatorTraderId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "originatorTraderId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "BestExSnapshots",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "prefix": {
+         "singleType": {
+          "prefix": {
+           "singleType": {
+            "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+           }
+          },
+          "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+         }
+        },
+        "symbol": "slick/relational/RelationalProfile#RelationalAPI#Table#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+          }
+         }
+        ]
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tag.",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#price().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#quantity().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorTraderId().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorAccountId().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#isManual().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#pk().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`*`()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(quantity)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "quantity",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Long#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.unapply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "unapply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord.unapply().(x$0)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Tuple7#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Predef.String#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/entity/package.Rational#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Option#",
+             "typeArguments": [
+              {
+               "typeRef": {
+                "symbol": "scala/Long#"
+               }
+              }
+             ]
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Option#",
+             "typeArguments": [
+              {
+               "typeRef": {
+                "symbol": "scala/Int#"
+               }
+              }
+             ]
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Boolean#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(originatorAccountId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "originatorAccountId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(tradeId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(price)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(quantity)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(originatorTraderId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(originatorAccountId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(isManual)",
+        "omnistac/euds/dao/BestExInfoDbRecord#copy().(rank)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#isManual().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "isManual",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Boolean#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productElement().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElement",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#productElement().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElement()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/package.Rational#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function7#toString().",
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$3().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$3",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$7().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$7",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Int#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(tradeId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "tradeId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`*`().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "*",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/lifted/ProvenShape#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "slick/lifted/AbstractTable#`*`()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tag.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "tag",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Tag#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(tradeId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tradeId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(isManual)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "isManual",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "rows",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "bestExInfo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/BestExInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "apply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(tradeId)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(price)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(quantity)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(originatorTraderId)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(originatorAccountId)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(isManual)",
+        "omnistac/euds/dao/BestExInfoDbRecord.apply().(rank)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function7#apply()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "BestExSnapshotDAO",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/number/RationalUtils#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/BestExSnapshotDAO#bestExTableQuery.",
+       "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().",
+       "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().",
+       "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#"
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tag",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/lifted/Tag#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "BestExInfoDbRecord$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "value",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 2048,
+   "displayName": "acc",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(originatorAccountId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "originatorAccountId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "inserts",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "slick/sql/FixedSqlAction#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "slick/dbio/NoStream#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "slick/dbio/Effect.Write#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eta$0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+        }
+       },
+       "symbol": "com/github/tminglei/slickpg/ExPostgresProfile#ExtPostgresInsertActionComposerImpl#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "prefix": {
+           "typeRef": {
+            "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#"
+           }
+          },
+          "symbol": "slick/relational/RelationalTableComponent#Table#TableElementType#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(originatorAccountId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "originatorAccountId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "rank",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Tuple2#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/BestExInfo#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(tradeId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "tradeId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$6().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$6",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Boolean#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#isManual.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "isManual",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.writeReplace().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "writeReplace",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/Object#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorAccountId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "originatorAccountId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#quantity.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "quantity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Long#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#pk().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "pk",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/lifted/PrimaryKey#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(rank)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "rank",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().(tag)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tag",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Tag#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#equals().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "equals",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#equals().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#equals().",
+    "java/lang/Object#equals().",
+    "scala/Any#equals()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#tradeId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "tradeId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productIterator().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productIterator",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/collection/Iterator#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Any#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productIterator()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$2().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$2",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "omnistac/core/entity/package.Rational#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(rank)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "rank",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.unapply().(x$0)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$0",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/BestExInfoDbRecord#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(quantity)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "quantity",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Long#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().(tag)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorTraderId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "originatorTraderId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Option#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#canEqual().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "canEqual",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#canEqual().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#canEqual()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#quantity().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "quantity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Option#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Long#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "insertBestExAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().(trade)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/collection/immutable/Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect.Write#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().(trade)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "trade",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy().(isManual)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "isManual",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#canEqual().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "rank",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productElementName().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElementName",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#productElementName().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElementName()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$5().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$5",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Int#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productArity().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productArity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productArity()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#toProto().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "toProto",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/BestExInfo#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "tradeId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(tradeId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(price)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(quantity)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(originatorTraderId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(originatorAccountId)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(isManual)",
+        "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(rank)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#copy$default$1().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$1",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Predef.String#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#price().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "price",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#Rep#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().(trade)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "trade",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productElement().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.apply().(rank)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "rank",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 128,
+   "displayName": "BestExInfoDbRecord",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/number/RationalUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/Product#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/package.Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/BestExInfoDbRecord#tradeId.",
+       "omnistac/euds/dao/BestExInfoDbRecord#price.",
+       "omnistac/euds/dao/BestExInfoDbRecord#quantity.",
+       "omnistac/euds/dao/BestExInfoDbRecord#originatorTraderId.",
+       "omnistac/euds/dao/BestExInfoDbRecord#originatorAccountId.",
+       "omnistac/euds/dao/BestExInfoDbRecord#isManual.",
+       "omnistac/euds/dao/BestExInfoDbRecord#rank.",
+       "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().",
+       "omnistac/euds/dao/BestExInfoDbRecord#toProto().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$1().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$2().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$3().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$4().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$5().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$6().",
+       "omnistac/euds/dao/BestExInfoDbRecord#copy$default$7().",
+       "omnistac/euds/dao/BestExInfoDbRecord#productPrefix().",
+       "omnistac/euds/dao/BestExInfoDbRecord#productArity().",
+       "omnistac/euds/dao/BestExInfoDbRecord#productElement().",
+       "omnistac/euds/dao/BestExInfoDbRecord#productIterator().",
+       "omnistac/euds/dao/BestExInfoDbRecord#canEqual().",
+       "omnistac/euds/dao/BestExInfoDbRecord#productElementName().",
+       "omnistac/euds/dao/BestExInfoDbRecord#hashCode().",
+       "omnistac/euds/dao/BestExInfoDbRecord#toString().",
+       "omnistac/euds/dao/BestExInfoDbRecord#equals()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#hashCode().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "hashCode",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#hashCode().",
+    "scala/Any#hashCode()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productElementName().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#productPrefix().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productPrefix",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productPrefix()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().(originatorTraderId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "originatorTraderId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 8,
+    "endLine": 33,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#quantity().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 29,
+    "endLine": 48,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 63,
+    "endLine": 5,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 31,
+    "endLine": 52,
+    "endCharacter": 34
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 25,
+    "endLine": 9,
+    "endCharacter": 35
+   },
+   "symbol": "slick/lifted/Aliases#TableQuery.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 8,
+    "endLine": 23,
+    "endCharacter": 15
+   },
+   "symbol": "local5",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 6,
+    "endLine": 13,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 20,
+    "endLine": 58,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#price.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 4,
+    "endLine": 51,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#quantity.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 16,
+    "endLine": 11,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 19,
+    "endLine": 15,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/message/BestExInfo#getPrice().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 8,
+    "endLine": 40,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#pk().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 26,
+    "endLine": 58,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalEntitySugar#toProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 40,
+    "endLine": 36,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 8,
+    "endLine": 12,
+    "endCharacter": 12
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 33,
+    "endLine": 42,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorTraderId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 58,
+    "endLine": 43,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.unapply().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 18,
+    "endLine": 23,
+    "endCharacter": 22
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 44,
+    "endLine": 23,
+    "endCharacter": 58
+   },
+   "symbol": "slick/jdbc/JdbcActionComponent#InsertActionComposerImpl#insertOrUpdate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 24,
+    "endLine": 30,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tag.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 33,
+    "endLine": 36,
+    "endCharacter": 39
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 32,
+    "endLine": 37,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 8,
+    "endLine": 36,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#isManual().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 4,
+    "endLine": 49,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#tradeId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 66,
+    "endLine": 58,
+    "endCharacter": 70
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 39,
+    "endLine": 43,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/util/number/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 16,
+    "endLine": 42,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#price().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 21,
+    "endLine": 31,
+    "endCharacter": 27
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 8,
+    "endLine": 35,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorAccountId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 35,
+    "endLine": 5,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 48,
+    "endLine": 28,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 4,
+    "endLine": 24,
+    "endCharacter": 8
+   },
+   "symbol": "slick/lifted/Aliases#DBIO.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 33,
+    "endLine": 35,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 6,
+    "endLine": 9,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#bestExTableQuery.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 17,
+    "endLine": 41,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`*`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 18,
+    "endLine": 24,
+    "endCharacter": 25
+   },
+   "symbol": "local5",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 76,
+    "endLine": 28,
+    "endCharacter": 82
+   },
+   "symbol": "slick/jdbc/JdbcActionComponent#JdbcStreamingQueryActionExtensionMethodsImpl#result().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 53,
+    "endLine": 42,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorAccountId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 98,
+    "endLine": 58,
+    "endCharacter": 106
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#isManual.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 29,
+    "endLine": 30,
+    "endCharacter": 32
+   },
+   "symbol": "slick/lifted/Aliases#Tag#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 13,
+    "endLine": 49,
+    "endCharacter": 19
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 47,
+    "endLine": 35,
+    "endCharacter": 50
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 74,
+    "endLine": 42,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#isManual().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 52,
+    "endLine": 33,
+    "endCharacter": 56
+   },
+   "symbol": "scala/Long#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 8,
+    "endLine": 32,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#price().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 4,
+    "endLine": 52,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorTraderId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 15,
+    "endLine": 32,
+    "endCharacter": 18
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 19,
+    "endLine": 19,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/message/BestExInfo#getIsManual().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 6,
+    "endLine": 57,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#toProto().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 48,
+    "endLine": 30,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 14,
+    "endLine": 54,
+    "endCharacter": 21
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 11,
+    "endLine": 50,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 16,
+    "endLine": 27,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 4,
+    "endLine": 28,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#bestExTableQuery.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 73,
+    "endLine": 12,
+    "endCharacter": 77
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 93,
+    "endLine": 58,
+    "endCharacter": 97
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 18,
+    "endLine": 33,
+    "endCharacter": 21
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 18,
+    "endLine": 36,
+    "endCharacter": 21
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 28,
+    "endLine": 2,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/entity/package.Rational.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 28,
+    "endLine": 2,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 28,
+    "endLine": 15,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 9,
+    "endLine": 43,
+    "endCharacter": 11
+   },
+   "symbol": "slick/lifted/ShapedValue#`\u003c\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 10,
+    "endLine": 55,
+    "endCharacter": 13
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 35,
+    "endLine": 11,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().(trade)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 23,
+    "endLine": 30,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 57,
+    "endLine": 28,
+    "endCharacter": 63
+   },
+   "symbol": "slick/lifted/Query#sortBy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 14,
+    "endLine": 14,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 84,
+    "endLine": 42,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 38,
+    "endLine": 28,
+    "endCharacter": 41
+   },
+   "symbol": "slick/lifted/ColumnExtensionMethods#`===`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 42,
+    "endLine": 28,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().(trade)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 22,
+    "endLine": 36,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 28,
+    "endLine": 34,
+    "endCharacter": 31
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 13,
+    "endLine": 40,
+    "endCharacter": 23
+   },
+   "symbol": "slick/lifted/AbstractTable#primaryKey().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 31,
+    "endLine": 31,
+    "endCharacter": 37
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 71,
+    "endLine": 58,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorAccountId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 4,
+    "endLine": 50,
+    "endCharacter": 9
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#price.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 24,
+    "endLine": 56,
+    "endCharacter": 24
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 38,
+    "endLine": 32,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 67,
+    "endLine": 30,
+    "endCharacter": 67
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/BestExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/BestExInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 19,
+    "endLine": 16,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/message/BestExInfo#quantity.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 4,
+    "endLine": 58,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/core/message/BestExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 30,
+    "endLine": 28,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 14,
+    "endLine": 51,
+    "endCharacter": 20
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 8,
+    "endLine": 34,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#originatorTraderId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 18
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 61,
+    "endLine": 34,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 45,
+    "endLine": 33,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 6,
+    "endLine": 8,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 8,
+    "endLine": 17,
+    "endCharacter": 18
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 33,
+    "endLine": 4,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 33,
+    "endLine": 4,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 23,
+    "endLine": 23,
+    "endCharacter": 26
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 38,
+    "endLine": 33,
+    "endCharacter": 44
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 36,
+    "endLine": 58,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#quantity.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 14,
+    "endLine": 37,
+    "endCharacter": 17
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 8,
+    "endLine": 14,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().(trade)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 31,
+    "endLine": 32,
+    "endCharacter": 37
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 8,
+    "endLine": 31,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 27,
+    "endLine": 23,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#bestExTableQuery.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 24,
+    "endLine": 52,
+    "endCharacter": 30
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 9,
+    "endLine": 24,
+    "endCharacter": 17
+   },
+   "symbol": "slick/dbio/DBIOAction.sequence().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 21,
+    "endLine": 28,
+    "endCharacter": 27
+   },
+   "symbol": "slick/lifted/Query#filter().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 25,
+    "endLine": 37,
+    "endCharacter": 31
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 39,
+    "endLine": 40,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 18,
+    "endLine": 37,
+    "endCharacter": 21
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 61,
+    "endLine": 12,
+    "endCharacter": 71
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 49,
+    "endLine": 12,
+    "endCharacter": 52
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 8,
+    "endLine": 20,
+    "endCharacter": 12
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 19,
+    "endLine": 32,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 39,
+    "endLine": 34,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 32,
+    "endLine": 34,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 19,
+    "endLine": 18,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/message/BestExInfo#getOriginatorAccountId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 66,
+    "endLine": 28,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 4,
+    "endLine": 54,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#isManual.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 22,
+    "endLine": 33,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 10,
+    "endLine": 56,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 21,
+    "endLine": 12,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#bestExSnapshot.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 40,
+    "endLine": 35,
+    "endCharacter": 46
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 42,
+    "endLine": 30,
+    "endCharacter": 47
+   },
+   "symbol": "slick/relational/RelationalProfile#RelationalAPI#Table#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 4,
+    "endLine": 55,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#rank.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 15,
+    "endLine": 12,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#insertBestExAction().(trade)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 8,
+    "endLine": 37,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 71,
+    "endLine": 28,
+    "endCharacter": 74
+   },
+   "symbol": "slick/lifted/ColumnOrdered#asc().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 21,
+    "endLine": 51,
+    "endCharacter": 25
+   },
+   "symbol": "scala/Long#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 17,
+    "endLine": 31,
+    "endCharacter": 20
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 8,
+    "endLine": 19,
+    "endCharacter": 18
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 11,
+    "endLine": 48,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 8,
+    "endLine": 16,
+    "endCharacter": 18
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 32,
+    "endLine": 8,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 29,
+    "endLine": 6,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/spok/message/TradeEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 29,
+    "endLine": 6,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 29,
+    "endLine": 33,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Long#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 48,
+    "endLine": 40,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#rank().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 15,
+    "endLine": 57,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/message/BestExInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 4,
+    "endLine": 53,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorAccountId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 8,
+    "endLine": 15,
+    "endCharacter": 18
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 54,
+    "endLine": 34,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 15,
+    "endLine": 58,
+    "endCharacter": 19
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 31,
+    "endLine": 43,
+    "endCharacter": 37
+   },
+   "symbol": "scala/Function7#tupled().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 47,
+    "endLine": 27,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 19,
+    "endLine": 17,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/message/BestExInfo#originatorTraderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 8,
+    "endLine": 30,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 38,
+    "endLine": 31,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 42,
+    "endLine": 11,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 73,
+    "endLine": 30,
+    "endCharacter": 77
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 36,
+    "endLine": 9,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 7,
+    "endLine": 42,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#tradeId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 36,
+    "endLine": 12,
+    "endCharacter": 48
+   },
+   "symbol": "scala/collection/IterableOps#zipWithIndex().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 12,
+    "endLine": 43,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 23,
+    "endLine": 42,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#quantity().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 46,
+    "endLine": 58,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/euds/dao/BestExInfoDbRecord#originatorTraderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 47,
+    "endLine": 34,
+    "endCharacter": 53
+   },
+   "symbol": "slick/relational/RelationalTableComponent#Table#column().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 68,
+    "endLine": 30,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#BestExSnapshots#`\u003cinit\u003e`().(tag)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 25,
+    "endLine": 53,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 29,
+    "endLine": 35,
+    "endCharacter": 32
+   },
+   "symbol": "slick/lifted/Aliases#Rep#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 40,
+    "endLine": 27,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/dao/BestExSnapshotDAO#getBestExSnapshotAction().(trade)",
+   "role": "DEFINITION"
+  }
+ ]
+}

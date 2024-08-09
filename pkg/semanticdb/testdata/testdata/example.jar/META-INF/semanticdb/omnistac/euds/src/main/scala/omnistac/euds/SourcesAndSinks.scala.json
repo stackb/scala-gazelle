@@ -1,0 +1,3961 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/SourcesAndSinks.scala",
+ "md5": "DDB21618C5F0C911B4CABE934615A02E",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#firmLimitSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "firmLimitSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local11"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local11",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#tcrsSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "tcrsSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#accountLimitUsageSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "accountLimitUsageSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local16"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local16",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#relationshipLimitSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "relationshipLimitSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local14"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local14",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#userLimitSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "userLimitSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local13"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local13",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFinraTraceSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsFinraTraceSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmSessionSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "swarmSessionSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local4"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local4",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsTradesStateSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsTradesStateSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsAttributedOrdersStateSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsAttributedOrdersStateSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#relationshipLimitUsageSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "relationshipLimitUsageSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local18"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local18",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#stpTradeStatusSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "stpTradeStatusSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local26"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local26",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#accountLimitSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "accountLimitSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local12"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local12",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#userLimitUsageSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "userLimitUsageSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local17"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local17",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsRequestsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsRequestsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local0"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local0",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmStatusSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "swarmStatusSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local19"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local19",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFillsStateSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsFillsStateSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#firmLimitUsageSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "firmLimitUsageSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local15"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local15",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#watchItemSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "watchItemSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local20"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local20",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "SourcesAndSinks",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/pubsub/AckPublisher#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/SourcesAndSinks#eudsRequestsSource().",
+       "omnistac/euds/SourcesAndSinks#eudsResponsesAndNotificationsSink().",
+       "omnistac/euds/SourcesAndSinks#swarmOrderSource().",
+       "omnistac/euds/SourcesAndSinks#platformStateSource().",
+       "omnistac/euds/SourcesAndSinks#swarmFillSource().",
+       "omnistac/euds/SourcesAndSinks#swarmSessionSource().",
+       "omnistac/euds/SourcesAndSinks#stagedIoiSource().",
+       "omnistac/euds/SourcesAndSinks#orderBookSource().",
+       "omnistac/euds/SourcesAndSinks#placementSource().",
+       "omnistac/euds/SourcesAndSinks#eudsOrdersStateSink().",
+       "omnistac/euds/SourcesAndSinks#eudsAttributedOrdersStateSink().",
+       "omnistac/euds/SourcesAndSinks#eudsFillsStateSink().",
+       "omnistac/euds/SourcesAndSinks#eudsTradesStateSink().",
+       "omnistac/euds/SourcesAndSinks#tcrsSink().",
+       "omnistac/euds/SourcesAndSinks#eudsStagedIoiSink().",
+       "omnistac/euds/SourcesAndSinks#eudsFinraTraceSink().",
+       "omnistac/euds/SourcesAndSinks#eudsFinraTraceFixSource().",
+       "omnistac/euds/SourcesAndSinks#fatFingerSource().",
+       "omnistac/euds/SourcesAndSinks#notificationSource().",
+       "omnistac/euds/SourcesAndSinks#firmLimitSource().",
+       "omnistac/euds/SourcesAndSinks#accountLimitSource().",
+       "omnistac/euds/SourcesAndSinks#userLimitSource().",
+       "omnistac/euds/SourcesAndSinks#relationshipLimitSource().",
+       "omnistac/euds/SourcesAndSinks#firmLimitUsageSource().",
+       "omnistac/euds/SourcesAndSinks#accountLimitUsageSource().",
+       "omnistac/euds/SourcesAndSinks#userLimitUsageSource().",
+       "omnistac/euds/SourcesAndSinks#relationshipLimitUsageSource().",
+       "omnistac/euds/SourcesAndSinks#swarmStatusSource().",
+       "omnistac/euds/SourcesAndSinks#watchItemSource().",
+       "omnistac/euds/SourcesAndSinks#finalTradeSource().",
+       "omnistac/euds/SourcesAndSinks#finraB2BTradeSource().",
+       "omnistac/euds/SourcesAndSinks#attributedTradesStateEventsSource().",
+       "omnistac/euds/SourcesAndSinks#castsEventsSource().",
+       "omnistac/euds/SourcesAndSinks#castMarketsEventsSource().",
+       "omnistac/euds/SourcesAndSinks#castMarketViewsEventsSource().",
+       "omnistac/euds/SourcesAndSinks#rejectedCastRequestsSource().",
+       "omnistac/euds/SourcesAndSinks#midSource().",
+       "omnistac/euds/SourcesAndSinks#stpTradeStatusSource()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#orderBookSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "orderBookSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local6"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local6",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsResponsesAndNotificationsSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsResponsesAndNotificationsSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#finraB2BTradeSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "finraB2BTradeSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local22"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local22",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFinraTraceFixSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsFinraTraceFixSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local8"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local8",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#notificationSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "notificationSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local10"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local10",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#placementSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "placementSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local7"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local7",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#platformStateSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "platformStateSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local2"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local2",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#castMarketsEventsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "castMarketsEventsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#castsEventsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "castsEventsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#finalTradeSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "finalTradeSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local21"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local21",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#midSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "midSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local25"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local25",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#stagedIoiSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "stagedIoiSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local5"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local5",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#fatFingerSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "fatFingerSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local9"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local9",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#castMarketViewsEventsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "castMarketViewsEventsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsStagedIoiSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsStagedIoiSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsOrdersStateSink().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "eudsOrdersStateSink",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#attributedTradesStateEventsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "attributedTradesStateEventsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local23"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local23",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmOrderSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "swarmOrderSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local1"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local1",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#rejectedCastRequestsSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "rejectedCastRequestsSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local24"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local24",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmFillSource().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "swarmFillSource",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "existentialType": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "local3"
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {
+        "hardlinks": [
+         {
+          "symbol": "local3",
+          "language": "SCALA",
+          "kind": "TYPE",
+          "properties": 4,
+          "displayName": "_",
+          "signature": {
+           "typeSignature": {
+            "typeParameters": {},
+            "lowerBound": {
+             "typeRef": {
+              "symbol": "scala/Nothing#"
+             }
+            },
+            "upperBound": {
+             "typeRef": {
+              "symbol": "scala/Any#"
+             }
+            }
+           }
+          },
+          "access": {
+           "publicAccess": {}
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 74,
+    "endLine": 53,
+    "endCharacter": 79
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 6,
+    "endLine": 49,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsTradesStateSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 26,
+    "endLine": 47,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 90,
+    "endLine": 27,
+    "endCharacter": 95
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 2,
+    "endLine": 8,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 34,
+    "endLine": 85,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmOrderSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 30,
+    "endLine": 67,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 81,
+    "endLine": 55,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 69,
+    "endLine": 49,
+    "endCharacter": 75
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 37,
+    "endLine": 45,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/pubsub/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 26,
+    "endLine": 35,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 6,
+    "endLine": 69,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#relationshipLimitSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 6,
+    "endLine": 25,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsRequestsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 32,
+    "endLine": 49,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 6,
+    "endLine": 61,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#notificationSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 6,
+    "endLine": 81,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#watchItemSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 6,
+    "endLine": 79,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmStatusSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 33,
+    "endLine": 65,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 6,
+    "endLine": 41,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#placementSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 65,
+    "endLine": 43,
+    "endCharacter": 68
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 81,
+    "endLine": 47,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 31,
+    "endLine": 91,
+    "endCharacter": 37
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 79,
+    "endLine": 45,
+    "endCharacter": 85
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 41,
+    "endLine": 27,
+    "endCharacter": 45
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 33,
+    "endLine": 61,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 38,
+    "endLine": 57,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 21,
+    "endLine": 51,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 43,
+    "endLine": 77,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 31,
+    "endLine": 73,
+    "endCharacter": 37
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 6,
+    "endLine": 35,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmSessionSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 2,
+    "endLine": 6,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 68,
+    "endLine": 47,
+    "endCharacter": 74
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 68,
+    "endLine": 55,
+    "endCharacter": 74
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 31,
+    "endLine": 55,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 30,
+    "endLine": 41,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 79,
+    "endLine": 27,
+    "endCharacter": 82
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 6,
+    "endLine": 45,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsAttributedOrdersStateSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 6,
+    "endLine": 83,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#finalTradeSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 25,
+    "endLine": 53,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 17,
+    "endLine": 97,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 35,
+    "endLine": 71,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 32,
+    "endLine": 89,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 6,
+    "endLine": 73,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#accountLimitUsageSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 18,
+    "endLine": 2,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 46,
+    "endLine": 27,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 31,
+    "endLine": 69,
+    "endCharacter": 37
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 6,
+    "endLine": 27,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsResponsesAndNotificationsSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 32,
+    "endLine": 43,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 28,
+    "endLine": 71,
+    "endCharacter": 34
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 69,
+    "endLine": 43,
+    "endCharacter": 75
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 31,
+    "endLine": 83,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 6,
+    "endLine": 97,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#midSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 35,
+    "endLine": 99,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 23,
+    "endLine": 63,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 75,
+    "endLine": 55,
+    "endCharacter": 80
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 30,
+    "endLine": 63,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 92,
+    "endLine": 45,
+    "endCharacter": 99
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/pubsub/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 2,
+    "endLine": 7,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 31,
+    "endLine": 57,
+    "endCharacter": 37
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 23,
+    "endLine": 41,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 41,
+    "endLine": 3,
+    "endCharacter": 45
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 41,
+    "endLine": 3,
+    "endCharacter": 45
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 23,
+    "endLine": 67,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 30,
+    "endLine": 23,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/pubsub/AckPublisher#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 83,
+    "endLine": 27,
+    "endCharacter": 89
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 27,
+    "endLine": 85,
+    "endCharacter": 33
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 6,
+    "endLine": 51,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#tcrsSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 96,
+    "endLine": 27,
+    "endCharacter": 103
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 30,
+    "endLine": 39,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 24,
+    "endLine": 3,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 33,
+    "endLine": 25,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 30,
+    "endLine": 81,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 47,
+    "endLine": 3,
+    "endCharacter": 53
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 47,
+    "endLine": 3,
+    "endCharacter": 53
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 74,
+    "endLine": 93,
+    "endCharacter": 81
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 23,
+    "endLine": 59,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 35,
+    "endLine": 93,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 34,
+    "endLine": 95,
+    "endCharacter": 40
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 24,
+    "endLine": 29,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 31,
+    "endLine": 29,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 32,
+    "endLine": 79,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 31,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 65,
+    "endLine": 51,
+    "endCharacter": 70
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 18,
+    "endLine": 3,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 24,
+    "endLine": 2,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/NotUsed.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 24,
+    "endLine": 2,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 28,
+    "endLine": 5,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 28,
+    "endLine": 4,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/pubsub/AckPublisher#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 42,
+    "endLine": 93,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 6,
+    "endLine": 99,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#stpTradeStatusSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 86,
+    "endLine": 45,
+    "endCharacter": 91
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 6,
+    "endLine": 63,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#firmLimitSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 16,
+    "endLine": 51,
+    "endCharacter": 20
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 63,
+    "endLine": 53,
+    "endCharacter": 66
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 6,
+    "endLine": 57,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFinraTraceFixSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 6,
+    "endLine": 95,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#rejectedCastRequestsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 24,
+    "endLine": 83,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 6,
+    "endLine": 59,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#fatFingerSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 82,
+    "endLine": 43,
+    "endCharacter": 89
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 75,
+    "endLine": 47,
+    "endCharacter": 80
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 26,
+    "endLine": 65,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 26,
+    "endLine": 61,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#orderBookSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 36,
+    "endLine": 77,
+    "endCharacter": 42
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 6,
+    "endLine": 31,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#platformStateSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 23,
+    "endLine": 33,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 6,
+    "endLine": 67,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#userLimitSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 23,
+    "endLine": 39,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 27,
+    "endLine": 31,
+    "endCharacter": 33
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 6,
+    "endLine": 23,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 31,
+    "endLine": 47,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 41,
+    "endLine": 87,
+    "endCharacter": 47
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 27,
+    "endLine": 43,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 6,
+    "endLine": 75,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#userLimitUsageSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 65,
+    "endLine": 49,
+    "endCharacter": 68
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 6,
+    "endLine": 71,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#firmLimitUsageSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 54,
+    "endLine": 51,
+    "endCharacter": 57
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 6,
+    "endLine": 87,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#attributedTradesStateEventsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 6,
+    "endLine": 89,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#castsEventsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 48,
+    "endLine": 87,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 30,
+    "endLine": 33,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 23,
+    "endLine": 37,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 70,
+    "endLine": 91,
+    "endCharacter": 77
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 6,
+    "endLine": 65,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#accountLimitSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 35,
+    "endLine": 75,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 28,
+    "endLine": 99,
+    "endCharacter": 34
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 11,
+    "endLine": 3,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 76,
+    "endLine": 43,
+    "endCharacter": 81
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 38,
+    "endLine": 73,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 6,
+    "endLine": 43,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsOrdersStateSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFillsStateSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 25,
+    "endLine": 89,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 41,
+    "endLine": 95,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 6,
+    "endLine": 53,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsStagedIoiSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 26,
+    "endLine": 25,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 25,
+    "endLine": 79,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 6,
+    "endLine": 91,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#castMarketsEventsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 34,
+    "endLine": 31,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 38,
+    "endLine": 91,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 27,
+    "endLine": 49,
+    "endCharacter": 31
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 38,
+    "endLine": 69,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 6,
+    "endLine": 33,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#swarmFillSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 64,
+    "endLine": 47,
+    "endCharacter": 67
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 58,
+    "endLine": 51,
+    "endCharacter": 64
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 6,
+    "endLine": 93,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#castMarketViewsEventsSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 33,
+    "endLine": 35,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 30,
+    "endLine": 37,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 28,
+    "endLine": 75,
+    "endCharacter": 34
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 6,
+    "endLine": 85,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#finraB2BTradeSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 30,
+    "endLine": 53,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 80,
+    "endLine": 53,
+    "endCharacter": 87
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 75,
+    "endLine": 45,
+    "endCharacter": 78
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 67,
+    "endLine": 53,
+    "endCharacter": 73
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 64,
+    "endLine": 55,
+    "endCharacter": 67
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 6,
+    "endLine": 77,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#relationshipLimitUsageSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 6,
+    "endLine": 37,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#stagedIoiSource().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 42,
+    "endLine": 45,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeProducerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 6,
+    "endLine": 55,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/SourcesAndSinks#eudsFinraTraceSink().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 23,
+    "endLine": 81,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 26,
+    "endLine": 55,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 24,
+    "endLine": 97,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.ResponseEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 64,
+    "endLine": 89,
+    "endCharacter": 71
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 76,
+    "endLine": 49,
+    "endCharacter": 81
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 82,
+    "endLine": 49,
+    "endCharacter": 89
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 30,
+    "endLine": 59,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/pubsub/KafkaMessages.RequestEnvelopeConsumerRecord#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 71,
+    "endLine": 51,
+    "endCharacter": 78
+   },
+   "symbol": "org/apache/pekko/NotUsed#",
+   "role": "REFERENCE"
+  }
+ ]
+}

@@ -1,0 +1,3437 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/NotificationDAO.scala",
+ "md5": "921E41A6CFE6CAFF70244010CA6545C1",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createBroadcastEventInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(notificationId)",
+        "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#queryResult2NotificationEventTransformer.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1056,
+   "displayName": "queryResult2NotificationEventTransformer",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/jdbc/GetResult#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterNotificationEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createHistoricalNotificationsQueryAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().(query)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/spok/message/BlotterNotificationEvent#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterNotificationEvent#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(notificationId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "notificationId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationTraceIdsForTodayAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createNotificationTraceIdsForTodayAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Predef.String#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ibe",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(traceId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "traceId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(pse)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "pse",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/mam/payload/message/PlatformStateChange#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(notificationId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "notificationId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#ec.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1060,
+   "displayName": "ec",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/ExecutionContext#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().(notificationId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "notificationId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(notificationId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "notificationId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(eventId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "eventId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createInstrumentBroadcastEventInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(notificationId)",
+        "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+        "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createPlatformStateEventInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(notificationId)",
+        "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(pse)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "NotificationDAO",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/data/DataUtil#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/LazyLogging#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/dao/ContextHelper#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/date/LocalDateUtils#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/NotificationDAO#ec.",
+       "omnistac/euds/dao/NotificationDAO#queryResult2NotificationEventTransformer.",
+       "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().",
+       "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().",
+       "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().",
+       "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().",
+       "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().",
+       "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().",
+       "omnistac/euds/dao/NotificationDAO#createNotificationTraceIdsForTodayAction()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "today",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/time/LocalDate#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeInstrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createNotificationQueryAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().(notificationId)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/spok/message/BlotterNotificationEvent#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterNotificationEvent#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/jdbc/PositionedResult#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().(query)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "query",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/NotificationsQueryRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ne",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/mam/message/Notification#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "be",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/mam/payload/message/BroadcastEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createNotificationInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(traceId)",
+        "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(eventId)",
+        "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 16,
+    "endLine": 45,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 81,
+    "endLine": 40,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 42,
+    "endLine": 46,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 52,
+    "endLine": 76,
+    "endCharacter": 59
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 53,
+    "endLine": 85,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(notificationId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 53,
+    "endLine": 7,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 53,
+    "endLine": 7,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 10,
+    "endLine": 108,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 17,
+    "endLine": 31,
+    "endCharacter": 30
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 12,
+    "endLine": 46,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 30,
+    "endLine": 60,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 13,
+    "endLine": 28,
+    "endCharacter": 14
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 62,
+    "endLine": 78,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#longDescription.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 33,
+    "endLine": 78,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 47,
+    "endLine": 45,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 105,
+    "endLine": 127,
+    "endCharacter": 114
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.SYSTEM_TZ.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 58,
+    "endLine": 127,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 14,
+    "endLine": 29,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 12,
+    "endLine": 13,
+    "endCharacter": 16
+   },
+   "symbol": "java/time/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 12,
+    "endLine": 44,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 19,
+    "endLine": 32,
+    "endCharacter": 35
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 30,
+    "endLine": 30,
+    "endCharacter": 31
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 54,
+    "endLine": 43,
+    "endCharacter": 63
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 56,
+    "endLine": 9,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/spok/message/NotificationsQueryRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 56,
+    "endLine": 9,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/spok/message/NotificationsQueryRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 14,
+    "endLine": 27,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 24,
+    "endLine": 14,
+    "endCharacter": 40
+   },
+   "symbol": "scala/concurrent/ExecutionContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 24,
+    "endLine": 14,
+    "endCharacter": 40
+   },
+   "symbol": "scala/concurrent/ExecutionContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 44
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 56,
+    "endLine": 128,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 18,
+    "endLine": 47,
+    "endCharacter": 21
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 11,
+    "endLine": 59,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 64,
+    "endLine": 40,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(eventId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 30,
+    "endLine": 9,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 30,
+    "endLine": 9,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 44,
+    "endLine": 53,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 33,
+    "endLine": 76,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 35,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/postgres/SlickUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 17,
+    "endLine": 32,
+    "endCharacter": 18
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 64,
+    "endLine": 44,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/mam/message/Notification#getSource().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/mam/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 46,
+    "endLine": 91,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().(notificationId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 13,
+    "endLine": 108,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 26,
+    "endLine": 3,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/data/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 77,
+    "endLine": 85,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(pse)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 80,
+    "endLine": 16,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 10,
+    "endLine": 47,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 43,
+    "endLine": 76,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 10,
+    "endLine": 76,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 6,
+    "endLine": 60,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 73,
+    "endLine": 40,
+    "endCharacter": 79
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 18,
+    "endLine": 18,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 23,
+    "endLine": 26,
+    "endCharacter": 36
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 14,
+    "endLine": 80,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#body.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 52,
+    "endLine": 78,
+    "endCharacter": 59
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 34,
+    "endLine": 107,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().(notificationId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 61,
+    "endLine": 16,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 79,
+    "endLine": 128,
+    "endCharacter": 88
+   },
+   "symbol": "java/time/LocalDate#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 55,
+    "endLine": 52,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(notificationId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 10,
+    "endLine": 74,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 17,
+    "endLine": 36,
+    "endCharacter": 33
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 82,
+    "endLine": 134,
+    "endCharacter": 88
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 32,
+    "endLine": 53,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 8,
+    "endLine": 133,
+    "endCharacter": 13
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 4,
+    "endLine": 52,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 65,
+    "endLine": 50,
+    "endCharacter": 71
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 52,
+    "endLine": 127,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 15,
+    "endLine": 46,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/mam/message/Notification#email.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 10,
+    "endLine": 77,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 16,
+    "endLine": 82,
+    "endCharacter": 19
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 23,
+    "endLine": 18,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(bbgId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 42,
+    "endLine": 44,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/mam/message/Notification#getStatus().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 16,
+    "endLine": 8,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 6,
+    "endLine": 16,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 62,
+    "endLine": 77,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#bbGlobalId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 32,
+    "endLine": 128,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 33,
+    "endLine": 77,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 77,
+    "endLine": 50,
+    "endCharacter": 91
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 43,
+    "endLine": 78,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 57,
+    "endLine": 22,
+    "endCharacter": 66
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 4,
+    "endLine": 42,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 71,
+    "endLine": 127,
+    "endCharacter": 80
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 129,
+    "startCharacter": 11,
+    "endLine": 129,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 67,
+    "endLine": 43,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/mam/message/Notification#getExpirationTs().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 31,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/data/DataUtil.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 31,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 37,
+    "endLine": 35,
+    "endCharacter": 51
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextDateOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 6,
+    "endLine": 27,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(cusip)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 22,
+    "endLine": 58,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 93,
+    "endLine": 128,
+    "endCharacter": 102
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 45,
+    "endLine": 46,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/mam/message/Notification#getDismissedBy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 16,
+    "endLine": 29,
+    "endCharacter": 32
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 6,
+    "endLine": 36,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(status)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 6,
+    "endLine": 59,
+    "endCharacter": 9
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 19,
+    "endLine": 20,
+    "endCharacter": 35
+   },
+   "symbol": "scala/concurrent/ExecutionContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 16,
+    "endLine": 91,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationQueryAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 33,
+    "endLine": 75,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 82,
+    "endLine": 85,
+    "endCharacter": 101
+   },
+   "symbol": "omnistac/mam/payload/message/PlatformStateChange#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 81,
+    "endLine": 127,
+    "endCharacter": 90
+   },
+   "symbol": "java/time/LocalDate#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 62,
+    "endLine": 76,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#isin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 43,
+    "endLine": 4,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 43,
+    "endLine": 4,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 95,
+    "endLine": 22,
+    "endCharacter": 104
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 14,
+    "endLine": 74,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#getInstrumentId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 6,
+    "endLine": 34,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(publishedTime)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 41,
+    "endLine": 43,
+    "endCharacter": 45
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 6,
+    "endLine": 30,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(instrumentDescription)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 89,
+    "endLine": 128,
+    "endCharacter": 92
+   },
+   "symbol": "java/time/LocalDate#now(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 69,
+    "endLine": 134,
+    "endCharacter": 74
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 13,
+    "endLine": 14,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 7,
+    "endLine": 14,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 69,
+    "endLine": 85,
+    "endCharacter": 75
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 16,
+    "endLine": 27,
+    "endCharacter": 32
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 29,
+    "endLine": 43,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 6,
+    "endLine": 28,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(isin)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 47,
+    "endLine": 53,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent#callback.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 18,
+    "endLine": 10,
+    "endCharacter": 27
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 18,
+    "endLine": 10,
+    "endCharacter": 27
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 10,
+    "endLine": 79,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 63,
+    "endLine": 43,
+    "endCharacter": 63
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 79,
+    "endLine": 134,
+    "endCharacter": 81
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 14,
+    "endLine": 33,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 22,
+    "endLine": 88,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/mam/payload/message/PlatformStateChange#getCurrentState().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 6,
+    "endLine": 26,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(instrumentId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 22,
+    "endLine": 34,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 30,
+    "endLine": 133,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 18,
+    "endLine": 54,
+    "endCharacter": 21
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 6,
+    "endLine": 35,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 71,
+    "endLine": 88,
+    "endCharacter": 74
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 6,
+    "endLine": 25,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(notificationId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 28,
+    "endLine": 46,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/mam/message/Notification#getTeamId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 35,
+    "endLine": 35,
+    "endCharacter": 36
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 32,
+    "endLine": 43,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/mam/message/Notification#getLevel().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 25,
+    "endLine": 25,
+    "endCharacter": 41
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 28,
+    "endLine": 18,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 38,
+    "endLine": 127,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/spok/message/NotificationsQueryRequest#tradeDateFrom.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 18,
+    "endLine": 53,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 4,
+    "endLine": 92,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 52,
+    "endLine": 44,
+    "endCharacter": 56
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 10,
+    "endLine": 78,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 15,
+    "endLine": 20,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#ec.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 6,
+    "endLine": 33,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(email)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 39,
+    "endLine": 44,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 4,
+    "endLine": 61,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 16,
+    "endLine": 50,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 26,
+    "endLine": 45,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 79,
+    "endLine": 7,
+    "endCharacter": 98
+   },
+   "symbol": "omnistac/mam/payload/message/PlatformStateChange.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 79,
+    "endLine": 7,
+    "endCharacter": 98
+   },
+   "symbol": "omnistac/mam/payload/message/PlatformStateChange#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 52,
+    "endLine": 34,
+    "endCharacter": 59
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 10,
+    "endLine": 81,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 43,
+    "endLine": 77,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 25,
+    "endLine": 45,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 66,
+    "endLine": 88,
+    "endCharacter": 69
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 30,
+    "endLine": 16,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 16,
+    "endLine": 133,
+    "endCharacter": 25
+   },
+   "symbol": "java/time/LocalDate#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 62,
+    "endLine": 91,
+    "endCharacter": 68
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 15,
+    "endLine": 36,
+    "endCharacter": 16
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 32,
+    "endLine": 4,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 91,
+    "endLine": 127,
+    "endCharacter": 94
+   },
+   "symbol": "java/time/LocalDate#now(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 13,
+    "endLine": 47,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 16,
+    "endLine": 12,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 16,
+    "endLine": 85,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 57,
+    "endLine": 111,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().(query)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 14,
+    "endLine": 79,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#header.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 20,
+    "endLine": 7,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/mam/payload/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 105,
+    "endLine": 22,
+    "endCharacter": 106
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 37,
+    "endLine": 18,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 10,
+    "endLine": 75,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 65,
+    "endLine": 18,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 13,
+    "endLine": 10,
+    "endCharacter": 17
+   },
+   "symbol": "slick/jdbc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 71,
+    "endLine": 42,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 74,
+    "endLine": 44,
+    "endCharacter": 78
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 35,
+    "endLine": 53,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent#body.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 4,
+    "endLine": 24,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 32,
+    "endLine": 127,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 103,
+    "endLine": 128,
+    "endCharacter": 112
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.SYSTEM_TZ.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 52,
+    "endLine": 75,
+    "endCharacter": 59
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 9,
+    "endLine": 18,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 63,
+    "endLine": 88,
+    "endCharacter": 65
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 132,
+    "startCharacter": 16,
+    "endLine": 132,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationTraceIdsForTodayAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 56,
+    "endLine": 40,
+    "endCharacter": 62
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 15,
+    "endLine": 43,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/mam/message/Notification#getUserId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 14,
+    "endLine": 81,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/mam/payload/message/InstrumentBroadcastEvent#callback.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 52,
+    "endLine": 77,
+    "endCharacter": 59
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 11,
+    "endLine": 82,
+    "endCharacter": 14
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 18,
+    "endLine": 88,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(pse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 15,
+    "endLine": 31,
+    "endCharacter": 16
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 28,
+    "endLine": 7,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/mam/payload/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 16,
+    "endLine": 9,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 21,
+    "endLine": 26,
+    "endCharacter": 22
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 16,
+    "endLine": 40,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 56,
+    "endLine": 87,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createPlatformStateEventInsertAction().(notificationId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 95,
+    "endLine": 127,
+    "endCharacter": 104
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 6,
+    "endLine": 58,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(notificationId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 4,
+    "endLine": 112,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 13,
+    "endLine": 54,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 50,
+    "endLine": 45,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/mam/message/Notification#getTtl().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 15,
+    "endLine": 28,
+    "endCharacter": 31
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 129,
+    "startCharacter": 14,
+    "endLine": 129,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 85,
+    "endLine": 40,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/mam/message/Notification#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 23,
+    "endLine": 25,
+    "endCharacter": 24
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 74,
+    "endLine": 42,
+    "endCharacter": 91
+   },
+   "symbol": "omnistac/mam/message/Notification#getNotificationId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 26,
+    "endLine": 133,
+    "endCharacter": 29
+   },
+   "symbol": "java/time/LocalDate#now(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 15,
+    "endLine": 22,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#queryResult2NotificationEventTransformer.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 37,
+    "endLine": 60,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 47,
+    "endLine": 40,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(traceId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 49,
+    "endLine": 50,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(notificationId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 8,
+    "endLine": 82,
+    "endCharacter": 10
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 21,
+    "endLine": 9,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 24,
+    "endLine": 34,
+    "endCharacter": 43
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 12,
+    "endLine": 43,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 12,
+    "endLine": 12,
+    "endCharacter": 15
+   },
+   "symbol": "java/sql/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 62,
+    "endLine": 75,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#cusip.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 6,
+    "endLine": 32,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(userName)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 50,
+    "endLine": 128,
+    "endCharacter": 53
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 43,
+    "endLine": 75,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 16,
+    "endLine": 33,
+    "endCharacter": 32
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 60,
+    "endLine": 42,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(eventId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 25,
+    "endLine": 46,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 12
+   },
+   "symbol": "slick/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 6,
+    "endLine": 31,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent.apply().(userId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 32,
+    "endLine": 30,
+    "endCharacter": 48
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 50,
+    "endLine": 42,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(traceId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 29,
+    "endLine": 45,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/mam/message/Notification#getTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/mam/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 16,
+    "endLine": 57,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 38,
+    "endLine": 88,
+    "endCharacter": 42
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 16,
+    "endLine": 111,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createHistoricalNotificationsQueryAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 4,
+    "endLine": 134,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 69,
+    "endLine": 128,
+    "endCharacter": 78
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 64,
+    "endLine": 111,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/spok/message/NotificationsQueryRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 7,
+    "endLine": 13,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 40,
+    "endLine": 133,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.SYSTEM_TZ.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 30,
+    "endLine": 44,
+    "endCharacter": 34
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 73,
+    "endLine": 50,
+    "endCharacter": 75
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createBroadcastEventInsertAction().(be)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 18,
+    "endLine": 35,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#jDateToProtoDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 38,
+    "endLine": 128,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/spok/message/NotificationsQueryRequest#tradeDateTo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 10,
+    "endLine": 80,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(ibe)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 9,
+    "endLine": 73,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createInstrumentBroadcastEventInsertAction().(notificationId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 28,
+    "endLine": 6,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/mam/message/Notification.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 28,
+    "endLine": 6,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/mam/message/Notification#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 44,
+    "endLine": 16,
+    "endCharacter": 55
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 21,
+    "endLine": 53,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent#header.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 64,
+    "endLine": 43,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 15,
+    "endLine": 44,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/mam/message/Notification#getPayloadType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 26,
+    "endLine": 8,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 10,
+    "endLine": 54,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 20,
+    "endLine": 6,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/mam/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 61,
+    "endLine": 44,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/euds/dao/NotificationDAO#createNotificationInsertAction().(ne)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 67,
+    "endLine": 22,
+    "endCharacter": 91
+   },
+   "symbol": "omnistac/spok/message/BlotterNotificationEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 4,
+    "endLine": 87,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 37,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 37,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/mam/payload/message/BroadcastEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 46,
+    "endLine": 34,
+    "endCharacter": 49
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 7,
+    "endLine": 12,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 34,
+    "endLine": 8,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 34,
+    "endLine": 8,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  }
+ ]
+}

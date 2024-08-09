@@ -1,0 +1,3068 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/AttributedActionsResponseHandler.scala",
+ "md5": "C4DE465F254584CBB83A940A1EDDA247",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleSnapshot().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleSnapshot",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/PartialFunction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/AnyRef#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "scala/package.Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandler#handleSnapshot()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(userId)",
+        "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(contextProvider)",
+        "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+        "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(replyTo)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "AttributedActionsResponseHandlerFactory",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/AttributedActionsResponseHandlerFactory.create()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "create",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(request)",
+        "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(contextProvider)",
+        "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(replyTo)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/access/TopicResponseHandler#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandlerFactory#create()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().(response)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "response",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#contextProvider.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "contextProvider",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/AttributedActionsResponseHandlerLogic#contextProvider."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().(response)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "response",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local34"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local33"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local34"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local37"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "originatingRequest",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "trumidUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/TrumidUserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getBlotterAttributedActionEventOption",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().(response)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local6",
+       "local5"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local3",
+        "local4"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local5"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local13"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/package.Seq#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "scala/AnyRef#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/package.Seq#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "omnistac/core/message/ResponseEnvelope#"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local1",
+       "local2"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "AttributedActionsResponseHandlerLogic",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/AttributedActionsResponseHandlerLogic#userId.",
+       "omnistac/euds/AttributedActionsResponseHandlerLogic#contextProvider.",
+       "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "snapshot",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local39",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "session",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ValidatedUserSessionKey#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "attributedActions",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#userId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "userId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/AttributedActionsResponseHandlerLogic#userId."
+   ]
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local6"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local6"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local5"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local22"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local21"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleResponse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/AttributedActionsResponseHandler#handleResponse().(response)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandler#handleResponse()."
+   ]
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "attributedAction",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#originatingRequest.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "originatingRequest",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(replyTo)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "replyTo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#replyTo.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "replyTo",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local34",
+       "local33"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local31",
+        "local32"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local33"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "omnistac/core/entity/UserContext#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local29",
+       "local30"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "attributedAction",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "batch",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(userId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "userId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#userId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1028,
+   "displayName": "userId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/AnyRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "attributedActionEvent",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#contextProvider.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1028,
+   "displayName": "contextProvider",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "AttributedActionsResponseHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/biz/access/TopicResponseHandler#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/AttributedActionsResponseHandler#userId.",
+       "omnistac/euds/AttributedActionsResponseHandler#contextProvider.",
+       "omnistac/euds/AttributedActionsResponseHandler#originatingRequest.",
+       "omnistac/euds/AttributedActionsResponseHandler#replyTo.",
+       "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/AttributedActionsResponseHandler#handleSnapshot().",
+       "omnistac/euds/AttributedActionsResponseHandler#handleResponse()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(replyTo)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "replyTo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local22"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local25"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local22",
+       "local21"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local19",
+        "local20"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local21"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "omnistac/core/message/ResponseEnvelope#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local17",
+       "local18"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 114,
+    "endLine": 47,
+    "endCharacter": 114
+   },
+   "symbol": "local28",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 14,
+    "endLine": 39,
+    "endCharacter": 17
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 74,
+    "endLine": 6,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 74,
+    "endLine": 6,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 8,
+    "endLine": 10,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#userId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 31,
+    "endLine": 14,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 6,
+    "endLine": 37,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 12,
+    "endLine": 61,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 16,
+    "endLine": 42,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 72,
+    "endLine": 47,
+    "endCharacter": 74
+   },
+   "symbol": "scala/Boolean#`==`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 31,
+    "endLine": 17,
+    "endCharacter": 46
+   },
+   "symbol": "scala/PartialFunction#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 78,
+    "endLine": 61,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 25,
+    "endLine": 3,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/biz/provider/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 16,
+    "endLine": 10,
+    "endCharacter": 19
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 82,
+    "endLine": 25,
+    "endCharacter": 87
+   },
+   "symbol": "local11",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 53,
+    "endLine": 61,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/message/ValidatedUserSessionKey#userId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 8,
+    "endLine": 11,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#contextProvider.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#contextProvider.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 85,
+    "endLine": 17,
+    "endCharacter": 85
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 7,
+    "endLine": 26,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/IterableOnceOps#toSeq().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 60,
+    "endLine": 17,
+    "endCharacter": 63
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 4,
+    "endLine": 31,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 47,
+    "endLine": 6,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/core/message/RequestedValidatedSession.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 83,
+    "endLine": 53,
+    "endCharacter": 83
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 14,
+    "endLine": 19,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 9,
+    "endLine": 15,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 87,
+    "endLine": 45,
+    "endCharacter": 103
+   },
+   "symbol": "local23",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 15,
+    "endLine": 55,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 106,
+    "endLine": 47,
+    "endCharacter": 113
+   },
+   "symbol": "scala/Option#collect().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 6,
+    "endLine": 57,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(replyTo)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 11,
+    "endLine": 4,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 7,
+    "endLine": 25,
+    "endCharacter": 10
+   },
+   "symbol": "scala/collection/Iterator#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 47,
+    "endLine": 17,
+    "endCharacter": 50
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 11,
+    "endLine": 60,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/RequestedValidatedSession.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 25,
+    "endLine": 11,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 44,
+    "endLine": 44,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 30,
+    "endLine": 4,
+    "endCharacter": 38
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 30,
+    "endLine": 4,
+    "endCharacter": 38
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 30,
+    "endLine": 14,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 54,
+    "endLine": 47,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/core/entity/UserContext#user.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 51,
+    "endLine": 14,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().(replyTo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 36,
+    "endLine": 45,
+    "endCharacter": 52
+   },
+   "symbol": "local23",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 61,
+    "endLine": 61,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(contextProvider)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 7,
+    "endLine": 53,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 4,
+    "endLine": 23,
+    "endCharacter": 21
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 92,
+    "endLine": 17,
+    "endCharacter": 100
+   },
+   "symbol": "local7",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 84,
+    "endLine": 48,
+    "endCharacter": 100
+   },
+   "symbol": "local27",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 49,
+    "endLine": 44,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 26,
+    "endLine": 24,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/EudsConfig.attributedBatchSize.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 45,
+    "endLine": 61,
+    "endCharacter": 52
+   },
+   "symbol": "local39",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 5,
+    "endLine": 45,
+    "endCharacter": 12
+   },
+   "symbol": "scala/Option#collect().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 42,
+    "endLine": 31,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 34,
+    "endLine": 20,
+    "endCharacter": 38
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 15,
+    "endLine": 57,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 57,
+    "endLine": 48,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#canViewAttributedTrades().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 6,
+    "endLine": 56,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(contextProvider)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 20,
+    "endLine": 25,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#originatingRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 52,
+    "endLine": 25,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 4,
+    "endLine": 12,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#originatingRequest.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 46,
+    "endLine": 48,
+    "endCharacter": 56
+   },
+   "symbol": "local35",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 6,
+    "endLine": 9,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 15,
+    "endLine": 46,
+    "endCharacter": 31
+   },
+   "symbol": "local27",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 23,
+    "endLine": 56,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 23,
+    "endLine": 40,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 10,
+    "endLine": 14,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 92,
+    "endLine": 47,
+    "endCharacter": 104
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#getIsForTest().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 55,
+    "endLine": 53,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 6,
+    "endLine": 43,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().(response)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 37,
+    "endLine": 60,
+    "endCharacter": 44
+   },
+   "symbol": "local39",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 62,
+    "endLine": 32,
+    "endCharacter": 83
+   },
+   "symbol": "local15",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 56,
+    "endLine": 31,
+    "endCharacter": 77
+   },
+   "symbol": "local15",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 59,
+    "endLine": 30,
+    "endCharacter": 65
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 24,
+    "endLine": 4,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 38,
+    "endLine": 9,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 34,
+    "endLine": 3,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 54,
+    "endLine": 45,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 58,
+    "endLine": 32,
+    "endCharacter": 61
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 13,
+    "endLine": 48,
+    "endCharacter": 23
+   },
+   "symbol": "local35",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 55,
+    "endLine": 2,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 72,
+    "endLine": 19,
+    "endCharacter": 73
+   },
+   "symbol": "local9",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 13,
+    "endLine": 45,
+    "endCharacter": 13
+   },
+   "symbol": "local16",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 87,
+    "endLine": 61,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(replyTo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 29,
+    "endLine": 5,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 29,
+    "endLine": 5,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 40,
+    "endLine": 30,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 39,
+    "endLine": 25,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#makeResponse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 15,
+    "endLine": 54,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 15,
+    "endLine": 30,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 16,
+    "endLine": 43,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 4,
+    "endLine": 59,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 18,
+    "endLine": 4,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 37,
+    "endLine": 47,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#userId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 75,
+    "endLine": 47,
+    "endCharacter": 91
+   },
+   "symbol": "local27",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 25,
+    "endLine": 48,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 30,
+    "endLine": 30,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().(response)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 7,
+    "endLine": 24,
+    "endCharacter": 14
+   },
+   "symbol": "scala/collection/IterableOps#grouped().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 25,
+    "endLine": 2,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/core/biz/access/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 34,
+    "endLine": 19,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#getBlotterAttributedActionEventOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 5,
+    "endLine": 46,
+    "endCharacter": 12
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 52,
+    "endLine": 31,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 37,
+    "endLine": 18,
+    "endCharacter": 44
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 44,
+    "endLine": 61,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 15,
+    "endLine": 17,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleSnapshot().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 5,
+    "endLine": 58,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 28,
+    "endLine": 32,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 60,
+    "endLine": 7,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 60,
+    "endLine": 7,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvents#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 4,
+    "endLine": 13,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#replyTo.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 13,
+    "endLine": 13,
+    "endCharacter": 21
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 24,
+    "endLine": 12,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 15,
+    "endLine": 32,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#makeResponse(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 59,
+    "endLine": 47,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/gum/message/User#getIsForTest().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 11,
+    "endLine": 19,
+    "endCharacter": 12
+   },
+   "symbol": "local9",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 92,
+    "endLine": 6,
+    "endCharacter": 107
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 45,
+    "endLine": 47,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#filter().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 64,
+    "endLine": 17,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 22,
+    "endLine": 47,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#getUserContext().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 102,
+    "endLine": 17,
+    "endCharacter": 105
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#userId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 30,
+    "endLine": 7,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 30,
+    "endLine": 7,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 30,
+    "endLine": 6,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 30,
+    "endLine": 6,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 6,
+    "endLine": 55,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerFactory.create().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 106,
+    "endLine": 17,
+    "endCharacter": 112
+   },
+   "symbol": "scala/AnyRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 66,
+    "endLine": 30,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 11,
+    "endLine": 25,
+    "endCharacter": 16
+   },
+   "symbol": "local11",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 51,
+    "endLine": 17,
+    "endCharacter": 57
+   },
+   "symbol": "scala/AnyRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 20,
+    "endLine": 45,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 12,
+    "endLine": 44,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/spok/message/BlotterAttributedActionEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 6,
+    "endLine": 40,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandlerLogic#contextProvider.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 5,
+    "endLine": 44,
+    "endCharacter": 11
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 25
+   },
+   "symbol": "local8",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 6,
+    "endLine": 32,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/AttributedActionsResponseHandler#handleResponse().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 28,
+    "endLine": 18,
+    "endCharacter": 36
+   },
+   "symbol": "local7",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 15,
+    "endLine": 24,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/EudsConfig.",
+   "role": "REFERENCE"
+  }
+ ]
+}

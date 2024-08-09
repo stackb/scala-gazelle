@@ -1,0 +1,6010 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/BackToBackTradeDAO.scala",
+ "md5": "BA281145E8FFC377218056B9712B0B7B",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "query",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createQueryBackToBackTradesByTradeIdsAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().(tradeIds)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "t",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BackToBackTradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "reportResponse",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/FinraTraceReportResponse#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createQueryBackToBackTradesByTradeDateForRepublish",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createBackToBackTradeInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+        "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "typeRef": {
+         "symbol": "slick/sql/SqlStreamingAction#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/package.Vector#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "scala/Int#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "slick/dbio/Effect#"
+           }
+          }
+         ]
+        }
+       },
+       "symbol": "slick/sql/SqlAction#ResultAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$30",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/TradingProtocol#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$29",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Some#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$28",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$27",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "instrumentDescription",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "isAuthorized",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$31",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(user)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "user",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "key",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "key",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#finraReportingAssetClass.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "finraReportingAssetClass",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/FinraReportingAssetClass#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/jdbc/PositionedResult#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeInstrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/BuySell#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "BackToBackTradeDAO",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/data/DataUtil#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/date/LocalDateUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/LazyLogging#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/dao/ContextHelper#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/BackToBackTradeDAO#finraReportingAssetClass.",
+       "omnistac/euds/dao/BackToBackTradeDAO#queryResultToBackToBackTradeEventTransformer.",
+       "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().",
+       "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().",
+       "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().",
+       "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().",
+       "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "tags",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/DateYMD#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "key",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createUpdateBackToBackTradeAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "typeRef": {
+         "symbol": "slick/sql/SqlStreamingAction#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/package.Vector#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "scala/Int#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "slick/dbio/Effect#"
+           }
+          }
+         ]
+        }
+       },
+       "symbol": "slick/sql/SqlAction#ResultAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$23",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$22",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$21",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/DateYMD#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tradeDate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/DateYMD#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createBackToBackTradeQueryAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(user)",
+        "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$26",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$25",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/FinraReportingAssetClass#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$24",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#queryResultToBackToBackTradeEventTransformer.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1056,
+   "displayName": "queryResultToBackToBackTradeEventTransformer",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/jdbc/GetResult#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/DateYMD#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().(tradeIds)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tradeIds",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 92,
+    "endLine": 120,
+    "endCharacter": 95
+   },
+   "symbol": "java/time/LocalDate#now(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 2,
+    "endLine": 12,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 2,
+    "endLine": 12,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 67,
+    "endLine": 165,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#finraTraceId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 55,
+    "endLine": 112,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/core/entity/UserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 13,
+    "endLine": 45,
+    "endCharacter": 14
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 14,
+    "endLine": 168,
+    "endCharacter": 17
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 68,
+    "endLine": 112,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 24,
+    "endLine": 39,
+    "endCharacter": 38
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextLongOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 15,
+    "endLine": 45,
+    "endCharacter": 31
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 11,
+    "endLine": 109,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 15,
+    "endLine": 48,
+    "endCharacter": 18
+   },
+   "symbol": "slick/jdbc/PositionedResult#`\u003c\u003c?`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 15,
+    "endLine": 35,
+    "endCharacter": 16
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 21,
+    "endLine": 8,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 62,
+    "endLine": 55,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#finraReportingAssetClass.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 50,
+    "endLine": 7,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/util/data/TradingProtocolMap.tradingProtocolMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 16,
+    "endLine": 46,
+    "endCharacter": 32
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 35,
+    "endLine": 55,
+    "endCharacter": 51
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 11,
+    "endLine": 68,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 18,
+    "endLine": 19,
+    "endCharacter": 27
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 18,
+    "endLine": 19,
+    "endCharacter": 27
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 30,
+    "endLine": 43,
+    "endCharacter": 31
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 6,
+    "endLine": 41,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(reportingPartyId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 141,
+    "startCharacter": 32,
+    "endLine": 141,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 72,
+    "endLine": 60,
+    "endCharacter": 75
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 25,
+    "endLine": 51,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#dbDateToCoreDateYMDProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 8,
+    "endLine": 138,
+    "endCharacter": 12
+   },
+   "symbol": "local38",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 74,
+    "endLine": 65,
+    "endCharacter": 80
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 7,
+    "endLine": 19,
+    "endCharacter": 12
+   },
+   "symbol": "slick/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 57,
+    "endLine": 158,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 6,
+    "endLine": 35,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(bondId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 8,
+    "endLine": 114,
+    "endCharacter": 13
+   },
+   "symbol": "local35",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 75,
+    "endLine": 159,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 67,
+    "endLine": 163,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#isin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 87,
+    "endLine": 55,
+    "endCharacter": 90
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 126,
+    "startCharacter": 30,
+    "endLine": 126,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#tag.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 4,
+    "endLine": 72,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 37,
+    "endLine": 161,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 171,
+    "startCharacter": 4,
+    "endLine": 171,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 6,
+    "endLine": 43,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(instrumentDescription)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 71,
+    "endLine": 138,
+    "endCharacter": 78
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 16,
+    "endLine": 156,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#getIsForTest().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 6,
+    "endLine": 40,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(vwap)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 71,
+    "endLine": 29,
+    "endCharacter": 98
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 16,
+    "endLine": 114,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 57,
+    "endLine": 162,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 106,
+    "startCharacter": 58,
+    "endLine": 106,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/message/DateYMD#getYear().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 47,
+    "endLine": 162,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 18,
+    "endLine": 18,
+    "endCharacter": 31
+   },
+   "symbol": "slick/dbio/SuccessAction.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 18,
+    "endLine": 18,
+    "endCharacter": 31
+   },
+   "symbol": "slick/dbio/SuccessAction#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 38,
+    "endLine": 116,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#instrumentDescription.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 33,
+    "endLine": 176,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 67,
+    "endLine": 71,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 61,
+    "endLine": 115,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 13,
+    "endLine": 18,
+    "endCharacter": 17
+   },
+   "symbol": "slick/dbio/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 22,
+    "endLine": 39,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 23,
+    "endLine": 38,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#dbDateToCoreDateYMDProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 60,
+    "endLine": 138,
+    "endCharacter": 63
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 45,
+    "endLine": 32,
+    "endCharacter": 59
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextDateOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 16,
+    "endLine": 135,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 22,
+    "endLine": 42,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 6,
+    "endLine": 56,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(finraReportTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 49,
+    "endLine": 112,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(user)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 131,
+    "startCharacter": 20,
+    "endLine": 131,
+    "endCharacter": 24
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 14,
+    "endLine": 163,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 80,
+    "endLine": 27,
+    "endCharacter": 87
+   },
+   "symbol": "omnistac/core/util/data/EnumMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 37,
+    "endLine": 158,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 28,
+    "endLine": 146,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 31,
+    "endLine": 121,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 16,
+    "endLine": 34,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 14,
+    "endLine": 165,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 6,
+    "endLine": 48,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(tags)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 55,
+    "endLine": 121,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 6,
+    "endLine": 119,
+    "endCharacter": 9
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 59,
+    "endLine": 56,
+    "endCharacter": 66
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 53,
+    "endLine": 56,
+    "endCharacter": 56
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 85,
+    "endLine": 159,
+    "endCharacter": 91
+   },
+   "symbol": "omnistac/secmaster/message/BondTicker#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 32,
+    "endLine": 48,
+    "endCharacter": 41
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 137,
+    "startCharacter": 6,
+    "endLine": 137,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 6,
+    "endLine": 54,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(rejectReasonText)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 6,
+    "endLine": 50,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(finraId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 75,
+    "endLine": 112,
+    "endCharacter": 103
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 154,
+    "startCharacter": 27,
+    "endLine": 154,
+    "endCharacter": 27
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 57,
+    "endLine": 164,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 141,
+    "startCharacter": 16,
+    "endLine": 141,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#tradeDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 22,
+    "endLine": 49,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 4,
+    "endLine": 139,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 38,
+    "endLine": 157,
+    "endCharacter": 42
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 129,
+    "startCharacter": 14,
+    "endLine": 129,
+    "endCharacter": 16
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 6,
+    "endLine": 60,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(tradingProtocol)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 44,
+    "endLine": 178,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 34,
+    "endLine": 172,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 16,
+    "endLine": 157,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#tradingProtocol.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 6,
+    "endLine": 46,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(bbgId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 155,
+    "startCharacter": 14,
+    "endLine": 155,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 65,
+    "endLine": 173,
+    "endCharacter": 68
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 14,
+    "endLine": 157,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 59,
+    "endLine": 120,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 7,
+    "endLine": 21,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 44,
+    "endLine": 151,
+    "endCharacter": 48
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 37,
+    "endLine": 147,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 6,
+    "endLine": 34,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(swarmId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 14,
+    "endLine": 27,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#finraReportingAssetClass.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 57,
+    "endLine": 159,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 31,
+    "endLine": 147,
+    "endCharacter": 34
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 48,
+    "endLine": 115,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Any#isInstanceOf().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 6,
+    "endLine": 33,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(friendlyTradeId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 14,
+    "endLine": 44,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 16,
+    "endLine": 65,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 47,
+    "endLine": 108,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 102,
+    "endLine": 29,
+    "endCharacter": 111
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 14,
+    "endLine": 140,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 42,
+    "endLine": 48,
+    "endCharacter": 45
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/data/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 33,
+    "endLine": 175,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 137,
+    "startCharacter": 37,
+    "endLine": 137,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 42,
+    "endLine": 5,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/core/util/data/BuySellMap.buySellMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 14,
+    "endLine": 142,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 6,
+    "endLine": 44,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(cusip)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 52,
+    "endLine": 127,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#finraReportingAssetClass.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 155,
+    "startCharacter": 16,
+    "endLine": 155,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#isCanceled.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 48,
+    "endLine": 38,
+    "endCharacter": 49
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 47,
+    "endLine": 165,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 29,
+    "endLine": 56,
+    "endCharacter": 30
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 112,
+    "endLine": 29,
+    "endCharacter": 113
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 13,
+    "endLine": 19,
+    "endCharacter": 17
+   },
+   "symbol": "slick/jdbc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 39,
+    "endLine": 120,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#tradeDateFrom.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 32,
+    "endLine": 8,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 70,
+    "endLine": 65,
+    "endCharacter": 73
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 6,
+    "endLine": 45,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(isin)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 16,
+    "endLine": 21,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 23,
+    "endLine": 37,
+    "endCharacter": 24
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 37,
+    "endLine": 163,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 16,
+    "endLine": 142,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#friendlyTradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 25,
+    "endLine": 37,
+    "endCharacter": 44
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 53,
+    "endLine": 120,
+    "endCharacter": 56
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 16,
+    "endLine": 10,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 18,
+    "endLine": 26,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 14,
+    "endLine": 143,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 57,
+    "endLine": 165,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 129,
+    "startCharacter": 17,
+    "endLine": 129,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 16,
+    "endLine": 144,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#swarmId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 26,
+    "endLine": 10,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 16,
+    "endLine": 151,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#getFinraReportingAssetClass().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 18,
+    "endLine": 146,
+    "endCharacter": 27
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 177,
+    "startCharacter": 41,
+    "endLine": 177,
+    "endCharacter": 50
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 37,
+    "endLine": 36,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 18,
+    "endLine": 31,
+    "endCharacter": 28
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 6,
+    "endLine": 55,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(finraReportingAssetClass)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 34,
+    "endLine": 10,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 34,
+    "endLine": 10,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 6,
+    "endLine": 36,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(buySell)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 14,
+    "endLine": 147,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 45,
+    "endLine": 60,
+    "endCharacter": 52
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 42,
+    "endLine": 6,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/core/util/data/EnumMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 27,
+    "endLine": 41,
+    "endCharacter": 43
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 6,
+    "endLine": 38,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(settlementDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 15,
+    "endLine": 138,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 154,
+    "startCharacter": 18,
+    "endLine": 154,
+    "endCharacter": 27
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 47,
+    "endLine": 24,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 18,
+    "endLine": 57,
+    "endCharacter": 31
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 6,
+    "endLine": 31,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(tradeId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 40,
+    "endLine": 27,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Predef.Map#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 2,
+    "endLine": 14,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 2,
+    "endLine": 14,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 66,
+    "endLine": 116,
+    "endCharacter": 73
+   },
+   "symbol": "java/lang/String#replace(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 47,
+    "endLine": 158,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 57,
+    "endLine": 163,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 149,
+    "startCharacter": 16,
+    "endLine": 149,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#vwap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 30,
+    "endLine": 128,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 53,
+    "endLine": 60,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/util/data/TradingProtocolMap.tradingProtocolMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 16,
+    "endLine": 112,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 15,
+    "endLine": 29,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#queryResultToBackToBackTradeEventTransformer.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 14,
+    "endLine": 161,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 16,
+    "endLine": 50,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 16,
+    "endLine": 71,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 6,
+    "endLine": 136,
+    "endCharacter": 7
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 29,
+    "endLine": 178,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 14,
+    "endLine": 162,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 19,
+    "endLine": 48,
+    "endCharacter": 22
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 7,
+    "endLine": 18,
+    "endCharacter": 12
+   },
+   "symbol": "slick/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 14,
+    "endLine": 150,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 32,
+    "endLine": 157,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 66,
+    "endLine": 170,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 75,
+    "endLine": 158,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 40,
+    "endLine": 115,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 24,
+    "endLine": 33,
+    "endCharacter": 25
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 131,
+    "startCharacter": 6,
+    "endLine": 131,
+    "endCharacter": 19
+   },
+   "symbol": "slick/dbio/SuccessAction.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 34,
+    "endLine": 40,
+    "endCharacter": 35
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 50,
+    "endLine": 51,
+    "endCharacter": 51
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 6,
+    "endLine": 58,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(isCanceled)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 65,
+    "endLine": 26,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 37,
+    "endLine": 121,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#tradeDateTo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 125,
+    "startCharacter": 27,
+    "endLine": 125,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 27,
+    "endLine": 53,
+    "endCharacter": 40
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 37,
+    "endLine": 26,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 149,
+    "startCharacter": 27,
+    "endLine": 149,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 6,
+    "endLine": 42,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(contraPartyId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 6,
+    "endLine": 32,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 141,
+    "startCharacter": 26,
+    "endLine": 141,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 6,
+    "endLine": 52,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(reportWasAcceptedByFinra)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 23,
+    "endLine": 48,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 49,
+    "endLine": 172,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#finraReportId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 24,
+    "endLine": 49,
+    "endCharacter": 40
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 6,
+    "endLine": 51,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(finraControlDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 14,
+    "endLine": 179,
+    "endCharacter": 17
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 177,
+    "startCharacter": 50,
+    "endLine": 177,
+    "endCharacter": 50
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 25,
+    "endLine": 61,
+    "endCharacter": 26
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 48,
+    "endLine": 3,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/entity/UserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 25,
+    "endLine": 59,
+    "endCharacter": 36
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBoolean().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 141,
+    "startCharacter": 14,
+    "endLine": 141,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 54,
+    "endLine": 55,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 16,
+    "endLine": 145,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#getBuySell().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 8,
+    "endLine": 115,
+    "endCharacter": 20
+   },
+   "symbol": "local36",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 81,
+    "endLine": 138,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/secmaster/message/Tag#tag.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 67,
+    "endLine": 161,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#bbGlobalId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 26,
+    "endLine": 7,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/data/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 17,
+    "endLine": 47,
+    "endCharacter": 33
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 33,
+    "endLine": 24,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 6,
+    "endLine": 24,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 50,
+    "endLine": 38,
+    "endCharacter": 64
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextDateOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 19,
+    "endLine": 168,
+    "endCharacter": 23
+   },
+   "symbol": "slick/basic/BasicStreamingAction#head().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 60,
+    "endLine": 65,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().(tradeIds)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 149,
+    "startCharacter": 21,
+    "endLine": 149,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 125,
+    "startCharacter": 33,
+    "endLine": 125,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#bondId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 16,
+    "endLine": 9,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 23,
+    "endLine": 26,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 16,
+    "endLine": 140,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 25,
+    "endLine": 53,
+    "endCharacter": 26
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 6,
+    "endLine": 37,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(tradeTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 106,
+    "endLine": 112,
+    "endCharacter": 109
+   },
+   "symbol": "scala/Any#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 47,
+    "endLine": 37,
+    "endCharacter": 50
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 41,
+    "endLine": 124,
+    "endCharacter": 62
+   },
+   "symbol": "local37",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 64,
+    "endLine": 138,
+    "endCharacter": 69
+   },
+   "symbol": "scala/collection/SeqFactory.Delegate#empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 37,
+    "endLine": 164,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 47,
+    "endLine": 159,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 71,
+    "endLine": 173,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 14,
+    "endLine": 158,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 49,
+    "endLine": 121,
+    "endCharacter": 52
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 85,
+    "endLine": 158,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/secmaster/message/BondTicker#tickerId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 27,
+    "endLine": 146,
+    "endCharacter": 27
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(ticker)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 16,
+    "endLine": 166,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#postTradeGroupId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 44
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 154,
+    "startCharacter": 28,
+    "endLine": 154,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 33,
+    "endLine": 55,
+    "endCharacter": 34
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 27,
+    "endLine": 54,
+    "endCharacter": 43
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 44,
+    "endLine": 27,
+    "endCharacter": 50
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 44,
+    "endLine": 138,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#tags.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 35,
+    "endLine": 114,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(user)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 2,
+    "endLine": 13,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 2,
+    "endLine": 13,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 6,
+    "endLine": 57,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(version)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 72,
+    "endLine": 120,
+    "endCharacter": 81
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 18,
+    "endLine": 32,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#dbDateToCoreDateYMDProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 126,
+    "startCharacter": 24,
+    "endLine": 126,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 26,
+    "endLine": 67,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeIdsAction().(tradeIds)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 53,
+    "endLine": 37,
+    "endCharacter": 60
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 9,
+    "endLine": 136,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 59,
+    "endLine": 107,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/core/message/DateYMD#getMonth().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 60,
+    "endLine": 116,
+    "endCharacter": 63
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 21,
+    "endLine": 11,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 67,
+    "endLine": 158,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 123,
+    "startCharacter": 36,
+    "endLine": 123,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 48,
+    "endLine": 176,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#rejectReasonText.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 7,
+    "endLine": 11,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 26,
+    "endLine": 6,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/data/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 25,
+    "endLine": 41,
+    "endCharacter": 26
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 28,
+    "endLine": 26,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 84,
+    "endLine": 24,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 18,
+    "endLine": 50,
+    "endCharacter": 34
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 48,
+    "endLine": 173,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#finraControlDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 16,
+    "endLine": 31,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 15,
+    "endLine": 47,
+    "endCharacter": 16
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 16,
+    "endLine": 57,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 21,
+    "endLine": 9,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 28,
+    "endLine": 122,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 177,
+    "startCharacter": 51,
+    "endLine": 177,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 26,
+    "endLine": 8,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 137,
+    "startCharacter": 30,
+    "endLine": 137,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 106,
+    "endLine": 120,
+    "endCharacter": 115
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.SYSTEM_TZ.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 118,
+    "startCharacter": 8,
+    "endLine": 118,
+    "endCharacter": 20
+   },
+   "symbol": "local36",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 35,
+    "endLine": 52,
+    "endCharacter": 52
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBooleanOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 88,
+    "endLine": 27,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/core/util/data/EnumMap.toMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 33,
+    "endLine": 120,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 37,
+    "endLine": 159,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 57,
+    "endLine": 161,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 2,
+    "endLine": 15,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/FinraReportingAssetClass.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 2,
+    "endLine": 15,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/FinraReportingAssetClass#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 94,
+    "endLine": 27,
+    "endCharacter": 118
+   },
+   "symbol": "omnistac/spok/message/FinraReportingAssetClass.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 16,
+    "endLine": 11,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 37,
+    "endLine": 165,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 160,
+    "startCharacter": 13,
+    "endLine": 160,
+    "endCharacter": 17
+   },
+   "symbol": "local38",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 14,
+    "endLine": 164,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 13,
+    "endLine": 48,
+    "endCharacter": 14
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 47,
+    "endLine": 163,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 18,
+    "endLine": 59,
+    "endCharacter": 22
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 19,
+    "endLine": 179,
+    "endCharacter": 23
+   },
+   "symbol": "slick/basic/BasicStreamingAction#head().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 43,
+    "endLine": 115,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(user)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 106,
+    "startCharacter": 48,
+    "endLine": 106,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 26,
+    "endLine": 33,
+    "endCharacter": 42
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 33,
+    "endLine": 52,
+    "endCharacter": 34
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 48,
+    "endLine": 175,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#rejectReasonCode.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 31,
+    "endLine": 5,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/data/BuySellMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 23,
+    "endLine": 59,
+    "endCharacter": 24
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 9,
+    "endLine": 26,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 6,
+    "endLine": 61,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(postTradeGroupId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 16,
+    "endLine": 36,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 14,
+    "endLine": 148,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 14,
+    "endLine": 152,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 131,
+    "startCharacter": 25,
+    "endLine": 131,
+    "endCharacter": 30
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 18,
+    "endLine": 34,
+    "endCharacter": 34
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 12,
+    "endLine": 21,
+    "endCharacter": 15
+   },
+   "symbol": "java/sql/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 16,
+    "endLine": 8,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 38,
+    "endLine": 138,
+    "endCharacter": 41
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 4,
+    "endLine": 66,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 27,
+    "endLine": 145,
+    "endCharacter": 31
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 154,
+    "startCharacter": 30,
+    "endLine": 154,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#getModifiedOn().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 31,
+    "endLine": 56,
+    "endCharacter": 50
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 56,
+    "endLine": 36,
+    "endCharacter": 59
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 29,
+    "endLine": 115,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#isOpsAdmin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 21,
+    "endLine": 58,
+    "endCharacter": 38
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBooleanOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 11,
+    "endLine": 179,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 32,
+    "endLine": 6,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/util/data/DataUtil.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 32,
+    "endLine": 6,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 11,
+    "endLine": 168,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 14,
+    "endLine": 109,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 14,
+    "endLine": 159,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 26,
+    "endLine": 9,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 50,
+    "endLine": 170,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 6,
+    "endLine": 59,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(isForTest)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 14,
+    "endLine": 46,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 16,
+    "endLine": 44,
+    "endCharacter": 32
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 16,
+    "endLine": 150,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#executingBrokerId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 14,
+    "endLine": 166,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 78,
+    "endLine": 71,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/core/message/DateYMD#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 43,
+    "endLine": 32,
+    "endCharacter": 44
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 149,
+    "startCharacter": 14,
+    "endLine": 149,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 67,
+    "endLine": 164,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#longDescription.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 96,
+    "endLine": 120,
+    "endCharacter": 105
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 47,
+    "endLine": 161,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 14,
+    "endLine": 68,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 128,
+    "startCharacter": 36,
+    "endLine": 128,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#isCanceled.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 31,
+    "endLine": 7,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/core/util/data/TradingProtocolMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 30,
+    "endLine": 146,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#getTradeTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 127,
+    "startCharacter": 46,
+    "endLine": 127,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 32,
+    "endLine": 116,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeQueryAction().(query)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 16,
+    "endLine": 152,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#version.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 33,
+    "endLine": 173,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 16,
+    "endLine": 148,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#totalQuantity.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 34,
+    "endLine": 122,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#swarmId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 34,
+    "endLine": 174,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().(reportResponse)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 26,
+    "endLine": 60,
+    "endCharacter": 42
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 24,
+    "endLine": 60,
+    "endCharacter": 25
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 25,
+    "endLine": 54,
+    "endCharacter": 26
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 8,
+    "endLine": 116,
+    "endCharacter": 29
+   },
+   "symbol": "local37",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 14,
+    "endLine": 153,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 57,
+    "endLine": 108,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/message/DateYMD#getDay().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 16,
+    "endLine": 147,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#settlementDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 16,
+    "endLine": 143,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#instrumentVersionId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(totalQuantity)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 14,
+    "endLine": 156,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 45,
+    "endLine": 36,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/core/util/data/BuySellMap.buySellMap.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 61,
+    "endLine": 29,
+    "endCharacter": 70
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 14,
+    "endLine": 151,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 24,
+    "endLine": 42,
+    "endCharacter": 40
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 123,
+    "startCharacter": 42,
+    "endLine": 123,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradesQueryRequest#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 4,
+    "endLine": 30,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 27,
+    "endLine": 61,
+    "endCharacter": 37
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 49,
+    "endLine": 174,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#reportWasAcceptedByFinra.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 32,
+    "endLine": 43,
+    "endCharacter": 48
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 82,
+    "endLine": 120,
+    "endCharacter": 91
+   },
+   "symbol": "java/time/LocalDate#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 52,
+    "endLine": 27,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/spok/message/FinraReportingAssetClass#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 12,
+    "endLine": 22,
+    "endCharacter": 16
+   },
+   "symbol": "java/time/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 49,
+    "endLine": 107,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createQueryBackToBackTradesByTradeDateForRepublish().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 23,
+    "endLine": 115,
+    "endCharacter": 28
+   },
+   "symbol": "local35",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 37,
+    "endLine": 162,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 67,
+    "endLine": 162,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#cusip.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 35,
+    "endLine": 9,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/postgres/SlickUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 67,
+    "endLine": 159,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 50,
+    "endLine": 138,
+    "endCharacter": 59
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 2,
+    "endLine": 16,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 2,
+    "endLine": 16,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 14,
+    "endLine": 144,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 29,
+    "endLine": 4,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/DateYMD.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 29,
+    "endLine": 4,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/DateYMD#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 6,
+    "endLine": 49,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(finraReportId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 67,
+    "endLine": 24,
+    "endCharacter": 78
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 7,
+    "endLine": 22,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 14,
+    "endLine": 145,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createBackToBackTradeInsertAction().(t)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 47,
+    "endLine": 164,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 19,
+    "endLine": 58,
+    "endCharacter": 20
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 16,
+    "endLine": 153,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/BackToBackTradeEvent#modifiedBy.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 52,
+    "endLine": 51,
+    "endCharacter": 66
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextDateOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 43,
+    "endLine": 8,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 43,
+    "endLine": 8,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 16,
+    "endLine": 170,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/BackToBackTradeDAO#createUpdateBackToBackTradeAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 6,
+    "endLine": 53,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/BlotterBackToBackTradeEvent.apply().(rejectReasonCode)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 36,
+    "endLine": 40,
+    "endCharacter": 56
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBigDecimalOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 177,
+    "startCharacter": 66,
+    "endLine": 177,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#getFinraReportTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 18,
+    "endLine": 36,
+    "endCharacter": 34
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 13,
+    "endLine": 40,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#bigDecimalToRational(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 17,
+    "endLine": 35,
+    "endCharacter": 33
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  }
+ ]
+}

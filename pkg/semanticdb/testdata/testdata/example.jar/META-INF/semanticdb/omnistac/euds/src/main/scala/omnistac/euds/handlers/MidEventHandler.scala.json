@@ -1,0 +1,2128 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/MidEventHandler.scala",
+ "md5": "5D0B10AC500EDCD96A98C4A900CAF5F6",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#canEqual().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`isInitialized_=`().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#equals().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "equals",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#equals().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#equals().",
+    "java/lang/Object#equals().",
+    "scala/Any#equals()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.apply().(spread)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "spread",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#price.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "price",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#copy().(spread)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "spread",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#hashCode().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "hashCode",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#hashCode().",
+    "scala/Any#hashCode()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "Fvmp",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractFunction2#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/Option#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "omnistac/core/entity/package.Rational#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Option#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "omnistac/core/entity/package.Rational#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/euds/handlers/Fvmp#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/Fvmp.toString().",
+       "omnistac/euds/handlers/Fvmp.apply().",
+       "omnistac/euds/handlers/Fvmp.unapply().",
+       "omnistac/euds/handlers/Fvmp.writeReplace()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productPrefix().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productPrefix",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productPrefix()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().(price)",
+        "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().(spread)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.unapply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "unapply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp.unapply().(x$0)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Tuple2#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Option#",
+             "typeArguments": [
+              {
+               "typeRef": {
+                "symbol": "omnistac/core/entity/package.Rational#"
+               }
+              }
+             ]
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Option#",
+             "typeArguments": [
+              {
+               "typeRef": {
+                "symbol": "omnistac/core/entity/package.Rational#"
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#copy().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#copy().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#copy().(price)",
+        "omnistac/euds/handlers/Fvmp#copy().(spread)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/handlers/Fvmp#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#copy$default$1().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$1",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/entity/package.Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productElementName().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productIterator().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productIterator",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/collection/Iterator#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Any#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productIterator()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#fvmpMap().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 2048,
+   "displayName": "fvmpMap",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/handlers/Fvmp#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function2#toString().",
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#spread.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "spread",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().(spread)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "spread",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#canEqual().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "canEqual",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#canEqual().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#canEqual()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 128,
+   "displayName": "Fvmp",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/Product#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/package.Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/Fvmp#price.",
+       "omnistac/euds/handlers/Fvmp#spread.",
+       "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/Fvmp#copy().",
+       "omnistac/euds/handlers/Fvmp#copy$default$1().",
+       "omnistac/euds/handlers/Fvmp#copy$default$2().",
+       "omnistac/euds/handlers/Fvmp#productPrefix().",
+       "omnistac/euds/handlers/Fvmp#productArity().",
+       "omnistac/euds/handlers/Fvmp#productElement().",
+       "omnistac/euds/handlers/Fvmp#productIterator().",
+       "omnistac/euds/handlers/Fvmp#canEqual().",
+       "omnistac/euds/handlers/Fvmp#productElementName().",
+       "omnistac/euds/handlers/Fvmp#hashCode().",
+       "omnistac/euds/handlers/Fvmp#toString().",
+       "omnistac/euds/handlers/Fvmp#equals()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.apply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "apply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp.apply().(price)",
+        "omnistac/euds/handlers/Fvmp.apply().(spread)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/handlers/Fvmp#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function2#apply()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`isInitialized_=`().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 2048,
+   "displayName": "isInitialized_=",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/MidEventHandler#`isInitialized_=`().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Unit#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productElement().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productElementName().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElementName",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#productElementName().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElementName()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`fvmpMap_=`().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/handlers/Fvmp#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#isInitialized().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 2048,
+   "displayName": "isInitialized",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleMids",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/MidEventHandler#handleMids().(re)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/package.List#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/FvmpCache#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "MidEventHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/number/RationalUtils#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/MidEventHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/MidEventHandler#fvmpMap().",
+       "omnistac/euds/handlers/MidEventHandler#`fvmpMap_=`().",
+       "omnistac/euds/handlers/MidEventHandler#isInitialized().",
+       "omnistac/euds/handlers/MidEventHandler#`isInitialized_=`().",
+       "omnistac/euds/handlers/MidEventHandler#handleMids()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "mid",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/sauce/message/MidTriggerMessage#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productElement().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElement",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/Fvmp#productElement().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElement()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#productArity().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productArity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productArity()."
+   ]
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "Fvmp$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/handlers/Fvmp#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`fvmpMap_=`().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 2048,
+   "displayName": "fvmpMap_=",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/MidEventHandler#`fvmpMap_=`().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Unit#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#copy$default$2().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$2",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/entity/package.Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().(re)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "re",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.apply().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#equals().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.writeReplace().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "writeReplace",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/Object#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().(price)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "price",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/Fvmp.unapply().(x$0)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$0",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/handlers/Fvmp#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 40,
+    "endLine": 21,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Predef.ArrowAssoc#`-\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 8,
+    "endLine": 30,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`isInitialized_=`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 56,
+    "endLine": 8,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 21,
+    "endLine": 10,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 17,
+    "endLine": 18,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().(re)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 67,
+    "endLine": 21,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 100,
+    "endLine": 21,
+    "endCharacter": 110
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 14,
+    "endLine": 14,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#fvmpMap().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 28,
+    "endLine": 2,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/entity/package.Rational.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 28,
+    "endLine": 2,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 27,
+    "endLine": 28,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/core/message/SnapshotComplete.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 13,
+    "endLine": 31,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/FvmpCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 32,
+    "endLine": 20,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 15,
+    "endLine": 34,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/entity/package.Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 61,
+    "endLine": 21,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 24,
+    "endLine": 21,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage#getInstrumentId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 45,
+    "endLine": 18,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/euds/FvmpCache#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 11,
+    "endLine": 28,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 52,
+    "endLine": 21,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage#priceMid.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 25,
+    "endLine": 23,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#fvmpMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/util/number/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 13,
+    "endLine": 35,
+    "endCharacter": 18
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 11,
+    "endLine": 20,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 12,
+    "endLine": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#isInitialized().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 32,
+    "endLine": 14,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 44,
+    "endLine": 14,
+    "endCharacter": 49
+   },
+   "symbol": "scala/collection/immutable/Map.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 27,
+    "endLine": 20,
+    "endCharacter": 30
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 94,
+    "endLine": 21,
+    "endCharacter": 97
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 8,
+    "endLine": 31,
+    "endCharacter": 12
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 10,
+    "endLine": 25,
+    "endCharacter": 14
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 33,
+    "endLine": 4,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 33,
+    "endLine": 4,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 29,
+    "endLine": 15,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 20,
+    "endLine": 21,
+    "endCharacter": 23
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 16,
+    "endLine": 21,
+    "endCharacter": 18
+   },
+   "symbol": "scala/collection/immutable/MapOps#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 20,
+    "endLine": 34,
+    "endCharacter": 21
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 4,
+    "endLine": 19,
+    "endCharacter": 6
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().(re)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/FvmpCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/FvmpCache#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 41,
+    "endLine": 8,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp#spread.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 49,
+    "endLine": 8,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 43,
+    "endLine": 21,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 8,
+    "endLine": 34,
+    "endCharacter": 14
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 23,
+    "endLine": 8,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 40,
+    "endLine": 14,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Predef.Map.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/sauce/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 66,
+    "endLine": 34,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().(re)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 15,
+    "endLine": 23,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/FvmpCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 46,
+    "endLine": 10,
+    "endCharacter": 46
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 23,
+    "endLine": 31,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#fvmpMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 8,
+    "endLine": 29,
+    "endCharacter": 14
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 10,
+    "endLine": 23,
+    "endCharacter": 14
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 47,
+    "endLine": 28,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 80,
+    "endLine": 21,
+    "endCharacter": 83
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 15,
+    "endLine": 29,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 16,
+    "endLine": 8,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp#price.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 6,
+    "endLine": 18,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#handleMids().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 84,
+    "endLine": 21,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage#spreadMid.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 6,
+    "endLine": 10,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 21,
+    "endLine": 18,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 48,
+    "endLine": 21,
+    "endCharacter": 51
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 40,
+    "endLine": 18,
+    "endCharacter": 44
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 15,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 14,
+    "endLine": 15,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#isInitialized().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 15,
+    "endLine": 25,
+    "endCharacter": 20
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 65,
+    "endLine": 3,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/core/message/SnapshotComplete.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 65,
+    "endLine": 3,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/core/message/SnapshotComplete#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 30,
+    "endLine": 6,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 30,
+    "endLine": 6,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/sauce/message/MidTriggerMessage#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 11,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/handlers/Fvmp#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 8,
+    "endLine": 35,
+    "endCharacter": 12
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 22,
+    "endLine": 6,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/sauce/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 32,
+    "endLine": 10,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 48,
+    "endLine": 3,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 27,
+    "endLine": 14,
+    "endCharacter": 30
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 23,
+    "endLine": 14,
+    "endCharacter": 26
+   },
+   "symbol": "scala/Predef.Map#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 8,
+    "endLine": 21,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/handlers/MidEventHandler#`fvmpMap_=`().",
+   "role": "REFERENCE"
+  }
+ ]
+}

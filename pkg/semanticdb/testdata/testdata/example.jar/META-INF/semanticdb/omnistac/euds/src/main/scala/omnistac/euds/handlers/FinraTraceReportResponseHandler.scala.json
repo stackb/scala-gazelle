@@ -1,0 +1,1052 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/FinraTraceReportResponseHandler.scala",
+ "md5": "9C154A39D4610A566FDB5B15B160C664",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "FinraTraceReportResponseHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/handlers/EudsHandler#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#actorSystem.",
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#dao.",
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#onInitialized.",
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#ec().",
+       "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(actorSystem)",
+        "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(dao)",
+        "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(onInitialized)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#actorSystem.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(actorSystem)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleFinraTraceReportResponse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "responseEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "result",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/FinraTraceReportResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "msg",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/FinraTraceReportResponse#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(onInitialized)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#ec().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 32,
+   "displayName": "ec",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/ExecutionContext#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().(dao)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "dao",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#dao.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "dao",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#onInitialized.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/handlers/EudsHandler#onInitialized()."
+   ]
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 58,
+    "endLine": 15,
+    "endCharacter": 68
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#dispatcher().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 18,
+    "endLine": 2,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 10,
+    "endLine": 13,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 24,
+    "endLine": 25,
+    "endCharacter": 28
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 31,
+    "endLine": 29,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 43,
+    "endLine": 7,
+    "endCharacter": 49
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 43,
+    "endLine": 7,
+    "endCharacter": 49
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 30,
+    "endLine": 2,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 30,
+    "endLine": 2,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 27,
+    "endLine": 23,
+    "endCharacter": 30
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 81,
+    "endLine": 19,
+    "endCharacter": 85
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 4,
+    "endLine": 20,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 6,
+    "endLine": 19,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 25,
+    "endLine": 7,
+    "endCharacter": 41
+   },
+   "symbol": "scala/concurrent/ExecutionContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 25,
+    "endLine": 7,
+    "endCharacter": 41
+   },
+   "symbol": "scala/concurrent/ExecutionContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 25,
+    "endLine": 24,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#persistFinraTraceReportResponse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 27,
+    "endLine": 15,
+    "endCharacter": 43
+   },
+   "symbol": "scala/concurrent/ExecutionContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 29,
+    "endLine": 25,
+    "endCharacter": 34
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 74,
+    "endLine": 19,
+    "endCharacter": 80
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 8,
+    "endLine": 28,
+    "endCharacter": 14
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 21,
+    "endLine": 24,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 23,
+    "endLine": 15,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#ec().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 37,
+    "endLine": 19,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 4,
+    "endLine": 11,
+    "endCharacter": 7
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#dao.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 86,
+    "endLine": 19,
+    "endCharacter": 102
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 57,
+    "endLine": 24,
+    "endCharacter": 60
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 46,
+    "endLine": 15,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#actorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 26,
+    "endLine": 29,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 8,
+    "endLine": 25,
+    "endCharacter": 14
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 12,
+    "endLine": 24,
+    "endCharacter": 18
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 16,
+    "endLine": 20,
+    "endCharacter": 17
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 15,
+    "endLine": 25,
+    "endCharacter": 18
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 2,
+    "endLine": 17,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#makeReady.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 66,
+    "endLine": 20,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 22,
+    "endLine": 13,
+    "endCharacter": 22
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 13,
+    "endLine": 7,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 8,
+    "endLine": 10,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#actorSystem.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 4,
+    "endLine": 22,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 15,
+    "endLine": 29,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 55,
+    "endLine": 19,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 29,
+    "endLine": 12,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 8,
+    "endLine": 29,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 9,
+    "endLine": 11,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 21,
+    "endLine": 28,
+    "endCharacter": 22
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 37,
+    "endLine": 9,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 15,
+    "endLine": 28,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 29,
+    "endLine": 5,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 29,
+    "endLine": 5,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 6,
+    "endLine": 9,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 25,
+    "endLine": 4,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 32,
+    "endLine": 23,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/spok/message/FinraTraceReportResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 11,
+    "endLine": 23,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 11,
+    "endLine": 20,
+    "endCharacter": 15
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 24,
+    "endLine": 2,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 8,
+    "endLine": 12,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#onInitialized.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 76,
+    "endLine": 28,
+    "endCharacter": 92
+   },
+   "symbol": "omnistac/euds/handlers/FinraTraceReportResponseHandler#handleFinraTraceReportResponse().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 48,
+    "endLine": 3,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 21,
+    "endLine": 10,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  }
+ ]
+}

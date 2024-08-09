@@ -1,0 +1,5619 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/EudsHandler.scala",
+ "md5": "A2C7A98AA5586472F65234B91730E05E",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "local44",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$40",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#makeReady.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1088,
+   "displayName": "makeReady",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local43",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$39",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/UstTradeBlendStrategy#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local42",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$38",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/ListFillSideDetails#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local41",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$37",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local48",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "foi",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local47",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "enrichedBuy",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local46",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$42",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/StringTuple#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local45",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$41",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/AutoExInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "attributedTradeDetails",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local40",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$36",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/RfqFillSideDetails#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(attributedTradeDetails)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "attributedTradeDetails",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().(maybeAttributedTradeDetails)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeAttributedTradeDetails",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local49",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "enrichedSell",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().(maybePlatformState)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybePlatformState",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/PlatformStateEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$29",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$28",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$27",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$26",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$33",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$32",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/BestExInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$31",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$30",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#onInitialized().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "onInitialized",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local39",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$35",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$34",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local66",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local65",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local64",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/MarkupType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local63",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/biz/message/AdjustmentCode#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local69",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/sauce/message/MidTriggerMessage#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local68",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local67",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local62",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local61",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmPhase#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local60",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local55",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local54",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local53",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Guid#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local52",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local59",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local58",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local57",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/PricingConvention#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local56",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "toTodayQueryDate",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().(maybePlatformState)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/DateYMD#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local51",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local50",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "foi",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local88",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "s",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local87",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "salesPeopleNames",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local86",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "salesIds",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local85",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$35",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local89",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/collection/immutable/Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local80",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$30",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/SettlementCycle#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local84",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$34",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local83",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$33",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/NetInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local82",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$32",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local81",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$31",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/ListFillDetails#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "enrichAttributedFill",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+        "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(contextProvider)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "enrichAttrTradeDetails",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(contextProvider)",
+        "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local77",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$27",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/InquiryType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local76",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$26",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/mktdata/message/TreasuryPrice#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local75",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$25",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/BondBillingType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local74",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$24",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/SwapType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local79",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$29",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/USTBenchmarkTenor#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local78",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$28",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/GreyOrderInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local73",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$23",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/OrderProductType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local72",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$22",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local71",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$21",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/CreditQuality#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local70",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/TradingProtocol#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "today",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/time/LocalDate#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "maybeEnrichFillOrderInfo",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local3"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "tradeDate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/DateYMD#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "contraPartyIsDefined",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().(maybeAttributedTradeDetails)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/HedgeOrSpot#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "enrichWithSalesPeopleNames",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(attributedTradeDetails)",
+        "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(contextProvider)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "foi",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeAtDetails",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$22",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$21",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$25",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$24",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmOrderLeg#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$23",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local99",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/HedgeOrSpot#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local105",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/EudsHandler#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "EudsHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/StrictLogging#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/date/LocalDateUtils#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/EudsHandler#makeReady.",
+       "omnistac/euds/handlers/EudsHandler#onInitialized().",
+       "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().",
+       "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().",
+       "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().",
+       "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().",
+       "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local98",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local104",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local97",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local103",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/CreditQuality#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local96",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/gum/message/SalesCoverage#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local102",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local108",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/UstTradeBlendStrategy#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local107",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local106",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local91",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local90",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local95",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local101",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local94",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local100",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local93",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local92",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/biz/message/AdjustmentCode#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 39,
+    "endLine": 37,
+    "endCharacter": 42
+   },
+   "symbol": "local48",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 14,
+    "endLine": 39,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#copy().(buyInfo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 15,
+    "endLine": 34,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#copy().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 63,
+    "endLine": 50,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(contextProvider)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 49,
+    "endLine": 20,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#tradingDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 37,
+    "endLine": 38,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 23,
+    "endLine": 56,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 48,
+    "endLine": 39,
+    "endCharacter": 60
+   },
+   "symbol": "local49",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 14,
+    "endLine": 45,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 45,
+    "endLine": 11,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 43,
+    "endLine": 6,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 43,
+    "endLine": 6,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 23,
+    "endLine": 30,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 4,
+    "endLine": 43,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().(maybeAttributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 71,
+    "endLine": 37,
+    "endCharacter": 74
+   },
+   "symbol": "local48",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 6,
+    "endLine": 56,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(contextProvider)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 37,
+    "endLine": 39,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#copy().(sellInfo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 36,
+    "endLine": 59,
+    "endCharacter": 43
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 29,
+    "endLine": 49,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 18,
+    "endLine": 21,
+    "endCharacter": 27
+   },
+   "symbol": "java/time/LocalDate#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 61,
+    "endLine": 20,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 42,
+    "endLine": 43,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#contraPtyAcctId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 10,
+    "endLine": 33,
+    "endCharacter": 24
+   },
+   "symbol": "local4",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 53,
+    "endLine": 22,
+    "endCharacter": 54
+   },
+   "symbol": "java/lang/String#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 4,
+    "endLine": 14,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#onInitialized().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 47,
+    "endLine": 7,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 47,
+    "endLine": 7,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 12,
+    "endLine": 23,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#LocalDateSugar#toProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 27,
+    "endLine": 33,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 67,
+    "endLine": 20,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 8,
+    "endLine": 58,
+    "endCharacter": 16
+   },
+   "symbol": "local86",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 43,
+    "endLine": 19,
+    "endCharacter": 49
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 5,
+    "endLine": 31,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 33,
+    "endLine": 50,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 38,
+    "endLine": 32,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 70,
+    "endLine": 58,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/gum/message/SalesCoverage#salespersonId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 27,
+    "endLine": 37,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#buyInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 22,
+    "endLine": 13,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 24,
+    "endLine": 39,
+    "endCharacter": 35
+   },
+   "symbol": "local47",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 9,
+    "endLine": 39,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 32,
+    "endLine": 43,
+    "endCharacter": 39
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 40,
+    "endLine": 34,
+    "endCharacter": 54
+   },
+   "symbol": "local4",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 6,
+    "endLine": 11,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 4,
+    "endLine": 60,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 14,
+    "endLine": 54,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/attributed/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 6,
+    "endLine": 46,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(contextProvider)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 16,
+    "endLine": 28,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 71,
+    "endLine": 33,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 97,
+    "endLine": 59,
+    "endCharacter": 100
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 103,
+    "endLine": 59,
+    "endCharacter": 107
+   },
+   "symbol": "omnistac/core/entity/UserContext#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 6,
+    "endLine": 19,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 6,
+    "endLine": 22,
+    "endCharacter": 12
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 60,
+    "endLine": 58,
+    "endCharacter": 67
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 11,
+    "endLine": 13,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#makeReady.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 27,
+    "endLine": 60,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 44,
+    "endLine": 59,
+    "endCharacter": 45
+   },
+   "symbol": "local88",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 6,
+    "endLine": 17,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#onInitialized().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 35,
+    "endLine": 42,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().(maybeAttributedTradeDetails)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 89,
+    "endLine": 20,
+    "endCharacter": 98
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 10,
+    "endLine": 21,
+    "endCharacter": 15
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 13,
+    "endLine": 22,
+    "endCharacter": 17
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#warn().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 8,
+    "endLine": 20,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 28,
+    "endLine": 21,
+    "endCharacter": 31
+   },
+   "symbol": "java/time/LocalDate#now(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 73,
+    "endLine": 38,
+    "endCharacter": 76
+   },
+   "symbol": "local50",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 65,
+    "endLine": 59,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/core/biz/provider/TradingAccountUserContextProvider#getTradingAccountUserContext().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 35,
+    "endLine": 37,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 8,
+    "endLine": 59,
+    "endCharacter": 24
+   },
+   "symbol": "local87",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 39,
+    "endLine": 5,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 39,
+    "endLine": 5,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 72,
+    "endLine": 19,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/core/message/DateYMD#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 12,
+    "endLine": 9,
+    "endCharacter": 16
+   },
+   "symbol": "java/time/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 64,
+    "endLine": 42,
+    "endCharacter": 70
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 14,
+    "endLine": 42,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 10,
+    "endLine": 34,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 51,
+    "endLine": 60,
+    "endCharacter": 67
+   },
+   "symbol": "local87",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 28,
+    "endLine": 38,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#sellInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 42,
+    "endLine": 58,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#salesCoverageList.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 26,
+    "endLine": 11,
+    "endCharacter": 39
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 36,
+    "endLine": 7,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 36,
+    "endLine": 7,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 23,
+    "endLine": 38,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 79,
+    "endLine": 20,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#LocalDateSugar#toProto().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 94,
+    "endLine": 59,
+    "endCharacter": 95
+   },
+   "symbol": "local88",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 22,
+    "endLine": 37,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 33,
+    "endLine": 32,
+    "endCharacter": 36
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 46
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 6,
+    "endLine": 30,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(contextProvider)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 46,
+    "endLine": 37,
+    "endCharacter": 70
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 32,
+    "endLine": 21,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/message/DateYMD.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/message/DateYMD#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 97,
+    "endLine": 42,
+    "endCharacter": 104
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 29,
+    "endLine": 50,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 19,
+    "endLine": 58,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 4,
+    "endLine": 25,
+    "endCharacter": 13
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 59,
+    "endLine": 43,
+    "endCharacter": 68
+   },
+   "symbol": "scala/Option#isDefined().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 12,
+    "endLine": 29,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 39,
+    "endLine": 20,
+    "endCharacter": 46
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 6,
+    "endLine": 55,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(attributedTradeDetails)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 50,
+    "endLine": 33,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(contextProvider)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 6,
+    "endLine": 50,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 8,
+    "endLine": 38,
+    "endCharacter": 20
+   },
+   "symbol": "local49",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 20,
+    "endLine": 20,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().(maybePlatformState)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 6,
+    "endLine": 23,
+    "endCharacter": 11
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 55,
+    "endLine": 22,
+    "endCharacter": 60
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 23,
+    "endLine": 19,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#toTodayQueryDate().(maybePlatformState)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 37,
+    "endLine": 47,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 4,
+    "endLine": 39,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 35,
+    "endLine": 3,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 35,
+    "endLine": 3,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 8,
+    "endLine": 32,
+    "endCharacter": 32
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 71,
+    "endLine": 42,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 67,
+    "endLine": 33,
+    "endCharacter": 70
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 48,
+    "endLine": 38,
+    "endCharacter": 72
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 27,
+    "endLine": 7,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 30,
+    "endLine": 55,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 50,
+    "endLine": 19,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 30,
+    "endLine": 47,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 32,
+    "endLine": 6,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 8,
+    "endLine": 49,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#contraPartyIsDefined().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 27,
+    "endLine": 59,
+    "endCharacter": 35
+   },
+   "symbol": "local86",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 34,
+    "endLine": 4,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 42,
+    "endLine": 21,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/util/date/DateUtils.SYSTEM_TZ.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 27,
+    "endLine": 17,
+    "endCharacter": 31
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 26,
+    "endLine": 6,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 23,
+    "endLine": 46,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 6,
+    "endLine": 52,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttrTradeDetails().(attributedTradeDetails)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 49,
+    "endLine": 59,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichWithSalesPeopleNames().(contextProvider)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 25,
+    "endLine": 4,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/biz/provider/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 27,
+    "endLine": 3,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/attributed/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 8,
+    "endLine": 37,
+    "endCharacter": 19
+   },
+   "symbol": "local47",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 41,
+    "endLine": 38,
+    "endCharacter": 44
+   },
+   "symbol": "local50",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 6,
+    "endLine": 34,
+    "endCharacter": 9
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 32,
+    "endLine": 60,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#copy().(salesPeopleNames)",
+   "role": "REFERENCE"
+  }
+ ]
+}

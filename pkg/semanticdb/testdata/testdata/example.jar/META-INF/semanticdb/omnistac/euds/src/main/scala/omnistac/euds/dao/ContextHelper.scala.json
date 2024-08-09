@@ -1,0 +1,1847 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/ContextHelper.scala",
+ "md5": "4E1847BAACC6B8695D0B1A5A69B4EF8C",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(isTrader)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "isTrader",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy$default$1().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$1",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Boolean#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "ContextHelper",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/ContextHelper#createContextTuple()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productElement().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElement",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#productElement().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElement()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/ContextHelper.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "ContextHelper",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/dao/ContextHelper#"
+       }
+      }
+     ],
+     "declarations": {}
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function4#toString().",
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productElementName().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productElementName",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#productElementName().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productElementName()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#isOpsAdmin.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "isOpsAdmin",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#equals().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "equals",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#equals().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#equals().",
+    "java/lang/Object#equals().",
+    "scala/Any#equals()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productElementName().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productPrefix().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productPrefix",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productPrefix()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(restrictingValue)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "restrictingValue",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.apply().(isOpsAdmin)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "isOpsAdmin",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#restrictingValue.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "restrictingValue",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#hashCode().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "hashCode",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#hashCode().",
+    "scala/Any#hashCode()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy$default$4().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$4",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Int#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(isOpsAdmin)",
+        "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(isTrader)",
+        "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(entityType)",
+        "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(restrictingValue)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#toString().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "toString",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "java/lang/Object#toString().",
+    "scala/Any#toString()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#equals().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "cptyUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/CounterpartyUserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "tradingFirmUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/TradingFirmUserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "trumidUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/TrumidUserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.unapply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "unapply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement.unapply().(x$0)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Tuple4#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Boolean#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Boolean#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Predef.String#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "UserEntitlement$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productIterator().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productIterator",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/collection/Iterator#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Any#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productIterator()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy().(isTrader)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "isTrader",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "tradingAccountUser",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/TradingAccountUserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 2048,
+   "displayName": "acc",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 128,
+   "displayName": "UserEntitlement",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/Product#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "scala/package.Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/UserEntitlement#isOpsAdmin.",
+       "omnistac/euds/dao/UserEntitlement#isTrader.",
+       "omnistac/euds/dao/UserEntitlement#entityType.",
+       "omnistac/euds/dao/UserEntitlement#restrictingValue.",
+       "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().",
+       "omnistac/euds/dao/UserEntitlement#copy().",
+       "omnistac/euds/dao/UserEntitlement#copy$default$1().",
+       "omnistac/euds/dao/UserEntitlement#copy$default$2().",
+       "omnistac/euds/dao/UserEntitlement#copy$default$3().",
+       "omnistac/euds/dao/UserEntitlement#copy$default$4().",
+       "omnistac/euds/dao/UserEntitlement#productPrefix().",
+       "omnistac/euds/dao/UserEntitlement#productArity().",
+       "omnistac/euds/dao/UserEntitlement#productElement().",
+       "omnistac/euds/dao/UserEntitlement#productIterator().",
+       "omnistac/euds/dao/UserEntitlement#canEqual().",
+       "omnistac/euds/dao/UserEntitlement#productElementName().",
+       "omnistac/euds/dao/UserEntitlement#hashCode().",
+       "omnistac/euds/dao/UserEntitlement#toString().",
+       "omnistac/euds/dao/UserEntitlement#equals()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy$default$3().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$3",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Predef.String#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().(user)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "user",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/UserContext#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#canEqual().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "canEqual",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#canEqual().(x$1)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Equals#canEqual()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.apply().(isTrader)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "isTrader",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.apply().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "apply",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement.apply().(isOpsAdmin)",
+        "omnistac/euds/dao/UserEntitlement.apply().(isTrader)",
+        "omnistac/euds/dao/UserEntitlement.apply().(entityType)",
+        "omnistac/euds/dao/UserEntitlement.apply().(restrictingValue)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Function4#apply()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(entityType)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "entityType",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy().(isOpsAdmin)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "isOpsAdmin",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productElement().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#entityType.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "entityType",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.apply().(restrictingValue)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "restrictingValue",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy$default$2().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy$default$2",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Boolean#"
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy().(entityType)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "entityType",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().(isOpsAdmin)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "isOpsAdmin",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.unapply().(x$0)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$0",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.writeReplace().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "writeReplace",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {}
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/lang/Object#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#isTrader.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "isTrader",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createContextTuple",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/ContextHelper#createContextTuple().(user)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#productArity().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "productArity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/Product#productArity()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy().(restrictingValue)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "restrictingValue",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#copy().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "copy",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/UserEntitlement#copy().(isOpsAdmin)",
+        "omnistac/euds/dao/UserEntitlement#copy().(isTrader)",
+        "omnistac/euds/dao/UserEntitlement#copy().(entityType)",
+        "omnistac/euds/dao/UserEntitlement#copy().(restrictingValue)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/UserEntitlement#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "UserEntitlement",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractFunction4#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/Boolean#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Boolean#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Predef.String#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Int#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "omnistac/euds/dao/UserEntitlement#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/UserEntitlement.toString().",
+       "omnistac/euds/dao/UserEntitlement.apply().",
+       "omnistac/euds/dao/UserEntitlement.unapply().",
+       "omnistac/euds/dao/UserEntitlement.writeReplace()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement.apply().(entityType)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "entityType",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/UserEntitlement#canEqual().(x$1)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 4,
+    "endLine": 40,
+    "endCharacter": 4
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 29,
+    "endLine": 31,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 6,
+    "endLine": 11,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 27,
+    "endLine": 41,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#isOpsAdmin.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 58,
+    "endLine": 41,
+    "endCharacter": 65
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 48,
+    "endLine": 41,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#isTrader.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 23,
+    "endLine": 13,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 29,
+    "endLine": 21,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext#isOpsAdmin().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 24,
+    "endLine": 18,
+    "endCharacter": 39
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 35,
+    "endLine": 14,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#isOpsAdmin().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 72,
+    "endLine": 16,
+    "endCharacter": 80
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 87,
+    "endLine": 41,
+    "endCharacter": 103
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#restrictingValue.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 2,
+    "endLine": 4,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 2,
+    "endLine": 4,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 40,
+    "endLine": 18,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/core/entity/TradingFirmUserContext#isOpsAdmin().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 21,
+    "endLine": 15,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/core/entity/CounterpartyUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 10,
+    "endLine": 24,
+    "endCharacter": 28
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 31,
+    "endLine": 11,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/entity/UserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 39,
+    "endLine": 41,
+    "endCharacter": 46
+   },
+   "symbol": "scala/Boolean#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 28,
+    "endLine": 17,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/core/entity/TradingFirmUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 81,
+    "endLine": 16,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/core/entity/CounterpartyUserContext#counterpartyId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 67,
+    "endLine": 41,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#entityType.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 45,
+    "endLine": 11,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 8,
+    "endLine": 14,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 25,
+    "endLine": 11,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().(user)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 78,
+    "endLine": 18,
+    "endCharacter": 93
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 8,
+    "endLine": 20,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 94,
+    "endLine": 18,
+    "endCharacter": 100
+   },
+   "symbol": "omnistac/core/entity/TradingFirmUserContext#firmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 4,
+    "endLine": 12,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#createContextTuple().(user)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/entity/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 2,
+    "endLine": 5,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/entity/TradingFirmUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 2,
+    "endLine": 5,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/entity/TradingFirmUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 11,
+    "endLine": 41,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 8,
+    "endLine": 16,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 11,
+    "endLine": 19,
+    "endCharacter": 29
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 79,
+    "endLine": 41,
+    "endCharacter": 85
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 11,
+    "endLine": 17,
+    "endCharacter": 26
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 2,
+    "endLine": 7,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/core/entity/UserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 2,
+    "endLine": 6,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 2,
+    "endLine": 6,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/core/entity/TrumidUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 6,
+    "endLine": 10,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 31,
+    "endLine": 19,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 105,
+    "endLine": 41,
+    "endCharacter": 108
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 10,
+    "endLine": 21,
+    "endCharacter": 28
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 33,
+    "endLine": 16,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/core/entity/CounterpartyUserContext#isOpsAdmin().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 10,
+    "endLine": 22,
+    "endCharacter": 28
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 26,
+    "endLine": 41,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 29,
+    "endLine": 22,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext#isTrader().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 7,
+    "endLine": 31,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 24,
+    "endLine": 14,
+    "endCharacter": 34
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 24,
+    "endLine": 16,
+    "endCharacter": 32
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 8,
+    "endLine": 26,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/UserEntitlement.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 29,
+    "endLine": 24,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/entity/TradingAccountUserContext#accountId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 11,
+    "endLine": 15,
+    "endCharacter": 19
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 11,
+    "endLine": 13,
+    "endCharacter": 21
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 2,
+    "endLine": 3,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/entity/CounterpartyUserContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 2,
+    "endLine": 3,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/entity/CounterpartyUserContext#",
+   "role": "REFERENCE"
+  }
+ ]
+}

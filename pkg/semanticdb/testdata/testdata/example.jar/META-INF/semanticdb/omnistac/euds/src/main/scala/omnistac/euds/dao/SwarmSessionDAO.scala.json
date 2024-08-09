@@ -1,0 +1,5068 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/SwarmSessionDAO.scala",
+ "md5": "B026DCB431DB4DC518C8CADE69F13672",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "local44",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local43",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local42",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local41",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmPhase#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ss",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/postswarm/message/SwarmStatus#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local48",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local47",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/PricingConvention#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local46",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/jdbc/PositionedResult#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local45",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local40",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "addNetDetails",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(info)",
+        "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local49",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "netId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "isNetSwarm",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Boolean#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ssi",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "netName",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$29",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "SwarmSessionDAO",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/data/DataUtil#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/LazyLogging#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/dao/ContextHelper#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/SwarmSessionDAO#queryResult2SwarmSessionInfoTransformer.",
+       "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().",
+       "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().",
+       "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().",
+       "omnistac/euds/dao/SwarmSessionDAO#addNetDetails()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "name",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "id",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "netInfo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/NetInfo#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().(swarmId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "swarmId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "info",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#queryResult2SwarmSessionInfoTransformer.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1056,
+   "displayName": "queryResult2SwarmSessionInfoTransformer",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/jdbc/GetResult#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/jdbc/PositionedResult#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local39",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/NetInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(info)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "info",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createSwarmStatusUpdateAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$21",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local65",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$29",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local64",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$28",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local63",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$27",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$25",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$24",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/USTBenchmarkTenor#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$23",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$22",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createSwarmSessionInsertWithRefDataAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+        "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/dbio/DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeInstrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local62",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$26",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local61",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$25",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/USTBenchmarkTenor#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local60",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$24",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$28",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$27",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/NetInfo#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$26",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local55",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$19",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local54",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local53",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local52",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmPhase#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local59",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$23",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local58",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$22",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Long#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local57",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$21",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local56",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$20",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/Rational#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createSwarmSessionByIdAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().(swarmId)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/SwarmSessionInfo#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local51",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local50",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$18",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Boolean#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$17",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/package.Seq#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/spok/message/PricingConvention#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/microswarm/message/SwarmType#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 63,
+    "endLine": 112,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 44
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 34,
+    "endLine": 115,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 10,
+    "endLine": 95,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 15,
+    "endLine": 28,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#bigDecimalToRational(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 10,
+    "endLine": 80,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 15,
+    "endLine": 17,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#queryResult2SwarmSessionInfoTransformer.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 37,
+    "endLine": 30,
+    "endCharacter": 56
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 6,
+    "endLine": 120,
+    "endCharacter": 8
+   },
+   "symbol": "local35",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 10,
+    "endLine": 92,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 34,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 34,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 24,
+    "endLine": 26,
+    "endCharacter": 25
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 28,
+    "endLine": 29,
+    "endCharacter": 41
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 45,
+    "endLine": 107,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().(swarmId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(initiatingActorId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 38,
+    "endLine": 28,
+    "endCharacter": 58
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBigDecimalOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 6,
+    "endLine": 13,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 16,
+    "endLine": 37,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 25,
+    "endLine": 27,
+    "endCharacter": 26
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 24,
+    "endLine": 122,
+    "endCharacter": 28
+   },
+   "symbol": "local36",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 28,
+    "endLine": 15,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 58,
+    "endLine": 102,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 24,
+    "endLine": 93,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 10,
+    "endLine": 78,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 14,
+    "endLine": 83,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#midPhasePrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 18,
+    "endLine": 98,
+    "endCharacter": 21
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 39,
+    "endLine": 124,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#copy().(netInfo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 61,
+    "endLine": 13,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/euds/dao/ContextHelper#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/postswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 99,
+    "endLine": 102,
+    "endCharacter": 101
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 23,
+    "endLine": 90,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 10,
+    "endLine": 79,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 16,
+    "endLine": 10,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 10,
+    "endLine": 84,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 33,
+    "endLine": 79,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 6,
+    "endLine": 38,
+    "endCharacter": 9
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 6,
+    "endLine": 22,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(phaseEndTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 28,
+    "endLine": 115,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(info)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 23,
+    "endLine": 117,
+    "endCharacter": 40
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBooleanOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 14,
+    "endLine": 104,
+    "endCharacter": 17
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 37,
+    "endLine": 15,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 10,
+    "endLine": 85,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 52,
+    "endLine": 25,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 19,
+    "endLine": 8,
+    "endCharacter": 28
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 19,
+    "endLine": 8,
+    "endCharacter": 28
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 8,
+    "endLine": 117,
+    "endCharacter": 18
+   },
+   "symbol": "local32",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 35,
+    "endLine": 31,
+    "endCharacter": 48
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 11,
+    "endLine": 104,
+    "endCharacter": 13
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 14,
+    "endLine": 96,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#isNetSwarm.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 22,
+    "endLine": 95,
+    "endCharacter": 25
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 23,
+    "endLine": 21,
+    "endCharacter": 39
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 10,
+    "endLine": 72,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 51,
+    "endLine": 11,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/ExecutionContext.Implicits.global().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 10,
+    "endLine": 97,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 6,
+    "endLine": 26,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(numMidBuyOrders)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 118,
+    "startCharacter": 8,
+    "endLine": 118,
+    "endCharacter": 13
+   },
+   "symbol": "local33",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 30,
+    "endLine": 73,
+    "endCharacter": 34
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 28,
+    "endLine": 83,
+    "endCharacter": 31
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 6,
+    "endLine": 21,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(swarmPhaseId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 63,
+    "endLine": 80,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#bbGlobalId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 24,
+    "endLine": 11,
+    "endCharacter": 40
+   },
+   "symbol": "scala/concurrent/ExecutionContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 6,
+    "endLine": 19,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(instrumentId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 63,
+    "endLine": 78,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#cusip.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 10,
+    "endLine": 83,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 12,
+    "endLine": 10,
+    "endCharacter": 15
+   },
+   "symbol": "java/sql/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 25,
+    "endLine": 74,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 35,
+    "endLine": 4,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 35,
+    "endLine": 4,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 37,
+    "endLine": 39,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 28,
+    "endLine": 25,
+    "endCharacter": 29
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 4,
+    "endLine": 41,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 14,
+    "endLine": 115,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 6,
+    "endLine": 20,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(instrumentVersionId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 55,
+    "endLine": 115,
+    "endCharacter": 71
+   },
+   "symbol": "slick/jdbc/PositionedResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 9,
+    "endLine": 15,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 118,
+    "startCharacter": 18,
+    "endLine": 118,
+    "endCharacter": 34
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 18,
+    "endLine": 116,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 6,
+    "endLine": 121,
+    "endCharacter": 10
+   },
+   "symbol": "local36",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/postswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 50,
+    "endLine": 22,
+    "endCharacter": 53
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 14,
+    "endLine": 89,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#markup.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 50,
+    "endLine": 101,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 63,
+    "endLine": 79,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#isin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 10,
+    "endLine": 96,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 31,
+    "endLine": 74,
+    "endCharacter": 35
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 58,
+    "endLine": 25,
+    "endCharacter": 65
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 10,
+    "endLine": 77,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 28,
+    "endLine": 22,
+    "endCharacter": 47
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 8,
+    "endLine": 119,
+    "endCharacter": 15
+   },
+   "symbol": "local34",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 23,
+    "endLine": 93,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 35,
+    "endLine": 30,
+    "endCharacter": 36
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 10,
+    "endLine": 81,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 10,
+    "endLine": 98,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 14,
+    "endLine": 73,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#swarmType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 6,
+    "endLine": 28,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(markup)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 26,
+    "endLine": 29,
+    "endCharacter": 27
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 6,
+    "endLine": 30,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(midPhaseExtensionTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 13,
+    "endLine": 11,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 23,
+    "endLine": 15,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 46
+   },
+   "symbol": "slick/jdbc/PositionedResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 4,
+    "endLine": 102,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 27,
+    "endLine": 89,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 28,
+    "endLine": 20,
+    "endCharacter": 29
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 59,
+    "endLine": 30,
+    "endCharacter": 62
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 4,
+    "endLine": 124,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(info)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 12
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 49,
+    "endLine": 124,
+    "endCharacter": 56
+   },
+   "symbol": "local34",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 52,
+    "endLine": 115,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 28,
+    "endLine": 95,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/spok/message/NetInfo#name.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 14,
+    "endLine": 124,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#copy().(isNetSwarm)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 21,
+    "endLine": 21,
+    "endCharacter": 22
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 10,
+    "endLine": 82,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 53,
+    "endLine": 79,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 26,
+    "endLine": 22,
+    "endCharacter": 27
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 46,
+    "endLine": 101,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 13,
+    "endLine": 98,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 15,
+    "endLine": 18,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(maybeInstrumentRefData)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 24,
+    "endLine": 91,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 30,
+    "endLine": 39,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 24,
+    "endLine": 90,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 20,
+    "endLine": 116,
+    "endCharacter": 36
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 14,
+    "endLine": 88,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getMidUsedLastTrade().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 27,
+    "endLine": 27,
+    "endCharacter": 40
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 24,
+    "endLine": 82,
+    "endCharacter": 27
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 14,
+    "endLine": 84,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getNumMidBuyOrders().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 96,
+    "endLine": 17,
+    "endCharacter": 97
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 43,
+    "endLine": 80,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 14,
+    "endLine": 81,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#invitedTraderIds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 13,
+    "endLine": 8,
+    "endCharacter": 17
+   },
+   "symbol": "slick/jdbc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 43,
+    "endLine": 78,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 5,
+    "endLine": 34,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 28,
+    "endLine": 90,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getSwarmStartTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 118,
+    "startCharacter": 16,
+    "endLine": 118,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 14,
+    "endLine": 93,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 56,
+    "endLine": 17,
+    "endCharacter": 65
+   },
+   "symbol": "slick/jdbc/GetResult#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 100,
+    "endLine": 103,
+    "endCharacter": 110
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus#getSwarmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 44,
+    "endLine": 13,
+    "endCharacter": 55
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 26,
+    "endLine": 6,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 4,
+    "endLine": 108,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 6,
+    "endLine": 23,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(swarmId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 14,
+    "endLine": 121,
+    "endCharacter": 21
+   },
+   "symbol": "local31",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 14,
+    "endLine": 94,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#midPhaseExtensionSeconds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 22,
+    "endLine": 34,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 16,
+    "endLine": 107,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 10,
+    "endLine": 89,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 33,
+    "endLine": 31,
+    "endCharacter": 34
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 18,
+    "endLine": 23,
+    "endCharacter": 34
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextStringOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 54,
+    "endLine": 107,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 10,
+    "endLine": 75,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 65,
+    "endLine": 15,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 27,
+    "endLine": 4,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 56,
+    "endLine": 22,
+    "endCharacter": 63
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 36,
+    "endLine": 28,
+    "endCharacter": 37
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 74,
+    "endLine": 115,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 30,
+    "endLine": 25,
+    "endCharacter": 49
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextTimestampOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 86,
+    "endLine": 17,
+    "endCharacter": 95
+   },
+   "symbol": "slick/jdbc/GetResult.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 28,
+    "endLine": 91,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getPhaseEndTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 49,
+    "endLine": 112,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionByIdAction().(swarmId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 10,
+    "endLine": 88,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 10,
+    "endLine": 74,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 29,
+    "endLine": 7,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/spok/message/NetInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 29,
+    "endLine": 7,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/spok/message/NetInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 14,
+    "endLine": 95,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#netInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 14,
+    "endLine": 77,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getInstrumentVersionId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 8,
+    "endLine": 116,
+    "endCharacter": 15
+   },
+   "symbol": "local31",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 26,
+    "endLine": 34,
+    "endCharacter": 30
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 60,
+    "endLine": 112,
+    "endCharacter": 62
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 21,
+    "endLine": 19,
+    "endCharacter": 22
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 41,
+    "endLine": 11,
+    "endCharacter": 50
+   },
+   "symbol": "scala/concurrent/ExecutionContext.Implicits.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 6,
+    "endLine": 27,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(numMidSellOrders)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 14,
+    "endLine": 97,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#netInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 33,
+    "endLine": 80,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 23,
+    "endLine": 91,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 14,
+    "endLine": 85,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getNumMidSellOrders().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 31,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/data/DataUtil.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 31,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 16,
+    "endLine": 23,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 21,
+    "endLine": 89,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 14,
+    "endLine": 76,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getInstrumentId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 33,
+    "endLine": 78,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 12,
+    "endLine": 120,
+    "endCharacter": 17
+   },
+   "symbol": "local33",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 24,
+    "endLine": 73,
+    "endCharacter": 27
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 43,
+    "endLine": 24,
+    "endCharacter": 44
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 65,
+    "endLine": 30,
+    "endCharacter": 72
+   },
+   "symbol": "java/sql/Timestamp#getTime().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 14,
+    "endLine": 92,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#initiatingActorId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 14,
+    "endLine": 74,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#swarmPhase.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 12
+   },
+   "symbol": "slick/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 14,
+    "endLine": 90,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 23,
+    "endLine": 19,
+    "endCharacter": 36
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 19,
+    "endLine": 104,
+    "endCharacter": 22
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 12,
+    "endLine": 122,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/spok/message/NetInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 53,
+    "endLine": 78,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 102,
+    "endLine": 102,
+    "endCharacter": 112
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus#getSwarmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 28,
+    "endLine": 93,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getMidPhaseExtensionTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 26,
+    "endLine": 3,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/data/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 43,
+    "endLine": 79,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 16,
+    "endLine": 101,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 11,
+    "endLine": 38,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 26,
+    "endLine": 26,
+    "endCharacter": 39
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 61,
+    "endLine": 102,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/postswarm/message/SwarmStatus#getCanceledReason().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 34,
+    "endLine": 83,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 14,
+    "endLine": 72,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getSwarmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 10,
+    "endLine": 94,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 30,
+    "endLine": 20,
+    "endCharacter": 43
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextIntOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 6,
+    "endLine": 31,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(midPhaseExtensionSeconds)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 14,
+    "endLine": 75,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#getSwarmPhaseId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 18,
+    "endLine": 15,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 53,
+    "endLine": 80,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 22,
+    "endLine": 97,
+    "endCharacter": 25
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 45,
+    "endLine": 24,
+    "endCharacter": 65
+   },
+   "symbol": "slick/jdbc/PositionedResult#nextBigDecimalOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 34,
+    "endLine": 6,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 34,
+    "endLine": 6,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 27,
+    "endLine": 124,
+    "endCharacter": 37
+   },
+   "symbol": "local32",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 7,
+    "endLine": 11,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 10,
+    "endLine": 76,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 97,
+    "endLine": 103,
+    "endCharacter": 99
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmStatusUpdateAction().(ss)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 14,
+    "endLine": 91,
+    "endCharacter": 23
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 66,
+    "endLine": 17,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 22,
+    "endLine": 24,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#bigDecimalToRational(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 30,
+    "endLine": 13,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/util/data/DataUtil#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 20,
+    "endLine": 122,
+    "endCharacter": 22
+   },
+   "symbol": "local35",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 28,
+    "endLine": 97,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/NetInfo#id.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 9,
+    "endLine": 124,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 21,
+    "endLine": 117,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#addNetDetails().(r)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 6,
+    "endLine": 24,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(midPhasePrice)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 6,
+    "endLine": 25,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo.apply().(swarmStartTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 30,
+    "endLine": 82,
+    "endCharacter": 34
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 14,
+    "endLine": 82,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/microswarm/message/SwarmSessionInfo#priceType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 10,
+    "endLine": 73,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/SwarmSessionDAO#createSwarmSessionInsertWithRefDataAction().(ssi)",
+   "role": "REFERENCE"
+  }
+ ]
+}

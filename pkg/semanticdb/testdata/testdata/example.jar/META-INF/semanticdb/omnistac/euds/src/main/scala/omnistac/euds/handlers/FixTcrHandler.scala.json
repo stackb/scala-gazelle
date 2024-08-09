@@ -1,0 +1,3775 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/FixTcrHandler.scala",
+ "md5": "FFAAEF2E09A78C1BB38F7D2A645239B2",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#featureSwitches.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "featureSwitches",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "scaleQuantity",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().(q)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/Rational#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleTradeEventNotifications",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().(r)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#efieAtsId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "efieAtsId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "FixTcrHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/number/RationalPriceUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/LazyLogging#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/FixTcrHandler#featureSwitches.",
+       "omnistac/euds/handlers/FixTcrHandler#contextProvider.",
+       "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+       "omnistac/euds/handlers/FixTcrHandler#efieAtsId.",
+       "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().",
+       "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().",
+       "omnistac/euds/handlers/FixTcrHandler#makeReport().",
+       "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().",
+       "omnistac/euds/handlers/FixTcrHandler#getProductType()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().(featureSwitches)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "featureSwitches",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "counterpartiesIds",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Set#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/Integer#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#contextProvider.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "contextProvider",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().(r)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "hs",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/HedgeOrSpot#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "makeReport",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/tcr/message/CounterpartyTCR#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "e",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().(trades)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "trades",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/TradeEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "t",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().(hs)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "hs",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/HedgeOrSpot#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "isCanceledBeforeFinal",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getProductType",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#getProductType().(hs)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/tcr/message/TCRProductType#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "event",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "makeFinalTradeReports",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().(trades)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/tcr/message/CounterpartyTCRList#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().(featureSwitches)",
+        "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().(contextProvider)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "q",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "cusip",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "isin",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().(q)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "q",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "executingFirm",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "intermediaryName",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "e",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/TradeEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "originatorMnemonic",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 16,
+    "endLine": 11,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 47,
+    "endLine": 95,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 29,
+    "endLine": 95,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().(hs)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 47,
+    "endLine": 53,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 27,
+    "endLine": 61,
+    "endCharacter": 37
+   },
+   "symbol": "java/util/UUID#randomUUID().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 41,
+    "endLine": 52,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 6,
+    "endLine": 61,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(tradeReportId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 39,
+    "endLine": 73,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 12,
+    "endLine": 16,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/number/RationalPriceUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 26,
+    "endLine": 20,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/EudsConfig.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 28,
+    "endLine": 93,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().(q)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 66,
+    "endLine": 55,
+    "endCharacter": 75
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getCptyId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 22,
+    "endLine": 83,
+    "endCharacter": 35
+   },
+   "symbol": "local5",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 6,
+    "endLine": 77,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(grossAmt)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 10,
+    "endLine": 31,
+    "endCharacter": 16
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 18,
+    "endLine": 76,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#orderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 18,
+    "endLine": 62,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#ssgmAccountNumber.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 84,
+    "endLine": 93,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().(q)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 15,
+    "endLine": 29,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Boolean#`unary_!`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 87,
+    "endLine": 93,
+    "endCharacter": 88
+   },
+   "symbol": "scala/math/BigDecimal#`/`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 10,
+    "endLine": 34,
+    "endCharacter": 16
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 55,
+    "endLine": 31,
+    "endCharacter": 60
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 73,
+    "endLine": 93,
+    "endCharacter": 83
+   },
+   "symbol": "scala/package.BigDecimal.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 19,
+    "endLine": 85,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#sendVcon.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 15,
+    "endLine": 63,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 22,
+    "endLine": 9,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/EudsConfig.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 16,
+    "endLine": 72,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 38,
+    "endLine": 93,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 25,
+    "endLine": 82,
+    "endCharacter": 41
+   },
+   "symbol": "local6",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 26,
+    "endLine": 39,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 16,
+    "endLine": 88,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 24,
+    "endLine": 69,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#tradeTimestamp.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 14,
+    "endLine": 19,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 12,
+    "endLine": 30,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 19,
+    "endLine": 66,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 24,
+    "endLine": 78,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 18,
+    "endLine": 70,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 8,
+    "endLine": 58,
+    "endCharacter": 12
+   },
+   "symbol": "local8",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 37,
+    "endLine": 20,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/EudsConfig.efieAtsId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 34,
+    "endLine": 4,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 61,
+    "endLine": 31,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#tradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 40,
+    "endLine": 61,
+    "endCharacter": 48
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 9,
+    "endLine": 50,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 8,
+    "endLine": 54,
+    "endCharacter": 21
+   },
+   "symbol": "local5",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 48,
+    "endLine": 43,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 17,
+    "endLine": 85,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 22,
+    "endLine": 31,
+    "endCharacter": 23
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 37,
+    "endLine": 48,
+    "endCharacter": 38
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 6,
+    "endLine": 82,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(intermediaryName)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 53,
+    "endLine": 6,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.BoolToOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 53,
+    "endLine": 6,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.BoolToOption.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 53,
+    "endLine": 6,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.BoolToOption#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 4,
+    "endLine": 26,
+    "endCharacter": 5
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().(r)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 45,
+    "endLine": 29,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/GreyTradeInfo#isGreyMarket.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 39,
+    "endLine": 54,
+    "endCharacter": 41
+   },
+   "symbol": "scala/Int#`==`(+3).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 51,
+    "endLine": 30,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches#enableTracerPostswarmMessagesForFix.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 8,
+    "endLine": 53,
+    "endCharacter": 26
+   },
+   "symbol": "local4",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 6,
+    "endLine": 45,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().(trades)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 37,
+    "endLine": 6,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 22,
+    "endLine": 61,
+    "endCharacter": 26
+   },
+   "symbol": "java/util/UUID#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 31,
+    "endLine": 57,
+    "endCharacter": 38
+   },
+   "symbol": "java/lang/String#isEmpty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 34,
+    "endLine": 30,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Boolean#`unary_!`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 27,
+    "endLine": 55,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#contextProvider.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 10,
+    "endLine": 48,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 8,
+    "endLine": 39,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 12,
+    "endLine": 2,
+    "endCharacter": 16
+   },
+   "symbol": "java/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 26,
+    "endLine": 6,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/collection/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 42,
+    "endLine": 54,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#efieAtsId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 22,
+    "endLine": 34,
+    "endCharacter": 23
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 14,
+    "endLine": 43,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 29,
+    "endLine": 58,
+    "endCharacter": 36
+   },
+   "symbol": "java/lang/String#isEmpty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 9,
+    "endLine": 22,
+    "endCharacter": 13
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 65,
+    "endLine": 22,
+    "endCharacter": 66
+   },
+   "symbol": "java/lang/String#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 7,
+    "endLine": 11,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 40,
+    "endLine": 28,
+    "endCharacter": 45
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 28,
+    "endLine": 32,
+    "endCharacter": 32
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 49,
+    "endLine": 7,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/core/util/collection/OptionUtils.toOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 58,
+    "endLine": 53,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/microswarm/message/SwarmPhase#isHedgeExecutionPhase().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 30,
+    "endLine": 66,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 33,
+    "endLine": 8,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/util/number/RationalPriceUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 33,
+    "endLine": 8,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/util/number/RationalPriceUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 65,
+    "endLine": 24,
+    "endCharacter": 69
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 74,
+    "endLine": 35,
+    "endCharacter": 79
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 13,
+    "endLine": 50,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 37,
+    "endLine": 7,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/util/collection/OptionUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 28,
+    "endLine": 54,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 17,
+    "endLine": 2,
+    "endCharacter": 21
+   },
+   "symbol": "java/util/UUID#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 31,
+    "endLine": 93,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Long#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 39,
+    "endLine": 24,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 64,
+    "endLine": 34,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getIsDelayedSpotFinal().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 11,
+    "endLine": 96,
+    "endCharacter": 13
+   },
+   "symbol": "java/lang/Object#`==`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 70,
+    "endLine": 24,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 43,
+    "endLine": 10,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/spok/message/TradeEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 43,
+    "endLine": 10,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 4,
+    "endLine": 44,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCRList.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 54,
+    "endLine": 48,
+    "endCharacter": 75
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 18,
+    "endLine": 71,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 22,
+    "endLine": 29,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#greyTradeInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 14,
+    "endLine": 52,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 6,
+    "endLine": 68,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(isin)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 66,
+    "endLine": 15,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#contextProvider.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 25,
+    "endLine": 73,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 33,
+    "endLine": 32,
+    "endCharacter": 38
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 6,
+    "endLine": 63,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(execId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 10,
+    "endLine": 32,
+    "endCharacter": 16
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 11,
+    "endLine": 3,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 64,
+    "endLine": 55,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 6,
+    "endLine": 80,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(commissionAmt)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 67,
+    "endLine": 22,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 31,
+    "endLine": 53,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#mnemonic.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 59,
+    "endLine": 73,
+    "endCharacter": 68
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 6,
+    "endLine": 69,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(transactionTs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 6,
+    "endLine": 79,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(netMoney)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 50,
+    "endLine": 58,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#isin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 83,
+    "endLine": 96,
+    "endCharacter": 92
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.CORPORATE.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 28,
+    "endLine": 48,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/SetOps#contains().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 14,
+    "endLine": 67,
+    "endCharacter": 19
+   },
+   "symbol": "local7",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 19,
+    "endLine": 77,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#cleanSettlementAmount.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 6,
+    "endLine": 62,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(account)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 11,
+    "endLine": 27,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 20,
+    "endLine": 57,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 58,
+    "endLine": 5,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 45,
+    "endLine": 19,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/euds/EudsConfig.ssgmIds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 58,
+    "endLine": 24,
+    "endCharacter": 64
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 8,
+    "endLine": 57,
+    "endCharacter": 13
+   },
+   "symbol": "local7",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 19,
+    "endLine": 64,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/message/Rational.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/message/Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 19,
+    "endLine": 79,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#settlementAmount.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 48,
+    "endLine": 58,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 38,
+    "endLine": 58,
+    "endCharacter": 42
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 17,
+    "endLine": 35,
+    "endCharacter": 27
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 14,
+    "endLine": 93,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 13,
+    "endLine": 28,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#counterpartiesIds.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 14,
+    "endLine": 20,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#efieAtsId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 21,
+    "endLine": 87,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 46,
+    "endLine": 28,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getCptyId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 68,
+    "endLine": 96,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 17,
+    "endLine": 65,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 35,
+    "endLine": 30,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#featureSwitches.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 6,
+    "endLine": 87,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(traderBbUuid)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 16,
+    "endLine": 9,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 37,
+    "endLine": 15,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 33,
+    "endLine": 35,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().(r)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 20,
+    "endLine": 70,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#settlementDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 24,
+    "endLine": 13,
+    "endCharacter": 30
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 24,
+    "endLine": 13,
+    "endCharacter": 30
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 28,
+    "endLine": 35,
+    "endCharacter": 32
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 13,
+    "endLine": 68,
+    "endCharacter": 17
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 30,
+    "endLine": 10,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/HedgeOrSpot.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 30,
+    "endLine": 10,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/HedgeOrSpot#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 6,
+    "endLine": 70,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(settlDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 22,
+    "endLine": 69,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 6,
+    "endLine": 78,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(accruedInterest)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 67,
+    "endLine": 11,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 67,
+    "endLine": 11,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 34,
+    "endLine": 19,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/EudsConfig.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 19,
+    "endLine": 65,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#quantity.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 6,
+    "endLine": 75,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(side)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 21,
+    "endLine": 58,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getIsin().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 22,
+    "endLine": 57,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getCusip().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 39,
+    "endLine": 48,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getCptyId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 29,
+    "endLine": 53,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 36,
+    "endLine": 24,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().(r)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 6,
+    "endLine": 66,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(quantityMM)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 6,
+    "endLine": 73,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(productType)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 26,
+    "endLine": 96,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/HedgeOrSpot.UST_HEDGE.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 26,
+    "endLine": 78,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#accruedInterestAmount.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 17,
+    "endLine": 32,
+    "endCharacter": 27
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 19,
+    "endLine": 84,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 31,
+    "endLine": 39,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 50,
+    "endLine": 57,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 37,
+    "endLine": 96,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 86,
+    "startCharacter": 19,
+    "endLine": 86,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 6,
+    "endLine": 71,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(tradeDate)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 62,
+    "endLine": 47,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getIsSwarmTradeAmendedAfterFinal().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 52,
+    "endLine": 96,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.GOVERNMENT.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 18,
+    "endLine": 46,
+    "endCharacter": 19
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 25,
+    "endLine": 52,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 6,
+    "endLine": 83,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(executingFirm)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 26,
+    "endLine": 7,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/collection/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 31,
+    "endLine": 30,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 6,
+    "endLine": 88,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(swarmId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 102,
+    "endLine": 34,
+    "endCharacter": 103
+   },
+   "symbol": "java/lang/String#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 46,
+    "endLine": 11,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCRList.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 46,
+    "endLine": 11,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCRList#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 17,
+    "endLine": 34,
+    "endCharacter": 21
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 33,
+    "endLine": 95,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/spok/message/HedgeOrSpot#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 14,
+    "endLine": 96,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/spok/message/HedgeOrSpot.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 83,
+    "endLine": 15,
+    "endCharacter": 102
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 31,
+    "endLine": 28,
+    "endCharacter": 39
+   },
+   "symbol": "scala/collection/SetOps#contains().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 34,
+    "endLine": 66,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#scaleQuantity().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 21,
+    "endLine": 8,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 14,
+    "endLine": 95,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 87,
+    "endLine": 30,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/common/featureswitch/FeatureSwitch#getValue().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 16,
+    "endLine": 62,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 18,
+    "endLine": 72,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#bondYield.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 24,
+    "endLine": 89,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 19,
+    "endLine": 58,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 4,
+    "endLine": 60,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 44,
+    "endLine": 47,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getIsCanceled().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 26,
+    "endLine": 8,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/util/number/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 26,
+    "endLine": 89,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#bondBillingType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 6,
+    "endLine": 24,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#handleTradeEventNotifications().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 9,
+    "endLine": 46,
+    "endCharacter": 15
+   },
+   "symbol": "scala/collection/IterableOps#filter().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 21,
+    "endLine": 64,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#netPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 6,
+    "endLine": 64,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(tradePrice)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 52,
+    "endLine": 57,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#cusip.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 20,
+    "endLine": 71,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#tradeDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 25,
+    "endLine": 4,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/biz/provider/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 6,
+    "endLine": 84,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(traderName)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 6,
+    "endLine": 67,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(cusip)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 6,
+    "endLine": 85,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(sendVcon)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 13,
+    "endLine": 75,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 24,
+    "endLine": 80,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#revenueAmount.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 8,
+    "endLine": 96,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().(hs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 27,
+    "endLine": 27,
+    "endCharacter": 32
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 10,
+    "endLine": 35,
+    "endCharacter": 16
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 21,
+    "endLine": 66,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#quantity.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 6,
+    "endLine": 72,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(yield)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 27,
+    "endLine": 81,
+    "endCharacter": 45
+   },
+   "symbol": "local4",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 86,
+    "startCharacter": 21,
+    "endLine": 86,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#isCanceled.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 4,
+    "endLine": 17,
+    "endCharacter": 4
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 14,
+    "endLine": 47,
+    "endCharacter": 35
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 19,
+    "endLine": 15,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 84,
+    "endLine": 73,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.CORPORATE.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 35,
+    "endLine": 35,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#makeResponse(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 49,
+    "endLine": 53,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getPhase().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 13,
+    "endLine": 13,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 15,
+    "endLine": 74,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 53,
+    "endLine": 48,
+    "endCharacter": 54
+   },
+   "symbol": "scala/Boolean#`unary_!`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 9,
+    "endLine": 17,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 62,
+    "endLine": 43,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCRList#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 16,
+    "endLine": 10,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 33,
+    "endLine": 3,
+    "endCharacter": 44
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 49,
+    "endLine": 93,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/core/util/number/RationalPriceUtils#bigDecimalToRationalMsg().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 21,
+    "endLine": 10,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 15,
+    "endLine": 39,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 17,
+    "endLine": 77,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 43,
+    "endLine": 73,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#getProductType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 6,
+    "endLine": 76,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(orderId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 20,
+    "endLine": 3,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 34,
+    "endLine": 9,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 34,
+    "endLine": 9,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/euds/LaunchDarklyFeatureSwitches#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 17,
+    "endLine": 31,
+    "endCharacter": 21
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 18,
+    "endLine": 30,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getIsForTest().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 18,
+    "endLine": 88,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#swarmId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 20,
+    "endLine": 15,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#featureSwitches.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 70,
+    "endLine": 35,
+    "endCharacter": 73
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 40,
+    "endLine": 57,
+    "endCharacter": 44
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 20,
+    "endLine": 73,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 17,
+    "endLine": 79,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 16,
+    "endLine": 29,
+    "endCharacter": 21
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 104,
+    "endLine": 34,
+    "endCharacter": 109
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 21,
+    "endLine": 84,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#traderName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 69,
+    "endLine": 73,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/tcr/message/TCRProductType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 59,
+    "endLine": 47,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Boolean#`unary_!`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 60,
+    "endLine": 47,
+    "endCharacter": 61
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 22,
+    "endLine": 80,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 86,
+    "startCharacter": 6,
+    "endLine": 86,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(isCanceled)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 87,
+    "endLine": 55,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/gum/message/Counterparty#selfId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 43,
+    "endLine": 55,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/core/biz/provider/TradingAccountUserContextProvider#getCounterpartyForId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 30,
+    "endLine": 54,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#getAtsId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 23,
+    "endLine": 87,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#bbUuid.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 6,
+    "endLine": 65,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(quantity)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 6,
+    "endLine": 74,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(spread)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 77,
+    "endLine": 55,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 34,
+    "endLine": 27,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 36,
+    "endLine": 43,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().(trades)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 12,
+    "endLine": 29,
+    "endCharacter": 14
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 20,
+    "endLine": 11,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/tcr/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 16,
+    "endLine": 76,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeReport().(e)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 6,
+    "endLine": 89,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(bondBillingType)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 8,
+    "endLine": 55,
+    "endCharacter": 24
+   },
+   "symbol": "local6",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 7,
+    "endLine": 13,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 17,
+    "endLine": 63,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#friendlyTradeId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 6,
+    "endLine": 81,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.apply().(originatorMnemonic)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 15,
+    "endLine": 75,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#buySell.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 40,
+    "endLine": 53,
+    "endCharacter": 46
+   },
+   "symbol": "scala/Option#orElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 17,
+    "endLine": 74,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#netSpread.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 80,
+    "endLine": 53,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.BoolToOption#toOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 29,
+    "endLine": 11,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 29,
+    "endLine": 11,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/tcr/message/CounterpartyTCR#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 58,
+    "endLine": 34,
+    "endCharacter": 63
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 48,
+    "endLine": 35,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#makeFinalTradeReports().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 44,
+    "endLine": 43,
+    "endCharacter": 47
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 36,
+    "endLine": 29,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#exists().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 42,
+    "endLine": 47,
+    "endCharacter": 43
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 50,
+    "endLine": 48,
+    "endCharacter": 52
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 28,
+    "endLine": 52,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 6,
+    "endLine": 15,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FixTcrHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 2,
+    "endLine": 22,
+    "endCharacter": 8
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 27,
+    "endLine": 73,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/TradeEvent#hedgeOrSpot.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 40,
+    "endLine": 5,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 40,
+    "endLine": 5,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 16,
+    "endLine": 8,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  }
+ ]
+}

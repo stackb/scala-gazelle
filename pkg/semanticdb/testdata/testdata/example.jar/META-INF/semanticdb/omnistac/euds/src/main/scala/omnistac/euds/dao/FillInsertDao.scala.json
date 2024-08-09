@@ -1,0 +1,8542 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/dao/FillInsertDao.scala",
+ "md5": "14992C07F7EF86E4F84594DE00E649FE",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeUstBenchmark",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/USTBenchmark#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "traceId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#mmddyyyyFormatter.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1088,
+   "displayName": "mmddyyyyFormatter",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "java/time/format/DateTimeFormatter#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillVersion)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillVersion",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillSide",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillOrderInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpSpread)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fvmpSpread",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "FillInsertDao",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/number/RationalUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/treasury/TreasuryPriceUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/util/date/LocalDateUtils#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/LazyLogging#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/dao/FillInsertDao#mmddyyyyFormatter.",
+       "omnistac/euds/dao/FillInsertDao#serializer.",
+       "omnistac/euds/dao/FillInsertDao#createFillInsertAction().",
+       "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maybeInstrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(listItemId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "listItemId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(direction)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "direction",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#serializer.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "serializer",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "singleType": {
+       "symbol": "omnistac/core/util/serialization/SerializationUtils."
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "c",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/biz/message/AdjustmentCode#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmp)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fvmp",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "instrumentId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "adjustmentCode",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "markupType",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "phase",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fillTimestamp",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/sql/Timestamp#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "quantity",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "swarmId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "instrumentVersionId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "pricingConventionName",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeTenor",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/USTBenchmarkTenor#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maturityDate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/DateYMD#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ustBond",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/BondInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "benchmarkYield",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "c",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/biz/message/AdjustmentCode#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "adjustmentCode",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpTimestamp)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fvmpTimestamp",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "p",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/entity/package.Rational#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createFillInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+        "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+        "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+        "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+        "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "prefix": {
+           "singleType": {
+            "prefix": {
+             "singleType": {
+              "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+             }
+            },
+            "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+           }
+          },
+          "symbol": "slick/lifted/Aliases#NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "prefix": {
+           "singleType": {
+            "prefix": {
+             "singleType": {
+              "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+             }
+            },
+            "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+           }
+          },
+          "symbol": "slick/lifted/Aliases#Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "message",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "at",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/attributed/message/AttributedTradeDetails#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "query",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "slick/sql/SqlStreamingAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Vector#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Int#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "slick/dbio/Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "version",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "markupRate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/entity/package.Rational#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "instrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeCorpBondMaturityDate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/time/LocalDate#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fwdStrikeDetails",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "isCanceled",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "ustBenchmark",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/USTBenchmark#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeUstBenchmarkMaturityDateStr",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "maturityDate",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/DateYMD#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "bondInfo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/BondInfo#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "createFillSideInsertAction",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillId)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillVersion)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(direction)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(listItemId)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmp)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpSpread)",
+        "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpTimestamp)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "prefix": {
+          "singleType": {
+           "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+          }
+         },
+         "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+        }
+       },
+       "symbol": "slick/lifted/Aliases#DBIOAction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        },
+        {
+         "typeRef": {
+          "prefix": {
+           "singleType": {
+            "prefix": {
+             "singleType": {
+              "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+             }
+            },
+            "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+           }
+          },
+          "symbol": "slick/lifted/Aliases#NoStream#"
+         }
+        },
+        {
+         "typeRef": {
+          "prefix": {
+           "singleType": {
+            "prefix": {
+             "singleType": {
+              "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver."
+             }
+            },
+            "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI."
+           }
+          },
+          "symbol": "slick/lifted/Aliases#Effect#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "protectedAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 58,
+    "endLine": 117,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#interestRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 44,
+    "endLine": 166,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 110,
+    "startCharacter": 35,
+    "endLine": 110,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 36,
+    "endLine": 148,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 49,
+    "endLine": 31,
+    "endCharacter": 50
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 126,
+    "startCharacter": 13,
+    "endLine": 126,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 81,
+    "endLine": 144,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 47,
+    "endLine": 17,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/util/treasury/TreasuryPriceUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 16,
+    "endLine": 133,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 46,
+    "endLine": 203,
+    "endCharacter": 49
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 12,
+    "endLine": 180,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 39,
+    "endLine": 144,
+    "endCharacter": 43
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 206,
+    "startCharacter": 42,
+    "endLine": 206,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/spok/message/AutoExInfo#ruleName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 59,
+    "endLine": 61,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 21,
+    "endLine": 179,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 89,
+    "endLine": 186,
+    "endCharacter": 99
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 131,
+    "startCharacter": 6,
+    "endLine": 131,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillVersion)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 50,
+    "endLine": 196,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rebatedMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 19,
+    "endLine": 66,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Option#isDefined().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 200,
+    "startCharacter": 12,
+    "endLine": 200,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 60,
+    "endLine": 139,
+    "endCharacter": 68
+   },
+   "symbol": "scalapb/GeneratedEnum#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 11,
+    "endLine": 74,
+    "endCharacter": 23
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 12,
+    "endLine": 108,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 12,
+    "endLine": 103,
+    "endCharacter": 28
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 17,
+    "endLine": 99,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#greyOrderInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 52,
+    "endLine": 157,
+    "endCharacter": 54
+   },
+   "symbol": "local28",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 28,
+    "endLine": 19,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 82,
+    "endLine": 115,
+    "endCharacter": 92
+   },
+   "symbol": "omnistac/secmaster/message/BondTicker#issuerName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 21,
+    "endLine": 195,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 34,
+    "endLine": 140,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#orderLegs.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 8,
+    "endLine": 65,
+    "endCharacter": 18
+   },
+   "symbol": "local22",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 205,
+    "startCharacter": 12,
+    "endLine": 205,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 49,
+    "endLine": 150,
+    "endCharacter": 58
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 26,
+    "endLine": 40,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#markupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 6,
+    "endLine": 17,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 8,
+    "endLine": 142,
+    "endCharacter": 13
+   },
+   "symbol": "local27",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 78,
+    "endLine": 109,
+    "endCharacter": 81
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 41,
+    "endLine": 90,
+    "endCharacter": 45
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 6,
+    "endLine": 67,
+    "endCharacter": 12
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 19,
+    "endLine": 21,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#mmddyyyyFormatter.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 8,
+    "endLine": 51,
+    "endCharacter": 40
+   },
+   "symbol": "local18",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 198,
+    "startCharacter": 12,
+    "endLine": 198,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 18,
+    "endLine": 136,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 12,
+    "endLine": 153,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 47,
+    "endLine": 145,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getFirmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 40,
+    "endLine": 186,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 38,
+    "endLine": 203,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/spok/message/AutoExInfo#status.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 69,
+    "endLine": 209,
+    "endCharacter": 77
+   },
+   "symbol": "scala/collection/IterableOnceOps#mkString(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 35,
+    "endLine": 7,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/postgres/SlickUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 6,
+    "endLine": 28,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 26,
+    "endLine": 39,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getMarkupType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 11,
+    "endLine": 80,
+    "endCharacter": 16
+   },
+   "symbol": "local7",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 31,
+    "endLine": 99,
+    "endCharacter": 37
+   },
+   "symbol": "scala/Option#exists().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 65,
+    "endLine": 19,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver#plainAPI.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 54,
+    "endLine": 115,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 40,
+    "endLine": 98,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/microswarm/message/GreyOrderInfo#isGreyMarket.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 33,
+    "endLine": 89,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 12,
+    "endLine": 166,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 171,
+    "startCharacter": 21,
+    "endLine": 171,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#podId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 30,
+    "endLine": 54,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#maturityDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 169,
+    "startCharacter": 41,
+    "endLine": 169,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 32,
+    "endLine": 138,
+    "endCharacter": 38
+   },
+   "symbol": "slick/lifted/Aliases#Effect#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 24,
+    "endLine": 15,
+    "endCharacter": 40
+   },
+   "symbol": "scala/concurrent/ExecutionContext.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 21,
+    "endLine": 42,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 12,
+    "endLine": 145,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 54,
+    "endLine": 165,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#dealerDeskId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 51,
+    "endLine": 197,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/microswarm/message/ListFillSideDetails#forwardStrikeOffset.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 54,
+    "endLine": 111,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 25,
+    "endLine": 120,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 50,
+    "endLine": 179,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#executionDiscountMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 40,
+    "endLine": 184,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 38,
+    "endLine": 146,
+    "endCharacter": 52
+   },
+   "symbol": "local24",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 27,
+    "endLine": 10,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 27,
+    "endLine": 45,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 66,
+    "endLine": 31,
+    "endCharacter": 72
+   },
+   "symbol": "scala/Option#orNull().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 8,
+    "endLine": 31,
+    "endCharacter": 22
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 29,
+    "endLine": 104,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 12,
+    "endLine": 174,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 88,
+    "startCharacter": 11,
+    "endLine": 88,
+    "endCharacter": 21
+   },
+   "symbol": "local12",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 105,
+    "startCharacter": 29,
+    "endLine": 105,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 6,
+    "endLine": 26,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 26,
+    "endLine": 65,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#referenceTreasuryTenor.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 90,
+    "endLine": 185,
+    "endCharacter": 100
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 50,
+    "endLine": 66,
+    "endCharacter": 57
+   },
+   "symbol": "scala/Option#isEmpty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 40,
+    "endLine": 173,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 6,
+    "endLine": 134,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(listItemId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 12,
+    "endLine": 186,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 84,
+    "endLine": 180,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 44,
+    "endLine": 165,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 18,
+    "endLine": 36,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 50,
+    "endLine": 182,
+    "endCharacter": 87
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#contrapartyExecutionInvoiceMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 79,
+    "endLine": 181,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 22,
+    "endLine": 54,
+    "endCharacter": 29
+   },
+   "symbol": "local20",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 35,
+    "endLine": 116,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 21,
+    "endLine": 162,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 12,
+    "endLine": 175,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 21,
+    "endLine": 174,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 54,
+    "endLine": 153,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#contraPtyAcctName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 8,
+    "endLine": 39,
+    "endCharacter": 18
+   },
+   "symbol": "local9",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 55,
+    "endLine": 140,
+    "endCharacter": 62
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 40,
+    "endLine": 8,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/core/util/serialization/SerializationUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 40,
+    "endLine": 8,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/core/util/serialization/SerializationUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 53,
+    "endLine": 68,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 101,
+    "endLine": 140,
+    "endCharacter": 104
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 37,
+    "endLine": 38,
+    "endCharacter": 37
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 82,
+    "endLine": 114,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/secmaster/message/BondTicker#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 106,
+    "endLine": 68,
+    "endCharacter": 107
+   },
+   "symbol": "java/lang/String#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 160,
+    "startCharacter": 44,
+    "endLine": 160,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 56,
+    "endLine": 31,
+    "endCharacter": 64
+   },
+   "symbol": "scalapb/GeneratedEnum#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 17,
+    "endLine": 120,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#netInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 21,
+    "endLine": 152,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 126,
+    "startCharacter": 10,
+    "endLine": 126,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 198,
+    "startCharacter": 21,
+    "endLine": 198,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#listFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 123,
+    "startCharacter": 17,
+    "endLine": 123,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#postTradeGroupId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 21,
+    "endLine": 146,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getFillSideId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 29,
+    "endLine": 97,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 50,
+    "endLine": 185,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#intermediationDiscountMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 95,
+    "endLine": 182,
+    "endCharacter": 105
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 31,
+    "endLine": 47,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#maturityDate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 72,
+    "endLine": 117,
+    "endCharacter": 75
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 33,
+    "endLine": 101,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 21,
+    "endLine": 148,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#omsOrderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 50,
+    "endLine": 187,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#intermediationStandardMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 131,
+    "startCharacter": 19,
+    "endLine": 131,
+    "endCharacter": 22
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 44
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 40,
+    "endLine": 190,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 160,
+    "startCharacter": 21,
+    "endLine": 160,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 28,
+    "endLine": 62,
+    "endCharacter": 40
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 25,
+    "endLine": 29,
+    "endCharacter": 31
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 17,
+    "endLine": 121,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#tradingSessionId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 37,
+    "endLine": 42,
+    "endCharacter": 45
+   },
+   "symbol": "scala/Option#contains().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 100,
+    "endLine": 61,
+    "endCharacter": 107
+   },
+   "symbol": "local6",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 12,
+    "endLine": 117,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 110,
+    "startCharacter": 45,
+    "endLine": 110,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 27,
+    "endLine": 91,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Option#contains().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 41,
+    "endLine": 15,
+    "endCharacter": 50
+   },
+   "symbol": "scala/concurrent/ExecutionContext.Implicits.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 35,
+    "endLine": 107,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#stage.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 54,
+    "endLine": 170,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#salesCreditCode.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 110,
+    "startCharacter": 12,
+    "endLine": 110,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 21,
+    "endLine": 191,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 13,
+    "endLine": 60,
+    "endCharacter": 18
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 17,
+    "endLine": 102,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#listDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 54,
+    "endLine": 162,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#sessionCreditQuality.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 21,
+    "endLine": 184,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 206,
+    "startCharacter": 12,
+    "endLine": 206,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 201,
+    "startCharacter": 11,
+    "endLine": 201,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(listItemId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 61,
+    "endLine": 145,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 35,
+    "endLine": 147,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#atsId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 40,
+    "endLine": 181,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 204,
+    "startCharacter": 21,
+    "endLine": 204,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#autoExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 167,
+    "startCharacter": 44,
+    "endLine": 167,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 12,
+    "endLine": 124,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 16,
+    "endLine": 11,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 210,
+    "startCharacter": 10,
+    "endLine": 210,
+    "endCharacter": 13
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 12,
+    "endLine": 104,
+    "endCharacter": 28
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 17,
+    "endLine": 92,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#swapType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 63,
+    "endLine": 173,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/spok/message/RfqCommonDetails#isInitiator.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 21,
+    "endLine": 145,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getAccountId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 21,
+    "endLine": 170,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 130,
+    "startCharacter": 6,
+    "endLine": 130,
+    "endCharacter": 12
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 12,
+    "endLine": 196,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 5,
+    "endLine": 30,
+    "endCharacter": 15
+   },
+   "symbol": "slick/lifted/Aliases#DBIOAction#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 21,
+    "endLine": 8,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 132,
+    "startCharacter": 17,
+    "endLine": 132,
+    "endCharacter": 23
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 40,
+    "endLine": 174,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 48,
+    "endLine": 117,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 21,
+    "endLine": 153,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 204,
+    "startCharacter": 42,
+    "endLine": 204,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/spok/message/AutoExInfo#ruleId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 149,
+    "startCharacter": 10,
+    "endLine": 149,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 29,
+    "endLine": 150,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 81,
+    "endLine": 142,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 23,
+    "endLine": 76,
+    "endCharacter": 26
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 199,
+    "startCharacter": 51,
+    "endLine": 199,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/microswarm/message/ListFillSideDetails#userPlacementListLegId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 12,
+    "endLine": 100,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 72,
+    "endLine": 148,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#isFacilitationEligible.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 167,
+    "startCharacter": 21,
+    "endLine": 167,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 92,
+    "endLine": 175,
+    "endCharacter": 102
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 12,
+    "endLine": 91,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 11,
+    "endLine": 85,
+    "endCharacter": 21
+   },
+   "symbol": "local9",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 29,
+    "endLine": 66,
+    "endCharacter": 31
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 21,
+    "endLine": 65,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 8,
+    "endLine": 43,
+    "endCharacter": 24
+   },
+   "symbol": "local13",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 10,
+    "endLine": 62,
+    "endCharacter": 11
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 17,
+    "endLine": 90,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#bondCreditQuality.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 54,
+    "endLine": 109,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 6,
+    "endLine": 60,
+    "endCharacter": 12
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 80,
+    "endLine": 151,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#dv01.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 12,
+    "endLine": 120,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 90,
+    "endLine": 142,
+    "endCharacter": 100
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getOrderId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 8,
+    "endLine": 61,
+    "endCharacter": 9
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 28,
+    "endLine": 38,
+    "endCharacter": 37
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 46,
+    "endLine": 174,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rfqCommonDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 90,
+    "endLine": 146,
+    "endCharacter": 93
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 154,
+    "startCharacter": 10,
+    "endLine": 154,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#dealerAcctIdForClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 57,
+    "endLine": 93,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 36,
+    "endLine": 46,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 40,
+    "endLine": 182,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 40,
+    "endLine": 195,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 85,
+    "endLine": 209,
+    "endCharacter": 98
+   },
+   "symbol": "java/lang/System#lineSeparator().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 12,
+    "endLine": 135,
+    "endCharacter": 18
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 40,
+    "endLine": 192,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 46,
+    "endLine": 100,
+    "endCharacter": 50
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 15,
+    "endLine": 25,
+    "endCharacter": 21
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 19,
+    "endLine": 35,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 206,
+    "startCharacter": 21,
+    "endLine": 206,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#autoExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 8,
+    "endLine": 32,
+    "endCharacter": 20
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 200,
+    "startCharacter": 21,
+    "endLine": 200,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#ustBookId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 160,
+    "startCharacter": 12,
+    "endLine": 160,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 104,
+    "endLine": 148,
+    "endCharacter": 107
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 6,
+    "endLine": 53,
+    "endCharacter": 13
+   },
+   "symbol": "local20",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 17,
+    "endLine": 93,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#treasuryPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 137,
+    "startCharacter": 6,
+    "endLine": 137,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpTimestamp)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 44,
+    "endLine": 43,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 6,
+    "endLine": 27,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 159,
+    "startCharacter": 13,
+    "endLine": 159,
+    "endCharacter": 17
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 40,
+    "endLine": 117,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#ustBond.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 34,
+    "endLine": 94,
+    "endCharacter": 37
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 22,
+    "endLine": 30,
+    "endCharacter": 30
+   },
+   "symbol": "slick/lifted/Aliases#NoStream#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 32,
+    "endLine": 92,
+    "endCharacter": 36
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 130,
+    "startCharacter": 14,
+    "endLine": 130,
+    "endCharacter": 20
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 50,
+    "endLine": 158,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#salesPeopleNames.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 54,
+    "endLine": 164,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#dealerCastId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 25,
+    "endLine": 139,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 19,
+    "endLine": 49,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 37,
+    "endLine": 34,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getPricingConvention().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 45,
+    "endLine": 111,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 85,
+    "endLine": 176,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 112,
+    "endLine": 61,
+    "endCharacter": 113
+   },
+   "symbol": "java/lang/String#`+`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 45,
+    "endLine": 31,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 106,
+    "startCharacter": 12,
+    "endLine": 106,
+    "endCharacter": 28
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 206,
+    "startCharacter": 32,
+    "endLine": 206,
+    "endCharacter": 39
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 17,
+    "endLine": 53,
+    "endCharacter": 29
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 8,
+    "endLine": 36,
+    "endCharacter": 15
+   },
+   "symbol": "local6",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 41,
+    "endLine": 143,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 68,
+    "endLine": 69,
+    "endCharacter": 72
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 10,
+    "endLine": 69,
+    "endCharacter": 11
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 45,
+    "endLine": 148,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#facilitatorId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 11,
+    "endLine": 82,
+    "endCharacter": 24
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 18,
+    "endLine": 46,
+    "endCharacter": 35
+   },
+   "symbol": "local15",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 19,
+    "endLine": 56,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#CoreDateYMDSugar#toLocalDate().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 38,
+    "endLine": 56,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#mmddyyyyFormatter.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 16,
+    "endLine": 30,
+    "endCharacter": 20
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 67,
+    "endLine": 176,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/spok/message/RfqCommonDetails#coverPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 4,
+    "endLine": 209,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 29,
+    "endLine": 103,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 12,
+    "endLine": 179,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 198,
+    "startCharacter": 51,
+    "endLine": 198,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/microswarm/message/ListFillSideDetails#userListId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 21,
+    "endLine": 144,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#hedgeOrSpot.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 23,
+    "endLine": 32,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 12,
+    "endLine": 194,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 21,
+    "endLine": 189,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 39,
+    "endLine": 95,
+    "endCharacter": 43
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 59,
+    "endLine": 150,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpTimestamp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 67,
+    "endLine": 172,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/spok/message/RfqCommonDetails#isWonTied.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 26,
+    "endLine": 6,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/util/number/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 94,
+    "endLine": 68,
+    "endCharacter": 101
+   },
+   "symbol": "local6",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 87,
+    "endLine": 190,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 26,
+    "endLine": 147,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 87,
+    "endLine": 140,
+    "endCharacter": 100
+   },
+   "symbol": "omnistac/microswarm/message/OrderLegAugmentInfo#treasuryYield.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 21,
+    "endLine": 156,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 205,
+    "startCharacter": 32,
+    "endLine": 205,
+    "endCharacter": 39
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 26,
+    "endLine": 42,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#isCanceled.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 40,
+    "endLine": 191,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 21,
+    "endLine": 190,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 55,
+    "endLine": 102,
+    "endCharacter": 59
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 120,
+    "startCharacter": 31,
+    "endLine": 120,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/spok/message/NetInfo#name.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 78,
+    "endLine": 197,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 53,
+    "endLine": 116,
+    "endCharacter": 63
+   },
+   "symbol": "scala/collection/IterableOps#headOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 35,
+    "endLine": 102,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/microswarm/message/ListFillDetails#listQuoteConvention.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 8,
+    "endLine": 66,
+    "endCharacter": 18
+   },
+   "symbol": "local22",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 208,
+    "startCharacter": 13,
+    "endLine": 208,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 113,
+    "startCharacter": 11,
+    "endLine": 113,
+    "endCharacter": 36
+   },
+   "symbol": "local14",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 6,
+    "endLine": 56,
+    "endCharacter": 18
+   },
+   "symbol": "local21",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 21,
+    "endLine": 163,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#bookId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 46,
+    "endLine": 173,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rfqCommonDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 8,
+    "endLine": 37,
+    "endCharacter": 13
+   },
+   "symbol": "local7",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 86,
+    "endLine": 153,
+    "endCharacter": 108
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 64,
+    "endLine": 108,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#longDescription.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 17,
+    "endLine": 97,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#inquiryType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 12,
+    "endLine": 122,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 40,
+    "endLine": 187,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 12,
+    "endLine": 109,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 54,
+    "endLine": 166,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#dealerSalesCode.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 204,
+    "startCharacter": 32,
+    "endLine": 204,
+    "endCharacter": 39
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 30,
+    "endLine": 117,
+    "endCharacter": 37
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 27,
+    "endLine": 22,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/serialization/SerializationUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 83,
+    "endLine": 186,
+    "endCharacter": 86
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 26,
+    "endLine": 8,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/serialization/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 44,
+    "endLine": 157,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 68,
+    "endLine": 142,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(direction)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 44,
+    "endLine": 161,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 73,
+    "endLine": 189,
+    "endCharacter": 76
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 40,
+    "endLine": 189,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 17,
+    "endLine": 89,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#tradingProtocol.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 106,
+    "startCharacter": 35,
+    "endLine": 106,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#pricingSource.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 50,
+    "endLine": 189,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#transactionMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 50,
+    "endLine": 190,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#transactionDiscountMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 84,
+    "endLine": 185,
+    "endCharacter": 87
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 7,
+    "endLine": 13,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 16,
+    "endLine": 9,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 6,
+    "endLine": 135,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmp)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 11,
+    "endLine": 83,
+    "endCharacter": 18
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 64,
+    "endLine": 111,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#isin.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 30,
+    "endLine": 31,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#adjustmentCode.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 25,
+    "endLine": 140,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 76,
+    "endLine": 184,
+    "endCharacter": 79
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 51,
+    "endLine": 15,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/ExecutionContext.Implicits.global().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 87,
+    "startCharacter": 11,
+    "endLine": 87,
+    "endCharacter": 18
+   },
+   "symbol": "local11",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 35,
+    "endLine": 108,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 21,
+    "endLine": 173,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 72,
+    "endLine": 197,
+    "endCharacter": 75
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 40,
+    "endLine": 94,
+    "endCharacter": 44
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 54,
+    "endLine": 112,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 35,
+    "endLine": 9,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/util/treasury/TreasuryPriceUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 23,
+    "endLine": 150,
+    "endCharacter": 26
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 12,
+    "endLine": 143,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 35,
+    "endLine": 33,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getInstrumentVersionId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 12,
+    "endLine": 89,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 50,
+    "endLine": 180,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#executionInvoiceMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 21,
+    "endLine": 180,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 44,
+    "endLine": 153,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 44,
+    "endLine": 164,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 55,
+    "endLine": 146,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillVersion)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 26,
+    "endLine": 7,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/postgres/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 199,
+    "startCharacter": 21,
+    "endLine": 199,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#listFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 169,
+    "startCharacter": 21,
+    "endLine": 169,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#listFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 21,
+    "endLine": 157,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 79,
+    "endLine": 179,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 72,
+    "endLine": 114,
+    "endCharacter": 79
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 11,
+    "endLine": 78,
+    "endCharacter": 19
+   },
+   "symbol": "local5",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 81,
+    "endLine": 190,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 171,
+    "startCharacter": 12,
+    "endLine": 171,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 12,
+    "endLine": 172,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 18,
+    "endLine": 134,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 167,
+    "startCharacter": 12,
+    "endLine": 167,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 94,
+    "endLine": 158,
+    "endCharacter": 109
+   },
+   "symbol": "omnistac/core/util/alphanumeric/AlphanumericUtils.StringSeparator.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 16,
+    "endLine": 10,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 51,
+    "endLine": 151,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#compoundOrderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 40,
+    "endLine": 185,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 80,
+    "endLine": 194,
+    "endCharacter": 83
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 205,
+    "startCharacter": 42,
+    "endLine": 205,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/spok/message/AutoExInfo#reason.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 50,
+    "endLine": 195,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#intermediationIncentiveMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 22,
+    "endLine": 47,
+    "endCharacter": 30
+   },
+   "symbol": "local16",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 39,
+    "endLine": 136,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 71,
+    "endLine": 178,
+    "endCharacter": 74
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 72,
+    "endLine": 144,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#netPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 53,
+    "endLine": 139,
+    "endCharacter": 54
+   },
+   "symbol": "local25",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 77,
+    "endLine": 140,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 12,
+    "endLine": 144,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 110,
+    "startCharacter": 54,
+    "endLine": 110,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 6,
+    "endLine": 46,
+    "endCharacter": 14
+   },
+   "symbol": "local16",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 49,
+    "endLine": 139,
+    "endCharacter": 52
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 199,
+    "startCharacter": 41,
+    "endLine": 199,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 6,
+    "endLine": 136,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpSpread)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 35,
+    "endLine": 115,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 40,
+    "endLine": 176,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 14,
+    "endLine": 22,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#serializer.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 8,
+    "endLine": 42,
+    "endCharacter": 18
+   },
+   "symbol": "local12",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 33,
+    "endLine": 95,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 35,
+    "endLine": 11,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 35,
+    "endLine": 11,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 63,
+    "endLine": 144,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 8,
+    "endLine": 33,
+    "endCharacter": 27
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 58,
+    "endLine": 150,
+    "endCharacter": 58
+   },
+   "symbol": "java/sql/Timestamp#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 52,
+    "endLine": 203,
+    "endCharacter": 56
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 18,
+    "endLine": 41,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 71,
+    "endLine": 151,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 40,
+    "endLine": 39,
+    "endCharacter": 44
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 30,
+    "endLine": 28,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 12,
+    "endLine": 189,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 11,
+    "endLine": 73,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fillId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 8,
+    "endLine": 59,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 62,
+    "endLine": 119,
+    "endCharacter": 71
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 109,
+    "endLine": 153,
+    "endCharacter": 116
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 64,
+    "endLine": 114,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 79,
+    "endLine": 176,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 57,
+    "endLine": 21,
+    "endCharacter": 66
+   },
+   "symbol": "java/time/format/DateTimeFormatter#ofPattern().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 12,
+    "endLine": 195,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 40,
+    "endLine": 178,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 12,
+    "endLine": 93,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 35,
+    "endLine": 104,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#levelSide.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 85,
+    "endLine": 195,
+    "endCharacter": 88
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 169,
+    "startCharacter": 51,
+    "endLine": 169,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/microswarm/message/ListFillSideDetails#listName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 32,
+    "endLine": 158,
+    "endCharacter": 40
+   },
+   "symbol": "scala/collection/IterableOnceOps#nonEmpty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 21,
+    "endLine": 143,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getOrderVersion().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 12,
+    "endLine": 197,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 17,
+    "endLine": 209,
+    "endCharacter": 18
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 167,
+    "startCharacter": 54,
+    "endLine": 167,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#contraPtyId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 35,
+    "endLine": 96,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/microswarm/message/ListFillDetails#listId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 32,
+    "endLine": 30,
+    "endCharacter": 38
+   },
+   "symbol": "slick/lifted/Aliases#Effect#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 8,
+    "endLine": 34,
+    "endCharacter": 29
+   },
+   "symbol": "local4",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 189,
+    "startCharacter": 79,
+    "endLine": 189,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 157,
+    "startCharacter": 12,
+    "endLine": 157,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 21,
+    "endLine": 165,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 17,
+    "endLine": 96,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#listDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 33,
+    "endLine": 144,
+    "endCharacter": 36
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 50,
+    "endLine": 175,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rfqCommonDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 133,
+    "startCharacter": 6,
+    "endLine": 133,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 12,
+    "endLine": 90,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 30,
+    "endLine": 33,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 65,
+    "endLine": 140,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderLeg#augmentInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 24,
+    "endLine": 35,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getQuantity().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 26,
+    "endLine": 92,
+    "endCharacter": 29
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 40,
+    "endLine": 196,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 64,
+    "endLine": 109,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#interestRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 81,
+    "endLine": 162,
+    "endCharacter": 85
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 87,
+    "endLine": 144,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 30,
+    "endLine": 37,
+    "endCharacter": 34
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 137,
+    "startCharacter": 21,
+    "endLine": 137,
+    "endCharacter": 25
+   },
+   "symbol": "scala/Long#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 41,
+    "endLine": 107,
+    "endCharacter": 45
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 54,
+    "endLine": 156,
+    "endCharacter": 75
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#clientAcctIdForDealer.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 132,
+    "startCharacter": 6,
+    "endLine": 132,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(direction)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 190,
+    "startCharacter": 12,
+    "endLine": 190,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 35,
+    "endLine": 119,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 28,
+    "endLine": 69,
+    "endCharacter": 40
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 12,
+    "endLine": 182,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 5,
+    "endLine": 138,
+    "endCharacter": 15
+   },
+   "symbol": "slick/lifted/Aliases#DBIOAction#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 32,
+    "endLine": 29,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 41,
+    "endLine": 119,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#tags.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 47,
+    "endLine": 136,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/core/message/Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 12,
+    "endLine": 101,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 21,
+    "endLine": 192,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 73,
+    "endLine": 68,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 67,
+    "endLine": 158,
+    "endCharacter": 75
+   },
+   "symbol": "scala/collection/IterableOnceOps#mkString(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 37,
+    "endLine": 40,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 17,
+    "endLine": 122,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#netInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 17,
+    "endLine": 95,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#bondBillingType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 28,
+    "endLine": 17,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 12,
+    "endLine": 99,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 41,
+    "endLine": 197,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 75,
+    "endLine": 162,
+    "endCharacter": 78
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 21,
+    "endLine": 168,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 43,
+    "endLine": 40,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 7,
+    "endLine": 14,
+    "endCharacter": 11
+   },
+   "symbol": "java/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 38,
+    "endLine": 38,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 18
+   },
+   "symbol": "local17",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 40,
+    "endLine": 100,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 26,
+    "endLine": 11,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 47,
+    "endLine": 158,
+    "endCharacter": 49
+   },
+   "symbol": "local28",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 54,
+    "endLine": 11,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 54,
+    "endLine": 11,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 54,
+    "endLine": 161,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#facilitatorName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 8,
+    "endLine": 139,
+    "endCharacter": 22
+   },
+   "symbol": "local24",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 21,
+    "endLine": 176,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 54,
+    "endLine": 108,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 42,
+    "endLine": 158,
+    "endCharacter": 46
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 17,
+    "endLine": 98,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#greyOrderInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 12,
+    "endLine": 146,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 105,
+    "startCharacter": 12,
+    "endLine": 105,
+    "endCharacter": 28
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 17,
+    "endLine": 76,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#price.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 33,
+    "endLine": 6,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 33,
+    "endLine": 6,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 8,
+    "endLine": 44,
+    "endCharacter": 33
+   },
+   "symbol": "local14",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 12,
+    "endLine": 97,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 35,
+    "endLine": 109,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 173,
+    "startCharacter": 12,
+    "endLine": 173,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 91,
+    "endLine": 17,
+    "endCharacter": 102
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 39,
+    "endLine": 21,
+    "endCharacter": 56
+   },
+   "symbol": "java/time/format/DateTimeFormatter#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 26,
+    "endLine": 9,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/core/util/treasury/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 58,
+    "endLine": 34,
+    "endCharacter": 62
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 197,
+    "startCharacter": 21,
+    "endLine": 197,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#listFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 123,
+    "startCharacter": 12,
+    "endLine": 123,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 50,
+    "endLine": 143,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getTraderId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 13,
+    "endLine": 15,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 8,
+    "endLine": 38,
+    "endCharacter": 21
+   },
+   "symbol": "local8",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 208,
+    "startCharacter": 10,
+    "endLine": 208,
+    "endCharacter": 12
+   },
+   "symbol": "slick/jdbc/SQLActionBuilder#as().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 73,
+    "endLine": 168,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#serializer.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 78,
+    "endLine": 209,
+    "endCharacter": 84
+   },
+   "symbol": "java/lang/System#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 6,
+    "endLine": 45,
+    "endCharacter": 23
+   },
+   "symbol": "local15",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 12,
+    "endLine": 164,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 21,
+    "endLine": 182,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 12,
+    "endLine": 192,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 84,
+    "endLine": 187,
+    "endCharacter": 87
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 12,
+    "endLine": 114,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 12,
+    "endLine": 185,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 64,
+    "endLine": 112,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#bbGlobalId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 12,
+    "endLine": 96,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 21,
+    "endLine": 194,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 25,
+    "endLine": 136,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 50,
+    "endLine": 168,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#salesCoverageList.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 182,
+    "startCharacter": 89,
+    "endLine": 182,
+    "endCharacter": 92
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 52,
+    "endLine": 209,
+    "endCharacter": 57
+   },
+   "symbol": "local27",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 33,
+    "endLine": 135,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 34,
+    "endLine": 139,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#adjustmentCode.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 21,
+    "endLine": 37,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getPhase().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 69,
+    "endLine": 196,
+    "endCharacter": 72
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 31,
+    "endLine": 93,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 12,
+    "endLine": 168,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 6,
+    "endLine": 54,
+    "endCharacter": 18
+   },
+   "symbol": "local21",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 90,
+    "endLine": 187,
+    "endCharacter": 100
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 104,
+    "startCharacter": 45,
+    "endLine": 104,
+    "endCharacter": 49
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 17,
+    "endLine": 14,
+    "endCharacter": 23
+   },
+   "symbol": "java/time/format/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 21,
+    "endLine": 39,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 17,
+    "endLine": 101,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#settlementCycle.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 12,
+    "endLine": 151,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 12,
+    "endLine": 102,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 21,
+    "endLine": 187,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 40,
+    "endLine": 180,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 134,
+    "startCharacter": 25,
+    "endLine": 134,
+    "endCharacter": 31
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 6,
+    "endLine": 25,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 12,
+    "endLine": 112,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 67,
+    "endLine": 175,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/spok/message/RfqCommonDetails#dealerQuotedPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 39,
+    "endLine": 97,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/core/message/InquiryType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 121,
+    "startCharacter": 12,
+    "endLine": 121,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 69,
+    "endLine": 93,
+    "endCharacter": 72
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 22,
+    "endLine": 52,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 86,
+    "endLine": 194,
+    "endCharacter": 96
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 165,
+    "startCharacter": 12,
+    "endLine": 165,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 12,
+    "endLine": 161,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 174,
+    "startCharacter": 63,
+    "endLine": 174,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/spok/message/RfqCommonDetails#tradingSessionId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 22,
+    "endLine": 138,
+    "endCharacter": 30
+   },
+   "symbol": "slick/lifted/Aliases#NoStream#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 11,
+    "endLine": 209,
+    "endCharacter": 16
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#debug().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 27,
+    "endLine": 43,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 12,
+    "endLine": 107,
+    "endCharacter": 28
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 82,
+    "endLine": 184,
+    "endCharacter": 92
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 102,
+    "startCharacter": 29,
+    "endLine": 102,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 199,
+    "startCharacter": 12,
+    "endLine": 199,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 32,
+    "endLine": 43,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#listDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 21,
+    "endLine": 181,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 52,
+    "endLine": 103,
+    "endCharacter": 56
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 72,
+    "endLine": 115,
+    "endCharacter": 79
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 59,
+    "endLine": 142,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 38,
+    "endLine": 145,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 40,
+    "endLine": 172,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 19,
+    "endLine": 135,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 28,
+    "endLine": 135,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 39,
+    "endLine": 89,
+    "endCharacter": 43
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 99,
+    "endLine": 148,
+    "endCharacter": 103
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmp)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 87,
+    "endLine": 192,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 46,
+    "endLine": 119,
+    "endCharacter": 53
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 80,
+    "endLine": 191,
+    "endCharacter": 83
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 160,
+    "startCharacter": 54,
+    "endLine": 160,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#facilitatorId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 53,
+    "endLine": 69,
+    "endCharacter": 63
+   },
+   "symbol": "local22",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 44,
+    "endLine": 162,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 40,
+    "endLine": 194,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 117,
+    "startCharacter": 78,
+    "endLine": 117,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 33,
+    "endLine": 124,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/microswarm/message/SwarmType#value.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 44,
+    "endLine": 152,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 50,
+    "endLine": 192,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#transactionStandardMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 29,
+    "endLine": 76,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 12,
+    "endLine": 203,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 64,
+    "endLine": 115,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#ticker.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 17,
+    "endLine": 124,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#swarmType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 129,
+    "startCharacter": 16,
+    "endLine": 129,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 16,
+    "endLine": 37,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 21,
+    "endLine": 196,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 105,
+    "startCharacter": 35,
+    "endLine": 105,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#strikeTimeLabel.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 45,
+    "endLine": 112,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 195,
+    "startCharacter": 91,
+    "endLine": 195,
+    "endCharacter": 101
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 139,
+    "startCharacter": 58,
+    "endLine": 139,
+    "endCharacter": 59
+   },
+   "symbol": "local25",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 12,
+    "endLine": 148,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 31,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 31,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 66,
+    "endLine": 143,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 107,
+    "endLine": 140,
+    "endCharacter": 117
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 198,
+    "startCharacter": 41,
+    "endLine": 198,
+    "endCharacter": 48
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 36,
+    "endLine": 10,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 36,
+    "endLine": 10,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 12,
+    "endLine": 94,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 101,
+    "startCharacter": 39,
+    "endLine": 101,
+    "endCharacter": 43
+   },
+   "symbol": "scalapb/GeneratedEnum#name().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 35,
+    "endLine": 90,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 50,
+    "endLine": 176,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rfqCommonDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 106,
+    "startCharacter": 29,
+    "endLine": 106,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 42,
+    "endLine": 151,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 9,
+    "endLine": 19,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 79,
+    "endLine": 61,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(traceId)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 14,
+    "endLine": 26,
+    "endCharacter": 20
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 192,
+    "startCharacter": 81,
+    "endLine": 192,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 194,
+    "startCharacter": 50,
+    "endLine": 194,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#executionIncentiveMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 108,
+    "startCharacter": 45,
+    "endLine": 108,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 205,
+    "startCharacter": 21,
+    "endLine": 205,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#autoExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 40,
+    "endLine": 179,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 91,
+    "startCharacter": 17,
+    "endLine": 91,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#isForTest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 185,
+    "startCharacter": 21,
+    "endLine": 185,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 4,
+    "endLine": 72,
+    "endCharacter": 7
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 8,
+    "endLine": 40,
+    "endCharacter": 18
+   },
+   "symbol": "local10",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 86,
+    "endLine": 191,
+    "endCharacter": 96
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/util/alphanumeric/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 12,
+    "endLine": 158,
+    "endCharacter": 14
+   },
+   "symbol": "local28",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 144,
+    "startCharacter": 45,
+    "endLine": 144,
+    "endCharacter": 54
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 50,
+    "endLine": 191,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#transactionInvoiceMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 24,
+    "endLine": 14,
+    "endCharacter": 41
+   },
+   "symbol": "java/time/format/DateTimeFormatter#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 12,
+    "endLine": 152,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 12,
+    "endLine": 115,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 103,
+    "startCharacter": 35,
+    "endLine": 103,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/message/ForwardStrikeGenericDetails#offsetConvention.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 148,
+    "startCharacter": 63,
+    "endLine": 148,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 32,
+    "endLine": 203,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 18,
+    "endLine": 19,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 50,
+    "endLine": 184,
+    "endCharacter": 74
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#intermediationMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 16,
+    "endLine": 13,
+    "endCharacter": 25
+   },
+   "symbol": "java/sql/Timestamp#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 45,
+    "endLine": 116,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#sectors.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 17,
+    "endLine": 94,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#orderProductType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 77,
+    "endLine": 178,
+    "endCharacter": 87
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 88,
+    "endLine": 151,
+    "endCharacter": 102
+   },
+   "symbol": "local26",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 40,
+    "endLine": 99,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/GreyOrderInfo#isFrp.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 31,
+    "endLine": 98,
+    "endCharacter": 37
+   },
+   "symbol": "scala/Option#exists().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 72,
+    "endLine": 119,
+    "endCharacter": 75
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 180,
+    "startCharacter": 78,
+    "endLine": 180,
+    "endCharacter": 81
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 25,
+    "endLine": 31,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 179,
+    "startCharacter": 85,
+    "endLine": 179,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 45,
+    "endLine": 114,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 32,
+    "endLine": 66,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeUstBenchmark)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 107,
+    "startCharacter": 29,
+    "endLine": 107,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 12,
+    "endLine": 14,
+    "endCharacter": 16
+   },
+   "symbol": "java/time/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 21,
+    "endLine": 9,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 56,
+    "endLine": 119,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/secmaster/message/Tag#tag.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 12,
+    "endLine": 76,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 8,
+    "endLine": 35,
+    "endCharacter": 16
+   },
+   "symbol": "local5",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 13,
+    "endLine": 67,
+    "endCharacter": 18
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 8,
+    "endLine": 140,
+    "endCharacter": 22
+   },
+   "symbol": "local26",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 135,
+    "startCharacter": 41,
+    "endLine": 135,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/core/message/Rational#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 30,
+    "endLine": 53,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#ustBond.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 210,
+    "startCharacter": 4,
+    "endLine": 210,
+    "endCharacter": 9
+   },
+   "symbol": "local27",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 35,
+    "endLine": 114,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 142,
+    "startCharacter": 16,
+    "endLine": 142,
+    "endCharacter": 19
+   },
+   "symbol": "slick/jdbc/ActionBasedSQLInterpolation#sql().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 39,
+    "endLine": 4,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/util/alphanumeric/AlphanumericUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 21,
+    "endLine": 172,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 184,
+    "startCharacter": 12,
+    "endLine": 184,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 150,
+    "startCharacter": 12,
+    "endLine": 150,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fvmpSpread)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 11,
+    "endLine": 79,
+    "endCharacter": 18
+   },
+   "symbol": "local6",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 16,
+    "endLine": 24,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 64,
+    "endLine": 116,
+    "endCharacter": 71
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 138,
+    "startCharacter": 16,
+    "endLine": 138,
+    "endCharacter": 20
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 209,
+    "startCharacter": 58,
+    "endLine": 209,
+    "endCharacter": 68
+   },
+   "symbol": "slick/sql/SqlAction#statements().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 152,
+    "startCharacter": 54,
+    "endLine": 152,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#contraTraderName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 21,
+    "endLine": 175,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 54,
+    "endLine": 43,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/microswarm/message/ListFillDetails#forwardStrikeGenericDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 114,
+    "startCharacter": 54,
+    "endLine": 114,
+    "endCharacter": 61
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 12,
+    "endLine": 95,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 71,
+    "endLine": 17,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/core/util/date/LocalDateUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 12,
+    "endLine": 27,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 84,
+    "endLine": 168,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/util/serialization/SerializationUtils#toJson().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 54,
+    "endLine": 31,
+    "endCharacter": 55
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 25,
+    "endLine": 122,
+    "endCharacter": 28
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 8,
+    "endLine": 68,
+    "endCharacter": 9
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 8,
+    "endLine": 41,
+    "endCharacter": 15
+   },
+   "symbol": "local11",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 153,
+    "startCharacter": 77,
+    "endLine": 153,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 21,
+    "endLine": 40,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 23,
+    "endLine": 19,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 79,
+    "endLine": 146,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#markupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 86,
+    "endLine": 175,
+    "endCharacter": 89
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 76,
+    "endLine": 158,
+    "endCharacter": 93
+   },
+   "symbol": "omnistac/core/util/alphanumeric/AlphanumericUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 51,
+    "endLine": 97,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/core/message/InquiryType.REGULAR.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 12,
+    "endLine": 181,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 50,
+    "endLine": 181,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#executionStandardMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 12,
+    "endLine": 156,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 21,
+    "endLine": 178,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 45,
+    "endLine": 109,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 145,
+    "startCharacter": 70,
+    "endLine": 145,
+    "endCharacter": 87
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#getCounterpartyId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 23,
+    "endLine": 41,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getVersion().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 118,
+    "startCharacter": 11,
+    "endLine": 118,
+    "endCharacter": 43
+   },
+   "symbol": "local18",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 11,
+    "endLine": 75,
+    "endCharacter": 30
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 140,
+    "startCharacter": 44,
+    "endLine": 140,
+    "endCharacter": 54
+   },
+   "symbol": "scala/collection/IterableOps#headOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 156,
+    "startCharacter": 44,
+    "endLine": 156,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 12,
+    "endLine": 13,
+    "endCharacter": 15
+   },
+   "symbol": "java/sql/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 187,
+    "startCharacter": 12,
+    "endLine": 187,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 76,
+    "endLine": 119,
+    "endCharacter": 81
+   },
+   "symbol": "scala/collection/SeqFactory.Delegate#empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 6,
+    "endLine": 49,
+    "endCharacter": 18
+   },
+   "symbol": "local17",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 31,
+    "endLine": 59,
+    "endCharacter": 38
+   },
+   "symbol": "scala/Option#isEmpty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 12,
+    "endLine": 170,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 122,
+    "startCharacter": 31,
+    "endLine": 122,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/spok/message/NetInfo#id.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 191,
+    "startCharacter": 12,
+    "endLine": 191,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 204,
+    "startCharacter": 12,
+    "endLine": 204,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 119,
+    "startCharacter": 12,
+    "endLine": 119,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 37,
+    "endLine": 28,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 50,
+    "endLine": 186,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#intermediationInvoiceMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 47,
+    "endLine": 10,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 47,
+    "endLine": 10,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 98,
+    "startCharacter": 12,
+    "endLine": 98,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 112,
+    "startCharacter": 35,
+    "endLine": 112,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 73,
+    "endLine": 93,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/core/util/treasury/TreasuryPriceUtils#toTreasuryPrice().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 12,
+    "endLine": 116,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 44,
+    "endLine": 168,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 124,
+    "startCharacter": 27,
+    "endLine": 124,
+    "endCharacter": 30
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 31,
+    "endLine": 56,
+    "endCharacter": 37
+   },
+   "symbol": "java/time/LocalDate#format().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 64,
+    "endLine": 69,
+    "endCharacter": 67
+   },
+   "symbol": "scala/Option#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 164,
+    "startCharacter": 21,
+    "endLine": 164,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 7,
+    "endLine": 15,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/message/InquiryType.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 29,
+    "endLine": 3,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/message/InquiryType#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 146,
+    "startCharacter": 70,
+    "endLine": 146,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 169,
+    "startCharacter": 12,
+    "endLine": 169,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 115,
+    "startCharacter": 45,
+    "endLine": 115,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#bondInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 12,
+    "endLine": 111,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(maybeInstrumentRefData)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 23,
+    "endLine": 36,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getSwarmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 43,
+    "endLine": 38,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getFillTimestamp().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 143,
+    "startCharacter": 75,
+    "endLine": 143,
+    "endCharacter": 87
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#owningTeamId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 7,
+    "endLine": 11,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 170,
+    "startCharacter": 44,
+    "endLine": 170,
+    "endCharacter": 51
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 110,
+    "startCharacter": 64,
+    "endLine": 110,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/secmaster/message/BondInfo#cusip.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 161,
+    "startCharacter": 21,
+    "endLine": 161,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 186,
+    "startCharacter": 21,
+    "endLine": 186,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#rfqFillSideDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 50,
+    "endLine": 178,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#executionMarkupRate.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 166,
+    "startCharacter": 21,
+    "endLine": 166,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#attributedTradeDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 136,
+    "startCharacter": 34,
+    "endLine": 136,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 172,
+    "startCharacter": 50,
+    "endLine": 172,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/microswarm/message/RfqFillSideDetails#rfqCommonDetails.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 181,
+    "startCharacter": 85,
+    "endLine": 181,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 111,
+    "startCharacter": 35,
+    "endLine": 111,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 41,
+    "endLine": 93,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/mktdata/message/TreasuryPrice#midPrice.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 168,
+    "startCharacter": 69,
+    "endLine": 168,
+    "endCharacter": 72
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 93,
+    "startCharacter": 51,
+    "endLine": 93,
+    "endCharacter": 54
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 86,
+    "startCharacter": 11,
+    "endLine": 86,
+    "endCharacter": 21
+   },
+   "symbol": "local10",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 11,
+    "endLine": 77,
+    "endCharacter": 32
+   },
+   "symbol": "local4",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 92,
+    "startCharacter": 12,
+    "endLine": 92,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 96,
+    "startCharacter": 29,
+    "endLine": 96,
+    "endCharacter": 32
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 17,
+    "endLine": 100,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#referenceTreasuryTenor.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 151,
+    "startCharacter": 21,
+    "endLine": 151,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#placementOrderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 32,
+    "endLine": 34,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillInsertAction().(fill)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 28,
+    "endLine": 32,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getInstrumentId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 158,
+    "startCharacter": 15,
+    "endLine": 158,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/attributed/message/AttributedTradeDetails#salesPeopleNames.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 175,
+    "startCharacter": 40,
+    "endLine": 175,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 97,
+    "startCharacter": 60,
+    "endLine": 97,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/message/InquiryType#value.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 126,
+    "startCharacter": 18,
+    "endLine": 126,
+    "endCharacter": 21
+   },
+   "symbol": "slick/dbio/DBIOAction#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 11,
+    "endLine": 84,
+    "endCharacter": 25
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 6,
+    "endLine": 52,
+    "endCharacter": 18
+   },
+   "symbol": "local19",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 178,
+    "startCharacter": 12,
+    "endLine": 178,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 163,
+    "startCharacter": 12,
+    "endLine": 163,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 147,
+    "startCharacter": 10,
+    "endLine": 147,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 109,
+    "startCharacter": 84,
+    "endLine": 109,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 196,
+    "startCharacter": 75,
+    "endLine": 196,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/core/util/number/RationalUtils#RationalMessageSugar#toRational().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 176,
+    "startCharacter": 12,
+    "endLine": 176,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 116,
+    "startCharacter": 74,
+    "endLine": 116,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/secmaster/message/Sector#sectorName.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 162,
+    "startCharacter": 12,
+    "endLine": 162,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/dao/FillInsertDao#createFillSideInsertAction().(fillSide)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 203,
+    "startCharacter": 21,
+    "endLine": 203,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#autoExInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 16,
+    "endLine": 8,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 37,
+    "endLine": 19,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/core/util/postgres/ExtendedSlickPostgresDriver.",
+   "role": "REFERENCE"
+  }
+ ]
+}

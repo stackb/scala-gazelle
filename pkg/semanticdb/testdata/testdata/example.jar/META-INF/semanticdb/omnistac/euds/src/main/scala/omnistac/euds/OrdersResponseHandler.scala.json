@@ -1,0 +1,2449 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/OrdersResponseHandler.scala",
+ "md5": "625D134868C8AE45CC11E523F76F717A",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#contextProvider.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "contextProvider",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#originatingRequest.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "originatingRequest",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#maskingFacade.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "maskingFacade",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/common/masking/MaskingFacade#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getBlotterOrderEventOption",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().(response)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().(response)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "response",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "batch",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/AnyRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(userId)",
+        "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+        "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(replyTo)",
+        "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(contextProvider)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "orderEvent",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "create",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/OrdersResponseHandlerFactory.create().(request)",
+        "omnistac/euds/OrdersResponseHandlerFactory.create().(contextProvider)",
+        "omnistac/euds/OrdersResponseHandlerFactory.create().(replyTo)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/access/TopicResponseHandler#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandlerFactory#create()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(userId)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "userId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "OrdersResponseHandlerFactory",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/OrdersResponseHandlerFactory.create()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(replyTo)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "replyTo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local6",
+       "local5"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local3",
+        "local4"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local5"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(contextProvider)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "contextProvider",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local13"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "originatingRequest",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/RequestEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/package.Seq#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "scala/AnyRef#"
+             }
+            }
+           ]
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/package.Seq#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "omnistac/core/message/ResponseEnvelope#"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local1",
+       "local2"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleResponse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/OrdersResponseHandler#handleResponse().(response)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandler#handleResponse()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleSnapshot().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleSnapshot",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/PartialFunction#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/AnyRef#"
+            }
+           }
+          ]
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "scala/package.Seq#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/core/biz/access/TopicResponseHandler#handleSnapshot()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#replyTo.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "replyTo",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "session",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ValidatedUserSessionKey#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().(response)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "response",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#userId.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "userId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "snapshot",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "order",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "orders",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "results",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(replyTo)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "replyTo",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorRef#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local6"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/OrdersResponseHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "OrdersResponseHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "omnistac/core/biz/access/TopicResponseHandler#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/OrdersResponseHandler#userId.",
+       "omnistac/euds/OrdersResponseHandler#originatingRequest.",
+       "omnistac/euds/OrdersResponseHandler#replyTo.",
+       "omnistac/euds/OrdersResponseHandler#contextProvider.",
+       "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/OrdersResponseHandler#maskingFacade.",
+       "omnistac/euds/OrdersResponseHandler#handleSnapshot().",
+       "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().",
+       "omnistac/euds/OrdersResponseHandler#handleResponse()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local6"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local5"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 27,
+    "endLine": 9,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 74,
+    "endLine": 39,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#makeResponse(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 52,
+    "endLine": 26,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 61,
+    "endLine": 20,
+    "endCharacter": 62
+   },
+   "symbol": "local9",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 11,
+    "endLine": 4,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 49,
+    "endLine": 16,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/euds/common/masking/MaskingFacade#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 15,
+    "endLine": 18,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleSnapshot().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 11,
+    "endLine": 40,
+    "endCharacter": 16
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#debug().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 17,
+    "endLine": 19,
+    "endCharacter": 25
+   },
+   "symbol": "local7",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 4,
+    "endLine": 11,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#originatingRequest.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 39,
+    "endLine": 26,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#makeResponse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 24,
+    "endLine": 11,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 51,
+    "endLine": 14,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(replyTo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 63,
+    "endLine": 16,
+    "endCharacter": 78
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#contextProvider.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 26,
+    "endLine": 19,
+    "endCharacter": 33
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 15,
+    "endLine": 25,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/EudsConfig.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 14,
+    "endLine": 31,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 31,
+    "endLine": 14,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().(originatingRequest)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 64,
+    "endLine": 18,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 44,
+    "endLine": 45,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 47,
+    "endLine": 5,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/core/message/RequestedValidatedSession.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 85,
+    "endLine": 18,
+    "endCharacter": 85
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 28,
+    "endLine": 6,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/common/masking/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 18,
+    "endLine": 4,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 34,
+    "endLine": 3,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 14,
+    "endLine": 16,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#maskingFacade.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 6,
+    "endLine": 47,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 71,
+    "endLine": 26,
+    "endCharacter": 76
+   },
+   "symbol": "local11",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 90,
+    "endLine": 40,
+    "endCharacter": 99
+   },
+   "symbol": "scala/Option#getOrElse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 60,
+    "endLine": 39,
+    "endCharacter": 64
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 49,
+    "endLine": 7,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 49,
+    "endLine": 7,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvents#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 33,
+    "endLine": 53,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 10,
+    "endLine": 14,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 30,
+    "endLine": 7,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 30,
+    "endLine": 7,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 9,
+    "endLine": 32,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 8,
+    "endLine": 38,
+    "endCharacter": 15
+   },
+   "symbol": "local16",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 42,
+    "endLine": 33,
+    "endCharacter": 52
+   },
+   "symbol": "local15",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 41,
+    "endLine": 31,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().(response)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 74,
+    "endLine": 5,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 74,
+    "endLine": 5,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 59,
+    "endLine": 53,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(replyTo)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 21,
+    "endLine": 13,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 59,
+    "endLine": 37,
+    "endCharacter": 65
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 6,
+    "endLine": 48,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(contextProvider)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 98,
+    "endLine": 31,
+    "endCharacter": 106
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 26,
+    "endLine": 25,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/EudsConfig.ordersBatchSize.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 72,
+    "endLine": 45,
+    "endCharacter": 72
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 50,
+    "endLine": 40,
+    "endCharacter": 58
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 17,
+    "endLine": 40,
+    "endCharacter": 18
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 110,
+    "endLine": 39,
+    "endCharacter": 115
+   },
+   "symbol": "local17",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 4,
+    "endLine": 40,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/LazyLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 12,
+    "endLine": 53,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 92,
+    "endLine": 5,
+    "endCharacter": 107
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 87,
+    "endLine": 39,
+    "endCharacter": 105
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvents.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 15,
+    "endLine": 49,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 25,
+    "endLine": 3,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/biz/provider/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 11,
+    "endLine": 20,
+    "endCharacter": 12
+   },
+   "symbol": "local9",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 30,
+    "endLine": 37,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().(response)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 12,
+    "endLine": 10,
+    "endCharacter": 15
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 106,
+    "endLine": 18,
+    "endCharacter": 112
+   },
+   "symbol": "scala/AnyRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 54,
+    "endLine": 33,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#contextProvider.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/spok/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 20,
+    "endLine": 26,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#originatingRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 33,
+    "endLine": 39,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 43,
+    "endLine": 39,
+    "endCharacter": 50
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 4,
+    "endLine": 12,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#replyTo.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 34,
+    "endLine": 21,
+    "endCharacter": 38
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 92,
+    "endLine": 18,
+    "endCharacter": 100
+   },
+   "symbol": "local7",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 15,
+    "endLine": 46,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 15,
+    "endLine": 37,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 6,
+    "endLine": 9,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 50,
+    "endLine": 53,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 24,
+    "endLine": 4,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 14,
+    "endLine": 20,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 7,
+    "endLine": 45,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 70,
+    "endLine": 33,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#getUserContext().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 4,
+    "endLine": 41,
+    "endCharacter": 11
+   },
+   "symbol": "local16",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 82,
+    "endLine": 40,
+    "endCharacter": 89
+   },
+   "symbol": "local16",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 29,
+    "endLine": 16,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/common/masking/MaskingFacade#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 66,
+    "endLine": 37,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 77,
+    "endLine": 31,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 7,
+    "endLine": 26,
+    "endCharacter": 10
+   },
+   "symbol": "scala/collection/Iterator#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 11,
+    "endLine": 52,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/RequestedValidatedSession.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 4,
+    "endLine": 51,
+    "endCharacter": 11
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 31,
+    "endLine": 18,
+    "endCharacter": 46
+   },
+   "symbol": "scala/PartialFunction#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 21,
+    "endLine": 7,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/spok/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 102,
+    "endLine": 18,
+    "endCharacter": 105
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 5,
+    "endLine": 50,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 7,
+    "endLine": 27,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/IterableOnceOps#toSeq().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 65,
+    "endLine": 39,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#handleResponse().(response)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 4,
+    "endLine": 24,
+    "endCharacter": 10
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 8,
+    "endLine": 19,
+    "endCharacter": 14
+   },
+   "symbol": "local8",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 55,
+    "endLine": 2,
+    "endCharacter": 82
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandlerFactory#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 106,
+    "endLine": 39,
+    "endCharacter": 109
+   },
+   "symbol": "scala/package.Seq.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 34,
+    "endLine": 20,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 70,
+    "endLine": 31,
+    "endCharacter": 76
+   },
+   "symbol": "scala/Option#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 37,
+    "endLine": 32,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/spok/message/BlotterOrderEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 60,
+    "endLine": 18,
+    "endCharacter": 63
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 51,
+    "endLine": 39,
+    "endCharacter": 56
+   },
+   "symbol": "local17",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 51,
+    "endLine": 18,
+    "endCharacter": 57
+   },
+   "symbol": "scala/AnyRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 15,
+    "endLine": 47,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/message/RequestEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 51,
+    "endLine": 31,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 6,
+    "endLine": 49,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(replyTo)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 40,
+    "endLine": 37,
+    "endCharacter": 56
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 25,
+    "endLine": 2,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/core/biz/access/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 42,
+    "endLine": 53,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/ValidatedUserSessionKey#userId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 37,
+    "endLine": 52,
+    "endCharacter": 44
+   },
+   "symbol": "local18",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 25,
+    "endLine": 32,
+    "endCharacter": 35
+   },
+   "symbol": "local15",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 21,
+    "endLine": 6,
+    "endCharacter": 27
+   },
+   "symbol": "omnistac/euds/common/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 7,
+    "endLine": 25,
+    "endCharacter": 14
+   },
+   "symbol": "scala/collection/IterableOps#grouped().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 14,
+    "endLine": 34,
+    "endCharacter": 18
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 34,
+    "endLine": 53,
+    "endCharacter": 41
+   },
+   "symbol": "local18",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 36,
+    "endLine": 6,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/common/masking/MaskingFacade#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 23,
+    "endLine": 48,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 20,
+    "endLine": 33,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/common/masking/MaskingFacade#maskBlotterOrderEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 11,
+    "endLine": 26,
+    "endCharacter": 16
+   },
+   "symbol": "local11",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 62,
+    "endLine": 16,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/euds/common/masking/MaskingFacade#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 6,
+    "endLine": 33,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#maskingFacade.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 30,
+    "endLine": 14,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/core/biz/access/TopicResponseHandler#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 85,
+    "endLine": 33,
+    "endCharacter": 91
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#userId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 47,
+    "endLine": 18,
+    "endCharacter": 50
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#getBlotterOrderEventOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 68,
+    "endLine": 53,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandlerFactory.create().(contextProvider)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 30,
+    "endLine": 4,
+    "endCharacter": 38
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 30,
+    "endLine": 4,
+    "endCharacter": 38
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 39,
+    "endLine": 40,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#userId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 100,
+    "endLine": 40,
+    "endCharacter": 104
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 4,
+    "endLine": 13,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#contextProvider.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 4,
+    "endLine": 10,
+    "endCharacter": 10
+   },
+   "symbol": "omnistac/euds/OrdersResponseHandler#userId.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 13,
+    "endLine": 12,
+    "endCharacter": 21
+   },
+   "symbol": "org/apache/pekko/actor/ActorRef#",
+   "role": "REFERENCE"
+  }
+ ]
+}

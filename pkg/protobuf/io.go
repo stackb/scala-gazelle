@@ -76,6 +76,17 @@ func WritePrettyJSONFile(filename string, message protoreflect.ProtoMessage) err
 	return nil
 }
 
+func WriteStableJSONFile(filename string, message protoreflect.ProtoMessage) error {
+	data, err := StableJSON(message)
+	if err != nil {
+		return fmt.Errorf("marshal: %w", err)
+	}
+	if err := os.WriteFile(filename, []byte(data), 0644); err != nil {
+		return fmt.Errorf("write: %w", err)
+	}
+	return nil
+}
+
 func StableJSON(message protoreflect.ProtoMessage) (string, error) {
 	marshaler := protojson.MarshalOptions{
 		Multiline:       false,

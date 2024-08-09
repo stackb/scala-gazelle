@@ -1,0 +1,3988 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/OrderEventHandler.scala",
+ "md5": "168DC26A6618363601328F9ECC55BFA7",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "local42",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/SpanWrapper#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local41",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#ec().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 32,
+   "displayName": "ec",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/ExecutionContextExecutor#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local40",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/BatchTracker#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(actorSystem)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "responseEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "OrderEventHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/handlers/EudsHandler#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/OrderEventHandler#actorSystem.",
+       "omnistac/euds/handlers/OrderEventHandler#dao.",
+       "omnistac/euds/handlers/OrderEventHandler#onInitialized.",
+       "omnistac/euds/handlers/OrderEventHandler#instrumentCache.",
+       "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/OrderEventHandler#ec().",
+       "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scalapb/GeneratedMessage#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(onInitialized)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/time/ZonedDateTime#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/util/UUID#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/util/UUID#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/SessionKey#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(dao)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "dao",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "accepted",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "ose",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/OrderStatusEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "event",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmOrderEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local12"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#onInitialized.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/handlers/EudsHandler#onInitialized()."
+   ]
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local12",
+       "local11"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local9",
+        "local10"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local11"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "local39",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local15"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/util/UUID#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "finalResult",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "scala/package.Throwable#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Unit#"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local7",
+       "local8"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eventId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "result",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "e",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "retrievedOrder",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/OrdersQueryResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "orderKey",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/lang/String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "qual$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeBlotterOrder",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Some#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterOrderEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "queryResponse",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/OrdersQueryResponse#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/util/Try#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/OrdersQueryResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleOrderNotifications",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Some#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/lang/String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Unit#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local12"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local11"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "ex",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(instrumentCache)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "instrumentCache",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "structuralType": {
+       "tpe": {
+        "withType": {
+         "types": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {}
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#actorSystem.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#instrumentCache.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "instrumentCache",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "structuralType": {
+       "tpe": {
+        "withType": {
+         "types": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {}
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(actorSystem)",
+        "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(dao)",
+        "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(onInitialized)",
+        "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().(instrumentCache)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "order",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmOrder#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "orderEvent",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/SwarmOrderEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eventualSavedOrderEvent",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/SwarmOrderEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Throwable#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#dao.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "dao",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 13,
+    "endLine": 10,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 47,
+    "endLine": 99,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 16,
+    "endLine": 25,
+    "endCharacter": 17
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 66,
+    "endLine": 37,
+    "endCharacter": 68
+   },
+   "symbol": "scala/Boolean#`||`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 20,
+    "endLine": 73,
+    "endCharacter": 34
+   },
+   "symbol": "local21",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 10,
+    "endLine": 37,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 17,
+    "endLine": 95,
+    "endCharacter": 27
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 49,
+    "endLine": 42,
+    "endCharacter": 57
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#onInitialized.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 10,
+    "endLine": 95,
+    "endCharacter": 16
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 63,
+    "endLine": 55,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusEvent#orderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 12,
+    "endLine": 48,
+    "endCharacter": 20
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 29,
+    "endLine": 45,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#eventId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 23,
+    "endLine": 22,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#ec().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 31,
+    "endLine": 72,
+    "endCharacter": 32
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 12,
+    "endLine": 47,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 41,
+    "endLine": 72,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrder#getOrderId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 23,
+    "endLine": 76,
+    "endCharacter": 30
+   },
+   "symbol": "scala/util/Failure.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 18,
+    "endLine": 40,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#orderStatusEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 14,
+    "endLine": 89,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 78,
+    "endLine": 51,
+    "endCharacter": 85
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusEvent#orderId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 50,
+    "endLine": 37,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusType#isOrderRejected().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 13,
+    "endLine": 11,
+    "endCharacter": 17
+   },
+   "symbol": "scala/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 21,
+    "endLine": 53,
+    "endCharacter": 21
+   },
+   "symbol": "local6",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 48,
+    "endLine": 70,
+    "endCharacter": 58
+   },
+   "symbol": "local18",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 36,
+    "endLine": 38,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusEvent#getStatusType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 18,
+    "endLine": 67,
+    "endCharacter": 23
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 16,
+    "endLine": 78,
+    "endCharacter": 30
+   },
+   "symbol": "local21",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 11,
+    "endLine": 35,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 26,
+    "endLine": 41,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 21,
+    "endLine": 16,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 91,
+    "endLine": 84,
+    "endCharacter": 99
+   },
+   "symbol": "local20",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 4,
+    "endLine": 19,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#instrumentCache.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 34,
+    "endLine": 35,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 21,
+    "endLine": 90,
+    "endCharacter": 31
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 25,
+    "endLine": 36,
+    "endCharacter": 30
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 87,
+    "endLine": 55,
+    "endCharacter": 94
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 4,
+    "endLine": 17,
+    "endCharacter": 7
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#dao.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 41,
+    "endLine": 42,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#eventId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 21,
+    "endLine": 99,
+    "endCharacter": 22
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 18,
+    "endLine": 11,
+    "endCharacter": 25
+   },
+   "symbol": "scala/util/control/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 23,
+    "endLine": 13,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/common/pubsub/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 7,
+    "endLine": 13,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 21,
+    "endLine": 89,
+    "endCharacter": 25
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 27,
+    "endLine": 6,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 51,
+    "endLine": 36,
+    "endCharacter": 64
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusEvent#getStatusType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 20,
+    "endLine": 72,
+    "endCharacter": 28
+   },
+   "symbol": "local20",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 4,
+    "endLine": 25,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 61,
+    "endLine": 72,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrder#getVersion().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 26,
+    "endLine": 7,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 37,
+    "endLine": 45,
+    "endCharacter": 45
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 21,
+    "endLine": 54,
+    "endCharacter": 26
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 28,
+    "endLine": 71,
+    "endCharacter": 38
+   },
+   "symbol": "local18",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 54,
+    "endLine": 22,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#actorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 78,
+    "endLine": 19,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 19,
+    "endLine": 12,
+    "endCharacter": 26
+   },
+   "symbol": "scala/util/Failure.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 19,
+    "endLine": 12,
+    "endCharacter": 26
+   },
+   "symbol": "scala/util/Failure#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 25,
+    "endLine": 5,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 21,
+    "endLine": 19,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 14,
+    "endLine": 42,
+    "endCharacter": 21
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 37,
+    "endLine": 75,
+    "endCharacter": 43
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 45,
+    "endLine": 83,
+    "endCharacter": 49
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 35,
+    "endLine": 66,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#eventId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 41,
+    "endLine": 73,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#getOrder().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 76,
+    "endLine": 84,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#copy().(dataKey)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 74,
+    "endLine": 73,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrder#getVersion().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 14,
+    "endLine": 43,
+    "endCharacter": 20
+   },
+   "symbol": "local4",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 24,
+    "endLine": 42,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 36,
+    "endLine": 37,
+    "endCharacter": 49
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusEvent#getStatusType().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 8,
+    "endLine": 31,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#makeReady.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 32,
+    "endLine": 90,
+    "endCharacter": 36
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 6,
+    "endLine": 15,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 17,
+    "endLine": 94,
+    "endCharacter": 21
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 43,
+    "endLine": 65,
+    "endCharacter": 51
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 43,
+    "endLine": 13,
+    "endCharacter": 63
+   },
+   "symbol": "omnistac/common/pubsub/kafka/topics/KafkaTopicsConstants.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 25,
+    "endLine": 10,
+    "endCharacter": 49
+   },
+   "symbol": "scala/concurrent/ExecutionContextExecutor#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 44,
+    "endLine": 75,
+    "endCharacter": 48
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 14,
+    "endLine": 90,
+    "endCharacter": 20
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 11,
+    "endLine": 8,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 8,
+    "endLine": 99,
+    "endCharacter": 14
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 14,
+    "endLine": 51,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 35,
+    "endLine": 65,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#traceId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 27,
+    "endLine": 82,
+    "endCharacter": 32
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 71,
+    "endLine": 94,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/common/pubsub/kafka/topics/KafkaTopicsConstants.MicroswarmOrdersResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 63,
+    "endLine": 3,
+    "endCharacter": 71
+   },
+   "symbol": "omnistac/core/util/collection/ListUtils#makeList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 12,
+    "endLine": 46,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 29,
+    "endLine": 44,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#traceId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 20,
+    "endLine": 64,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#persistOrder().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 32,
+    "endLine": 79,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/spok/message/OrdersQueryResponse#orders.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 43,
+    "endLine": 60,
+    "endCharacter": 45
+   },
+   "symbol": "scala/Boolean#`\u0026\u0026`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 22,
+    "endLine": 84,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 23,
+    "endLine": 36,
+    "endCharacter": 24
+   },
+   "symbol": "scala/Boolean#`unary_!`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 14,
+    "endLine": 61,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 50,
+    "endLine": 2,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 50,
+    "endLine": 2,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 28,
+    "endLine": 49,
+    "endCharacter": 34
+   },
+   "symbol": "local4",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 60,
+    "endLine": 25,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 18,
+    "endLine": 63,
+    "endCharacter": 41
+   },
+   "symbol": "local17",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 26,
+    "endLine": 61,
+    "endCharacter": 27
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 55,
+    "endLine": 72,
+    "endCharacter": 60
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 105,
+    "endLine": 94,
+    "endCharacter": 110
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 49,
+    "endLine": 24,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 8,
+    "endLine": 16,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#actorSystem.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 4,
+    "endLine": 27,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 44,
+    "endLine": 4,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 12,
+    "endLine": 44,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 14,
+    "endLine": 54,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 26,
+    "endLine": 51,
+    "endCharacter": 27
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 71,
+    "endLine": 84,
+    "endCharacter": 75
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 90,
+    "startCharacter": 37,
+    "endLine": 90,
+    "endCharacter": 42
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 24,
+    "endLine": 8,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 37,
+    "endLine": 76,
+    "endCharacter": 43
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 99,
+    "startCharacter": 15,
+    "endLine": 99,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 65,
+    "endLine": 36,
+    "endCharacter": 89
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusType#isOrderStatusTypeUnknown().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 74,
+    "endLine": 51,
+    "endCharacter": 77
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 18,
+    "endLine": 68,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#instrumentCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 11,
+    "endLine": 25,
+    "endCharacter": 15
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 20,
+    "endLine": 71,
+    "endCharacter": 25
+   },
+   "symbol": "local19",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 37,
+    "endLine": 44,
+    "endCharacter": 45
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 26,
+    "endLine": 11,
+    "endCharacter": 34
+   },
+   "symbol": "scala/util/control/NonFatal.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 77,
+    "endLine": 61,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#eventId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 50,
+    "endLine": 76,
+    "endCharacter": 51
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 16,
+    "endLine": 74,
+    "endCharacter": 30
+   },
+   "symbol": "local21",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 26,
+    "endLine": 3,
+    "endCharacter": 36
+   },
+   "symbol": "omnistac/core/util/collection/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 68,
+    "endLine": 24,
+    "endCharacter": 74
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 56,
+    "endLine": 73,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrder#getOrderId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 6,
+    "endLine": 24,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 37,
+    "endLine": 3,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 49,
+    "endLine": 75,
+    "endCharacter": 50
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 68,
+    "endLine": 2,
+    "endCharacter": 83
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 39,
+    "endLine": 79,
+    "endCharacter": 49
+   },
+   "symbol": "scala/collection/IterableOps#headOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 30,
+    "endLine": 28,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 75,
+    "endLine": 75,
+    "endCharacter": 83
+   },
+   "symbol": "local20",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 26,
+    "endLine": 89,
+    "endCharacter": 27
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 16,
+    "endLine": 60,
+    "endCharacter": 21
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 34,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 34,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 35,
+    "endLine": 72,
+    "endCharacter": 40
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 16,
+    "endLine": 64,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 20,
+    "endLine": 41,
+    "endCharacter": 25
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 36,
+    "endLine": 13,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/common/pubsub/kafka/topics/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 31,
+    "endLine": 36,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 43,
+    "endLine": 66,
+    "endCharacter": 51
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 75,
+    "endLine": 89,
+    "endCharacter": 99
+   },
+   "symbol": "omnistac/common/pubsub/kafka/topics/KafkaTopicsConstants.MicroswarmOrdersResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 31,
+    "endLine": 76,
+    "endCharacter": 32
+   },
+   "symbol": "local22",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 31,
+    "endLine": 78,
+    "endCharacter": 34
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 13,
+    "endLine": 53,
+    "endCharacter": 20
+   },
+   "symbol": "scala/concurrent/Future#recover().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 33,
+    "endLine": 60,
+    "endCharacter": 42
+   },
+   "symbol": "scala/Option#isDefined().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 21,
+    "endLine": 51,
+    "endCharacter": 25
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 25,
+    "endLine": 80,
+    "endCharacter": 29
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 28,
+    "endLine": 95,
+    "endCharacter": 32
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 31,
+    "endLine": 24,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 61,
+    "endLine": 4,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 66,
+    "endLine": 22,
+    "endCharacter": 76
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#dispatcher().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 35,
+    "endLine": 40,
+    "endCharacter": 44
+   },
+   "symbol": "scala/Option#isDefined().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 30,
+    "endLine": 2,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 30,
+    "endLine": 2,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 90,
+    "endLine": 36,
+    "endCharacter": 92
+   },
+   "symbol": "scala/Boolean#`||`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 31,
+    "endLine": 100,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 16,
+    "endLine": 13,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/common/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 16,
+    "endLine": 38,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 23,
+    "endLine": 43,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 21,
+    "endLine": 61,
+    "endCharacter": 25
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 12,
+    "endLine": 36,
+    "endCharacter": 20
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 10,
+    "endLine": 59,
+    "endCharacter": 21
+   },
+   "symbol": "local5",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 52,
+    "endLine": 84,
+    "endCharacter": 69
+   },
+   "symbol": "local25",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 37,
+    "endLine": 73,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 37,
+    "endLine": 78,
+    "endCharacter": 50
+   },
+   "symbol": "local24",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 50,
+    "endLine": 73,
+    "endCharacter": 55
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 23,
+    "endLine": 75,
+    "endCharacter": 30
+   },
+   "symbol": "scala/util/Success.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 53,
+    "endLine": 3,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/core/util/collection/CollectionUtils.Implicits.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 50,
+    "endLine": 38,
+    "endCharacter": 70
+   },
+   "symbol": "omnistac/microswarm/message/OrderStatusType#isOrderAmendRejected().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 9,
+    "endLine": 17,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 44,
+    "endLine": 76,
+    "endCharacter": 49
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 38,
+    "endLine": 19,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 18,
+    "endLine": 8,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 16,
+    "endLine": 37,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 10,
+    "endLine": 94,
+    "endCharacter": 16
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 59,
+    "endLine": 55,
+    "endCharacter": 62
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 14,
+    "endLine": 49,
+    "endCharacter": 25
+   },
+   "symbol": "local5",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 68,
+    "endLine": 73,
+    "endCharacter": 73
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 27,
+    "endLine": 43,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#persistOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 95,
+    "startCharacter": 33,
+    "endLine": 95,
+    "endCharacter": 38
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 8,
+    "endLine": 33,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 18,
+    "endLine": 46,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getSwarmOrder().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 41,
+    "startCharacter": 14,
+    "endLine": 41,
+    "endCharacter": 17
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 39,
+    "endLine": 71,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getSwarmOrder().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 26,
+    "endLine": 33,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 28,
+    "endLine": 12,
+    "endCharacter": 35
+   },
+   "symbol": "scala/util/Success.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 28,
+    "endLine": 12,
+    "endCharacter": 35
+   },
+   "symbol": "scala/util/Success#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 94,
+    "startCharacter": 22,
+    "endLine": 94,
+    "endCharacter": 23
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 10,
+    "endLine": 38,
+    "endCharacter": 15
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 31,
+    "endLine": 74,
+    "endCharacter": 41
+   },
+   "symbol": "scala/concurrent/Future#onComplete().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 18,
+    "endLine": 65,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 50,
+    "startCharacter": 13,
+    "endLine": 50,
+    "endCharacter": 16
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 28,
+    "endLine": 53,
+    "endCharacter": 36
+   },
+   "symbol": "scala/util/control/NonFatal.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 22,
+    "endLine": 59,
+    "endCharacter": 29
+   },
+   "symbol": "scala/concurrent/Future#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 47,
+    "startCharacter": 18,
+    "endLine": 47,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#getOrderStatusEvent().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 12,
+    "endLine": 20,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 13,
+    "endLine": 12,
+    "endCharacter": 17
+   },
+   "symbol": "scala/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 86,
+    "endLine": 84,
+    "endCharacter": 90
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 26,
+    "endLine": 100,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 25,
+    "endLine": 83,
+    "endCharacter": 42
+   },
+   "symbol": "local25",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 23,
+    "endLine": 15,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 16,
+    "endLine": 55,
+    "endCharacter": 17
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 80,
+    "endLine": 24,
+    "endCharacter": 96
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 18,
+    "endLine": 79,
+    "endCharacter": 31
+   },
+   "symbol": "local24",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 35,
+    "startCharacter": 27,
+    "endLine": 35,
+    "endCharacter": 32
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 27,
+    "endLine": 22,
+    "endCharacter": 51
+   },
+   "symbol": "scala/concurrent/ExecutionContextExecutor#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 12,
+    "endLine": 40,
+    "endCharacter": 17
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 31,
+    "endLine": 33,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 30,
+    "endLine": 13,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/common/pubsub/kafka/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 22,
+    "endLine": 60,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#swarmOrder.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 39,
+    "endLine": 84,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#makeResponse().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 38,
+    "endLine": 70,
+    "endCharacter": 45
+   },
+   "symbol": "scala/concurrent/Future#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 15,
+    "endLine": 100,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 60,
+    "endLine": 61,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 46,
+    "endLine": 60,
+    "endCharacter": 54
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 16,
+    "endLine": 56,
+    "endCharacter": 18
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 51,
+    "endLine": 10,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 51,
+    "endLine": 10,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 83,
+    "endLine": 76,
+    "endCharacter": 91
+   },
+   "symbol": "local20",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 28,
+    "startCharacter": 11,
+    "endLine": 28,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 24,
+    "endLine": 20,
+    "endCharacter": 24
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 35,
+    "endLine": 6,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 35,
+    "endLine": 6,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/microswarm/message/SwarmOrderEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 37,
+    "endLine": 53,
+    "endCharacter": 39
+   },
+   "symbol": "local13",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 7,
+    "endLine": 12,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 14,
+    "endLine": 70,
+    "endCharacter": 37
+   },
+   "symbol": "local17",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 100,
+    "startCharacter": 8,
+    "endLine": 100,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 12,
+    "endLine": 45,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 15,
+    "endLine": 33,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 94,
+    "endLine": 76,
+    "endCharacter": 95
+   },
+   "symbol": "local22",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 7,
+    "endLine": 11,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 62,
+    "endLine": 19,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 82,
+    "startCharacter": 22,
+    "endLine": 82,
+    "endCharacter": 26
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 29,
+    "endLine": 18,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 66,
+    "startCharacter": 18,
+    "endLine": 66,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/handlers/OrderEventHandler#handleOrderNotifications().(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 101,
+    "endLine": 51,
+    "endCharacter": 108
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 89,
+    "startCharacter": 109,
+    "endLine": 89,
+    "endCharacter": 114
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 75,
+    "endLine": 24,
+    "endCharacter": 79
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  }
+ ]
+}

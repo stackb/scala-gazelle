@@ -1,0 +1,5110 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/handlers/FillEventHandler.scala",
+ "md5": "193608D72FF9A1819E8B7C00C3856FFF",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "local44",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillSideId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local43",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/spok/message/BlotterFillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "responseEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local42",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "blotterFillResponses",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "prefix": {
+        "singleType": {
+         "symbol": "local40"
+        }
+       },
+       "symbol": "org/apache/pekko/stream/scaladsl/Source#Repr#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local41",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "guid",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/Guid#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local48",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local47",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "qual$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local46",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "envelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local45",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeOriginalEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(dao)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "dao",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().(responseEnvelopes)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "responseEnvelopes",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local40",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "blotterFillsSource",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/spok/message/BlotterFillEvent#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "org/apache/pekko/NotUsed#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(actorSystem)",
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(dao)",
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(userContextCache)",
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(onInitialized)",
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(instrumentCache)"
+       ]
+      },
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(mat)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleFillEventsBatch",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "local49",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local33",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeUstBenchmark",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/USTBenchmark#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local32",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "id",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#instrumentCache.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "instrumentCache",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "structuralType": {
+       "tpe": {
+        "withType": {
+         "types": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {}
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local31",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "maybeInstrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Option#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local30",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local37",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "successfullySavedFills",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local36",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eventualResponses",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/collection/immutable/List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local35",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Tuple3#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#dao.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "dao",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/euds/dao/EUDSDao#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local34",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "tenor",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/USTBenchmarkTenor#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "eventIdAndFillEventPairs",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/package.Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Tuple3#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "scala/Predef.String#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "omnistac/microswarm/message/FillEvent#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#ec().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 32,
+   "displayName": "ec",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/ExecutionContextExecutor#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#userContextCache.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "userContextCache",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "properties": 8,
+   "displayName": "$anonfun",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/runtime/AbstractPartialFunction#",
+        "typeArguments": [
+         {
+          "typeRef": {
+           "symbol": "omnistac/core/message/ResponseEnvelope#"
+          }
+         },
+         {
+          "typeRef": {
+           "symbol": "scala/Tuple3#",
+           "typeArguments": [
+            {
+             "typeRef": {
+              "symbol": "java/lang/String#"
+             }
+            },
+            {
+             "typeRef": {
+              "symbol": "omnistac/core/message/ResponseEnvelope#"
+             }
+            },
+            {
+             "typeRef": {
+              "symbol": "omnistac/microswarm/message/FillEvent#"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "java/io/Serializable#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "local2",
+       "local3"
+      ]
+     }
+    }
+   },
+   "annotations": [
+    {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/SerialVersionUID#"
+      }
+     }
+    }
+   ],
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "applyOrElse",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {
+      "symlinks": [
+       "local7",
+       "local6"
+      ]
+     },
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local4",
+        "local5"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "local6"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#applyOrElse()."
+   ]
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fillEvents",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Tuple3#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "java/lang/String#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           },
+           {
+            "typeRef": {
+             "symbol": "omnistac/microswarm/message/FillEvent#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local9",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "event",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local7",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "A1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Nothing#"
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local39",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillEvent",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local8",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local38",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fillIds",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/Guid#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "default",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function1#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "local7"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "local6"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local6",
+   "language": "SCALA",
+   "kind": "TYPE_PARAMETER",
+   "displayName": "B1",
+   "signature": {
+    "typeSignature": {
+     "typeParameters": {},
+     "lowerBound": {
+      "typeRef": {
+       "symbol": "scala/Tuple3#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     },
+     "upperBound": {
+      "typeRef": {
+       "symbol": "scala/Any#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 8,
+   "displayName": "isDefinedAt",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "local11"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "scala/PartialFunction#isDefinedAt()."
+   ]
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "local7"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(instrumentCache)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "instrumentCache",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "structuralType": {
+       "tpe": {
+        "withType": {
+         "types": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+            "typeArguments": [
+             {
+              "typeRef": {
+               "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+              }
+             }
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "declarations": {}
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local22",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "numOfFills",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Int#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local21",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Tuple3#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local65",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "processingTime",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local20",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local64",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "resp",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/List#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local63",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$16",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/SpanWrapper#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local26",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "fillSideId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#actorSystem.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local25",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fill",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/microswarm/message/FillEvent#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local24",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "responseEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local23",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "responseEnvelopesByFillId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local62",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$15",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(actorSystem)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "actorSystem",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local61",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$14",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "omnistac/core/message/BatchTracker#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local60",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$13",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#onInitialized.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/handlers/EudsHandler#onInitialized()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(onInitialized)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 1024,
+   "displayName": "onInitialized",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Function0#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Unit#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local29",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "eventId",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local28",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "enrichedFills",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/euds/dao/FillData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local27",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$2",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Tuple3#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#mat.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1056,
+   "displayName": "mat",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/Materializer#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "local11",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local55",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$8",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/SessionKey#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local10",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local54",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$7",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local53",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$6",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scalapb/GeneratedMessage#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local52",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$5",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Predef.String#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local15",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "x0$1",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Tuple3#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "java/lang/String#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/microswarm/message/FillEvent#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local59",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$12",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/reflect/internal/annotations/uncheckedBounds#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Option#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "java/util/UUID#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local14",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "r",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local58",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$11",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/util/UUID#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local13",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "fillEventEnvelopes",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local57",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$10",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/util/UUID#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local12",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "defaultCase$",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local56",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$9",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Boolean#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(mat)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32,
+   "displayName": "mat",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/stream/Materializer#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local51",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$4",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "java/time/ZonedDateTime#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local50",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "x$3",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.String#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleFillNotifications",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().(responseEnvelopes)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "FillEventHandler",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/handlers/EudsHandler#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/handlers/FillEventHandler#actorSystem.",
+       "omnistac/euds/handlers/FillEventHandler#dao.",
+       "omnistac/euds/handlers/FillEventHandler#userContextCache.",
+       "omnistac/euds/handlers/FillEventHandler#onInitialized.",
+       "omnistac/euds/handlers/FillEventHandler#instrumentCache.",
+       "omnistac/euds/handlers/FillEventHandler#mat.",
+       "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().",
+       "omnistac/euds/handlers/FillEventHandler#ec().",
+       "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().",
+       "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).",
+       "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local19",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "swarmIds",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Set#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Predef.String#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local18",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "requestStartTime",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Long#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local17",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "responseEnvelope",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/message/ResponseEnvelope#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local16",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "otherEnvelopes",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/collection/immutable/Seq#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "omnistac/core/message/ResponseEnvelope#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "handleFillNotifications",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/package.List#",
+          "typeArguments": [
+           {
+            "typeRef": {
+             "symbol": "omnistac/core/message/ResponseEnvelope#"
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().(userContextCache)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "userContextCache",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/core/biz/provider/UserContextProvider#"
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 46,
+    "endLine": 58,
+    "endCharacter": 50
+   },
+   "symbol": "scala/collection/SeqOps#size().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 78,
+    "endLine": 19,
+    "endCharacter": 95
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 57,
+    "endLine": 79,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#makeResponse(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 58,
+    "endLine": 69,
+    "endCharacter": 65
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 52,
+    "endLine": 75,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 14,
+    "endLine": 39,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 32,
+    "endLine": 85,
+    "endCharacter": 42
+   },
+   "symbol": "local22",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 34,
+    "endLine": 2,
+    "endCharacter": 53
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 36,
+    "endLine": 63,
+    "endCharacter": 46
+   },
+   "symbol": "omnistac/microswarm/message/FillOrderInfo#fillSideId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 11,
+    "endLine": 62,
+    "endCharacter": 15
+   },
+   "symbol": "local25",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 6,
+    "endLine": 62,
+    "endCharacter": 10
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 7,
+    "endLine": 36,
+    "endCharacter": 10
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 70,
+    "endLine": 79,
+    "endCharacter": 74
+   },
+   "symbol": "local43",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 8,
+    "endLine": 73,
+    "endCharacter": 25
+   },
+   "symbol": "local36",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 76,
+    "endLine": 79,
+    "endCharacter": 80
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#copy().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 11,
+    "endLine": 59,
+    "endCharacter": 15
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 41,
+    "endLine": 34,
+    "endCharacter": 62
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 66,
+    "endLine": 69,
+    "endCharacter": 81
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#instrumentCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 30,
+    "endLine": 25,
+    "endCharacter": 47
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().(responseEnvelopes)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 62,
+    "endLine": 57,
+    "endCharacter": 66
+   },
+   "symbol": "local20",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 11,
+    "endLine": 8,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 22,
+    "endLine": 14,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 81,
+    "endLine": 74,
+    "endCharacter": 89
+   },
+   "symbol": "scala/collection/SeqOps#distinct().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 8,
+    "endLine": 77,
+    "endCharacter": 12
+   },
+   "symbol": "local43",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 8,
+    "endLine": 26,
+    "endCharacter": 18
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 54,
+    "endLine": 26,
+    "endCharacter": 55
+   },
+   "symbol": "local8",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 20,
+    "endLine": 74,
+    "endCharacter": 42
+   },
+   "symbol": "local37",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 21,
+    "endLine": 15,
+    "endCharacter": 32
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 81,
+    "endLine": 79,
+    "endCharacter": 88
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#copy().(dataKey)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 64,
+    "endLine": 85,
+    "endCharacter": 72
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 56,
+    "endLine": 75,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#getFillsById().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 38,
+    "endLine": 75,
+    "endCharacter": 51
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source.fromPublisher().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 43,
+    "endLine": 74,
+    "endCharacter": 46
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 77,
+    "endLine": 54,
+    "endCharacter": 83
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 54,
+    "endLine": 23,
+    "endCharacter": 65
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#actorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 69,
+    "endLine": 75,
+    "endCharacter": 76
+   },
+   "symbol": "local38",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 22,
+    "endLine": 83,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 80,
+    "startCharacter": 10,
+    "endLine": 80,
+    "endCharacter": 16
+   },
+   "symbol": "scala/Option#toList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 31,
+    "endLine": 45,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 32,
+    "endLine": 73,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#persistFills().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 62,
+    "endLine": 19,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 21,
+    "endLine": 26,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().(responseEnvelopes)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 6,
+    "endLine": 14,
+    "endCharacter": 22
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 64,
+    "endLine": 29,
+    "endCharacter": 65
+   },
+   "symbol": "local14",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 49,
+    "endLine": 67,
+    "endCharacter": 52
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 60,
+    "endLine": 74,
+    "endCharacter": 69
+   },
+   "symbol": "local39",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 15,
+    "endLine": 70,
+    "endCharacter": 22
+   },
+   "symbol": "local29",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 77,
+    "endLine": 68,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#getInstrumentById().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 8,
+    "endLine": 61,
+    "endCharacter": 33
+   },
+   "symbol": "local23",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 40,
+    "endLine": 29,
+    "endCharacter": 43
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 30,
+    "endLine": 27,
+    "endCharacter": 35
+   },
+   "symbol": "local9",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 48,
+    "endLine": 79,
+    "endCharacter": 56
+   },
+   "symbol": "local46",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 27,
+    "endLine": 81,
+    "endCharacter": 34
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#runWith().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 15,
+    "endLine": 49,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 8,
+    "endLine": 67,
+    "endCharacter": 21
+   },
+   "symbol": "local28",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 24,
+    "endLine": 67,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 7,
+    "endLine": 27,
+    "endCharacter": 8
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 73,
+    "endLine": 25,
+    "endCharacter": 79
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 11,
+    "endLine": 40,
+    "endCharacter": 15
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 24,
+    "endLine": 70,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#enrichAttributedFill().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 8,
+    "endLine": 30,
+    "endCharacter": 22
+   },
+   "symbol": "local16",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 10,
+    "endLine": 74,
+    "endCharacter": 17
+   },
+   "symbol": "local38",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 9,
+    "endLine": 64,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/immutable/List#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 25,
+    "endLine": 2,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/core/biz/provider/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 10,
+    "endLine": 34,
+    "endCharacter": 20
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 6,
+    "endLine": 81,
+    "endCharacter": 26
+   },
+   "symbol": "local42",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 22,
+    "endLine": 17,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/core/biz/provider/UserContextProvider#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 68,
+    "endLine": 78,
+    "endCharacter": 78
+   },
+   "symbol": "local44",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 11,
+    "endLine": 10,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 9,
+    "endLine": 27,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#eventId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 23,
+    "endLine": 23,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#ec().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 28,
+    "endLine": 83,
+    "endCharacter": 32
+   },
+   "symbol": "local64",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 8,
+    "endLine": 44,
+    "endCharacter": 17
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#makeReady.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 21,
+    "endLine": 2,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/core/biz/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 91,
+    "endLine": 79,
+    "endCharacter": 95
+   },
+   "symbol": "local43",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 16,
+    "endLine": 3,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 16,
+    "endLine": 40,
+    "endCharacter": 17
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 51,
+    "endLine": 81,
+    "endCharacter": 57
+   },
+   "symbol": "scala/collection/IterableOnceOps#toList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 34,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 34,
+    "endLine": 7,
+    "endCharacter": 51
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 8,
+    "endLine": 48,
+    "endCharacter": 14
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 4,
+    "endLine": 17,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#userContextCache.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 51,
+    "endLine": 70,
+    "endCharacter": 67
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#userContextCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 18,
+    "endLine": 8,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 99,
+    "endLine": 75,
+    "endCharacter": 102
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 85,
+    "endLine": 25,
+    "endCharacter": 101
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 35,
+    "endLine": 68,
+    "endCharacter": 39
+   },
+   "symbol": "local30",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 16,
+    "endLine": 20,
+    "endCharacter": 28
+   },
+   "symbol": "org/apache/pekko/stream/Materializer#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 64,
+    "endLine": 78,
+    "endCharacter": 67
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 27,
+    "endLine": 27,
+    "endCharacter": 28
+   },
+   "symbol": "local8",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 8,
+    "endLine": 18,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#onInitialized.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 35,
+    "endLine": 69,
+    "endCharacter": 57
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#referenceTreasuryTenor.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 7,
+    "endLine": 9,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 79,
+    "endLine": 3,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 14,
+    "endLine": 78,
+    "endCharacter": 35
+   },
+   "symbol": "local45",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 4,
+    "endLine": 59,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 35,
+    "endLine": 5,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/dao/FillData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 35,
+    "endLine": 5,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/dao/FillData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 71,
+    "endLine": 57,
+    "endCharacter": 75
+   },
+   "symbol": "local20",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 51,
+    "endLine": 12,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 51,
+    "endLine": 12,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 45,
+    "endLine": 81,
+    "endCharacter": 48
+   },
+   "symbol": "scala/concurrent/Future#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 61,
+    "endLine": 3,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 61,
+    "endLine": 3,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 53,
+    "endLine": 25,
+    "endCharacter": 69
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 12,
+    "endLine": 21,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/handlers/EudsHandler#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 91,
+    "endLine": 75,
+    "endCharacter": 97
+   },
+   "symbol": "omnistac/core/message/GuidUtils#toUUID().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 32,
+    "endLine": 34,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 7,
+    "endLine": 8,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 18,
+    "startCharacter": 29,
+    "endLine": 18,
+    "endCharacter": 33
+   },
+   "symbol": "scala/Unit#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 70,
+    "endLine": 74,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getFillId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 61,
+    "endLine": 67,
+    "endCharacter": 68
+   },
+   "symbol": "local29",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 16,
+    "endLine": 5,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 38,
+    "endLine": 64,
+    "endCharacter": 40
+   },
+   "symbol": "scala/Predef.ArrowAssoc#`-\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 18,
+    "endLine": 9,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 31,
+    "startCharacter": 4,
+    "endLine": 31,
+    "endCharacter": 10
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 84,
+    "endLine": 54,
+    "endCharacter": 88
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 11,
+    "endLine": 9,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 68,
+    "endLine": 40,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 30,
+    "endLine": 69,
+    "endCharacter": 34
+   },
+   "symbol": "local30",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 58,
+    "endLine": 26,
+    "endCharacter": 73
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 28,
+    "endLine": 73,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#dao.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 80,
+    "endLine": 25,
+    "endCharacter": 84
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 13,
+    "endLine": 64,
+    "endCharacter": 23
+   },
+   "symbol": "local26",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 31,
+    "endLine": 9,
+    "endCharacter": 43
+   },
+   "symbol": "org/apache/pekko/stream/Materializer.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 31,
+    "endLine": 9,
+    "endCharacter": 43
+   },
+   "symbol": "org/apache/pekko/stream/Materializer#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 70,
+    "endLine": 73,
+    "endCharacter": 92
+   },
+   "symbol": "local37",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 40,
+    "endLine": 81,
+    "endCharacter": 43
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink.seq().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 27,
+    "endLine": 33,
+    "endCharacter": 50
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 27,
+    "startCharacter": 17,
+    "endLine": 27,
+    "endCharacter": 25
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 19,
+    "endLine": 63,
+    "endCharacter": 25
+   },
+   "symbol": "scala/Option#toList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 26,
+    "endLine": 5,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 36,
+    "endLine": 79,
+    "endCharacter": 44
+   },
+   "symbol": "local46",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 94,
+    "endLine": 70,
+    "endCharacter": 111
+   },
+   "symbol": "local33",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 11,
+    "endLine": 43,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/core/message/ResponsePayload.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 21,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/core/util/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 10,
+    "endLine": 75,
+    "endCharacter": 28
+   },
+   "symbol": "local40",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 74,
+    "endLine": 26,
+    "endCharacter": 79
+   },
+   "symbol": "local9",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 27,
+    "endLine": 64,
+    "endCharacter": 37
+   },
+   "symbol": "local26",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 8,
+    "endLine": 29,
+    "endCharacter": 26
+   },
+   "symbol": "local13",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 75,
+    "endLine": 39,
+    "endCharacter": 81
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 8,
+    "endLine": 55,
+    "endCharacter": 24
+   },
+   "symbol": "local18",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 25,
+    "endLine": 62,
+    "endCharacter": 29
+   },
+   "symbol": "local25",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 24,
+    "endLine": 21,
+    "endCharacter": 24
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 41,
+    "endLine": 64,
+    "endCharacter": 57
+   },
+   "symbol": "local24",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 26,
+    "endLine": 49,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 45,
+    "endLine": 73,
+    "endCharacter": 58
+   },
+   "symbol": "local28",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 13,
+    "endLine": 85,
+    "endCharacter": 17
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#info().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 21,
+    "endLine": 48,
+    "endCharacter": 22
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 41,
+    "endLine": 3,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 41,
+    "endLine": 3,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 80,
+    "endLine": 61,
+    "endCharacter": 96
+   },
+   "symbol": "local24",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 73,
+    "startCharacter": 60,
+    "endLine": 73,
+    "endCharacter": 67
+   },
+   "symbol": "scala/concurrent/Future#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 34,
+    "endLine": 84,
+    "endCharacter": 51
+   },
+   "symbol": "java/lang/System#currentTimeMillis().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 83,
+    "startCharacter": 4,
+    "endLine": 83,
+    "endCharacter": 21
+   },
+   "symbol": "local36",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 26,
+    "endLine": 77,
+    "endCharacter": 36
+   },
+   "symbol": "local44",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 21,
+    "endLine": 5,
+    "endCharacter": 24
+   },
+   "symbol": "omnistac/euds/dao/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 76,
+    "endLine": 57,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#getSwarmId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 52,
+    "endLine": 76,
+    "endCharacter": 61
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/FlowOps#mapConcat().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 31,
+    "endLine": 10,
+    "endCharacter": 39
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 25,
+    "endLine": 12,
+    "endCharacter": 49
+   },
+   "symbol": "scala/concurrent/ExecutionContextExecutor#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 82,
+    "endLine": 69,
+    "endCharacter": 94
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#getBenchmark().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 66,
+    "endLine": 23,
+    "endCharacter": 76
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#dispatcher().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 16,
+    "endLine": 62,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#buyInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 4,
+    "endLine": 16,
+    "endCharacter": 7
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#dao.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 89,
+    "endLine": 57,
+    "endCharacter": 94
+   },
+   "symbol": "scala/collection/IterableOnceOps#toSet().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 14,
+    "endLine": 53,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 8,
+    "endLine": 57,
+    "endCharacter": 16
+   },
+   "symbol": "local19",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 43,
+    "endLine": 30,
+    "endCharacter": 47
+   },
+   "symbol": "scala/collection/SeqOps#diff().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 4,
+    "endLine": 40,
+    "endCharacter": 10
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 15,
+    "endLine": 48,
+    "endCharacter": 20
+   },
+   "symbol": "com/typesafe/scalalogging/LoggerImpl#error().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 13,
+    "endLine": 36,
+    "endCharacter": 20
+   },
+   "symbol": "scala/collection/IterableOps#flatten().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 39,
+    "endLine": 26,
+    "endCharacter": 46
+   },
+   "symbol": "scala/collection/IterableOps#collect().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 47,
+    "endLine": 26,
+    "endCharacter": 47
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 26,
+    "endLine": 7,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 6,
+    "endLine": 70,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/dao/FillData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 89,
+    "endLine": 54,
+    "endCharacter": 105
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 34,
+    "endLine": 59,
+    "endCharacter": 44
+   },
+   "symbol": "local22",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 44,
+    "endLine": 4,
+    "endCharacter": 59
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/BenchmarkLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 52,
+    "endLine": 33,
+    "endCharacter": 54
+   },
+   "symbol": "scala/collection/IterableOps#`++`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 40,
+    "startCharacter": 85,
+    "endLine": 40,
+    "endCharacter": 92
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#traceId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 21,
+    "endLine": 36,
+    "endCharacter": 27
+   },
+   "symbol": "scala/collection/IterableOnceOps#toList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 48,
+    "endLine": 30,
+    "endCharacter": 66
+   },
+   "symbol": "local13",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 49,
+    "endLine": 25,
+    "endCharacter": 52
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 16,
+    "endLine": 59,
+    "endCharacter": 17
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 13,
+    "endLine": 12,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 56,
+    "endLine": 84,
+    "endCharacter": 72
+   },
+   "symbol": "local18",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/GuidUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 30,
+    "endLine": 3,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/core/message/GuidUtils#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 21,
+    "endLine": 58,
+    "endCharacter": 45
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 15,
+    "startCharacter": 8,
+    "endLine": 15,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#actorSystem.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 23,
+    "startCharacter": 27,
+    "endLine": 23,
+    "endCharacter": 51
+   },
+   "symbol": "scala/concurrent/ExecutionContextExecutor#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 13,
+    "endLine": 77,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/spok/message/BlotterFillEvent#id.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 10,
+    "endLine": 68,
+    "endCharacter": 32
+   },
+   "symbol": "local31",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 6,
+    "endLine": 85,
+    "endCharacter": 12
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#logger.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 15,
+    "endLine": 45,
+    "endCharacter": 25
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 45,
+    "endLine": 54,
+    "endCharacter": 61
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 38,
+    "endLine": 39,
+    "endCharacter": 54
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 8,
+    "endLine": 33,
+    "endCharacter": 22
+   },
+   "symbol": "local16",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 44,
+    "endLine": 57,
+    "endCharacter": 47
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 21,
+    "endLine": 34,
+    "endCharacter": 31
+   },
+   "symbol": "scala/collection/IterableOps#headOption().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 70,
+    "endLine": 70,
+    "endCharacter": 92
+   },
+   "symbol": "local31",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 7,
+    "endLine": 12,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 18,
+    "endLine": 10,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 61,
+    "endLine": 4,
+    "endCharacter": 77
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 36,
+    "endLine": 61,
+    "endCharacter": 60
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 96,
+    "endLine": 79,
+    "endCharacter": 98
+   },
+   "symbol": "omnistac/spok/message/BlotterFillEvent#id.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 81,
+    "endLine": 75,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/core/message/GuidUtils.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 81,
+    "endLine": 26,
+    "endCharacter": 90
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 10,
+    "endLine": 79,
+    "endCharacter": 31
+   },
+   "symbol": "local45",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 87,
+    "endLine": 39,
+    "endCharacter": 103
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 9,
+    "endLine": 16,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/euds/dao/EUDSDao#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 8,
+    "endLine": 45,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 29,
+    "endLine": 29,
+    "endCharacter": 39
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 61,
+    "endLine": 61,
+    "endCharacter": 68
+   },
+   "symbol": "scala/collection/IterableOps#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 81,
+    "startCharacter": 35,
+    "endLine": 81,
+    "endCharacter": 39
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 27,
+    "endLine": 6,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/microswarm/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 25,
+    "endLine": 30,
+    "endCharacter": 42
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().(responseEnvelopes)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 76,
+    "endLine": 34,
+    "endCharacter": 82
+   },
+   "symbol": "scala/Option#toList().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 30,
+    "endLine": 62,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#sellInfo.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 65,
+    "startCharacter": 6,
+    "endLine": 65,
+    "endCharacter": 11
+   },
+   "symbol": "scala/collection/IterableOnceOps#toMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 10,
+    "endLine": 84,
+    "endCharacter": 24
+   },
+   "symbol": "local65",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 7,
+    "endLine": 10,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 77,
+    "endLine": 75,
+    "endCharacter": 80
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 26,
+    "endLine": 63,
+    "endCharacter": 33
+   },
+   "symbol": "scala/collection/immutable/List#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 38,
+    "endLine": 19,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 7,
+    "endLine": 32,
+    "endCharacter": 15
+   },
+   "symbol": "scala/concurrent/Future.sequence().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 45,
+    "endLine": 70,
+    "endCharacter": 49
+   },
+   "symbol": "local30",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 16,
+    "endLine": 7,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 61,
+    "endLine": 68,
+    "endCharacter": 76
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#instrumentCache.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 98,
+    "endLine": 61,
+    "endCharacter": 102
+   },
+   "symbol": "local25",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 34,
+    "endLine": 55,
+    "endCharacter": 51
+   },
+   "symbol": "java/lang/System#currentTimeMillis().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 105,
+    "endLine": 75,
+    "endCharacter": 113
+   },
+   "symbol": "java/util/UUID#toString().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 16,
+    "endLine": 6,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/microswarm/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 35,
+    "endLine": 6,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 35,
+    "endLine": 6,
+    "endCharacter": 44
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 53,
+    "endLine": 68,
+    "endCharacter": 60
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 4,
+    "endLine": 19,
+    "endCharacter": 19
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#instrumentCache.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 42,
+    "startCharacter": 4,
+    "endLine": 42,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 79,
+    "startCharacter": 32,
+    "endLine": 79,
+    "endCharacter": 35
+   },
+   "symbol": "scala/Option#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 20,
+    "startCharacter": 11,
+    "endLine": 20,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#mat.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 63,
+    "endLine": 54,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 40,
+    "endLine": 68,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/microswarm/message/FillEvent#instrumentId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 55,
+    "endLine": 29,
+    "endCharacter": 56
+   },
+   "symbol": "local14",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 30,
+    "endLine": 8,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 30,
+    "endLine": 43,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/core/message/PlatformStateEvent#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 77,
+    "startCharacter": 16,
+    "endLine": 77,
+    "endCharacter": 23
+   },
+   "symbol": "scala/Option#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 78,
+    "startCharacter": 38,
+    "endLine": 78,
+    "endCharacter": 63
+   },
+   "symbol": "local23",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 62,
+    "endLine": 76,
+    "endCharacter": 66
+   },
+   "symbol": "local43",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 24,
+    "endLine": 8,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 31,
+    "endLine": 49,
+    "endCharacter": 36
+   },
+   "symbol": "scala/collection/immutable/List.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 27,
+    "endLine": 55,
+    "endCharacter": 33
+   },
+   "symbol": "java/lang/System#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 18,
+    "endLine": 85,
+    "endCharacter": 19
+   },
+   "symbol": "scala/StringContext#s().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 6,
+    "endLine": 54,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 58,
+    "startCharacter": 8,
+    "endLine": 58,
+    "endCharacter": 18
+   },
+   "symbol": "local22",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 74,
+    "startCharacter": 47,
+    "endLine": 74,
+    "endCharacter": 56
+   },
+   "symbol": "local39",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 54,
+    "endLine": 84,
+    "endCharacter": 55
+   },
+   "symbol": "scala/Long#`-`(+4).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 25,
+    "startCharacter": 6,
+    "endLine": 25,
+    "endCharacter": 29
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 9,
+    "endLine": 63,
+    "endCharacter": 16
+   },
+   "symbol": "scala/collection/immutable/List#flatMap().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 47,
+    "endLine": 10,
+    "endCharacter": 53
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 47,
+    "endLine": 10,
+    "endCharacter": 53
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 33,
+    "endLine": 76,
+    "endCharacter": 51
+   },
+   "symbol": "local40",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 23,
+    "endLine": 33,
+    "endCharacter": 26
+   },
+   "symbol": "scala/collection/IterableOps#map().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 84,
+    "startCharacter": 27,
+    "endLine": 84,
+    "endCharacter": 33
+   },
+   "symbol": "java/lang/System#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 32,
+    "endLine": 54,
+    "endCharacter": 35
+   },
+   "symbol": "scala/package.Seq#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 37,
+    "endLine": 54,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Predef.String#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 21,
+    "endLine": 19,
+    "endCharacter": 37
+   },
+   "symbol": "omnistac/core/util/instrumentlookup/InstrumentLookup#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 34,
+    "startCharacter": 63,
+    "endLine": 34,
+    "endCharacter": 73
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 56,
+    "endLine": 39,
+    "endCharacter": 72
+   },
+   "symbol": "omnistac/core/message/ResponseEnvelope#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 76,
+    "startCharacter": 10,
+    "endLine": 76,
+    "endCharacter": 30
+   },
+   "symbol": "local42",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 82,
+    "endLine": 39,
+    "endCharacter": 86
+   },
+   "symbol": "scala/package.List#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 49,
+    "startCharacter": 8,
+    "endLine": 49,
+    "endCharacter": 14
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 21,
+    "endLine": 3,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/core/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 86,
+    "startCharacter": 6,
+    "endLine": 86,
+    "endCharacter": 10
+   },
+   "symbol": "local64",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 16,
+    "endLine": 2,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/core/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 85,
+    "startCharacter": 79,
+    "endLine": 85,
+    "endCharacter": 93
+   },
+   "symbol": "local65",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 57,
+    "startCharacter": 19,
+    "endLine": 57,
+    "endCharacter": 43
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillEventsBatch().(eventIdAndFillEventPairs)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 75,
+    "startCharacter": 31,
+    "endLine": 75,
+    "endCharacter": 37
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Source.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 24,
+    "endLine": 10,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 10,
+    "endLine": 69,
+    "endCharacter": 27
+   },
+   "symbol": "local33",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 41,
+    "endLine": 10,
+    "endCharacter": 45
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 41,
+    "endLine": 10,
+    "endCharacter": 45
+   },
+   "symbol": "org/apache/pekko/stream/scaladsl/Sink#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 26,
+    "endLine": 45,
+    "endCharacter": 30
+   },
+   "symbol": "scala/package.List.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 24,
+    "endLine": 9,
+    "endCharacter": 30
+   },
+   "symbol": "org/apache/pekko/stream/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 67,
+    "startCharacter": 73,
+    "endLine": 67,
+    "endCharacter": 77
+   },
+   "symbol": "local30",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 59,
+    "startCharacter": 66,
+    "endLine": 59,
+    "endCharacter": 74
+   },
+   "symbol": "local19",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 48,
+    "startCharacter": 52,
+    "endLine": 48,
+    "endCharacter": 68
+   },
+   "symbol": "omnistac/euds/handlers/FillEventHandler#handleFillNotifications(+1).(responseEnvelope)",
+   "role": "REFERENCE"
+  }
+ ]
+}

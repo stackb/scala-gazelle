@@ -1,0 +1,3060 @@
+{
+ "schema": "SEMANTICDB4",
+ "uri": "omnistac/euds/src/main/scala/omnistac/euds/client/InstrumentDataClient.scala",
+ "md5": "E8EAF141B287030F4EC5E0B3E9B0943E",
+ "language": "SCALA",
+ "symbols": [
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#data.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "data",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "instrumentDataServiceClient",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClient#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient.`\u003cinit\u003e$default$2`().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "\u003cinit\u003e$default$2",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "annotatedType": {
+       "annotations": [
+        {
+         "tpe": {
+          "typeRef": {
+           "symbol": "scala/annotation/unchecked/uncheckedVariance#"
+          }
+         }
+        }
+       ],
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Predef.Map#",
+         "typeArguments": [
+          {
+           "typeRef": {
+            "symbol": "scala/Int#"
+           }
+          },
+          {
+           "typeRef": {
+            "symbol": "omnistac/secmaster/message/USTBenchmark#"
+           }
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#`\u003cinit\u003e`().(actorSystem)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32,
+   "displayName": "actorSystem",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getInstrumentByVersionId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().(data)",
+        "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().(benchmarks)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getBenchmarkByInstrumentId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#`\u003cinit\u003e`().",
+   "language": "SCALA",
+   "kind": "CONSTRUCTOR",
+   "properties": 8192,
+   "displayName": "\u003cinit\u003e",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {},
+      {
+       "symlinks": [
+        "omnistac/euds/client/GrpcInstrumentDataClientImpl#`\u003cinit\u003e`().(actorSystem)"
+       ]
+      }
+     ]
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "StubbedInstrumentDataClient",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/client/InstrumentDataClient#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/client/StubbedInstrumentDataClient#data.",
+       "omnistac/euds/client/StubbedInstrumentDataClient#benchmarks.",
+       "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().",
+       "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().",
+       "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().",
+       "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentById().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().(benchmarks)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32768,
+   "displayName": "benchmarks",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/USTBenchmark#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "getBenchmarkByInstrumentId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId().(in)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#",
+   "language": "SCALA",
+   "kind": "TRAIT",
+   "displayName": "InstrumentDataClient",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/client/InstrumentDataClient#getInstrumentById().",
+       "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().",
+       "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#actorSystem.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1056,
+   "displayName": "actorSystem",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "org/apache/pekko/actor/ActorSystem#"
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#",
+   "language": "SCALA",
+   "kind": "CLASS",
+   "displayName": "GrpcInstrumentDataClientImpl",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "omnistac/euds/client/InstrumentDataClient#"
+       }
+      },
+      {
+       "typeRef": {
+        "symbol": "com/typesafe/scalalogging/StrictLogging#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#actorSystem.",
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#`\u003cinit\u003e`().",
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().",
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().",
+       "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentById().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "getInstrumentById",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/InstrumentDataClient#getInstrumentById().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId().(in)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "in",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getInstrumentById",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getInstrumentById()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 4,
+   "displayName": "getInstrumentByVersionId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient.",
+   "language": "SCALA",
+   "kind": "OBJECT",
+   "properties": 8,
+   "displayName": "StubbedInstrumentDataClient",
+   "signature": {
+    "classSignature": {
+     "typeParameters": {},
+     "parents": [
+      {
+       "typeRef": {
+        "symbol": "scala/AnyRef#"
+       }
+      }
+     ],
+     "declarations": {
+      "symlinks": [
+       "omnistac/euds/client/StubbedInstrumentDataClient.`\u003cinit\u003e$default$2`()."
+      ]
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   }
+  },
+  {
+   "symbol": "local1",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32,
+   "displayName": "tracing",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local2",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32,
+   "displayName": "tracing",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getBenchmarkByInstrumentId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId()."
+   ]
+  },
+  {
+   "symbol": "local0",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "properties": 32,
+   "displayName": "tracing",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#benchmarks.",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "properties": 1024,
+   "displayName": "benchmarks",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/USTBenchmark#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "privateThisAccess": {}
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getInstrumentByVersionId",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId()."
+   ]
+  },
+  {
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().(request)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "request",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local5",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "ustBenchmark",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/USTBenchmark#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().",
+   "language": "SCALA",
+   "kind": "METHOD",
+   "displayName": "getInstrumentById",
+   "signature": {
+    "methodSignature": {
+     "typeParameters": {},
+     "parameterLists": [
+      {
+       "symlinks": [
+        "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().(request)"
+       ]
+      }
+     ],
+     "returnType": {
+      "typeRef": {
+       "symbol": "scala/concurrent/Future#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   "access": {
+    "publicAccess": {}
+   },
+   "overriddenSymbols": [
+    "omnistac/euds/client/InstrumentDataClient#getInstrumentById()."
+   ]
+  },
+  {
+   "symbol": "local3",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "instrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().(data)",
+   "language": "SCALA",
+   "kind": "PARAMETER",
+   "displayName": "data",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "scala/Predef.Map#",
+       "typeArguments": [
+        {
+         "typeRef": {
+          "symbol": "scala/Int#"
+         }
+        },
+        {
+         "typeRef": {
+          "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "symbol": "local4",
+   "language": "SCALA",
+   "kind": "LOCAL",
+   "properties": 1024,
+   "displayName": "instrumentRefData",
+   "signature": {
+    "valueSignature": {
+     "tpe": {
+      "typeRef": {
+       "symbol": "omnistac/secmaster/message/InstrumentRefData#"
+      }
+     }
+    }
+   }
+  }
+ ],
+ "occurrences": [
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 2,
+    "endLine": 11,
+    "endCharacter": 27
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 11,
+    "startCharacter": 2,
+    "endLine": 11,
+    "endCharacter": 27
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 18,
+    "endLine": 5,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 43,
+    "endLine": 7,
+    "endCharacter": 48
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 35,
+    "endLine": 4,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 35,
+    "endLine": 4,
+    "endCharacter": 52
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 88,
+    "endLine": 56,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 24,
+    "endLine": 5,
+    "endCharacter": 29
+   },
+   "symbol": "org/apache/pekko/actor/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 45,
+    "endLine": 63,
+    "endCharacter": 55
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 15,
+    "endLine": 70,
+    "endCharacter": 18
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 31,
+    "endLine": 24,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 21,
+    "endLine": 54,
+    "endCharacter": 33
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#instrumentId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 57,
+    "endLine": 29,
+    "endCharacter": 68
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 99,
+    "endLine": 29,
+    "endCharacter": 99
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 24,
+    "endLine": 19,
+    "endCharacter": 30
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 24,
+    "endLine": 19,
+    "endCharacter": 30
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 69,
+    "endLine": 32,
+    "endCharacter": 75
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 21,
+    "endLine": 62,
+    "endCharacter": 40
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#instrumentVersionId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 37,
+    "endLine": 26,
+    "endCharacter": 70
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 51,
+    "endLine": 44,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 21,
+    "endLine": 46,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 4,
+    "endLine": 62,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#data.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 31,
+    "endLine": 38,
+    "endCharacter": 38
+   },
+   "symbol": "local1",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 14,
+    "endLine": 30,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 11,
+    "endLine": 6,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 8,
+    "endCharacter": 16
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 79,
+    "endLine": 46,
+    "endCharacter": 86
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 19,
+    "endLine": 70,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 17,
+    "endCharacter": 21
+   },
+   "symbol": "omnistac/euds/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 47,
+    "endLine": 72,
+    "endCharacter": 56
+   },
+   "symbol": "scala/concurrent/Future.failed().(exception)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 18,
+    "endLine": 7,
+    "endCharacter": 27
+   },
+   "symbol": "trumid/ats/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 6,
+    "endLine": 61,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 7,
+    "endLine": 3,
+    "endCharacter": 9
+   },
+   "symbol": "io/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 81,
+    "endLine": 24,
+    "endCharacter": 113
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 51,
+    "endLine": 71,
+    "endCharacter": 85
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 77,
+    "endLine": 39,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 11,
+    "endLine": 71,
+    "endCharacter": 15
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 30,
+    "endLine": 5,
+    "endCharacter": 41
+   },
+   "symbol": "org/apache/pekko/actor/ActorSystem#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 52,
+    "endLine": 56,
+    "endCharacter": 61
+   },
+   "symbol": "scala/concurrent/Future.failed().(exception)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 13,
+    "endLine": 19,
+    "endCharacter": 23
+   },
+   "symbol": "scala/concurrent/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 63,
+    "endLine": 17,
+    "endCharacter": 76
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable(+2).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 63,
+    "endLine": 17,
+    "endCharacter": 76
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 63,
+    "endLine": 17,
+    "endCharacter": 76
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 21,
+    "endLine": 17,
+    "endCharacter": 26
+   },
+   "symbol": "trumid/common/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 72,
+    "endLine": 30,
+    "endCharacter": 90
+   },
+   "symbol": "trumid/common/grpc/client/GrpcClientSettings.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 9,
+    "endLine": 54,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 13,
+    "endLine": 62,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 33,
+    "endLine": 2,
+    "endCharacter": 46
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 68,
+    "endLine": 64,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 14,
+    "endLine": 7,
+    "endCharacter": 17
+   },
+   "symbol": "trumid/ats/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 30,
+    "startCharacter": 44,
+    "endLine": 30,
+    "endCharacter": 71
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 21,
+    "endLine": 39,
+    "endCharacter": 48
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 2,
+    "endLine": 8,
+    "endCharacter": 35
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 8,
+    "startCharacter": 2,
+    "endLine": 8,
+    "endCharacter": 35
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 15,
+    "endLine": 32,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 96,
+    "endLine": 56,
+    "endCharacter": 105
+   },
+   "symbol": "io/grpc/Status#NOT_FOUND.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 7,
+    "endLine": 17,
+    "endCharacter": 13
+   },
+   "symbol": "trumid/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 110,
+    "endLine": 51,
+    "endCharacter": 115
+   },
+   "symbol": "scala/collection/immutable/Map.empty().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 69,
+    "endLine": 51,
+    "endCharacter": 79
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#benchmarks.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 7,
+    "endLine": 2,
+    "endCharacter": 10
+   },
+   "symbol": "com/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 16,
+    "endLine": 4,
+    "endCharacter": 25
+   },
+   "symbol": "omnistac/secmaster/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 88,
+    "endLine": 64,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 85,
+    "endLine": 33,
+    "endCharacter": 102
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClientPowerApi#getInstrumentById().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 11,
+    "endLine": 64,
+    "endCharacter": 15
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 15,
+    "endLine": 44,
+    "endCharacter": 48
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 6,
+    "endLine": 29,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 14,
+    "endLine": 16,
+    "endCharacter": 20
+   },
+   "symbol": "trumid/common/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 60,
+    "endLine": 22,
+    "endCharacter": 66
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 86,
+    "endLine": 71,
+    "endCharacter": 98
+   },
+   "symbol": "local5",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 45,
+    "endLine": 55,
+    "endCharacter": 55
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 82,
+    "endLine": 55,
+    "endCharacter": 99
+   },
+   "symbol": "local3",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 4,
+    "endLine": 70,
+    "endCharacter": 14
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#benchmarks.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 70,
+    "startCharacter": 27,
+    "endLine": 70,
+    "endCharacter": 39
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#instrumentId.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 89,
+    "endLine": 63,
+    "endCharacter": 106
+   },
+   "symbol": "local4",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 11,
+    "endLine": 63,
+    "endCharacter": 15
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 80,
+    "endLine": 26,
+    "endCharacter": 114
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 106,
+    "endLine": 33,
+    "endCharacter": 113
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 68,
+    "startCharacter": 15,
+    "endLine": 68,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 62,
+    "startCharacter": 9,
+    "endLine": 62,
+    "endCharacter": 12
+   },
+   "symbol": "scala/collection/MapOps#get().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 20,
+    "endLine": 2,
+    "endCharacter": 32
+   },
+   "symbol": "com/typesafe/scalalogging/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 54,
+    "endLine": 4,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 54,
+    "endLine": 4,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 33,
+    "endLine": 53,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 15,
+    "endLine": 61,
+    "endCharacter": 46
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 33,
+    "endLine": 22,
+    "endCharacter": 57
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 34,
+    "endLine": 51,
+    "endCharacter": 38
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#data.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 21,
+    "endLine": 16,
+    "endCharacter": 25
+   },
+   "symbol": "trumid/common/grpc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 19,
+    "startCharacter": 7,
+    "endLine": 19,
+    "endCharacter": 12
+   },
+   "symbol": "scala/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 58,
+    "endLine": 44,
+    "endCharacter": 92
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 6,
+    "endLine": 46,
+    "endCharacter": 13
+   },
+   "symbol": "local2",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 7,
+    "endLine": 6,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 63,
+    "endLine": 72,
+    "endCharacter": 83
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 11,
+    "endLine": 5,
+    "endCharacter": 17
+   },
+   "symbol": "org/apache/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 6,
+    "endLine": 22,
+    "endCharacter": 23
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentById().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 44,
+    "startCharacter": 6,
+    "endLine": 44,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 106,
+    "endLine": 51,
+    "endCharacter": 109
+   },
+   "symbol": "scala/Predef.Map.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 34,
+    "endLine": 29,
+    "endCharacter": 34
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 7,
+    "endLine": 7,
+    "endCharacter": 13
+   },
+   "symbol": "trumid/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 6,
+    "endLine": 26,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 2,
+    "endLine": 9,
+    "endCharacter": 36
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 9,
+    "startCharacter": 2,
+    "endLine": 9,
+    "endCharacter": 36
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 52,
+    "endLine": 64,
+    "endCharacter": 61
+   },
+   "symbol": "scala/concurrent/Future.failed().(exception)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 38,
+    "startCharacter": 4,
+    "endLine": 38,
+    "endCharacter": 17
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 11,
+    "endLine": 72,
+    "endCharacter": 15
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 56,
+    "endLine": 37,
+    "endCharacter": 88
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 2,
+    "endLine": 14,
+    "endCharacter": 29
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 14,
+    "startCharacter": 2,
+    "endLine": 14,
+    "endCharacter": 29
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClient#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 76,
+    "endLine": 53,
+    "endCharacter": 101
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 44,
+    "endLine": 51,
+    "endCharacter": 47
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 81,
+    "endLine": 51,
+    "endCharacter": 84
+   },
+   "symbol": "scala/Predef.Map#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 58,
+    "endLine": 69,
+    "endCharacter": 92
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 50,
+    "endLine": 33,
+    "endCharacter": 56
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#invoke().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 27,
+    "endLine": 17,
+    "endCharacter": 31
+   },
+   "symbol": "trumid/common/pekko/grpc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 49,
+    "endLine": 51,
+    "endCharacter": 66
+   },
+   "symbol": "omnistac/secmaster/message/InstrumentRefData#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 32,
+    "endLine": 17,
+    "endCharacter": 40
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 56,
+    "endLine": 61,
+    "endCharacter": 88
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 33,
+    "endLine": 32,
+    "endCharacter": 40
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentById().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 12,
+    "endLine": 52,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 18,
+    "endLine": 6,
+    "endCharacter": 23
+   },
+   "symbol": "org/apache/pekko/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 51,
+    "endLine": 69,
+    "endCharacter": 57
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 49,
+    "endLine": 37,
+    "endCharacter": 55
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 42,
+    "endLine": 53,
+    "endCharacter": 66
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 2,
+    "endLine": 13,
+    "endCharacter": 34
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 13,
+    "startCharacter": 2,
+    "endLine": 13,
+    "endCharacter": 34
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 43,
+    "startCharacter": 15,
+    "endLine": 43,
+    "endCharacter": 41
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getBenchmarkByInstrumentId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 14,
+    "endLine": 17,
+    "endCharacter": 20
+   },
+   "symbol": "trumid/common/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 83,
+    "endLine": 72,
+    "endCharacter": 83
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#`\u003cinit\u003e`(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 78,
+    "endLine": 29,
+    "endCharacter": 98
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 7,
+    "startCharacter": 28,
+    "endLine": 7,
+    "endCharacter": 42
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 6,
+    "endLine": 39,
+    "endCharacter": 13
+   },
+   "symbol": "local1",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 73,
+    "endLine": 26,
+    "endCharacter": 79
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 33,
+    "endLine": 16,
+    "endCharacter": 51
+   },
+   "symbol": "trumid/common/grpc/client/GrpcClientSettings.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 14,
+    "endLine": 39,
+    "endCharacter": 20
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#invoke().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 40,
+    "endLine": 51,
+    "endCharacter": 43
+   },
+   "symbol": "scala/Predef.Map#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 15,
+    "endLine": 37,
+    "endCharacter": 46
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 36,
+    "startCharacter": 15,
+    "endLine": 36,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 76,
+    "endLine": 32,
+    "endCharacter": 101
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 40,
+    "endLine": 71,
+    "endCharacter": 50
+   },
+   "symbol": "scala/concurrent/Future.successful().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 4,
+    "endLine": 45,
+    "endCharacter": 17
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 17,
+    "startCharacter": 41,
+    "endLine": 17,
+    "endCharacter": 62
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 56,
+    "endLine": 55,
+    "endCharacter": 81
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 45,
+    "endLine": 64,
+    "endCharacter": 51
+   },
+   "symbol": "scala/concurrent/Future.failed().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 33,
+    "endLine": 72,
+    "endCharacter": 39
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 89,
+    "endLine": 56,
+    "endCharacter": 95
+   },
+   "symbol": "io/grpc/Status#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 104,
+    "endLine": 29,
+    "endCharacter": 117
+   },
+   "symbol": "com/typesafe/scalalogging/StrictLogging#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 37,
+    "startCharacter": 6,
+    "endLine": 37,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#getInstrumentByVersionId().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 4,
+    "endLine": 33,
+    "endCharacter": 17
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder.withInvokable(+1).",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 74,
+    "endLine": 24,
+    "endCharacter": 80
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 67,
+    "endLine": 22,
+    "endCharacter": 92
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdResponse#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 61,
+    "startCharacter": 49,
+    "endLine": 61,
+    "endCharacter": 55
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 26,
+    "endLine": 4,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/secmaster/message/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 91,
+    "endLine": 72,
+    "endCharacter": 100
+   },
+   "symbol": "io/grpc/Status#NOT_FOUND.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 89,
+    "endLine": 64,
+    "endCharacter": 95
+   },
+   "symbol": "io/grpc/Status#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 16,
+    "endLine": 63,
+    "endCharacter": 33
+   },
+   "symbol": "local4",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 11,
+    "endLine": 56,
+    "endCharacter": 15
+   },
+   "symbol": "scala/None.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 4,
+    "startCharacter": 7,
+    "endLine": 4,
+    "endCharacter": 15
+   },
+   "symbol": "omnistac/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 11,
+    "endLine": 55,
+    "endCharacter": 15
+   },
+   "symbol": "scala/Some.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 32,
+    "startCharacter": 42,
+    "endLine": 32,
+    "endCharacter": 66
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 16,
+    "endLine": 55,
+    "endCharacter": 33
+   },
+   "symbol": "local3",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 45,
+    "endLine": 56,
+    "endCharacter": 51
+   },
+   "symbol": "scala/concurrent/Future.failed().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 26,
+    "startCharacter": 33,
+    "endLine": 26,
+    "endCharacter": 35
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getBenchmarkByInstrumentId().(in)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 2,
+    "endLine": 12,
+    "endCharacter": 33
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 12,
+    "startCharacter": 2,
+    "endLine": 12,
+    "endCharacter": 33
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 14,
+    "endLine": 46,
+    "endCharacter": 20
+   },
+   "symbol": "trumid/common/pekko/grpc/metadata/ClientHeaderForwarder#invoke().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 69,
+    "endLine": 53,
+    "endCharacter": 75
+   },
+   "symbol": "scala/concurrent/Future#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startCharacter": 22,
+    "endCharacter": 28
+   },
+   "symbol": "omnistac/euds/client/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 6,
+    "endLine": 24,
+    "endCharacter": 30
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentByVersionId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 6,
+    "endLine": 51,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 42,
+    "endLine": 33,
+    "endCharacter": 49
+   },
+   "symbol": "local0",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 16,
+    "endLine": 71,
+    "endCharacter": 28
+   },
+   "symbol": "local5",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 24,
+    "startCharacter": 40,
+    "endLine": 24,
+    "endCharacter": 71
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 38,
+    "endLine": 64,
+    "endCharacter": 44
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 46,
+    "startCharacter": 49,
+    "endLine": 46,
+    "endCharacter": 75
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClientPowerApi#getBenchmarkByInstrumentId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 71,
+    "startCharacter": 33,
+    "endLine": 71,
+    "endCharacter": 39
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 26,
+    "endLine": 16,
+    "endCharacter": 32
+   },
+   "symbol": "trumid/common/grpc/client/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 53,
+    "startCharacter": 15,
+    "endLine": 53,
+    "endCharacter": 32
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 64,
+    "startCharacter": 96,
+    "endLine": 64,
+    "endCharacter": 105
+   },
+   "symbol": "io/grpc/Status#NOT_FOUND.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 90,
+    "endLine": 51,
+    "endCharacter": 102
+   },
+   "symbol": "omnistac/secmaster/message/USTBenchmark#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 29,
+    "startCharacter": 44,
+    "endLine": 29,
+    "endCharacter": 55
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#actorSystem.",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 56,
+    "endLine": 63,
+    "endCharacter": 88
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByVersionIdResponse.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 55,
+    "startCharacter": 38,
+    "endLine": 55,
+    "endCharacter": 44
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 68,
+    "endLine": 56,
+    "endCharacter": 88
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 60,
+    "startCharacter": 15,
+    "endLine": 60,
+    "endCharacter": 39
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentByVersionId().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 85,
+    "endLine": 51,
+    "endCharacter": 88
+   },
+   "symbol": "scala/Int#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 4,
+    "endLine": 54,
+    "endCharacter": 8
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#data.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 63,
+    "startCharacter": 38,
+    "endLine": 63,
+    "endCharacter": 44
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 40,
+    "endLine": 72,
+    "endCharacter": 46
+   },
+   "symbol": "scala/concurrent/Future.failed().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 22,
+    "startCharacter": 24,
+    "endLine": 22,
+    "endCharacter": 31
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#getInstrumentById().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 6,
+    "endLine": 69,
+    "endCharacter": 13
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getBenchmarkByInstrumentId().(request)",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 72,
+    "startCharacter": 84,
+    "endLine": 72,
+    "endCharacter": 90
+   },
+   "symbol": "io/grpc/Status#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 2,
+    "startCharacter": 11,
+    "endLine": 2,
+    "endCharacter": 19
+   },
+   "symbol": "com/typesafe/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 52,
+    "startCharacter": 33,
+    "endLine": 52,
+    "endCharacter": 33
+   },
+   "symbol": "java/lang/Object#`\u003cinit\u003e`().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 5,
+    "startCharacter": 7,
+    "endLine": 5,
+    "endCharacter": 10
+   },
+   "symbol": "org/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 51,
+    "startCharacter": 33,
+    "endLine": 51,
+    "endCharacter": 33
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#`\u003cinit\u003e`().",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 54,
+    "startCharacter": 13,
+    "endLine": 54,
+    "endCharacter": 20
+   },
+   "symbol": "omnistac/euds/client/StubbedInstrumentDataClient#getInstrumentById().(request)",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 21,
+    "startCharacter": 6,
+    "endLine": 21,
+    "endCharacter": 26
+   },
+   "symbol": "omnistac/euds/client/InstrumentDataClient#",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 39,
+    "startCharacter": 49,
+    "endLine": 39,
+    "endCharacter": 73
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/InstrumentDataServiceClientPowerApi#getInstrumentByVersionId().",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 57,
+    "endLine": 33,
+    "endCharacter": 84
+   },
+   "symbol": "omnistac/euds/client/GrpcInstrumentDataClientImpl#instrumentDataServiceClient.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 10,
+    "endLine": 3,
+    "endCharacter": 14
+   },
+   "symbol": "io/grpc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 3,
+    "startCharacter": 15,
+    "endLine": 3,
+    "endCharacter": 21
+   },
+   "symbol": "io/grpc/Status#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 24,
+    "endLine": 6,
+    "endCharacter": 28
+   },
+   "symbol": "org/apache/pekko/grpc/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 2,
+    "endLine": 10,
+    "endCharacter": 26
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 10,
+    "startCharacter": 2,
+    "endLine": 10,
+    "endCharacter": 26
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetInstrumentByIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 56,
+    "startCharacter": 38,
+    "endLine": 56,
+    "endCharacter": 44
+   },
+   "symbol": "scala/concurrent/Future.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 33,
+    "startCharacter": 31,
+    "endLine": 33,
+    "endCharacter": 38
+   },
+   "symbol": "local0",
+   "role": "DEFINITION"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 29,
+    "endLine": 6,
+    "endCharacter": 49
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException.",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 6,
+    "startCharacter": 29,
+    "endLine": 6,
+    "endCharacter": 49
+   },
+   "symbol": "org/apache/pekko/grpc/GrpcServiceException#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 16,
+    "startCharacter": 7,
+    "endLine": 16,
+    "endCharacter": 13
+   },
+   "symbol": "trumid/",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 69,
+    "startCharacter": 15,
+    "endLine": 69,
+    "endCharacter": 48
+   },
+   "symbol": "trumid/ats/secmaster/instrumentdata/proto/GetBenchmarkByInstrumentIdRequest#",
+   "role": "REFERENCE"
+  },
+  {
+   "range": {
+    "startLine": 45,
+    "startCharacter": 31,
+    "endLine": 45,
+    "endCharacter": 38
+   },
+   "symbol": "local2",
+   "role": "DEFINITION"
+  }
+ ]
+}
