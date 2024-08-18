@@ -19,14 +19,20 @@ func NewTextDocumentVisitor() *TextDocumentVisitor {
 type TextDocumentVisitor struct {
 	types   map[string]*spb.Type
 	symbols map[string]*spb.SymbolInformation
+	debug   bool
 }
 
 func toImport(symbol string) string {
-	symbol = strings.TrimSuffix(symbol, ".")
-	symbol = strings.ReplaceAll(symbol, "/", ".")
-	if idx := strings.LastIndex(symbol, "#"); idx != -1 {
+	if strings.HasPrefix(symbol, "local") {
+		return ""
+	}
+	if idx := strings.Index(symbol, "#"); idx != -1 {
 		symbol = symbol[:idx]
 	}
+	if idx := strings.Index(symbol, "."); idx != -1 {
+		symbol = symbol[:idx]
+	}
+	symbol = strings.ReplaceAll(symbol, "/", ".")
 	return symbol
 }
 
@@ -36,12 +42,17 @@ func (v *TextDocumentVisitor) File(filename string) *sppb.File {
 	seen := make(map[string]bool)
 	for name := range v.types {
 		imp := toImport(name)
+		if imp == "" {
+			continue
+		}
 		if _, exists := seen[imp]; exists {
 			continue
 		}
 		seen[imp] = true
 		imports = append(imports, imp)
-		log.Println(filename, "import:", imp)
+		if v.debug {
+			log.Println(filename, "import:", imp)
+		}
 	}
 	sort.Strings(imports)
 	file.Imports = imports
@@ -50,7 +61,9 @@ func (v *TextDocumentVisitor) File(filename string) *sppb.File {
 
 func (v *TextDocumentVisitor) addType(symbol string, node *spb.Type) {
 	if _, ok := v.types[symbol]; ok {
-		log.Printf("duplicate type registration: %s", symbol)
+		if v.debug {
+			log.Printf("duplicate type registration: %s", symbol)
+		}
 		return
 	}
 	v.types[symbol] = node
@@ -103,7 +116,9 @@ func (v *TextDocumentVisitor) VisitAnnotation(node *spb.Annotation) {
 func (v *TextDocumentVisitor) VisitSymlink(name string) {
 	node, ok := v.symbols[name]
 	if !ok {
-		log.Println("unknown symlink:", name)
+		if v.debug {
+			log.Println("unknown symlink:", name)
+		}
 		v.addType(name, nil)
 		return
 	}
@@ -212,7 +227,9 @@ func (v *TextDocumentVisitor) VisitTypeRef(node *spb.TypeRef) {
 		v.VisitType(child)
 	}
 	if _, ok := v.types[node.Symbol]; !ok {
-		log.Printf("unknown typeref target: %s", node.Symbol)
+		if v.debug {
+			log.Printf("unknown typeref target: %s", node.Symbol)
+		}
 		v.addType(node.Symbol, nil)
 	}
 	// DONE

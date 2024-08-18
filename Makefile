@@ -35,6 +35,7 @@ scalapb_protos:
 semanticdb_protos:
 	bazel run //scala/meta/semanticdb:semanticdb_go_compiled_sources.update
 	mv scala/meta/semanticdb/scala/meta/semanticdb/semanticdb.pb.go scala/meta/semanticdb/semanticdb.pb.go
+	mv scala/meta/semanticdb/scala/meta/semanticdb/semanticidx.pb.go scala/meta/semanticdb/semanticidx.pb.go
 	rm -rf scala/meta/semanticdb/scala
 
 .PHONY: protos

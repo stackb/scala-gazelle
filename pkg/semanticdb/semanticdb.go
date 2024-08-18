@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"google.golang.org/protobuf/proto"
@@ -34,8 +35,6 @@ func ReadJar(jar *zip.ReadCloser) ([]*spb.TextDocuments, error) {
 			continue
 		}
 
-		fmt.Println("File Name:", file.Name)
-
 		if doc, err := ReadJarZipFile(file); err != nil {
 			return nil, fmt.Errorf("reading file within jar: %v", err)
 		} else {
@@ -53,10 +52,10 @@ func ReadJarZipFile(file *zip.File) (*spb.TextDocuments, error) {
 	}
 	defer fileReader.Close()
 
-	return ReadTextDocument(fileReader)
+	return ReadTextDocumentsIn(fileReader)
 }
 
-func ReadTextDocument(in io.ReadCloser) (*spb.TextDocuments, error) {
+func ReadTextDocumentsIn(in io.ReadCloser) (*spb.TextDocuments, error) {
 	data, err := io.ReadAll(in)
 	if err != nil {
 		return nil, err
@@ -66,6 +65,34 @@ func ReadTextDocument(in io.ReadCloser) (*spb.TextDocuments, error) {
 		return nil, err
 	}
 	return &doc, nil
+}
+
+func ReadTextDocumentFile(filename string) (*spb.TextDocument, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	var doc spb.TextDocument
+	if err := proto.Unmarshal(data, &doc); err != nil {
+		return nil, err
+	}
+	return &doc, nil
+}
+
+func ReadTextDocumentFromIndex(idx *spb.Index, uri string) (*spb.TextDocument, bool, error) {
+	if entry, ok := idx.Entries[uri]; ok {
+		filename := entry.GetToplevelEntry().Uri
+		if filename == "" {
+			return nil, false, fmt.Errorf("missing top-level entry for %s", uri)
+		}
+		doc, err := ReadTextDocumentFile(filename)
+		if err != nil {
+			return nil, true, err
+		}
+		return doc, true, nil
+	} else {
+		return nil, false, nil
+	}
 }
 
 func ToFile(in *spb.TextDocument) (*sppb.File, error) {
