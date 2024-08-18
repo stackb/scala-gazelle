@@ -38,6 +38,15 @@ func NewDirectImport(imp string, source *sppb.File) *Import {
 	}
 }
 
+// NewSemanticImport creates a new semantic import from the given file.
+func NewSemanticImport(imp string, source *sppb.File) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_SEMANTIC,
+		Imp:    imp,
+		Source: source,
+	}
+}
+
 // NewResolvedNameImport creates a new resolved import from the given file,
 // name, and symbol.  The 'name' is the token that resolved in the file scope.
 func NewResolvedNameImport(imp string, source *sppb.File, name string, symbol *Symbol) *Import {

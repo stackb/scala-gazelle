@@ -3,15 +3,14 @@ package provider
 import (
 	"flag"
 	"fmt"
-	"log"
 	"path"
 	"path/filepath"
-	"sort"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/google/go-cmp/cmp"
+	"github.com/bazelbuild/buildtools/build"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
@@ -22,6 +21,8 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
+
+const semanticDbName = "semanticdb"
 
 // NewSemanticdbProvider constructs a new NewSemanticdbProvider.
 func NewSemanticdbProvider(delegate parser.Parser) *SemanticdbProvider {
@@ -60,7 +61,7 @@ type SemanticdbProvider struct {
 
 // Name implements part of the resolver.SymbolProvider interface.
 func (r *SemanticdbProvider) Name() string {
-	return "semanticdb"
+	return semanticDbName
 }
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
@@ -97,8 +98,29 @@ func (r *SemanticdbProvider) OnEnd() error {
 }
 
 // CanProvide implements the resolver.SymbolProvider interface.
-func (cr *SemanticdbProvider) CanProvide(from label.Label, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
-	return false
+func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+	hasSemanticDbSuffixComment := false
+	for _, c := range append(expr.Comment().Before, expr.Comment().Suffix...) {
+		text := strings.TrimSpace(strings.TrimPrefix(c.Token, "#"))
+		if text == semanticDbName {
+			hasSemanticDbSuffixComment = true
+			break
+		}
+	}
+	if !hasSemanticDbSuffixComment {
+		return false
+	}
+
+	// at this point in the function, we know the dep was labeled as a semanticdb-managed dep.  If the resolved import
+	if dep.Import.Source == nil {
+		return false
+	}
+
+	// if the source file for the import has semanticdb info, we expect it to
+	// successfully resolve again, so return true.  If the Source file was not
+	// augmented with semanticdb info, we assume that the '# semanticdb' comment
+	// originated from a previous gazelle run.
+	return len(dep.Import.Source.SemanticImports) > 0
 }
 
 // ParseScalaRule implements scalarule.Parser
@@ -132,26 +154,28 @@ func (r *SemanticdbProvider) loadSemanticInfoFile(wantUri, path string) (got *sp
 	return
 }
 
-func (r *SemanticdbProvider) visitFile(pkg string, file *sppb.File) (*sppb.File, error) {
+func (r *SemanticdbProvider) visitFile(pkg string, file *sppb.File) error {
 	uri := path.Join(pkg, file.Filename)
 
 	// do we have a parsed doc already?
 	if doc, ok := r.docs[uri]; ok {
-		return mergeImports(doc, file)
+		file.SemanticImports = semanticdb.SemanticImports(doc)
+		return nil
 	}
 
 	// can we locate the info file?
 	path, exists := r.infoMap.Entries[uri]
 	if !exists {
-		return nil, fmt.Errorf("no semantic info available for: %s", uri)
+		return fmt.Errorf("no semantic info available for: %s", uri)
 	}
 
 	// load and merge it
 	abspath := filepath.Join(r.configWorkDir, path)
 	if doc, err := r.loadSemanticInfoFile(uri, abspath); err != nil {
-		return nil, err
+		return err
 	} else {
-		return mergeImports(doc, file)
+		file.SemanticImports = semanticdb.SemanticImports(doc)
+		return nil
 	}
 }
 
@@ -185,38 +209,4 @@ func (r *SemanticdbProvider) addTextDocument(doc *spb.TextDocument) error {
 	}
 	r.docs[doc.Uri] = doc
 	return nil
-}
-
-func mergeImports(doc *spb.TextDocument, file *sppb.File) (*sppb.File, error) {
-	next, err := semanticdb.ToFile(doc)
-	if err != nil {
-		return nil, fmt.Errorf("error while gathering semantic info for file: %v", err)
-	}
-	original := deduplicateAndSort(file.Imports)
-	imports := deduplicateAndSort(append(file.Imports, next.Imports...))
-
-	if diff := cmp.Diff(original, imports); diff != "" {
-		log.Println(doc.Uri, "imports diff:\n", diff)
-	}
-
-	file.Imports = imports
-
-	return file, nil
-}
-
-// deduplicateAndSort removes duplicate entries and sorts the list
-func deduplicateAndSort(in []string) (out []string) {
-	if len(in) == 0 {
-		return in
-	}
-	seen := make(map[string]bool)
-	for _, v := range in {
-		if seen[v] {
-			continue
-		}
-		seen[v] = true
-		out = append(out, v)
-	}
-	sort.Strings(out)
-	return
 }

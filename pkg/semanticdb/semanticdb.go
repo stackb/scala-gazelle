@@ -9,7 +9,6 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
 
@@ -95,8 +94,8 @@ func ReadTextDocumentFromIndex(idx *spb.Index, uri string) (*spb.TextDocument, b
 	}
 }
 
-func ToFile(in *spb.TextDocument) (*sppb.File, error) {
+func SemanticImports(in *spb.TextDocument) []string {
 	visitor := NewTextDocumentVisitor()
 	visitor.VisitTextDocument(in)
-	return visitor.File(in.Uri), nil
+	return visitor.SemanticImports()
 }

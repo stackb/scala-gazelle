@@ -139,9 +139,8 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 	configuredRules := s.cfg.ConfiguredRules()
 
 	for _, ruleConfig := range configuredRules {
-		// if enabled != rc.Enabled {
 		if !ruleConfig.Enabled {
-			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
+			log.Printf("%s: skipping rule config %s (not enabled)", s.rel, ruleConfig.Name)
 			continue
 		}
 		rule := s.provideRule(ruleConfig)

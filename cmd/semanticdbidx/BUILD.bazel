@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//pkg/collections",
         "//pkg/protobuf",
-        "//pkg/semanticdb",
         "//scala/meta/semanticdb",
     ],
 )

@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
 
@@ -36,8 +35,7 @@ func toImport(symbol string) string {
 	return symbol
 }
 
-func (v *TextDocumentVisitor) File(filename string) *sppb.File {
-	file := new(sppb.File)
+func (v *TextDocumentVisitor) SemanticImports() []string {
 	imports := make([]string, 0, len(v.types))
 	seen := make(map[string]bool)
 	for name := range v.types {
@@ -50,13 +48,9 @@ func (v *TextDocumentVisitor) File(filename string) *sppb.File {
 		}
 		seen[imp] = true
 		imports = append(imports, imp)
-		if v.debug {
-			log.Println(filename, "import:", imp)
-		}
 	}
 	sort.Strings(imports)
-	file.Imports = imports
-	return file
+	return imports
 }
 
 func (v *TextDocumentVisitor) addType(symbol string, node *spb.Type) {

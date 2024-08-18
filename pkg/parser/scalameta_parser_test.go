@@ -545,47 +545,45 @@ case class TradingAccountUser(
 			},
 		},
 	} {
-		// if name != "option-parameter-type-name" {
+		// if name != "degenerate" {
 		// 	continue
 		// }
-		t.Run(name,
-			func(t *testing.T) {
-				tmpDir, err := bazel.NewTmpDir("")
-				if err != nil {
-					t.Fatal(err)
-				}
-				defer os.RemoveAll(tmpDir)
+		t.Run(name, func(t *testing.T) {
+			tmpDir, err := bazel.NewTmpDir("")
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer os.RemoveAll(tmpDir)
 
-				files := mustWriteTestFiles(t, tmpDir, tc.files)
-				tc.in.Filenames = files
+			files := mustWriteTestFiles(t, tmpDir, tc.files)
+			tc.in.Filenames = files
+			server := NewScalametaParser()
+			if err := server.Start(); err != nil {
+				t.Fatal("server start:", err)
+			}
+			defer server.Stop()
 
-				server := NewScalametaParser()
-				if err := server.Start(); err != nil {
-					t.Fatal("server start:", err)
-				}
-				defer server.Stop()
+			got, err := server.Parse(context.Background(), &tc.in)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got.ElapsedMillis = 0
 
-				got, err := server.Parse(context.Background(), &tc.in)
-				if err != nil {
-					t.Fatal(err)
+			// remove tmpdir prefix and zero the time delta for diff comparison
+			for i := range got.Files {
+				if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
+					got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
 				}
-				got.ElapsedMillis = 0
+			}
 
-				// remove tmpdir prefix and zero the time delta for diff comparison
-				for i := range got.Files {
-					if strings.HasPrefix(got.Files[i].Filename, tmpDir) {
-						got.Files[i].Filename = got.Files[i].Filename[len(tmpDir)+1:]
-					}
-				}
-
-				if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
-					sppb.ParseResponse{},
-					sppb.File{},
-					sppb.ClassList{},
-				)); diff != "" {
-					t.Errorf(".Parse (-want +got):\n%s", diff)
-				}
-			})
+			if diff := cmp.Diff(&tc.want, got, cmpopts.IgnoreUnexported(
+				sppb.ParseResponse{},
+				sppb.File{},
+				sppb.ClassList{},
+			)); diff != "" {
+				t.Errorf(".Parse (-want +got):\n%s", diff)
+			}
+		})
 	}
 }
 

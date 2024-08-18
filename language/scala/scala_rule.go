@@ -13,12 +13,13 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/wildcardimport"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
@@ -313,6 +314,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 					}
 				}
 			}
+
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
@@ -340,6 +342,12 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 			}
 			putImport(imp)
 		}
+	}
+
+	// add in semantic imports
+	for _, name := range file.SemanticImports {
+		imp := resolver.NewSemanticImport(name, file)
+		putImport(imp)
 	}
 
 	// gather package scopes

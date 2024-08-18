@@ -9,6 +9,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/bazelbuild/buildtools/build"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/mock"
 
@@ -135,6 +136,7 @@ func TestMavenProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		lang string
 		from label.Label
+		expr build.Expr
 		want bool
 	}{
 		"degenerate case": {
@@ -182,7 +184,7 @@ func TestMavenProviderCanProvide(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			got := p.CanProvide(tc.from, func(from label.Label) (*rule.Rule, bool) {
+			got := p.CanProvide(&resolver.ImportLabel{Label: tc.from}, tc.expr, func(from label.Label) (*rule.Rule, bool) {
 				return nil, false
 			})
 

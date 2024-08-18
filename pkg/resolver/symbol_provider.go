@@ -6,6 +6,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 )
 
 // SymbolProvider is a flag-configurable entity that supplies symbols
@@ -30,5 +31,5 @@ type SymbolProvider interface {
 	// example, the maven resolver may return true for labels like
 	// "@maven//:junit_junit". The rule Index can be used to consult what type
 	// of label from is, based on the rule characteristics.
-	CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool
+	CanProvide(dep *ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool
 }

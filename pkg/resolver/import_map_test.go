@@ -1,6 +1,7 @@
 package resolver_test
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -106,9 +107,16 @@ func TestImportMapDeps(t *testing.T) {
 			}
 			labels := importMap.Deps(tc.from)
 			got := make([]label.Label, len(labels))
-			for i, v := range labels {
-				got[i] = v.Label
+			var i int
+			for lbl := range labels {
+				got[i] = lbl
+				i++
 			}
+			sort.Slice(got, func(i, j int) bool {
+				a := got[i]
+				b := got[j]
+				return a.String() < b.String()
+			})
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

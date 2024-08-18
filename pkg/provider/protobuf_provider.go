@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -97,9 +98,9 @@ func (p *ProtobufProvider) OnEnd() error {
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *ProtobufProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
-	return strings.HasSuffix(dep.Name, "proto_scala_library") ||
-		strings.HasSuffix(dep.Name, "grpc_scala_library")
+func (p *ProtobufProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+	return strings.HasSuffix(dep.Label.Name, "proto_scala_library") ||
+		strings.HasSuffix(dep.Label.Name, "grpc_scala_library")
 }
 
 func (p *ProtobufProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) *resolver.Symbol {

@@ -49,7 +49,9 @@ func (imports ImportMap) Values() []*Import {
 // Deps returns a de-duplicated list of labels that represent the from-relative
 // final deps. The list is not sorted under the expectation that sorting will be
 // done elsewhere.
-func (imports ImportMap) Deps(from label.Label) (deps []*ImportLabel) {
+func (imports ImportMap) Deps(from label.Label) map[label.Label]*ImportLabel {
+	deps := make(map[label.Label]*ImportLabel)
+
 	seen := map[label.Label]bool{
 		label.NoLabel: true,
 		from:          true,
@@ -71,12 +73,13 @@ func (imports ImportMap) Deps(from label.Label) (deps []*ImportLabel) {
 		if relDep.Relative && relDep.Name == from.Name {
 			continue
 		}
-		deps = append(deps, &ImportLabel{Import: imp, Label: relDep})
+		deps[relDep] = &ImportLabel{Import: imp, Label: relDep}
 	}
-	return
+
+	return deps
 }
 
-// Put the given import in the map.
+// Put the given import in the map, but only if it does not already exist in the map.
 func (imports ImportMap) Put(imp *Import) {
 	// TODO: should we record *all* imports for a given key?  Does priority matter?
 	if _, ok := imports[imp.Imp]; !ok {

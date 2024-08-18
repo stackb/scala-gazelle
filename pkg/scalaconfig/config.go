@@ -148,9 +148,9 @@ func (c *Config) Rel() string {
 	return c.rel
 }
 
-func (c *Config) hasSymbolProvider(from label.Label) bool {
+func (c *Config) shouldKeep(expr build.Expr, dep *resolver.ImportLabel) bool {
 	for _, provider := range c.universe.SymbolProviders() {
-		if provider.CanProvide(from, c.universe.GetKnownRule) {
+		if provider.CanProvide(dep, expr, c.universe.GetKnownRule) {
 			return true
 		}
 	}
@@ -438,6 +438,10 @@ func (c *Config) ShouldAnnotateRule() bool {
 	return ok
 }
 
+func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
+	return &build.Comment{Token: "# " + imp.Symbol.Provider}
+}
+
 // ShouldFixWildcardImport tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -555,7 +559,7 @@ func (c *Config) ruleAttrMergeDeps(
 // list if they can be parsed as dependency labels that have a provider.  Others
 // types of expressions are left as-is.  Dependency labels that have no known
 // provider are also left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels []*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
+func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
@@ -594,9 +598,15 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			continue
 		}
 
+		imp, ok := importLabels[dep]
+		if !ok {
+			dst.List = append(dst.List, expr)
+			continue
+		}
+
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so leave it alone.
-		if !c.hasSymbolProvider(dep) {
+		if !c.shouldKeep(expr, imp) {
 			dst.List = append(dst.List, expr)
 			continue
 		}
@@ -609,10 +619,17 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		if !want {
 			continue
 		}
+		imp := importLabels[dep]
+
 		depExpr := &build.StringExpr{Value: dep.String()}
 		if c.shouldAnnotateDeps() {
-			depExpr.Suffix = append(depExpr.Suffix, depComment(dep, importLabels))
+			depExpr.Suffix = append(depExpr.Suffix, depCommentFor(imp.Import))
 		}
+		comment := c.depSuffixComment(imp.Import)
+		if comment != nil {
+			depExpr.Suffix = append(depExpr.Suffix, *comment)
+		}
+
 		dst.List = append(dst.List, depExpr)
 	}
 
@@ -715,16 +732,6 @@ func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefi
 		comment := setCommentPrefix(imp.Comment(), prefix)
 		comments.Before = append(comments.Before, comment)
 	}
-}
-
-func depComment(dep label.Label, importLabels []*resolver.ImportLabel) build.Comment {
-	for _, imp := range importLabels {
-		if dep != imp.Label {
-			continue
-		}
-		return depCommentFor(imp.Import)
-	}
-	panic(fmt.Sprintf("dependency %v was not found in the import label list", dep))
 }
 
 func depCommentFor(imp *resolver.Import) build.Comment {
