@@ -9,8 +9,19 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
+
+var globalScope resolver.Scope
+
+func SetGlobalScope(scope resolver.Scope) {
+	globalScope = scope
+}
+
+func GetGlobalScope() resolver.Scope {
+	return globalScope
+}
 
 func ReadJarFile(filename string) ([]*spb.TextDocuments, error) {
 	jar, err := zip.OpenReader(filename)

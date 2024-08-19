@@ -72,7 +72,10 @@ func (r *SemanticdbProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *c
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (r *SemanticdbProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
+
 	r.configWorkDir = c.WorkDir
+
+	semanticdb.SetGlobalScope(scope)
 
 	if r.indexFile != "" {
 		if err := r.parseIndex(r.indexFile); err != nil {

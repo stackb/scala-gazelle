@@ -5,7 +5,7 @@ load("@io_bazel_rules_scala//scala:semanticdb_provider.bzl", "SemanticdbInfo")
 
 def _index(ctx, output_file):
     args = ctx.actions.args()
-    args.use_param_file("@%s", use_always = False)
+    args.use_param_file("@%s", use_always = True)
     args.add("--output_file", output_file)
     info_files = []
 
@@ -47,6 +47,10 @@ semanticdb_index = rule(
             providers = [SemanticdbInfo],
             mandatory = True,
         ),
+        "kinds": attr.string_list(
+            doc = "list of scala rule kinds to collect",
+            mandatory = True,
+        ),
         "_indextool": attr.label(
             default = Label("@build_stack_scala_gazelle//cmd/semanticdbidx"),
             cfg = "exec",
@@ -55,6 +59,6 @@ semanticdb_index = rule(
         ),
     },
     outputs = {
-        "index": "%{name}.pb",
+        "index": "%{name}.pb.json",
     },
 )

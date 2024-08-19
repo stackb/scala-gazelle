@@ -102,10 +102,11 @@ func (s *scalaPackage) Resolve(
 	}
 	fn := func() {
 		provider.Resolve(&scalarule.ResolveContext{
-			Config:    c,
-			RuleIndex: ix,
-			Rule:      r,
-			From:      from,
+			Config:     c,
+			RuleIndex:  ix,
+			KnownRules: s.universe,
+			Rule:       r,
+			From:       from,
 		}, importsRaw)
 	}
 	// the first resolve cycle populates the symbol scopes with
@@ -140,7 +141,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 
 	for _, ruleConfig := range configuredRules {
 		if !ruleConfig.Enabled {
-			log.Printf("%s: skipping rule config %s (not enabled)", s.rel, ruleConfig.Name)
+			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, ruleConfig.Name)
 			continue
 		}
 		rule := s.provideRule(ruleConfig)

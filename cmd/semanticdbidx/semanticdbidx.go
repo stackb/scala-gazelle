@@ -47,6 +47,10 @@ func main() {
 }
 
 func parseFlags(args []string) (files []infoFile, err error) {
+	for i, arg := range args {
+		log.Printf("%d: %s", i, arg)
+		args[i] = unquoteSingle(arg)
+	}
 	fs := flag.NewFlagSet("semanticdbidx", flag.ExitOnError)
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Var(&infoFiles, "info_file", "a string NAME=RELPATH that maps NAME (the name of the scala source file) to RELPATH (the relative path of the semanticdb info file for that source file)")
@@ -83,4 +87,11 @@ func index(files ...infoFile) (*spb.InfoMap, error) {
 	}
 
 	return index, nil
+}
+
+func unquoteSingle(arg string) string {
+	if strings.HasPrefix(arg, "'") && strings.HasSuffix(arg, "'") {
+		return arg[1 : len(arg)-1]
+	}
+	return arg
 }

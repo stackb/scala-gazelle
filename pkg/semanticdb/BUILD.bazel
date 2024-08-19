@@ -10,11 +10,14 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/semanticdb",
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg/resolver",
         "//pkg/scalarule",
         "//scala/meta/semanticdb",
         "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@org_golang_google_protobuf//proto",
     ],
 )
