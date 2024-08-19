@@ -102,14 +102,13 @@ func (s *scalaPackage) Resolve(
 	}
 	fn := func() {
 		provider.Resolve(&scalarule.ResolveContext{
-			Config:     c,
-			RuleIndex:  ix,
-			KnownRules: s.universe,
-			Rule:       r,
-			From:       from,
+			Config:    c,
+			RuleIndex: ix,
+			Rule:      r,
+			From:      from,
 		}, importsRaw)
 	}
-	// the first resolve cycle populates the symbol scopes with
+	// the first resolve cycle populates the symbol scopes
 	fn()
 	s.resolveWork = append(s.resolveWork, fn)
 }

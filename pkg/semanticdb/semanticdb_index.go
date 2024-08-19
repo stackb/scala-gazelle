@@ -8,7 +8,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/bazelbuild/buildtools/build"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -134,19 +133,4 @@ func (s *semanticdbIndexRule) Resolve(rctx *scalarule.ResolveContext, importsRaw
 	sort.Strings(jars)
 
 	rctx.Rule.SetAttr("jars", jars)
-}
-
-func isTestOnlyRule(r *rule.Rule) bool {
-	testonly := r.Attr("testonly")
-	if testonly == nil {
-		return false
-	}
-	switch t := testonly.(type) {
-	case *build.Ident:
-		log.Printf("testonly type %s%%%s: %T %+v", r.Name(), r.Kind(), t, t)
-		return t.Name == "True"
-	default:
-		log.Printf("testonly type %s%%%s: %T %+v", r.Name(), r.Kind(), t, t)
-		return false
-	}
 }

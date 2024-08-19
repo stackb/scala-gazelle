@@ -77,7 +77,6 @@ func merge(filenames ...string) (*spb.TextDocuments, error) {
 					log.Println("seen:", doc.Uri)
 					continue
 				}
-				log.Println("index:", doc.Uri)
 
 				// remove occurrences and synthetics for file size as they are
 				// not used

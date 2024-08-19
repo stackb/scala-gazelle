@@ -4,23 +4,16 @@ load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compil
 
 proto_library(
     name = "semanticdb_proto",
-    srcs = [
-        "semanticdb.proto",
-        "semanticidx.proto",
-    ],
+    srcs = ["semanticdb.proto"],
     visibility = ["//scala/meta:__subpackages__"],
     deps = ["//scalapb:scalapb_proto"],
 )
 
 proto_compiled_sources(
     name = "semanticdb_go_compiled_sources",
-    srcs = [
-        "semanticdb.pb.go",
-        "semanticidx.pb.go",
-    ],
+    srcs = ["semanticdb.pb.go"],
     output_mappings = [
         "semanticdb.pb.go=github.com/stackb/scala-gazelle/scala/meta/semanticdb/semanticdb.pb.go",
-        "semanticidx.pb.go=github.com/stackb/scala-gazelle/scala/meta/semanticdb/semanticidx.pb.go",
     ],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "semanticdb_proto",
@@ -28,10 +21,7 @@ proto_compiled_sources(
 
 go_library(
     name = "semanticdb",
-    srcs = [
-        "semanticdb.pb.go",
-        "semanticidx.pb.go",
-    ],
+    srcs = ["semanticdb.pb.go"],
     importpath = "github.com/stackb/scala-gazelle/scala/meta/semanticdb",
     visibility = ["//visibility:public"],
     deps = [

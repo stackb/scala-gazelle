@@ -216,15 +216,9 @@ func (r *scalaRule) Exports() resolver.ImportMap {
 
 // fileExports gathers needed imports for the given file.
 func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
-	repo := ""
-	rel := r.ctx.scalaConfig.Rel()
-	ruleName := r.ctx.rule.Name()
 
-	putExport := func(imp *resolver.Import) {
-		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
-			exports.Put(imp)
-		}
-	}
+	from := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name())
+	putExport := resolver.PutImportIfNotSelf(exports, from)
 
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
@@ -278,17 +272,18 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 }
 
-// fileImports gathers needed imports for the given file.
-func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
-	repo := ""
-	rel := r.ctx.scalaConfig.Rel()
-	ruleName := r.ctx.rule.Name()
-
-	putImport := func(imp *resolver.Import) {
+func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName string) func(*resolver.Import) {
+	return func(imp *resolver.Import) {
 		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
 			imports.Put(imp)
 		}
 	}
+}
+
+// fileImports gathers needed imports for the given file.
+func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
+	from := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name())
+	putImport := resolver.PutImportIfNotSelf(imports, from)
 
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()

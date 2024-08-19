@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"path"
-	"path/filepath"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -26,14 +25,10 @@ const semanticDbName = "semanticdb"
 
 // NewSemanticdbProvider constructs a new NewSemanticdbProvider.
 func NewSemanticdbProvider(delegate parser.Parser) *SemanticdbProvider {
-	infoMap := new(spb.InfoMap)
-	infoMap.Entries = make(map[string]string)
-
 	return &SemanticdbProvider{
 		delegate: delegate,
 		jarFiles: make(collections.StringSlice, 0),
 		docs:     make(map[string]*spb.TextDocument),
-		infoMap:  infoMap,
 	}
 }
 
@@ -49,14 +44,8 @@ type SemanticdbProvider struct {
 	indexFile string
 	// jarFiles is a repeatable list of jars to include in the index
 	jarFiles collections.StringSlice
-	// configWorkDir is the Config.WorkDir that gives us the abs path prefix for
-	// filenames.
-	configWorkDir string
-
 	// docs is a map of known text documents
 	docs map[string]*spb.TextDocument
-	// infoMap is the parsed infoMap proto (from index file)
-	infoMap *spb.InfoMap
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -66,14 +55,17 @@ func (r *SemanticdbProvider) Name() string {
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
 func (r *SemanticdbProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
-	flags.StringVar(&r.indexFile, "semanticdb_index_file", "", "path to the semanticdb index file")
-	flags.Var(&r.jarFiles, "semanticdb_jar_file", "path to a scala jar that contains semanticdb meta-inf")
+	flags.StringVar(&r.indexFile,
+		"semanticdb_index_file",
+		"",
+		"path to the semanticdb index file")
+	flags.Var(&r.jarFiles,
+		"semanticdb_jar_file",
+		"path to a scala jar that contains semanticdb meta-inf")
 }
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (r *SemanticdbProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
-
-	r.configWorkDir = c.WorkDir
 
 	semanticdb.SetGlobalScope(scope)
 
@@ -143,43 +135,12 @@ func (r *SemanticdbProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) er
 	return r.delegate.LoadScalaRule(from, rule)
 }
 
-func (r *SemanticdbProvider) loadSemanticInfoFile(wantUri, path string) (got *spb.TextDocument, err error) {
-	var pb spb.TextDocuments
-	if err = protobuf.ReadFile(path, &pb); err != nil {
-		return nil, fmt.Errorf("attempted read of semanticdb info file %s: %v", path, err)
-	}
-	for _, d := range pb.Documents {
-		r.docs[d.Uri] = d
-		if d.Uri == wantUri {
-			got = d
-		}
-	}
-	return
-}
-
 func (r *SemanticdbProvider) visitFile(pkg string, file *sppb.File) error {
 	uri := path.Join(pkg, file.Filename)
-
-	// do we have a parsed doc already?
 	if doc, ok := r.docs[uri]; ok {
 		file.SemanticImports = semanticdb.SemanticImports(doc)
-		return nil
 	}
-
-	// can we locate the info file?
-	path, exists := r.infoMap.Entries[uri]
-	if !exists {
-		return fmt.Errorf("no semantic info available for: %s", uri)
-	}
-
-	// load and merge it
-	abspath := filepath.Join(r.configWorkDir, path)
-	if doc, err := r.loadSemanticInfoFile(uri, abspath); err != nil {
-		return err
-	} else {
-		file.SemanticImports = semanticdb.SemanticImports(doc)
-		return nil
-	}
+	return nil
 }
 
 func (r *SemanticdbProvider) parseIndex(_ string) error {

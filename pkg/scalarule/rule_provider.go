@@ -5,17 +5,15 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
-	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 // ResolveContext carries context about a rule during rule provider import
 // resolution.
 type ResolveContext struct {
-	Config     *config.Config
-	RuleIndex  *resolve.RuleIndex
-	KnownRules resolver.KnownRuleRegistry
-	Rule       *rule.Rule
-	From       label.Label
+	Config    *config.Config
+	RuleIndex *resolve.RuleIndex
+	Rule      *rule.Rule
+	From      label.Label
 }
 
 // RuleProvider implementations are capable of providing a rule and import list

@@ -3,6 +3,8 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "semanticdb",
     srcs = [
+        "globalscope.go",
+        "io.go",
         "semanticdb.go",
         "semanticdb_index.go",
         "visitor.go",
@@ -17,7 +19,6 @@ go_library(
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
-        "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@org_golang_google_protobuf//proto",
     ],
 )

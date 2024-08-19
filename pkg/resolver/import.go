@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -176,4 +177,12 @@ func IsWildcardImport(imp string) (string, bool) {
 		return "", false
 	}
 	return imp[:len(imp)-len("._")], true
+}
+
+func PutImportIfNotSelf(imports ImportMap, from label.Label) func(*Import) {
+	return func(imp *Import) {
+		if !IsSelfImport(imp.Symbol, from.Repo, from.Pkg, from.Name) {
+			imports.Put(imp)
+		}
+	}
 }

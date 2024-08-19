@@ -11,7 +11,3 @@ type Package interface {
 	// created a new Rule.
 	ParseRule(r *grule.Rule, attrName string) (Rule, error)
 }
-
-type PackageIndex interface {
-	FindPackages(prefix string) []*Package
-}
