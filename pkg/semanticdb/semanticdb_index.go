@@ -128,14 +128,11 @@ func (s *semanticdbIndexRule) Resolve(rctx *scalarule.ResolveContext, importsRaw
 		if _, ok := kinds[sym.Provider]; !ok {
 			continue
 		}
-		_, ok := rctx.KnownRules.GetKnownRule(lbl)
-		if !ok {
-			continue
-		}
 		jar := label.New(lbl.Repo, lbl.Pkg, lbl.Name+".jar")
 		jars = append(jars, jar.String())
 	}
 	sort.Strings(jars)
+
 	rctx.Rule.SetAttr("jars", jars)
 }
 
