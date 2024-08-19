@@ -117,7 +117,7 @@ func (s *semanticdbIndexRule) Resolve(rctx *scalarule.ResolveContext, importsRaw
 		symbols[sym.Label] = sym
 	}
 
-	deps := make([]string, 0, len(symbols))
+	jars := make([]string, 0, len(symbols))
 	for lbl, sym := range symbols {
 		if lbl == label.NoLabel {
 			continue
@@ -128,17 +128,15 @@ func (s *semanticdbIndexRule) Resolve(rctx *scalarule.ResolveContext, importsRaw
 		if _, ok := kinds[sym.Provider]; !ok {
 			continue
 		}
-		r, ok := rctx.KnownRules.GetKnownRule(lbl)
+		_, ok := rctx.KnownRules.GetKnownRule(lbl)
 		if !ok {
 			continue
 		}
-		if isTestOnlyRule(r) {
-			continue
-		}
-		deps = append(deps, lbl.String())
+		jar := label.New(lbl.Repo, lbl.Pkg, lbl.Name+".jar")
+		jars = append(jars, jar.String())
 	}
-	sort.Strings(deps)
-	rctx.Rule.SetAttr("deps", deps)
+	sort.Strings(jars)
+	rctx.Rule.SetAttr("jars", jars)
 }
 
 func isTestOnlyRule(r *rule.Rule) bool {

@@ -121,6 +121,9 @@ func (v *TextDocumentVisitor) VisitSymlink(name string) {
 }
 
 func (v *TextDocumentVisitor) VisitSignature(node *spb.Signature) {
+	if node == nil {
+		return
+	}
 	switch t := node.SealedValue.(type) {
 	case *spb.Signature_ClassSignature:
 		v.VisitClassSignature(t.ClassSignature)

@@ -155,17 +155,17 @@ func (imp *Import) String() string {
 	return strings.Join(parts, " ")
 }
 
-func IsSelfImport(imp *Import, repo, pkg, name string) bool {
-	if imp.Symbol == nil {
+func IsSelfImport(symbol *Symbol, repo, pkg, name string) bool {
+	if symbol == nil {
 		return false
 	}
 	if repo != "" {
 		return false
 	}
-	if pkg != imp.Symbol.Label.Pkg {
+	if pkg != symbol.Label.Pkg {
 		return false
 	}
-	if name != imp.Symbol.Label.Name {
+	if name != symbol.Label.Name {
 		return false
 	}
 	return true

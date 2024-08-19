@@ -23,7 +23,6 @@ import (
 )
 
 const (
-	debugSelfImports         = false
 	debugNameNotFound        = false
 	debugUnresolved          = false
 	debugExtendsNameNotFound = false
@@ -217,18 +216,18 @@ func (r *scalaRule) Exports() resolver.ImportMap {
 
 // fileExports gathers needed imports for the given file.
 func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
-	var scopes []resolver.Scope
-	direct := resolver.NewTrieScope()
+	repo := ""
+	rel := r.ctx.scalaConfig.Rel()
+	ruleName := r.ctx.rule.Name()
 
 	putExport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
-			if debugSelfImports {
-				log.Println("skipping export from current", imp.Imp)
-			}
-			return
+		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
+			exports.Put(imp)
 		}
-		exports.Put(imp)
 	}
+
+	var scopes []resolver.Scope
+	direct := resolver.NewTrieScope()
 
 	// add in outer scope
 	scopes = append(scopes, r.ctx.scope, direct)
@@ -281,18 +280,18 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
-	var scopes []resolver.Scope
-	direct := resolver.NewTrieScope()
+	repo := ""
+	rel := r.ctx.scalaConfig.Rel()
+	ruleName := r.ctx.rule.Name()
 
 	putImport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
-			if debugSelfImports {
-				log.Println("skipping import from current", imp.Imp)
-			}
-			return
+		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
+			imports.Put(imp)
 		}
-		imports.Put(imp)
 	}
+
+	var scopes []resolver.Scope
+	direct := resolver.NewTrieScope()
 
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
@@ -347,6 +346,10 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 	// add in semantic imports
 	for _, name := range file.SemanticImports {
 		imp := resolver.NewSemanticImport(name, file)
+		// try and resolve the symbol such that we can determine self-imports
+		if sym, ok := r.ctx.scope.GetSymbol(imp.Imp); ok {
+			imp.Symbol = sym
+		}
 		putImport(imp)
 	}
 

@@ -183,8 +183,12 @@ func (r *SemanticdbProvider) visitFile(pkg string, file *sppb.File) error {
 }
 
 func (r *SemanticdbProvider) parseIndex(_ string) error {
-	if err := protobuf.ReadFile(r.indexFile, r.infoMap); err != nil {
+	var docs spb.TextDocuments
+	if err := protobuf.ReadFile(r.indexFile, &docs); err != nil {
 		return err
+	}
+	for _, doc := range docs.Documents {
+		r.docs[doc.Uri] = doc
 	}
 	return nil
 }
