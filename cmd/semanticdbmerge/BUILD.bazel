@@ -18,3 +18,9 @@ go_binary(
     embed = [":semanticdbmerge_lib"],
     visibility = ["//visibility:public"],
 )
+
+sh_test(
+    name = "semanticdbmerge_test",
+    srcs = ["semanticdbmerge_test.sh"],
+    data = [":semanticdbmerge"],
+)

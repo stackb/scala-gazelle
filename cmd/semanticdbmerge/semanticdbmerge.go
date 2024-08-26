@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"sort"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -19,24 +20,32 @@ func main() {
 	log.SetPrefix("semanticdbmerge: ")
 	log.SetFlags(0) // don't print timestamps
 
-	args, err := collections.ReadOsArgsParams()
+	if err := run(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run(args []string) error {
+	args, err := collections.ReadArgsParamsFile(args)
 	if err != nil {
-		log.Fatalln("failed to read params file:", err)
+		return fmt.Errorf("failed to read params file: %v", err)
 	}
 
 	files, err := parseFlags(args)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to parse args: %v", err)
 	}
 
 	merged, err := merge(files...)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to merge files: %v", err)
 	}
 
 	if err := protobuf.WriteFile(outputFile, merged); err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to write output file: %v", err)
 	}
+
+	return nil
 }
 
 func parseFlags(args []string) (files []string, err error) {
@@ -47,7 +56,7 @@ func parseFlags(args []string) (files []string, err error) {
 		fs.PrintDefaults()
 	}
 	if err = fs.Parse(args); err != nil {
-		return
+		return nil, err
 	}
 
 	if outputFile == "" {
@@ -56,7 +65,7 @@ func parseFlags(args []string) (files []string, err error) {
 
 	files = fs.Args()
 	if len(files) == 0 {
-		err = fmt.Errorf("semanticdbmerge positional args should be a non-empty list of scala jars (that contains semanticdb info) to merge")
+		err = fmt.Errorf("semanticdbmerge positional args should be a non-empty list of scala jar filenames (that contains semanticdb info) to merge")
 	}
 
 	return

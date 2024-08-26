@@ -40,16 +40,21 @@ func CollectFiles(dir string) (files []string, err error) {
 	return
 }
 
-// ReadOsArgsParams reads the os.Args and maybe loads from the params file
-func ReadOsArgsParams() ([]string, error) {
-	args := os.Args[1:]
-	if len(args) == 1 && strings.HasPrefix(args[0], "@") {
-		paramsFile := args[0][1:]
-		var err error
-		args, err = readParamsFile(paramsFile)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read params file %s: %v", paramsFile, err)
-		}
+// ReadArgsParamsFile reads the and maybe loads from the params file if the sole
+// argument starts with '@'; if so args are loaded from that file.
+func ReadArgsParamsFile(args []string) ([]string, error) {
+	if len(args) != 1 {
+		return args, nil
+	}
+	if !strings.HasPrefix(args[0], "@") {
+		return args, nil
+	}
+
+	paramsFile := args[0][1:]
+	var err error
+	args, err = readParamsFile(paramsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read params file %s: %v", paramsFile, err)
 	}
 	return args, nil
 }
