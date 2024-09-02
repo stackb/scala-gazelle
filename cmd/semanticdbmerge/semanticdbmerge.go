@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -65,7 +66,7 @@ func parseFlags(args []string) (files []string, err error) {
 
 	files = fs.Args()
 	if len(files) == 0 {
-		err = fmt.Errorf("semanticdbmerge positional args should be a non-empty list of scala jar filenames (that contains semanticdb info) to merge")
+		err = fmt.Errorf("semanticdbmerge positional args should be a non-empty list of jars or semanticdb files to merge")
 	}
 
 	return
@@ -76,23 +77,43 @@ func merge(filenames ...string) (*spb.TextDocuments, error) {
 	merged := new(spb.TextDocuments)
 
 	for _, filename := range filenames {
-		group, err := semanticdb.ReadJarFile(filename)
-		if err != nil {
-			return nil, err
-		}
-		for _, item := range group {
-			for _, doc := range item.Documents {
+		switch filepath.Ext(filename) {
+		case ".pb":
+			docs, err := semanticdb.ReadTextDocumentsFile(filename)
+			if err != nil {
+				return nil, err
+			}
+			for _, doc := range docs.Documents {
 				if seen[doc.Uri] {
 					log.Println("seen:", doc.Uri)
 					continue
 				}
-
 				// remove occurrences and synthetics for file size as they are
 				// not used
 				doc.Occurrences = nil
 				doc.Synthetics = nil
 
 				merged.Documents = append(merged.Documents, doc)
+			}
+		case ".jar":
+			group, err := semanticdb.ReadJarFile(filename)
+			if err != nil {
+				return nil, err
+			}
+			for _, docs := range group {
+				for _, doc := range docs.Documents {
+					if seen[doc.Uri] {
+						log.Println("seen:", doc.Uri)
+						continue
+					}
+
+					// remove occurrences and synthetics for file size as they are
+					// not used
+					doc.Occurrences = nil
+					doc.Synthetics = nil
+
+					merged.Documents = append(merged.Documents, doc)
+				}
 			}
 		}
 	}

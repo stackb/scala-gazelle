@@ -54,6 +54,18 @@ func ReadJarZipFile(file *zip.File) (*spb.TextDocuments, error) {
 	return ReadTextDocumentsIn(fileReader)
 }
 
+func ReadTextDocumentsFile(filename string) (*spb.TextDocuments, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("opening file: %v", err)
+	}
+	var doc spb.TextDocuments
+	if err := proto.Unmarshal(data, &doc); err != nil {
+		return nil, err
+	}
+	return &doc, nil
+}
+
 func ReadTextDocumentsIn(in io.ReadCloser) (*spb.TextDocuments, error) {
 	data, err := io.ReadAll(in)
 	if err != nil {
