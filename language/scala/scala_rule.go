@@ -151,13 +151,13 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 		}
 
-		for _, req := range item.sym.Requires {
-			if _, ok := imports[req.Name]; ok {
-				continue
-			}
-			imports.Put(resolver.NewTransitiveImport(req.Name, item.sym.Name, req))
-			transitive.Push(item.imp, req)
-		}
+		// for _, req := range item.sym.Requires {
+		// 	if _, ok := imports[req.Name]; ok {
+		// 		continue
+		// 	}
+		// 	imports.Put(resolver.NewTransitiveImport(req.Name, item.sym.Name, req))
+		// 	transitive.Push(item.imp, req)
+		// }
 	}
 
 	return imports

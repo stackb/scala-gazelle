@@ -67,7 +67,7 @@ func SymbolConfictMessage(symbol *Symbol, imp *Import, from label.Label) string 
 		return ""
 	}
 	lines := make([]string, 0, len(symbol.Conflicts)+3)
-	lines = append(lines, fmt.Sprintf("Ambiguous resolve of %v %q (symbol is provided by %d labels) [%s]", symbol.Type, symbol.Name, len(symbol.Conflicts)+1, imp))
+	lines = append(lines, fmt.Sprintf("[%v]: Ambiguous resolve of %v %q (symbol is provided by %d labels) [%s]", from, symbol.Type, symbol.Name, len(symbol.Conflicts)+1, imp))
 	if symbol.Type == sppb.ImportType_PACKAGE || symbol.Type == sppb.ImportType_PROTO_PACKAGE {
 		lines = append(lines, " - Possible action: remove wildcard or package import")
 	}
