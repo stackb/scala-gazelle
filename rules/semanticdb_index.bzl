@@ -25,10 +25,14 @@ def _merge(ctx, output_file):
 
 def _semanticdb_index_impl(ctx):
     _merge(ctx, ctx.outputs.index)
+    _merge(ctx, ctx.outputs.json)
 
     return [
         DefaultInfo(
             files = depset([ctx.outputs.index]),
+        ),
+        OutputGroupInfo(
+            json = depset([ctx.outputs.json]),
         ),
         SemanticDbIndexInfo(
             index = ctx.outputs.index,
@@ -59,5 +63,6 @@ semanticdb_index = rule(
     },
     outputs = {
         "index": "%{name}.pb",
+        "json": "%{name}.json",
     },
 )

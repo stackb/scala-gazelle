@@ -75,6 +75,13 @@ func parseFlags(args []string) (files []string, err error) {
 func merge(filenames ...string) (*spb.TextDocuments, error) {
 	seen := make(map[string]bool)
 	merged := new(spb.TextDocuments)
+	mergeDoc := func(doc *spb.TextDocument) {
+		if seen[doc.Uri] {
+			return
+		}
+		seen[doc.Uri] = true
+		merged.Documents = append(merged.Documents, doc)
+	}
 
 	for _, filename := range filenames {
 		switch filepath.Ext(filename) {
@@ -84,16 +91,7 @@ func merge(filenames ...string) (*spb.TextDocuments, error) {
 				return nil, err
 			}
 			for _, doc := range docs.Documents {
-				if seen[doc.Uri] {
-					log.Println("seen:", doc.Uri)
-					continue
-				}
-				// remove occurrences and synthetics for file size as they are
-				// not used
-				doc.Occurrences = nil
-				doc.Synthetics = nil
-
-				merged.Documents = append(merged.Documents, doc)
+				mergeDoc(doc)
 			}
 		case ".jar":
 			group, err := semanticdb.ReadJarFile(filename)
@@ -102,17 +100,7 @@ func merge(filenames ...string) (*spb.TextDocuments, error) {
 			}
 			for _, docs := range group {
 				for _, doc := range docs.Documents {
-					if seen[doc.Uri] {
-						log.Println("seen:", doc.Uri)
-						continue
-					}
-
-					// remove occurrences and synthetics for file size as they are
-					// not used
-					doc.Occurrences = nil
-					doc.Synthetics = nil
-
-					merged.Documents = append(merged.Documents, doc)
+					mergeDoc(doc)
 				}
 			}
 		}

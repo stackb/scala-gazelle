@@ -20,6 +20,10 @@ func TestToImport(t *testing.T) {
 			symbol: "omnistac/euds/package.isFinraTraceEvent().(r)",
 			want:   "omnistac.euds.package",
 		},
+		"package": {
+			symbol: "trumid/ats/limitsng/",
+			want:   "",
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			got := toImport(tc.symbol)

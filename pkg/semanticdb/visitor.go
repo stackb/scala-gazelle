@@ -25,6 +25,10 @@ func toImport(symbol string) string {
 	if strings.HasPrefix(symbol, "local") {
 		return ""
 	}
+	// skip package symbols (e.g. 'trumid/ats/limitsng/')
+	if strings.HasSuffix(symbol, "/") {
+		return ""
+	}
 	if idx := strings.Index(symbol, "#"); idx != -1 {
 		symbol = symbol[:idx]
 	}
@@ -66,6 +70,9 @@ func (v *TextDocumentVisitor) addType(symbol string, node *spb.Type) {
 func (v *TextDocumentVisitor) VisitTextDocument(node *spb.TextDocument) {
 	for _, child := range node.Symbols {
 		v.VisitSymbolInformation(child)
+	}
+	for _, child := range node.Occurrences {
+		v.VisitOccurence(child)
 	}
 	// TODO: occurrences? diagnostics? synthetics?
 }
@@ -333,4 +340,19 @@ func (v *TextDocumentVisitor) VisitMatchCase(node *spb.MatchType_CaseType) {
 
 func (v *TextDocumentVisitor) VisitConstant(node *spb.Constant) {
 	// DONE - no need to visit constants, right?
+}
+
+func (v *TextDocumentVisitor) VisitOccurence(node *spb.SymbolOccurrence) {
+	if _, ok := v.symbols[node.Symbol]; ok {
+		return // already processed
+	}
+	// only process REFERENCE as it seems we would not want to import anything
+	// defined in the file.
+	if node.Role != spb.SymbolOccurrence_REFERENCE {
+		return
+	}
+
+	// can't save (wrong map value type)
+	// v.symbols[node.Symbol] = nil
+	v.addType(node.Symbol, nil)
 }
