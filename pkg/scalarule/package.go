@@ -1,6 +1,7 @@
 package scalarule
 
 import (
+	"github.com/bazelbuild/bazel-gazelle/language"
 	grule "github.com/bazelbuild/bazel-gazelle/rule"
 )
 
@@ -10,4 +11,6 @@ type Package interface {
 	// ParseRule parses the sources from the named attr (typically 'srcs') and
 	// created a new Rule.
 	ParseRule(r *grule.Rule, attrName string) (Rule, error)
+	// GenerateArgs returns the GenerateArgs for the package
+	GenerateArgs() *language.GenerateArgs
 }
