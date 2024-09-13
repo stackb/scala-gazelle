@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "semanticdbextract_lib",
+    srcs = ["semanticdbextract.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/semanticdbextract",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/protobuf",
+        "//pkg/semanticdb",
+        "//scala/meta/semanticdb",
+    ],
+)
+
+go_binary(
+    name = "semanticdbextract",
+    embed = [":semanticdbextract_lib"],
+    visibility = ["//visibility:public"],
+)
