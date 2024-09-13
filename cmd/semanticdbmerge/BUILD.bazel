@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/cmd/semanticdbmerge",
     visibility = ["//visibility:private"],
     deps = [
+        "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/protobuf",
         "//pkg/semanticdb",

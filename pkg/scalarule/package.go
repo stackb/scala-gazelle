@@ -12,5 +12,5 @@ type Package interface {
 	// created a new Rule.
 	ParseRule(r *grule.Rule, attrName string) (Rule, error)
 	// GenerateArgs returns the GenerateArgs for the package
-	GenerateArgs() *language.GenerateArgs
+	GenerateArgs() language.GenerateArgs
 }

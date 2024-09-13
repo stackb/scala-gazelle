@@ -8,6 +8,11 @@ option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/p
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
 
+// FileSet represents a set of Files
+message FileSet {
+    repeated File files = 1;
+}
+
 // File represents a parsed file named in a scala rule.srcs list.
 message File {
     // filename is the (relative) source filename

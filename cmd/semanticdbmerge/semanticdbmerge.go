@@ -12,6 +12,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/semanticdb"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	spb "github.com/stackb/scala-gazelle/scala/meta/semanticdb"
 )
 
@@ -72,26 +73,35 @@ func parseFlags(args []string) (files []string, err error) {
 	return
 }
 
-func merge(filenames ...string) (*spb.TextDocuments, error) {
+func merge(filenames ...string) (*sppb.FileSet, error) {
+	fileSet := new(sppb.FileSet)
 	seen := make(map[string]bool)
-	merged := new(spb.TextDocuments)
-	mergeDoc := func(doc *spb.TextDocument) {
+
+	addFile := func(file *sppb.File) {
+		if seen[file.Filename] {
+			return
+		}
+		seen[file.Filename] = true
+		fileSet.Files = append(fileSet.Files, file)
+	}
+
+	addDocument := func(doc *spb.TextDocument) {
 		if seen[doc.Uri] {
 			return
 		}
-		seen[doc.Uri] = true
-		merged.Documents = append(merged.Documents, doc)
+		addFile(newFile(doc))
 	}
 
 	for _, filename := range filenames {
 		switch filepath.Ext(filename) {
 		case ".pb":
-			docs, err := semanticdb.ReadTextDocumentsFile(filename)
+			var fileSet sppb.FileSet
+			err := protobuf.ReadFile(filename, &fileSet)
 			if err != nil {
 				return nil, err
 			}
-			for _, doc := range docs.Documents {
-				mergeDoc(doc)
+			for _, file := range fileSet.Files {
+				addFile(file)
 			}
 		case ".jar":
 			group, err := semanticdb.ReadJarFile(filename)
@@ -100,17 +110,24 @@ func merge(filenames ...string) (*spb.TextDocuments, error) {
 			}
 			for _, docs := range group {
 				for _, doc := range docs.Documents {
-					mergeDoc(doc)
+					addDocument(doc)
 				}
 			}
 		}
 	}
 
-	sort.Slice(merged.Documents, func(i, j int) bool {
-		a := merged.Documents[i].Uri
-		b := merged.Documents[j].Uri
+	sort.Slice(fileSet.Files, func(i, j int) bool {
+		a := fileSet.Files[i].Filename
+		b := fileSet.Files[j].Filename
 		return a < b
 	})
 
-	return merged, nil
+	return fileSet, nil
+}
+
+func newFile(doc *spb.TextDocument) *sppb.File {
+	return &sppb.File{
+		Filename:        doc.Uri,
+		SemanticImports: semanticdb.SemanticImports(doc),
+	}
 }

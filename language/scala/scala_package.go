@@ -28,7 +28,7 @@ var ErrRuleHasNoSrcs = fmt.Errorf("rule has no source files")
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
 	// args are the generateArgs
-	args *language.GenerateArgs
+	args language.GenerateArgs
 	// parser is the file parser
 	parser parser.Parser
 	// universe is the parent universe
@@ -50,7 +50,7 @@ type scalaPackage struct {
 
 // newScalaPackage constructs a Package given a list of scala files.
 func newScalaPackage(
-	args *language.GenerateArgs,
+	args language.GenerateArgs,
 	cfg *scalaconfig.Config,
 	providerRegistry scalarule.ProviderRegistry,
 	parser parser.Parser,
@@ -195,7 +195,7 @@ func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule
 }
 
 // GenerateArgs implements part of the scalarule.Package interface.
-func (s *scalaPackage) GenerateArgs() *language.GenerateArgs {
+func (s *scalaPackage) GenerateArgs() language.GenerateArgs {
 	return s.args
 }
 
@@ -234,7 +234,7 @@ func (s *scalaPackage) repoRootDir() string {
 }
 
 // Rules provides the aggregated rule list for the package.
-func (s *scalaPackage) Rules(args language.GenerateArgs) []*rule.Rule {
+func (s *scalaPackage) Rules() []*rule.Rule {
 	return s.getProvidedRules(s.gen, true)
 }
 

@@ -29,6 +29,7 @@ func NewSemanticdbProvider(delegate parser.Parser) *SemanticdbProvider {
 		delegate: delegate,
 		jarFiles: make(collections.StringSlice, 0),
 		docs:     make(map[string]*spb.TextDocument),
+		files:    make(map[string]*sppb.File),
 	}
 }
 
@@ -42,10 +43,14 @@ type SemanticdbProvider struct {
 	delegate parser.Parser
 	// indexFile is the name of the file that should be parsed as a InfoMap
 	indexFile string
+	// fileSetFile is the name of the file that should be parsed as a FileSet proto
+	fileSetFile string
 	// jarFiles is a repeatable list of jars to include in the index
 	jarFiles collections.StringSlice
 	// docs is a map of known text documents
 	docs map[string]*spb.TextDocument
+	// docs is a map of known file Instances that have semanticdb info
+	files map[string]*sppb.File
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -59,6 +64,10 @@ func (r *SemanticdbProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *c
 		"semanticdb_index_file",
 		"",
 		"path to the semanticdb index file")
+	flags.StringVar(&r.fileSetFile,
+		"semanticdb_fileset",
+		"",
+		"path to the semanticdb fileset")
 	flags.Var(&r.jarFiles,
 		"semanticdb_jar_file",
 		"path to a scala jar that contains semanticdb meta-inf")
@@ -69,6 +78,11 @@ func (r *SemanticdbProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, s
 
 	semanticdb.SetGlobalScope(scope)
 
+	if r.fileSetFile != "" {
+		if err := r.parseFileSet(r.fileSetFile); err != nil {
+			return err
+		}
+	}
 	if r.indexFile != "" {
 		if err := r.parseIndex(r.indexFile); err != nil {
 			return err
@@ -137,19 +151,30 @@ func (r *SemanticdbProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) er
 
 func (r *SemanticdbProvider) visitFile(pkg string, file *sppb.File) error {
 	uri := path.Join(pkg, file.Filename)
-	if doc, ok := r.docs[uri]; ok {
-		file.SemanticImports = semanticdb.SemanticImports(doc)
+	if f, ok := r.files[uri]; ok {
+		file.SemanticImports = f.SemanticImports
 	}
 	return nil
 }
 
-func (r *SemanticdbProvider) parseIndex(_ string) error {
+func (r *SemanticdbProvider) parseIndex(filename string) error {
 	var docs spb.TextDocuments
-	if err := protobuf.ReadFile(r.indexFile, &docs); err != nil {
+	if err := protobuf.ReadFile(filename, &docs); err != nil {
 		return err
 	}
 	for _, doc := range docs.Documents {
 		r.docs[doc.Uri] = doc
+	}
+	return nil
+}
+
+func (r *SemanticdbProvider) parseFileSet(filename string) error {
+	var fileSet sppb.FileSet
+	if err := protobuf.ReadFile(filename, &fileSet); err != nil {
+		return err
+	}
+	for _, file := range fileSet.Files {
+		r.files[file.Filename] = file
 	}
 	return nil
 }
