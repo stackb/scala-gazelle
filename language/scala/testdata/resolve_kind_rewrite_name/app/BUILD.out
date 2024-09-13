@@ -4,5 +4,7 @@ scala_binary(
     name = "app",
     srcs = ["App.scala"],
     main_class = "app.App",
-    deps = ["//lib:lib_helper"],
+    deps = [
+        "//lib:lib_helper",  # scala_helper_library
+    ],
 )

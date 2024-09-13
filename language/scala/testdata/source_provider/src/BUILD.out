@@ -4,15 +4,21 @@ scala_library(
     name = "lib",
     # exports: ✅ java.util.LinkedList<OVERRIDE> @java//util<override> (EXTENDS of Lib.scala via "a.b.c.Lib")
     srcs = ["a/b/c/Lib.scala"],
-    exports = ["@java//util"],
-    deps = ["@java//util"],
+    exports = [
+        "@java//util",  # override
+    ],
+    deps = [
+        "@java//util",  # override
+    ],
 )
 
 scala_binary(
     name = "app",
     srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
-    deps = [":lib"],
+    deps = [
+        ":lib",  # scala_library
+    ],
 )
 
 scala_test(

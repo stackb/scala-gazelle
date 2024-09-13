@@ -17,5 +17,7 @@ scala_library(
     # deps: ❌ not.Exists<ERROR> symbol not found (DIRECT of Main.scala)
     # deps: ✅ proto.Customer<PROTO_MESSAGE> //proto:proto_proto_scala_library<protobuf> (DIRECT of Main.scala)
     srcs = ["Main.scala"],
-    deps = ["//proto:proto_proto_scala_library"],
+    deps = [
+        "//proto:proto_proto_scala_library",  # protobuf
+    ],
 )
