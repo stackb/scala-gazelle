@@ -23,9 +23,31 @@ def _merge(ctx, output_file):
         outputs = [output_file],
     )
 
+def _extract(ctx, jar_file):
+    output_file = ctx.actions.declare_file(jar_file.basename + ".textdocuments.json", sibling = jar_file)
+    args = ctx.actions.args()
+    args.use_param_file("@%s", use_always = False)
+    args.add("--jar_file", jar_file)
+    args.add("--output_file", output_file)
+
+    ctx.actions.run(
+        mnemonic = "SemanticDbExtract",
+        progress_message = "Extracting semanticdb textdocuments from jar: " + jar_file.short_path,
+        executable = ctx.executable._extracttool,
+        arguments = [args],
+        inputs = [jar_file],
+        outputs = [output_file],
+    )
+
+    return output_file
+
 def _semanticdb_index_impl(ctx):
     _merge(ctx, ctx.outputs.index)
     _merge(ctx, ctx.outputs.json)
+    textdocuments = [
+        _extract(ctx, jar_file)
+        for jar_file in ctx.files.jars
+    ]
 
     return [
         DefaultInfo(
@@ -33,6 +55,7 @@ def _semanticdb_index_impl(ctx):
         ),
         OutputGroupInfo(
             json = depset([ctx.outputs.json]),
+            textdocuments = depset(textdocuments),
         ),
         SemanticDbIndexInfo(
             index = ctx.outputs.index,
@@ -59,6 +82,12 @@ semanticdb_index = rule(
             cfg = "exec",
             executable = True,
             doc = "the semanticdb merge tool",
+        ),
+        "_extracttool": attr.label(
+            default = Label("@build_stack_scala_gazelle//cmd/semanticdbextract"),
+            cfg = "exec",
+            executable = True,
+            doc = "the semanticdb extract tool",
         ),
     },
     outputs = {

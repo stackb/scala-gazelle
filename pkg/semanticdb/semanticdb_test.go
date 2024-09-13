@@ -147,11 +147,8 @@ func TestSemanticImports(t *testing.T) {
 		filename string
 		wantErr  string
 	}{
-		"degenerate": {
-			wantErr: "opening jar file: open : no such file or directory",
-		},
-		"example jar": {
-			filename: "testdata/example.jar",
+		"stringlib": {
+			filename: "testdata/stringlib.jar.textdocuments.json",
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -163,7 +160,8 @@ func TestSemanticImports(t *testing.T) {
 				dir = filepath.Join(bwd, "pkg/semanticdb")
 			}
 
-			got, err := ReadJarFile(tc.filename)
+			var got spb.TextDocuments
+			err = protobuf.ReadFile(tc.filename, &got)
 			var gotErr string
 			if err != nil {
 				gotErr = err.Error()
@@ -175,36 +173,34 @@ func TestSemanticImports(t *testing.T) {
 				return
 			}
 
-			for _, docs := range got {
-				for _, doc := range docs.Documents {
-					semanticImports := SemanticImports(doc)
-					file := new(sppb.File)
-					file.SemanticImports = semanticImports
+			for _, doc := range got.Documents {
+				semanticImports := SemanticImports(doc)
+				file := new(sppb.File)
+				file.SemanticImports = semanticImports
 
-					goldenFile := filepath.Join(dir, "testdata", tc.filename, "META-INF", "semanticdb", doc.Uri+".file.json")
+				goldenFile := filepath.Join(dir, "testdata", tc.filename+".golden", doc.Uri+".file.json")
 
-					if *update {
-						if err := os.MkdirAll(filepath.Dir(goldenFile), os.ModePerm); err != nil {
-							t.Fatal(err)
-						}
-						if err := protobuf.WriteStableJSONFile(goldenFile, file); err != nil {
-							t.Fatal(err)
-						}
-						log.Println("Wrote golden file:", goldenFile)
-						continue
-					}
-
-					var want sppb.File
-					if err := protobuf.ReadFile(goldenFile, &want); err != nil {
+				if *update {
+					if err := os.MkdirAll(filepath.Dir(goldenFile), os.ModePerm); err != nil {
 						t.Fatal(err)
 					}
-
-					if diff := cmp.Diff(&want, doc,
-						cmpopts.IgnoreUnexported(
-							sppb.File{},
-						)); diff != "" {
-						t.Errorf("%s (-want +got):\n%s", doc.Uri, diff)
+					if err := protobuf.WriteStableJSONFile(goldenFile, file); err != nil {
+						t.Fatal(err)
 					}
+					log.Println("Wrote golden file:", goldenFile)
+					continue
+				}
+
+				var want sppb.File
+				if err := protobuf.ReadFile(goldenFile, &want); err != nil {
+					t.Fatal(err)
+				}
+
+				if diff := cmp.Diff(&want, doc,
+					cmpopts.IgnoreUnexported(
+						sppb.File{},
+					)); diff != "" {
+					t.Errorf("%s (-want +got):\n%s", doc.Uri, diff)
 				}
 			}
 		})

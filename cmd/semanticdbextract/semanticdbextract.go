@@ -44,7 +44,7 @@ func run(args []string) error {
 		return fmt.Errorf("failed to merge files: %v", err)
 	}
 
-	if err := protobuf.WriteFile(outputFile, doc); err != nil {
+	if err := protobuf.WriteStableJSONFile(outputFile, doc); err != nil {
 		return fmt.Errorf("failed to write output file: %v", err)
 	}
 

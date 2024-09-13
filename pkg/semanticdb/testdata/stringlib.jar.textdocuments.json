@@ -1,0 +1,193 @@
+{
+ "documents": [
+  {
+   "schema": "SEMANTICDB4",
+   "uri": "trumid/common/utils/string/src/package.scala",
+   "md5": "7D344E91C034B608A9E95F2370F7B678",
+   "language": "SCALA",
+   "symbols": [
+    {
+     "symbol": "trumid/common/utils/string/package.",
+     "language": "SCALA",
+     "kind": "PACKAGE_OBJECT",
+     "properties": 8,
+     "displayName": "string",
+     "signature": {
+      "classSignature": {
+       "typeParameters": {},
+       "parents": [
+        {
+         "typeRef": {
+          "symbol": "scala/AnyRef#"
+         }
+        }
+       ],
+       "declarations": {
+        "symlinks": [
+         "trumid/common/utils/string/package.snakify()."
+        ]
+       }
+      }
+     }
+    },
+    {
+     "symbol": "trumid/common/utils/string/package.snakify().",
+     "language": "SCALA",
+     "kind": "METHOD",
+     "displayName": "snakify",
+     "signature": {
+      "methodSignature": {
+       "typeParameters": {},
+       "parameterLists": [
+        {
+         "symlinks": [
+          "trumid/common/utils/string/package.snakify().(name)"
+         ]
+        }
+       ],
+       "returnType": {
+        "typeRef": {
+         "symbol": "scala/Predef.String#"
+        }
+       }
+      }
+     },
+     "access": {
+      "publicAccess": {}
+     }
+    },
+    {
+     "symbol": "trumid/common/utils/string/package.snakify().(name)",
+     "language": "SCALA",
+     "kind": "PARAMETER",
+     "displayName": "name",
+     "signature": {
+      "valueSignature": {
+       "tpe": {
+        "typeRef": {
+         "symbol": "scala/Predef.String#"
+        }
+       }
+      }
+     }
+    }
+   ],
+   "occurrences": [
+    {
+     "range": {
+      "startLine": 2,
+      "startCharacter": 15,
+      "endLine": 2,
+      "endCharacter": 21
+     },
+     "symbol": "trumid/common/utils/string/package.",
+     "role": "DEFINITION"
+    },
+    {
+     "range": {
+      "startLine": 12,
+      "startCharacter": 6,
+      "endLine": 12,
+      "endCharacter": 13
+     },
+     "symbol": "trumid/common/utils/string/package.snakify().",
+     "role": "DEFINITION"
+    },
+    {
+     "range": {
+      "startCharacter": 8,
+      "endCharacter": 14
+     },
+     "symbol": "trumid/",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startCharacter": 15,
+      "endCharacter": 21
+     },
+     "symbol": "trumid/common/",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 13,
+      "startCharacter": 4,
+      "endLine": 13,
+      "endCharacter": 8
+     },
+     "symbol": "trumid/common/utils/string/package.snakify().(name)",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 12,
+      "startCharacter": 14,
+      "endLine": 12,
+      "endCharacter": 18
+     },
+     "symbol": "trumid/common/utils/string/package.snakify().(name)",
+     "role": "DEFINITION"
+    },
+    {
+     "range": {
+      "startCharacter": 22,
+      "endCharacter": 27
+     },
+     "symbol": "trumid/common/utils/",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 13,
+      "startCharacter": 9,
+      "endLine": 13,
+      "endCharacter": 19
+     },
+     "symbol": "java/lang/String#replaceAll().",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 12,
+      "startCharacter": 29,
+      "endLine": 12,
+      "endCharacter": 35
+     },
+     "symbol": "scala/Predef.String#",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 13,
+      "startCharacter": 53,
+      "endLine": 13,
+      "endCharacter": 63
+     },
+     "symbol": "java/lang/String#replaceAll().",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 12,
+      "startCharacter": 20,
+      "endLine": 12,
+      "endCharacter": 26
+     },
+     "symbol": "scala/Predef.String#",
+     "role": "REFERENCE"
+    },
+    {
+     "range": {
+      "startLine": 13,
+      "startCharacter": 94,
+      "endLine": 13,
+      "endCharacter": 105
+     },
+     "symbol": "java/lang/String#toLowerCase(+1).",
+     "role": "REFERENCE"
+    }
+   ]
+  }
+ ]
+}
