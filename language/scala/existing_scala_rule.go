@@ -127,21 +127,31 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	sc := scalaconfig.Get(rctx.Config)
-	sc.Imports(scalaRule.ResolveImports(rctx), rctx.Rule, "deps", rctx.From)
-	if s.isLibrary {
-		sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
+	imports := scalaRule.ResolveImports(rctx)
+	sc.Imports(imports, rctx.Rule, "deps", rctx.From)
+
+	commentsSrcs := rctx.Rule.AttrComments("srcs")
+	commentsSrcs.Before = nil
+	if sc.ShouldAnnotateImports() {
+		scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
 	}
 
-	srcs := rctx.Rule.Attr("srcs")
-	if sc.ShouldAnnotateRule() {
-		if comments, err := makeRuleComments(scalaRule.pb); err != nil {
-			log.Fatalln("annotating rule:", err)
-		} else {
-			srcs.Comment().Before = comments
-		}
-	} else {
-		srcs.Comment().Before = nil
+	if s.isLibrary {
+		exports := scalaRule.ResolveExports(rctx)
+		sc.Exports(exports, rctx.Rule, "exports", rctx.From)
 	}
+
+	// srcs := rctx.Rule.Attr("srcs")
+	// if sc.ShouldAnnotateRule() {
+	// 	if comments, err := makeRuleComments(scalaRule.pb); err != nil {
+	// 		log.Fatalln("annotating rule:", err)
+	// 	} else {
+	// 		srcs.Comment().Before = comments
+	// 	}
+	// 	// } else {
+	// 	// 	srcs.Comment().Before = nil
+	// }
+
 }
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {

@@ -111,7 +111,7 @@ func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.E
 	hasSemanticDbSuffixComment := false
 	for _, c := range append(expr.Comment().Before, expr.Comment().Suffix...) {
 		text := strings.TrimSpace(strings.TrimPrefix(c.Token, "#"))
-		if text == semanticDbName {
+		if text == semanticDbName || strings.HasPrefix(text, "SEMANTIC") {
 			hasSemanticDbSuffixComment = true
 			break
 		}
@@ -120,7 +120,7 @@ func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.E
 		return false
 	}
 
-	// at this point in the function, we know the dep was labeled as a semanticdb-managed dep.  If the resolved import
+	// at this point in the function, we know the dep was labeled as a semanticdb-managed dep.
 	if dep.Import.Source == nil {
 		return false
 	}

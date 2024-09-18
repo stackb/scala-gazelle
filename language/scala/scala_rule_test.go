@@ -281,7 +281,7 @@ func TestScalaRuleImports(t *testing.T) {
 			})
 
 			imports := scalaRule.Imports()
-			got := make([]string, len(imports))
+			got := make([]string, len(imports.Keys()))
 			for i, imp := range imports.Values() {
 				got[i] = imp.String()
 			}

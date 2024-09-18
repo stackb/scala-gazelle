@@ -418,7 +418,7 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *Config) shouldAnnotateImports() bool {
+func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
 }
@@ -439,7 +439,8 @@ func (c *Config) ShouldAnnotateRule() bool {
 }
 
 func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
-	return &build.Comment{Token: "# " + imp.Symbol.Provider}
+	return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+	// return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
@@ -509,7 +510,7 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 }
 
 func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(imports, r, c.shouldAnnotateImports(), attrName, from)
+	c.ruleAttrMergeDeps(imports, r, c.ShouldAnnotateImports(), attrName, from)
 }
 
 func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
@@ -519,7 +520,7 @@ func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName stri
 func (c *Config) ruleAttrMergeDeps(
 	imports resolver.ImportMap,
 	r *rule.Rule,
-	shouldAnnotateSrcs bool,
+	shouldAnnotate bool,
 	attrName string,
 	from label.Label,
 ) {
@@ -543,15 +544,6 @@ func (c *Config) ruleAttrMergeDeps(
 		r.SetAttr(attrName, next)
 	} else {
 		r.DelAttr(attrName)
-	}
-
-	// Apply annotations if requested
-	if shouldAnnotateSrcs {
-		comments := r.AttrComments("srcs")
-		if comments != nil {
-			prefix := attrName + ": "
-			annotateImports(imports, comments, prefix)
-		}
 	}
 }
 
@@ -634,14 +626,14 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 	}
 
 	// Sort the list
-	sort.SliceStable(dst.List, func(i, j int) bool {
-		a, aIsString := dst.List[i].(*build.StringExpr)
-		b, bIsString := dst.List[j].(*build.StringExpr)
-		if aIsString && bIsString {
-			return a.Token < b.Token
-		}
-		return false
-	})
+	// sort.SliceStable(dst.List, func(i, j int) bool {
+	// 	a, aIsString := dst.List[i].(*build.StringExpr)
+	// 	b, bIsString := dst.List[j].(*build.StringExpr)
+	// 	if aIsString && bIsString {
+	// 		return a.Token < b.Token
+	// 	}
+	// 	return false
+	// })
 
 	return dst
 }
@@ -725,11 +717,11 @@ func removeDepsCleaner(slice []resolver.DepsCleaner, index int) []resolver.DepsC
 	return append(slice[:index], slice[index+1:]...)
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
-	comments.Before = nil
+func AnnotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
 	for _, key := range imports.Keys() {
-		imp := imports[key]
+		imp, _ := imports.Get(key)
 		comment := setCommentPrefix(imp.Comment(), prefix)
+		// log.Printf("%d: %v", i, comment.Token)
 		comments.Before = append(comments.Before, comment)
 	}
 }

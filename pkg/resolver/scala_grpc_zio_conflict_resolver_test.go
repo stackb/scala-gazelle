@@ -103,8 +103,12 @@ func TestScalaGrpcZioConflictResolver(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			universe := mocks.NewUniverse(t)
-			resolver := resolver.ScalaGrpcZioConflictResolver{}
-			got, gotOk := resolver.ResolveConflict(universe, &tc.rule, tc.imports, &tc.imp, &tc.symbol)
+			rslv := resolver.ScalaGrpcZioConflictResolver{}
+			imports := tc.imports
+			if imports == nil {
+				imports = resolver.NewImportMap()
+			}
+			got, gotOk := rslv.ResolveConflict(universe, &tc.rule, imports, &tc.imp, &tc.symbol)
 			if diff := cmp.Diff(tc.wantOk, gotOk); diff != "" {
 				t.Errorf("ok (-want +got):\n%s", diff)
 			}

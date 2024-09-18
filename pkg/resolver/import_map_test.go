@@ -11,6 +11,41 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
+func TestImportMapKeys(t *testing.T) {
+	for name, tc := range map[string]struct {
+		imports []*resolver.Import
+		want    []string
+	}{
+		"degenerate": {
+			want: []string{},
+		},
+		"maintains insert order properly": {
+			imports: []*resolver.Import{
+				{Imp: "c", Kind: parse.ImportKind_DIRECT},
+				{Imp: "a", Kind: parse.ImportKind_EXTENDS},
+				{Imp: "b", Kind: parse.ImportKind_IMPLICIT},
+			},
+			want: []string{"c", "a", "b"},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			importMap := resolver.NewImportMap(tc.imports...)
+			keys := importMap.Keys()
+			if diff := cmp.Diff(tc.want, keys); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+			keys = []string{}
+			for _, imp := range importMap.Values() {
+				keys = append(keys, imp.Imp)
+			}
+			if diff := cmp.Diff(tc.want, keys); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+
+		})
+	}
+}
+
 func TestImportMapDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
 		from    label.Label
