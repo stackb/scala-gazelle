@@ -13,6 +13,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -68,16 +69,13 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	if sl.debugProcessFlagValue {
+		collections.PrintProcessIdForDelveAndWait()
+	}
 	if sl.printCacheKey && sl.cacheKeyFlagValue != "" {
 		fmt.Printf("scala-gazelle: cache v.%s\n", sl.cacheKeyFlagValue)
 	}
-	if sl.debugProcessFlagValue {
-		fmt.Printf("Debugging session requested (Process ID: %d)\n", os.Getpid())
-		fmt.Printf("NOTE: binary must be built with debug symbols for this to work (e.g 'bazel run -c dbg //:gazelle')\n")
-		fmt.Printf("dlv attach --headless --listen=:2345 %d\n", os.Getpid())
-		fmt.Println("Press ENTER to continue.")
-		fmt.Scanln()
-	}
+
 	sl.symbolResolver = newUniverseResolver(sl, sl.globalPackages)
 
 	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {

@@ -6,16 +6,16 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 scala_library(
     name = "app",
-    # deps: ✅ javax.inject<PACKAGE> @maven//:javax_inject_javax_inject<maven> (IMPLICIT via "javax.xml._")
-    # deps: ✅ javax.xml._<PACKAGE> @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
-    # deps: ❌ org.junit.rules.TemporaryFolder<ERROR> symbol not found (DIRECT of Main.scala)
+    # import: ✅ javax.xml._<PACKAGE> @maven//:xml_apis_xml_apis<maven> (DIRECT of Main.scala)
+    # import: ❌ org.junit.rules.TemporaryFolder<ERROR> symbol not found (DIRECT of Main.scala)
+    # import: ✅ javax.inject<PACKAGE> @maven//:javax_inject_javax_inject<maven> (IMPLICIT via "javax.xml._")
     srcs = ["Main.scala"],
     deps = [
         # junit is required for compilation but we haven't specified
         # that @atlassian-public deps should be managed by the scala-gazelle
         # extension (so this is left alone despite no # keep directive)
         "@atlassian-public//:junit_junit",
-        "@maven//:javax_inject_javax_inject",  # maven
-        "@maven//:xml_apis_xml_apis",  # maven
+        "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject)
+        "@maven//:xml_apis_xml_apis",  # DIRECT (maven javax.xml)
     ],
 )

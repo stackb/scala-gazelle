@@ -75,6 +75,9 @@ func (imports *OrderedImportMap) Deps(from label.Label) map[label.Label]*ImportL
 			continue
 		}
 		seen[dep] = true
+		if dep == label.NoLabel {
+			continue
+		}
 		// remove relative self imports (TODO: should these have been removed
 		// earlier?)
 		if dep.Relative && dep.Name == from.Name {

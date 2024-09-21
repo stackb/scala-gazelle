@@ -88,7 +88,7 @@ func newScalaRule(
 
 // ResolveExports performs symbol resolution for exports of the rule.
 func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.ImportMap {
-	exports := r.Exports()
+	exports := r.Exports(rctx.From)
 
 	//
 	// part 1: resolve any unsettled imports and populate the transitive stack.
@@ -112,7 +112,7 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 
 // ResolveImports performs symbol resolution for imports of the rule.
 func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.ImportMap {
-	imports := r.Imports()
+	imports := r.Imports(rctx.From)
 	sc := scalaconfig.Get(rctx.Config)
 
 	for _, imp := range imports.Values() {
@@ -146,7 +146,7 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 }
 
 // Imports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Imports() resolver.ImportMap {
+func (r *scalaRule) Imports(from label.Label) resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
 
@@ -155,14 +155,13 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 		imports.Put(resolver.NewMainClassImport(mainClass))
 	}
 
-	from := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name())
-
 	// direct
 	for _, file := range r.files {
 		r.fileImports(imports, file, from)
 	}
 
-	// semantic
+	// semantic add in semantic imports after direct ones to minimize the delta
+	// between running gazelle with and without semanticdb info.
 	for _, file := range r.files {
 		r.fileSemanticImports(imports, file, from)
 	}
@@ -188,20 +187,19 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 }
 
 // Exports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Exports() resolver.ImportMap {
+func (r *scalaRule) Exports(from label.Label) resolver.ImportMap {
 	exports := resolver.NewImportMap()
 
 	for _, file := range r.files {
-		r.fileExports(file, exports)
+		r.fileExports(file, exports, from)
 	}
 
 	return exports
 }
 
 // fileExports gathers exports for the given file.
-func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
+func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, from label.Label) {
 
-	from := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name())
 	putExport := resolver.PutImportIfNotSelf(exports, from)
 
 	var scopes []resolver.Scope
@@ -264,16 +262,13 @@ func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName s
 	}
 }
 
-// fileSemanticImports gathers needed imports for the given file.
+// fileSemanticImports gathers needed semantic imports for the given file.
 func (r *scalaRule) fileSemanticImports(imports resolver.ImportMap, file *sppb.File, from label.Label) {
 
 	putImport := resolver.PutImportIfNotSelf(imports, from)
 
-	// lastly, add in semantic imports.  Do this to minimize the delta between
-	// running with or without semanticimport info.
 	for _, name := range file.SemanticImports {
 		imp := resolver.NewSemanticImport(name, file)
-		// try and resolve the symbol such that we can determine self-imports
 		if sym, ok := r.ctx.scope.GetSymbol(imp.Imp); ok {
 			imp.Symbol = sym
 		}
@@ -284,21 +279,11 @@ func (r *scalaRule) fileSemanticImports(imports resolver.ImportMap, file *sppb.F
 
 // fileImports gathers needed imports for the given file.
 func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, from label.Label) {
-	// rel := r.ctx.scalaConfig.Rel()
-	// if rel == "trumid/common/utils/collection" {
-	// 	log.Println(rel, r.ctx.rule.Name(), "fileImports:")
-	// }
 
-	putImport := resolver.PutImportIfNotSelf(imports, from)
-	// putImport := func(imp *resolver.Import) {
-	// 	rel := r.ctx.scalaConfig.Rel()
-	// 	if rel == "trumid/common/utils/collection" {
-	// 		log.Println(rel, r.ctx.rule.Name(), "putImport:", imp)
-	// 	}
-	// 	putImportIfNotSelf(imp)
-	// }
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
+
+	putImport := resolver.PutImportIfNotSelf(imports, from)
 
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
@@ -385,7 +370,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 		if !resolvedOK {
-			log.Printf("warning: invalid extends token: symbol %q: was not found' ", name)
+			log.Fatalf("invalid extends token: symbol %q: was not found' ", name)
 		}
 
 		for _, imp := range extends.Classes {

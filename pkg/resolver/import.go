@@ -181,8 +181,9 @@ func IsWildcardImport(imp string) (string, bool) {
 
 func PutImportIfNotSelf(imports ImportMap, from label.Label) func(*Import) {
 	return func(imp *Import) {
-		if !IsSelfImport(imp.Symbol, from.Repo, from.Pkg, from.Name) {
-			imports.Put(imp)
+		if IsSelfImport(imp.Symbol, from.Repo, from.Pkg, from.Name) {
+			return
 		}
+		imports.Put(imp)
 	}
 }

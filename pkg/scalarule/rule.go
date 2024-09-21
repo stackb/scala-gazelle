@@ -1,6 +1,7 @@
 package scalarule
 
 import (
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -12,7 +13,7 @@ type Rule interface {
 	// rules.
 	Provides() []resolve.ImportSpec
 	// Import returns the list of required imports for the rule.
-	Imports() resolver.ImportMap
+	Imports(from label.Label) resolver.ImportMap
 	// Import returns the list of required exports for the rule.
-	Exports() resolver.ImportMap
+	Exports(from label.Label) resolver.ImportMap
 }

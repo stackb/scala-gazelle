@@ -137,8 +137,8 @@ func TestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
+				"✅ com.foo.Bar<> (DIRECT of A.scala)",
 				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
-				`✅ com.foo.Bar<> (DIRECT of A.scala)`,
 			},
 		},
 		"extends symbol completed by wildcard import": {
@@ -163,8 +163,8 @@ func TestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
 				"✅ akka.actor._<> (DIRECT of A.scala)",
+				`✅ akka.actor.Actor<CLASS> @maven//:akka_actor_akka_actor<maven> (EXTENDS of A.scala via "com.foo.ClassA")`,
 			},
 		},
 		"resolve_with via extends": {
@@ -249,8 +249,8 @@ func TestScalaRuleImports(t *testing.T) {
 				},
 			},
 			want: []string{
-				`✅ com.foo.proto.FooMessage<CLASS> //proto:foo_proto_scala_library<protobuf> (EXTENDS of A.scala via "com.foo.ClassA")`,
 				"✅ com.foo.proto._<> (DIRECT of A.scala)",
+				`✅ com.foo.proto.FooMessage<CLASS> //proto:foo_proto_scala_library<protobuf> (EXTENDS of A.scala via "com.foo.ClassA")`,
 			},
 		},
 	} {
@@ -280,7 +280,7 @@ func TestScalaRuleImports(t *testing.T) {
 				Files: tc.files,
 			})
 
-			imports := scalaRule.Imports()
+			imports := scalaRule.Imports(tc.from)
 			got := make([]string, len(imports.Keys()))
 			for i, imp := range imports.Values() {
 				got[i] = imp.String()
