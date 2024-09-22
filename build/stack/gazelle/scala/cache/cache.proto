@@ -8,7 +8,7 @@ option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/c
 option java_package = "build.stack.gazelle.scala.cache";
 option java_multiple_files = true;
 
-// Cache represents the scala gazelle cache.
+// Cache represents the scala gazelle file parse rule cache.
 message Cache {
     // package_count is the number of packages visited
     // during the generation phase.
@@ -18,5 +18,11 @@ message Cache {
     // key is a string that is persisted in the cache file.  If the key changes,
     // the cache is evicted.
     string key = 3;
+}
+
+// Resolved imports is a mapping between a fully-qualified scala import type and
+// the bazel label that provides it.
+message ResolvedImports {
+    map<string,string> imports = 1;
 }
 

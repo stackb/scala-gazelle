@@ -37,6 +37,7 @@ func (sl *scalaLang) onEnd() {
 		}
 	}
 
+	sl.dumpResolvedImportMap()
 	sl.reportCoverage(log.Printf)
 	sl.stopCpuProfiling()
 	sl.stopMemoryProfiling()
