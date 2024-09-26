@@ -13,16 +13,16 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/wildcardimport"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
-	debugSelfImports         = false
 	debugNameNotFound        = false
 	debugUnresolved          = false
 	debugExtendsNameNotFound = false
@@ -88,7 +88,7 @@ func newScalaRule(
 
 // ResolveExports performs symbol resolution for exports of the rule.
 func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.ImportMap {
-	exports := r.Exports()
+	exports := r.Exports(rctx.From)
 
 	//
 	// part 1: resolve any unsettled imports and populate the transitive stack.
@@ -112,51 +112,28 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 
 // ResolveImports performs symbol resolution for imports of the rule.
 func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.ImportMap {
-	imports := r.Imports()
+	imports := r.Imports(rctx.From)
 	sc := scalaconfig.Get(rctx.Config)
 
-	transitive := newImportSymbols()
-
-	//
-	// part 1: resolve any unsettled imports and populate the transitive stack.
-	//
 	for _, imp := range imports.Values() {
 		if imp.Error != nil {
 			continue
 		}
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
+			if len(imp.Symbol.Conflicts) > 0 {
+				if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, imp, imp.Symbol); ok {
+					imp.Symbol = resolved
+				} else {
+					fmt.Println(resolver.SymbolConfictMessage(imp.Symbol, imp, rctx.From))
+				}
+			}
+
 		} else {
 			if debugUnresolved {
 				log.Println("unresolved import:", imp)
 			}
 			imp.Error = resolver.ErrSymbolNotFound
-		}
-		if imp.Symbol != nil {
-			transitive.Push(imp, imp.Symbol)
-		}
-	}
-
-	//
-	// part 2: process each symbol and address conflicts, transitively.
-	//
-	for !transitive.IsEmpty() {
-		item, _ := transitive.Pop()
-
-		if len(item.sym.Conflicts) > 0 {
-			if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, item.imp, item.sym); ok {
-				item.imp.Symbol = resolved
-			} else {
-				fmt.Println(resolver.SymbolConfictMessage(item.sym, item.imp, rctx.From))
-			}
-		}
-
-		for _, req := range item.sym.Requires {
-			if _, ok := imports[req.Name]; ok {
-				continue
-			}
-			imports.Put(resolver.NewTransitiveImport(req.Name, item.sym.Name, req))
-			transitive.Push(item.imp, req)
 		}
 	}
 
@@ -169,7 +146,7 @@ func (r *scalaRule) ResolveSymbol(c *config.Config, ix *resolve.RuleIndex, from 
 }
 
 // Imports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Imports() resolver.ImportMap {
+func (r *scalaRule) Imports(from label.Label) resolver.ImportMap {
 	imports := resolver.NewImportMap()
 	impLang := scalaLangName
 
@@ -180,7 +157,13 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 
 	// direct
 	for _, file := range r.files {
-		r.fileImports(imports, file)
+		r.fileImports(imports, file, from)
+	}
+
+	// semantic add in semantic imports after direct ones to minimize the delta
+	// between running gazelle with and without semanticdb info.
+	for _, file := range r.files {
+		r.fileSemanticImports(imports, file, from)
 	}
 
 	// Initialize a list of symbols to find implicits for from all known
@@ -204,30 +187,23 @@ func (r *scalaRule) Imports() resolver.ImportMap {
 }
 
 // Exports implements part of the scalarule.Rule interface.
-func (r *scalaRule) Exports() resolver.ImportMap {
+func (r *scalaRule) Exports(from label.Label) resolver.ImportMap {
 	exports := resolver.NewImportMap()
 
 	for _, file := range r.files {
-		r.fileExports(file, exports)
+		r.fileExports(file, exports, from)
 	}
 
 	return exports
 }
 
-// fileExports gathers needed imports for the given file.
-func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
+// fileExports gathers exports for the given file.
+func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, from label.Label) {
+
+	putExport := resolver.PutImportIfNotSelf(exports, from)
+
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
-
-	putExport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
-			if debugSelfImports {
-				log.Println("skipping export from current", imp.Imp)
-			}
-			return
-		}
-		exports.Put(imp)
-	}
 
 	// add in outer scope
 	scopes = append(scopes, r.ctx.scope, direct)
@@ -278,20 +254,36 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap) {
 
 }
 
+func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName string) func(*resolver.Import) {
+	return func(imp *resolver.Import) {
+		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
+			imports.Put(imp)
+		}
+	}
+}
+
+// fileSemanticImports gathers needed semantic imports for the given file.
+func (r *scalaRule) fileSemanticImports(imports resolver.ImportMap, file *sppb.File, from label.Label) {
+
+	putImport := resolver.PutImportIfNotSelf(imports, from)
+
+	for _, name := range file.SemanticImports {
+		imp := resolver.NewSemanticImport(name, file)
+		if sym, ok := r.ctx.scope.GetSymbol(imp.Imp); ok {
+			imp.Symbol = sym
+		}
+		putImport(imp)
+	}
+
+}
+
 // fileImports gathers needed imports for the given file.
-func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
+func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, from label.Label) {
+
 	var scopes []resolver.Scope
 	direct := resolver.NewTrieScope()
 
-	putImport := func(imp *resolver.Import) {
-		if resolver.IsSelfImport(imp, "", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()) {
-			if debugSelfImports {
-				log.Println("skipping import from current", imp.Imp)
-			}
-			return
-		}
-		imports.Put(imp)
-	}
+	putImport := resolver.PutImportIfNotSelf(imports, from)
 
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
@@ -313,6 +305,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 					}
 				}
 			}
+
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
@@ -392,17 +385,6 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File) {
 		}
 	}
 
-	// resolve symbols named in the file.  For each one we find, add an import.
-	for _, name := range file.Names {
-		if !r.ctx.scalaConfig.ShouldResolveFileSymbolName(file.Filename, name) {
-			continue
-		}
-		if sym, ok := scope.GetSymbol(name); ok {
-			putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
-		} else {
-			putImport(resolver.NewErrorImport(name, file, "", fmt.Errorf("name not found")))
-		}
-	}
 }
 
 // Provides implements part of the scalarule.Rule interface.
@@ -468,44 +450,6 @@ func importBasename(imp string) string {
 		return imp
 	}
 	return imp[index+1:]
-}
-
-// importSymbol is a pair (import, symbol). If pair.imp.Symbol == pair.sym it
-// represents a direct, otherwise pair.sym is a transitive requirement of
-// pair.imp.
-type importSymbol struct {
-	imp *resolver.Import
-	sym *resolver.Symbol
-}
-
-// importSymbols is a stack of importSymbol pairs.
-type importSymbols []*importSymbol
-
-func newImportSymbols() importSymbols {
-	return []*importSymbol{}
-}
-
-// IsEmpty checks if the stack is empty
-func (s *importSymbols) IsEmpty() bool {
-	return len(*s) == 0
-}
-
-// Push a new pair onto the stack
-func (s *importSymbols) Push(imp *resolver.Import, sym *resolver.Symbol) {
-	*s = append(*s, &importSymbol{imp, sym})
-}
-
-// Pop: remove and return top element of stack, return false if stack is empty
-func (s *importSymbols) Pop() (*importSymbol, bool) {
-	if s.IsEmpty() {
-		return nil, false
-	}
-
-	i := len(*s) - 1
-	x := (*s)[i]
-	*s = (*s)[:i]
-
-	return x, true
 }
 
 func extendsKeysSorted(collection map[string]*sppb.ClassList) []string {

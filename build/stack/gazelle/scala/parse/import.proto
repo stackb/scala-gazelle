@@ -66,4 +66,6 @@ enum ImportKind {
     // An import required as a transitive dependency of some direct/initial
     // dependency.
     TRANSITIVE = 6;
+    // An import that was derived from the semanticdb type list for the file.option
+    SEMANTIC = 7;
 }

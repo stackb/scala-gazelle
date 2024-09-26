@@ -1,0 +1,13 @@
+load("//tools/plantuml:plantuml.bzl", "plantuml_diagram")
+
+plantuml_diagram(
+    name = "sequence",
+    src = "sequence.puml",
+    dst = "sequence.png",
+)
+
+plantuml_diagram(
+    name = "components",
+    src = "components.puml",
+    dst = "components.png",
+)

@@ -108,9 +108,12 @@ func (s *ScalametaParser) Start() error {
 		s.HttpPort = port
 	}
 	s.httpUrl = fmt.Sprintf("http://127.0.0.1:%d", s.HttpPort)
+	if debugParse {
+		log.Println("httpUrl:", s.httpUrl)
+	}
 
 	//
-	// Setup the bun process
+	// Setup the node process
 	//
 	exe, err := memexec.New(nodeExe)
 	if err != nil {
@@ -119,7 +122,7 @@ func (s *ScalametaParser) Start() error {
 	s.process = exe
 
 	//
-	// Start the bun process
+	// Start the node process
 	//
 	cmd := exe.Command("scalameta_parser.mjs")
 	cmd.Dir = processDir
@@ -131,6 +134,10 @@ func (s *ScalametaParser) Start() error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	s.cmd = cmd
+
+	if debugParse {
+		log.Println("cmd:", s.cmd)
+	}
 
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("starting process %s: %w", scalametaParsersIndexJs, err)
@@ -145,11 +152,19 @@ func (s *ScalametaParser) Start() error {
 		}
 	}()
 
+	if debugParse {
+		log.Println("parse connection created!")
+	}
+
 	host := "localhost"
 	port := s.HttpPort
-	timeout := 3 * time.Second
-	if !collections.WaitForConnectionAvailable(host, port, timeout) {
-		return fmt.Errorf("waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
+	timeout := 10 * time.Second
+	if !collections.WaitForConnectionAvailable(host, port, timeout, debugParse) {
+		return fmt.Errorf("timeout waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
+	}
+
+	if debugParse {
+		log.Println("parse connection available!")
 	}
 
 	//

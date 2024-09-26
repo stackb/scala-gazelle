@@ -472,8 +472,8 @@ func (p *bazelDepsProvider) loadFile(dir string, filename string, scope resolver
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *bazelDepsProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
-	if dep.Repo == "bazel_deps" {
+func (p *bazelDepsProvider) CanProvide(dep *resolver.ImportLabel, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+	if dep.Label.Repo == "bazel_deps" {
 		return true
 	}
 	return false
@@ -934,10 +934,10 @@ Generates:
 ```bazel
 scala_binary(
     name = "app",
-    # deps: ❌ AbstractServiceBase<ERROR> symbol not found (EXTENDS of foo.allocation.Main)
-    # deps: ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
-    # deps: ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
-    # deps: ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
+    # import: ❌ AbstractServiceBase<ERROR> symbol not found (EXTENDS of foo.allocation.Main)
+    # import: ✅ akka.NotUsed<CLASS> @maven//:com_typesafe_akka_akka_actor_2_12<jarindex> (DIRECT of BusinessFlows.scala)
+    # import: ✅ java.time.format.DateTimeFormatter<CLASS> NO-LABEL<java> (DIRECT of RequestHandler.scala)
+    # import: ✅ scala.concurrent.ExecutionContext<PACKAGE> @maven//:org_scala_lang_scala_library<maven> (DIRECT of RequestHandler.scala)
     srcs = glob(["src/main/**/*.scala"]),
     main_class = "foo.allocation.Main",
 )

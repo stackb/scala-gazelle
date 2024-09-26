@@ -30,6 +30,7 @@ def workspace_deps():
     io_bazel_rules_scala()
     protobuf_core_deps()
     hermetic_cc_toolchain()
+    plantuml_jar()
 
 def protobuf_core_deps():
     bazel_skylib()  # via com_google_protobuf
@@ -282,4 +283,12 @@ def hermetic_cc_toolchain():
             "https://mirror.bazel.build/github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
             "https://github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
         ],
+    )
+
+def plantuml_jar():
+    _maybe(
+        http_jar,
+        name = "plantuml_jar",
+        url = "https://github.com/plantuml/plantuml/releases/download/v1.2024.6/plantuml-1.2024.6.jar",
+        sha256 = "5a8dc3b37fe133a4744e55be80caf6080a70350aba716d95400a0f0cbd79e846",
     )

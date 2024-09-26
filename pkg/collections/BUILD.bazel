@@ -4,6 +4,7 @@ go_library(
     name = "collections",
     srcs = [
         "box_type.go",
+        "debugging.go",
         "fs.go",
         "intent.go",
         "net.go",

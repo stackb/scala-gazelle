@@ -1,6 +1,7 @@
 package resolver_test
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -9,6 +10,41 @@ import (
 	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
+
+func TestImportMapKeys(t *testing.T) {
+	for name, tc := range map[string]struct {
+		imports []*resolver.Import
+		want    []string
+	}{
+		"degenerate": {
+			want: []string{},
+		},
+		"maintains insert order properly": {
+			imports: []*resolver.Import{
+				{Imp: "c", Kind: parse.ImportKind_DIRECT},
+				{Imp: "a", Kind: parse.ImportKind_EXTENDS},
+				{Imp: "b", Kind: parse.ImportKind_IMPLICIT},
+			},
+			want: []string{"c", "a", "b"},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			importMap := resolver.NewImportMap(tc.imports...)
+			keys := importMap.Keys()
+			if diff := cmp.Diff(tc.want, keys); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+			keys = []string{}
+			for _, imp := range importMap.Values() {
+				keys = append(keys, imp.Imp)
+			}
+			if diff := cmp.Diff(tc.want, keys); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+
+		})
+	}
+}
 
 func TestImportMapDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
@@ -106,9 +142,16 @@ func TestImportMapDeps(t *testing.T) {
 			}
 			labels := importMap.Deps(tc.from)
 			got := make([]label.Label, len(labels))
-			for i, v := range labels {
-				got[i] = v.Label
+			var i int
+			for lbl := range labels {
+				got[i] = lbl
+				i++
 			}
+			sort.Slice(got, func(i, j int) bool {
+				a := got[i]
+				b := got[j]
+				return a.String() < b.String()
+			})
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

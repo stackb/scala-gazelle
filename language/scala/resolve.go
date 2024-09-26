@@ -10,7 +10,7 @@ import (
 
 // Imports implements part of the language.Language interface
 func (sl *scalaLang) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
-	from := label.Label{Pkg: f.Pkg, Name: r.Name()}
+	from := label.New("", f.Pkg, r.Name())
 
 	pkg, ok := sl.packages[from.Pkg]
 	if !ok {

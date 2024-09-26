@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/buildtools/build"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -33,6 +34,15 @@ type Import struct {
 func NewDirectImport(imp string, source *sppb.File) *Import {
 	return &Import{
 		Kind:   sppb.ImportKind_DIRECT,
+		Imp:    imp,
+		Source: source,
+	}
+}
+
+// NewSemanticImport creates a new semantic import from the given file.
+func NewSemanticImport(imp string, source *sppb.File) *Import {
+	return &Import{
+		Kind:   sppb.ImportKind_SEMANTIC,
 		Imp:    imp,
 		Source: source,
 	}
@@ -146,17 +156,17 @@ func (imp *Import) String() string {
 	return strings.Join(parts, " ")
 }
 
-func IsSelfImport(imp *Import, repo, pkg, name string) bool {
-	if imp.Symbol == nil {
+func IsSelfImport(symbol *Symbol, repo, pkg, name string) bool {
+	if symbol == nil {
 		return false
 	}
 	if repo != "" {
 		return false
 	}
-	if pkg != imp.Symbol.Label.Pkg {
+	if pkg != symbol.Label.Pkg {
 		return false
 	}
-	if name != imp.Symbol.Label.Name {
+	if name != symbol.Label.Name {
 		return false
 	}
 	return true
@@ -167,4 +177,13 @@ func IsWildcardImport(imp string) (string, bool) {
 		return "", false
 	}
 	return imp[:len(imp)-len("._")], true
+}
+
+func PutImportIfNotSelf(imports ImportMap, from label.Label) func(*Import) {
+	return func(imp *Import) {
+		if IsSelfImport(imp.Symbol, from.Repo, from.Pkg, from.Name) {
+			return
+		}
+		imports.Put(imp)
+	}
 }

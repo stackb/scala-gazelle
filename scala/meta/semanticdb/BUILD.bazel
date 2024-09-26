@@ -1,0 +1,32 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "semanticdb_proto",
+    srcs = ["semanticdb.proto"],
+    visibility = ["//scala/meta:__subpackages__"],
+    deps = ["//scalapb:scalapb_proto"],
+)
+
+proto_compiled_sources(
+    name = "semanticdb_go_compiled_sources",
+    srcs = ["semanticdb.pb.go"],
+    output_mappings = [
+        "semanticdb.pb.go=github.com/stackb/scala-gazelle/scala/meta/semanticdb/semanticdb.pb.go",
+    ],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "semanticdb_proto",
+)
+
+go_library(
+    name = "semanticdb",
+    srcs = ["semanticdb.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/scala/meta/semanticdb",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//scalapb",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

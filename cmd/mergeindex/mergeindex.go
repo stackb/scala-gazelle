@@ -72,7 +72,7 @@ func readParamsFile(filename string) ([]string, error) {
 }
 
 func parseFlags(args []string) (files []string, err error) {
-	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError) // flag.ContinueOnError
+	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError)
 	fs.StringVar(&predefinedLabels, "predefined", "", "a comma-separated list of labels to be considered predefined")
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Usage = func() {

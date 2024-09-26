@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -87,8 +88,8 @@ func (p *JavaProvider) OnEnd() error {
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *JavaProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
-	if _, ok := p.byLabel[dep]; ok {
+func (p *JavaProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+	if _, ok := p.byLabel[dep.Label]; ok {
 		return true
 	}
 	return false

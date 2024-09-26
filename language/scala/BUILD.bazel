@@ -3,7 +3,6 @@ load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 # load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
-# gazelle:exclude oldtestdata
 
 go_library(
     name = "scala",
@@ -93,6 +92,7 @@ go_test(
     embed = [":scala"],
     deps = [
         "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
         "//pkg/resolver",
         "//pkg/resolver/mocks",
         "//pkg/scalaconfig",

@@ -8,11 +8,18 @@ option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/p
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
 
+// FileSet represents a set of Files
+message FileSet {
+    repeated File files = 1;
+}
+
 // File represents a parsed file named in a scala rule.srcs list.
-// next: 2 (was sha256, can be re-used)
 message File {
     // filename is the (relative) source filename
     string filename = 1;
+    // semantic_imports is a list of types used by the file, typically
+    // discovered using semanticdb.
+    repeated string semantic_imports = 2;
     // imports is a list of required imports.
     repeated string imports = 3;
     // packages is a list of provided top-level classes.

@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "semanticdbmerge_lib",
+    srcs = ["semanticdbmerge.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/semanticdbmerge",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/protobuf",
+        "//pkg/semanticdb",
+        "//scala/meta/semanticdb",
+    ],
+)
+
+go_binary(
+    name = "semanticdbmerge",
+    embed = [":semanticdbmerge_lib"],
+    visibility = ["//visibility:public"],
+)

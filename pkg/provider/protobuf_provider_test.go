@@ -7,6 +7,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 	"github.com/google/go-cmp/cmp"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
@@ -76,6 +77,7 @@ func TestProtoSymbolProviderCanProvide(t *testing.T) {
 		lang      string
 		imports   map[string]map[label.Label][]string
 		from      label.Label
+		expr      build.Expr
 		indexFunc func(from label.Label) (*rule.Rule, bool)
 		want      bool
 	}{
@@ -107,7 +109,7 @@ func TestProtoSymbolProviderCanProvide(t *testing.T) {
 			p.CheckFlags(flags, c, scope)
 			p.OnResolve()
 
-			got := p.CanProvide(tc.from, tc.indexFunc)
+			got := p.CanProvide(&resolver.ImportLabel{Label: tc.from}, tc.expr, tc.indexFunc)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf(".CanProvide (-want +got):\n%s", diff)

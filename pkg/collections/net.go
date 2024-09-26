@@ -2,6 +2,7 @@ package collections
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -12,7 +13,7 @@ const connectionAvailableDuration = 250 * time.Millisecond
 // WaitForConnectionAvailable pings a tcp connection every 250 milliseconds
 // until it connects and returns true.  If it fails to connect by the timeout
 // deadline, returns false.
-func WaitForConnectionAvailable(host string, port int, timeout time.Duration) bool {
+func WaitForConnectionAvailable(host string, port int, timeout time.Duration, progress bool) bool {
 	target := fmt.Sprintf("%s:%d", host, port)
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -26,6 +27,9 @@ func WaitForConnectionAvailable(host string, port int, timeout time.Duration) bo
 				_, err := net.Dial("tcp", target)
 				if err == nil {
 					break
+				}
+				if progress {
+					log.Println(err)
 				}
 				time.Sleep(connectionAvailableDuration)
 			}

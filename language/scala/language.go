@@ -105,8 +105,6 @@ func (*scalaLang) KnownDirectives() []string {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	packages := make(map[string]*scalaPackage)
-
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
 		cache:                scpb.Cache{},
@@ -115,19 +113,23 @@ func NewLanguage() language.Language {
 		knownRules:           make(map[label.Label]*rule.Rule),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		depsCleaners:         make(map[string]resolver.DepsCleaner),
-		packages:             packages,
+		packages:             make(map[string]*scalaPackage),
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
 	}
 
-	lang.sourceProvider = provider.NewSourceProvider(func(msg string) {
+	progress := func(msg string) {
 		if lang.wantProgress {
 			writeParseProgress(lang.progress, msg)
 		}
-	})
-	lang.parser = parser.NewMemoParser(lang.sourceProvider)
+	}
+
+	lang.sourceProvider = provider.NewSourceProvider(progress)
+	semanticProvider := provider.NewSemanticdbProvider(lang.sourceProvider)
+	lang.parser = parser.NewMemoParser(semanticProvider)
 
 	lang.AddSymbolProvider(lang.sourceProvider)
+	lang.AddSymbolProvider(semanticProvider)
 	lang.AddSymbolProvider(provider.NewJavaProvider())
 	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))

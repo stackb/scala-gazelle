@@ -7,6 +7,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
+	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
@@ -26,16 +27,14 @@ var ErrRuleHasNoSrcs = fmt.Errorf("rule has no source files")
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
-	// rel is the package name (from args.Rel)
-	rel string
+	// args are the generateArgs
+	args language.GenerateArgs
 	// parser is the file parser
 	parser parser.Parser
 	// universe is the parent universe
 	universe resolver.Universe
 	// the registry to use
 	providerRegistry scalarule.ProviderRegistry
-	// the build file
-	file *rule.File
 	// the config for this package
 	cfg *scalaconfig.Config
 	// the generated and empty rule providers
@@ -51,18 +50,16 @@ type scalaPackage struct {
 
 // newScalaPackage constructs a Package given a list of scala files.
 func newScalaPackage(
-	rel string,
-	file *rule.File,
+	args language.GenerateArgs,
 	cfg *scalaconfig.Config,
 	providerRegistry scalarule.ProviderRegistry,
 	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
 	s := &scalaPackage{
-		rel:              rel,
+		args:             args,
 		parser:           parser,
 		universe:         universe,
 		providerRegistry: providerRegistry,
-		file:             file,
 		cfg:              cfg,
 		rules:            make(map[string]*rule.Rule),
 		resolveWork:      make([]func(), 0),
@@ -108,7 +105,7 @@ func (s *scalaPackage) Resolve(
 			From:      from,
 		}, importsRaw)
 	}
-	// the first resolve cycle populates the symbol scopes with
+	// the first resolve cycle populates the symbol scopes
 	fn()
 	s.resolveWork = append(s.resolveWork, fn)
 }
@@ -126,9 +123,9 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 	rules := make([]scalarule.RuleProvider, 0)
 
 	existingRulesByFQN := make(map[string][]*rule.Rule)
-	if s.file != nil {
-		for _, r := range s.file.Rules {
-			fqn := fullyQualifiedLoadName(s.file.Loads, r.Kind())
+	if s.args.File != nil {
+		for _, r := range s.args.File.Rules {
+			fqn := fullyQualifiedLoadName(s.args.File.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
 			if _, ok := s.providerRegistry.LookupProvider(fqn); ok {
 				s.ruleCoverage.total += 1
@@ -139,9 +136,8 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 	configuredRules := s.cfg.ConfiguredRules()
 
 	for _, ruleConfig := range configuredRules {
-		// if enabled != rc.Enabled {
 		if !ruleConfig.Enabled {
-			// log.Printf("%s: skipping rule config %s (not enabled)", s.rel, rc.Name)
+			// log.Printf("%s: skipping rule config %s (not enabled)", s.args.Rel, ruleConfig.Name)
 			continue
 		}
 		rule := s.provideRule(ruleConfig)
@@ -169,7 +165,7 @@ func (s *scalaPackage) provideRule(rc *scalarule.Config) scalarule.RuleProvider 
 	if !ok {
 		log.Fatalf(
 			"%s: rule provider not registered: %q (available: %v)",
-			s.rel,
+			s.args.Rel,
 			rc.Implementation,
 			s.providerRegistry.ProviderNames(),
 		)
@@ -184,7 +180,7 @@ func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule
 	if !ok {
 		log.Fatalf(
 			"%s: rule not registered: %q (available: %v)",
-			s.rel,
+			s.args.Rel,
 			rc.Implementation,
 			s.providerRegistry.ProviderNames(),
 		)
@@ -198,11 +194,16 @@ func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule
 	return nil
 }
 
+// GenerateArgs implements part of the scalarule.Package interface.
+func (s *scalaPackage) GenerateArgs() language.GenerateArgs {
+	return s.args
+}
+
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
 
-	dir := filepath.Join(s.repoRootDir(), s.rel)
-	srcs, err := glob.CollectFilenames(s.file, dir, r.Attr(attrName))
+	dir := filepath.Join(s.repoRootDir(), s.args.Rel)
+	srcs, err := glob.CollectFilenames(s.args.File, dir, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +211,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		return nil, ErrRuleHasNoSrcs
 	}
 
-	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.rel, Name: r.Name()})
+	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
 
 	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
 	if err != nil {
