@@ -26,6 +26,7 @@ const (
 	existingScalaTestRuleFlagName        = "existing_scala_test_rule"
 	existingScalaRuleCoverageFlagName    = "existing_scala_rule_coverage"
 	scalaGazelleCacheFileFlagName        = "scala_gazelle_cache_file"
+	scalaGazelleImportsFileFlagName      = "scala_gazelle_imports_file"
 	scalaGazelleDebugProcessFileFlagName = "scala_gazelle_debug_process"
 	scalaGazelleCacheKeyFlagName         = "scala_gazelle_cache_key"
 	scalaGazellePrintCacheKeyFlagName    = "scala_gazelle_print_cache_key"
@@ -39,6 +40,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.BoolVar(&sl.printCacheKey, scalaGazellePrintCacheKeyFlagName, true, "if a cache key is set, print the version for auditing purposes")
 	flags.BoolVar(&sl.existingScalaRuleCoverageFlagValue, existingScalaRuleCoverageFlagName, true, "report coverage statistics")
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
+	flags.StringVar(&sl.importsFileFlagValue, scalaGazelleImportsFileFlagName, "", "optional path to an imports file where resolved imports should be written (.json or .pb)")
 	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
@@ -234,6 +236,16 @@ func (sl *scalaLang) setupCache() error {
 		}
 	}
 	return nil
+}
+
+func (sl *scalaLang) dumpResolvedImportMap() {
+	if sl.importsFileFlagValue == "" {
+		return
+	}
+	filename := os.ExpandEnv(sl.importsFileFlagValue)
+	if err := sl.writeResolvedImportsMapFile(filename); err != nil {
+		log.Fatalf("writing resolved imports: %v", err)
+	}
 }
 
 func (sl *scalaLang) setupCpuProfiling(workDir string) error {

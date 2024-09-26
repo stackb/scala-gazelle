@@ -34,6 +34,8 @@ type scalaLang struct {
 	cacheFileFlagValue string
 	// cacheKeyFlagValue is the main cache key, if enabled
 	cacheKeyFlagValue string
+	// importsFileFlagValue is the name of a file to dump resolved import map to, if enabled
+	importsFileFlagValue string
 	// symbolProviderNamesFlagValue is a repeatable list of resolver to enable
 	symbolProviderNamesFlagValue collections.StringSlice
 	// conflictResolverNamesFlagValue is a repeatable list of conflict resolver
