@@ -1,0 +1,8 @@
+{
+ "semanticImports": [
+  "java.lang.String",
+  "scala.AnyRef",
+  "scala.Predef",
+  "trumid.common.utils.string.package"
+ ]
+}

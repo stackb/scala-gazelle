@@ -1,0 +1,8 @@
+{
+ "semanticImports": [
+  "common.utils.string.package",
+  "java.lang.String",
+  "scala.AnyRef",
+  "scala.Predef"
+ ]
+}

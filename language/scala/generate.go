@@ -26,7 +26,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	sc := scalaconfig.Get(args.Config)
-	pkg := newScalaPackage(args.Rel, args.File, sc, sl.ruleProviderRegistry, sl.parser, sl)
+	pkg := newScalaPackage(args, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++
 

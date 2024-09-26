@@ -10,6 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/bazelbuild/buildtools/build"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/maven"
@@ -78,7 +79,7 @@ func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Sco
 }
 
 // CanProvide implements part of the provider.SymbolProvider interface.
-func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *MavenProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
 	if len(p.resolvers) == 0 {
@@ -87,7 +88,7 @@ func (p *MavenProvider) CanProvide(dep label.Label, knownRule func(from label.La
 
 	// find the first resolver that manages the given workspace
 	for _, resolver := range p.resolvers {
-		if dep.Repo == resolver.Name() {
+		if dep.Label.Repo == resolver.Name() {
 			return true
 		}
 	}

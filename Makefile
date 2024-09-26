@@ -25,9 +25,27 @@ scalacache_protos:
 	mv build/stack/gazelle/scala/cache/build/stack/gazelle/scala/cache/*.go build/stack/gazelle/scala/cache/
 	rm -rf build/stack/gazelle/scala/cache/build
 
+.PHONY: scalapb_protos
+scalapb_protos:
+	bazel run //scalapb:scalapb_go_compiled_sources.update
+	mv scalapb/scalapb/scalapb.pb.go scalapb/scalapb.pb.go
+	rm -rf scalapb/scalapb
+
+.PHONY: semanticdb_protos
+semanticdb_protos:
+	bazel run //scala/meta/semanticdb:semanticdb_go_compiled_sources.update
+	mv scala/meta/semanticdb/scala/meta/semanticdb/semanticdb.pb.go scala/meta/semanticdb/semanticdb.pb.go
+	rm -rf scala/meta/semanticdb/scala
+
 .PHONY: protos
-protos: jarindex_protos parser_protos scalacache_protos 
+protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos
 	echo "Done."
+
+.PHONY: docs
+docs:
+	bazel build //docs/architecture:all
+	cp -f bazel-bin/docs/architecture/components.png docs/architecture
+	cp -f bazel-bin/docs/architecture/sequence.png docs/architecture
 
 .PHONY: tidy
 gazelle:
@@ -54,6 +72,10 @@ mocks:
 
 .PHONY: gen
 gen: mocks protos
+
+.PHONY: goldens
+goldens:
+	bazel run //pkg/semanticdb:semanticdb_test -- -update
 
 update_provider_test_golden_files:
 	bazel run pkg/provider:provider_test -- -update

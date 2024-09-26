@@ -87,6 +87,18 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				},
 			},
 		},
+		"debug imports": {
+			directives: []rule.Directive{
+				{Key: "scala_debug", Value: "imports"},
+			},
+			want: &Config{
+				rules:             map[string]*scalarule.Config{},
+				labelNameRewrites: map[string]resolver.LabelNameRewriteSpec{},
+				annotations: map[debugAnnotation]any{
+					DebugImports: nil,
+				},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
@@ -99,6 +111,40 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				cmpopts.IgnoreFields(Config{}, "config", "universe"),
 				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
 			); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestScalaConfigShouldAnnotateImports(t *testing.T) {
+	for name, tc := range map[string]struct {
+		directives []rule.Directive
+		want       bool
+	}{
+		"degenerate": {
+			want: false,
+		},
+		"false": {
+			directives: []rule.Directive{
+				{Key: "scala_debug", Value: "-imports"},
+			},
+			want: false,
+		},
+		"true": {
+			directives: []rule.Directive{
+				{Key: "scala_debug", Value: "imports"},
+			},
+			want: true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := sc.ShouldAnnotateImports()
+			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})

@@ -1,9 +1,12 @@
 package collections
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // ListFiles is a convenience debugging function to log the files under a given dir.
@@ -35,4 +38,44 @@ func CollectFiles(dir string) (files []string, err error) {
 		return
 	}
 	return
+}
+
+// ReadArgsParamsFile reads the and maybe loads from the params file if the sole
+// argument starts with '@'; if so args are loaded from that file.
+func ReadArgsParamsFile(args []string) ([]string, error) {
+	if len(args) != 1 {
+		return args, nil
+	}
+	if !strings.HasPrefix(args[0], "@") {
+		return args, nil
+	}
+
+	paramsFile := args[0][1:]
+	var err error
+	args, err = readParamsFile(paramsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read params file %s: %v", paramsFile, err)
+	}
+	return args, nil
+}
+
+func readParamsFile(filename string) ([]string, error) {
+	params := []string{}
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		params = append(params, line)
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return params, nil
 }

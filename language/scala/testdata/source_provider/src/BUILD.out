@@ -2,17 +2,22 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", 
 
 scala_library(
     name = "lib",
-    # exports: ✅ java.util.LinkedList<OVERRIDE> @java//util<override> (EXTENDS of Lib.scala via "a.b.c.Lib")
     srcs = ["a/b/c/Lib.scala"],
-    exports = ["@java//util"],
-    deps = ["@java//util"],
+    exports = [
+        "@java//util",  # EXTENDS (override java.util.LinkedList)
+    ],
+    deps = [
+        "@java//util",  # DIRECT (override java.util.LinkedList)
+    ],
 )
 
 scala_binary(
     name = "app",
     srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
-    deps = [":lib"],
+    deps = [
+        ":lib",  # DIRECT (scala_library a.b.c.Lib)
+    ],
 )
 
 scala_test(

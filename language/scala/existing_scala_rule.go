@@ -127,29 +127,29 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	sc := scalaconfig.Get(rctx.Config)
-	sc.Imports(scalaRule.ResolveImports(rctx), rctx.Rule, "deps", rctx.From)
-	if s.isLibrary {
-		sc.Exports(scalaRule.ResolveExports(rctx), rctx.Rule, "exports", rctx.From)
+	imports := scalaRule.ResolveImports(rctx)
+	sc.Imports(imports, rctx.Rule, "deps", rctx.From)
+
+	commentsSrcs := rctx.Rule.AttrComments("srcs")
+	commentsSrcs.Before = nil
+	if sc.ShouldAnnotateImports() {
+		scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
+	}
+	if sc.ShouldAnnotateRule() {
+		ruleComments := makeRuleComments(scalaRule.pb)
+		commentsSrcs.Before = append(commentsSrcs.Before, ruleComments...)
 	}
 
-	srcs := rctx.Rule.Attr("srcs")
-	if sc.ShouldAnnotateRule() {
-		if comments, err := makeRuleComments(scalaRule.pb); err != nil {
-			log.Fatalln("annotating rule:", err)
-		} else {
-			srcs.Comment().Before = comments
-		}
-	} else {
-		srcs.Comment().Before = nil
+	if s.isLibrary {
+		exports := scalaRule.ResolveExports(rctx)
+		sc.Exports(exports, rctx.Rule, "exports", rctx.From)
 	}
+
 }
 
-func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
+func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {
 	pb.ParseTimeMillis = 0
-	json, err := protobuf.StableJSON(pb)
-	if err != nil {
-		return nil, err
-	}
+	json, _ := protobuf.StableJSON(pb) // ignoring error, this isn't critical
 
 	scanner := bufio.NewScanner(strings.NewReader(json))
 	for scanner.Scan() {
@@ -158,9 +158,5 @@ func makeRuleComments(pb *sppb.Rule) (comments []build.Comment, err error) {
 			Token: "# " + line,
 		})
 	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
 	return
 }

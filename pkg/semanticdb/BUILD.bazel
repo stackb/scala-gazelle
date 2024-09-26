@@ -1,0 +1,43 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+# gazelle:exclude testdata
+
+go_library(
+    name = "semanticdb",
+    srcs = [
+        "globalscope.go",
+        "io.go",
+        "semanticdb.go",
+        "semanticdb_index.go",
+        "visitor.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/semanticdb",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/resolver",
+        "//pkg/scalarule",
+        "//scala/meta/semanticdb",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@org_golang_google_protobuf//proto",
+    ],
+)
+
+go_test(
+    name = "semanticdb_test",
+    srcs = [
+        "semanticdb_test.go",
+        "visitor_test.go",
+    ],
+    data = glob(["testdata/**/*"]),
+    embed = [":semanticdb"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/protobuf",
+        "//scala/meta/semanticdb",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
+    ],
+)

@@ -1,0 +1,7 @@
+java_binary(
+    name = "plantuml",
+    srcs = ["Main.java"],
+    main_class = "Main",
+    visibility = ["//visibility:public"],
+    deps = ["@plantuml_jar//jar"],
+)

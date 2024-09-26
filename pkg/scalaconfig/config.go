@@ -148,9 +148,9 @@ func (c *Config) Rel() string {
 	return c.rel
 }
 
-func (c *Config) hasSymbolProvider(from label.Label) bool {
+func (c *Config) shouldKeep(expr build.Expr, dep *resolver.ImportLabel) bool {
 	for _, provider := range c.universe.SymbolProviders() {
-		if provider.CanProvide(from, c.universe.GetKnownRule) {
+		if provider.CanProvide(dep, expr, c.universe.GetKnownRule) {
 			return true
 		}
 	}
@@ -418,7 +418,7 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 	return rules
 }
 
-func (c *Config) shouldAnnotateImports() bool {
+func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
 	return ok
 }
@@ -436,6 +436,11 @@ func (c *Config) shouldAnnotateDeps() bool {
 func (c *Config) ShouldAnnotateRule() bool {
 	_, ok := c.annotations[DebugRule]
 	return ok
+}
+
+func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
+	return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+	// return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
@@ -505,17 +510,16 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 }
 
 func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(imports, r, c.shouldAnnotateImports(), attrName, from)
+	c.ruleAttrMergeDeps(imports, r, attrName, from)
 }
 
 func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(exports, r, c.shouldAnnotateExports(), attrName, from)
+	c.ruleAttrMergeDeps(exports, r, attrName, from)
 }
 
 func (c *Config) ruleAttrMergeDeps(
 	imports resolver.ImportMap,
 	r *rule.Rule,
-	shouldAnnotateSrcs bool,
 	attrName string,
 	from label.Label,
 ) {
@@ -540,22 +544,13 @@ func (c *Config) ruleAttrMergeDeps(
 	} else {
 		r.DelAttr(attrName)
 	}
-
-	// Apply annotations if requested
-	if shouldAnnotateSrcs {
-		comments := r.AttrComments("srcs")
-		if comments != nil {
-			prefix := attrName + ": "
-			annotateImports(imports, comments, prefix)
-		}
-	}
 }
 
 // mergeDeps filters out a `deps` list.  Extries are removed from the
 // list if they can be parsed as dependency labels that have a provider.  Others
 // types of expressions are left as-is.  Dependency labels that have no known
 // provider are also left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels []*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
+func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
@@ -594,9 +589,15 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			continue
 		}
 
+		imp, ok := importLabels[dep]
+		if !ok {
+			dst.List = append(dst.List, expr)
+			continue
+		}
+
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so leave it alone.
-		if !c.hasSymbolProvider(dep) {
+		if !c.shouldKeep(expr, imp) {
 			dst.List = append(dst.List, expr)
 			continue
 		}
@@ -609,22 +610,18 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		if !want {
 			continue
 		}
+		imp := importLabels[dep]
 		depExpr := &build.StringExpr{Value: dep.String()}
 		if c.shouldAnnotateDeps() {
-			depExpr.Suffix = append(depExpr.Suffix, depComment(dep, importLabels))
+			depExpr.Suffix = append(depExpr.Suffix, depCommentFor(imp.Import))
 		}
+		comment := c.depSuffixComment(imp.Import)
+		if comment != nil {
+			depExpr.Suffix = append(depExpr.Suffix, *comment)
+		}
+
 		dst.List = append(dst.List, depExpr)
 	}
-
-	// Sort the list
-	sort.SliceStable(dst.List, func(i, j int) bool {
-		a, aIsString := dst.List[i].(*build.StringExpr)
-		b, bIsString := dst.List[j].(*build.StringExpr)
-		if aIsString && bIsString {
-			return a.Token < b.Token
-		}
-		return false
-	})
 
 	return dst
 }
@@ -708,23 +705,13 @@ func removeDepsCleaner(slice []resolver.DepsCleaner, index int) []resolver.DepsC
 	return append(slice[:index], slice[index+1:]...)
 }
 
-func annotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
-	comments.Before = nil
+func AnnotateImports(imports resolver.ImportMap, comments *build.Comments, prefix string) {
 	for _, key := range imports.Keys() {
-		imp := imports[key]
+		imp, _ := imports.Get(key)
 		comment := setCommentPrefix(imp.Comment(), prefix)
+		// log.Printf("%d: %v", i, comment.Token)
 		comments.Before = append(comments.Before, comment)
 	}
-}
-
-func depComment(dep label.Label, importLabels []*resolver.ImportLabel) build.Comment {
-	for _, imp := range importLabels {
-		if dep != imp.Label {
-			continue
-		}
-		return depCommentFor(imp.Import)
-	}
-	panic(fmt.Sprintf("dependency %v was not found in the import label list", dep))
 }
 
 func depCommentFor(imp *resolver.Import) build.Comment {
