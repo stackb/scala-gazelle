@@ -17,6 +17,7 @@ go_library(
         "fix.go",
         "flags.go",
         "generate.go",
+        "imports.go",
         "kinds.go",
         "known_rule_registry.go",
         "language.go",
