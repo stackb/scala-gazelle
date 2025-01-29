@@ -145,7 +145,7 @@ def _get_forwarded_deps(target, ctx):
 def get_source_jars(output):
     """Returns a list of source jars from the output."""
     if hasattr(output, "source_jars"):
-        return output.source_jars
+        return output.source_jars.to_list() if type(output.source_jars) == "depset" else output.source_jars
     if hasattr(output, "source_jar"):
         return [output.source_jar]
     return []
