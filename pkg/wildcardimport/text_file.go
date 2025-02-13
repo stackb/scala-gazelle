@@ -2,12 +2,20 @@ package wildcardimport
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"strings"
 )
+
+type ImportLineNotFoundError struct {
+	Filename   string
+	TargetLine string
+}
+
+func (e *ImportLineNotFoundError) Error() string {
+	return e.Filename + ": Import Line Not Found: " + e.TargetLine
+}
 
 type TextFile struct {
 	filename string
@@ -57,7 +65,7 @@ func NewTextFileFromReader(filename string, info fs.FileInfo, in io.Reader, targ
 		}
 	}
 	if file.targetLine == "" {
-		return nil, fmt.Errorf("%s: import target line not found: %q", filename, targetLine)
+		return nil, &ImportLineNotFoundError{TargetLine: targetLine, Filename: filename}
 	}
 
 	// add a final entry to afterLines so that the file ends with a single newline

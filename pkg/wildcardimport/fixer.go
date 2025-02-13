@@ -36,7 +36,15 @@ func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) 
 	log.Printf("[fixing...][%s](%s): %s", ruleLabel, filename, targetLine)
 	tf, err := NewTextFileFromFilename(filename, targetLine)
 	if err != nil {
+		if _, isFoundFoundError := err.(*ImportLineNotFoundError); isFoundFoundError {
+			log.Printf("WARN: %v", err)
+			return nil, nil
+		}
 		return nil, err
+	}
+	// if textfile is nil, could not find text pattern.  Move on.
+	if tf == nil {
+		return nil, nil
 	}
 
 	symbols, err := w.fixFile(ruleLabel, tf, importPrefix)

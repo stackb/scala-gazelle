@@ -54,6 +54,11 @@ func (s *Symbol) Conflict(sym *Symbol) {
 			log.Printf("conflicting symbols %q: %s", s.Name, diff)
 		}
 	}
+	for _, conflict := range s.Conflicts {
+		if sym.Label == conflict.Label {
+			return
+		}
+	}
 	s.Conflicts = append(s.Conflicts, sym)
 }
 

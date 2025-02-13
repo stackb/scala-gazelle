@@ -30,14 +30,80 @@ const (
 )
 
 const (
-	scalaDebugDirective             = "scala_debug"
+	// Enable additional debugging
+	//
+	// gazelle:scala_debug true
+	scalaDebugDirective = "scala_debug"
+
+	// Turn on the wildcard import fixer
+	//
+	// gazelle:scala_fix_wildcard_imports .scala examples.aeron.api.proto._
 	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
-	scalaRuleDirective              = "scala_rule"
-	resolveGlobDirective            = "resolve_glob"
-	resolveConflictsDirective       = "resolve_conflicts"
-	scalaDepsCleanerDirective       = "scala_deps_cleaner"
-	resolveWithDirective            = "resolve_with"
-	resolveFileSymbolName           = "resolve_file_symbol_name"
+
+	// Configure a scala rule
+	//
+	// gazelle:scala_rule RULE_NAME ATTRIBUTE VALUE
+	// gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
+	scalaRuleDirective = "scala_rule"
+
+	// Use glob for resolve overrides
+	//
+	// TODO(pcj): either remove this or implement it fully.  The directive
+	// currently does nothing.
+	resolveGlobDirective = "resolve_glob"
+
+	// Turn on a conflict resolver
+	//
+	// # gazelle:resolve_conflicts predefined_label
+	resolveConflictsDirective = "resolve_conflicts"
+
+	// Turn on a deps cleaner
+	//
+	// # gazelle:scala_deps_cleaner scala_proto_grpc_deps_cleaner
+	scalaDepsCleanerDirective = "scala_deps_cleaner"
+
+	// Declare an implicit import link.  If B "resolves with" A and A is a dependency, also include B.
+	//
+	// # gazelle:resolve_with scala akka.actor.ActorSystem com.typesafe.config.Config
+	resolveWithDirective = "resolve_with"
+
+	// The 'gazelle:resolve_file_symbol_name' directive reads as follows "for
+	// all files matching the glob '*.scala' (e.g., all scala files), enable
+	// "name" resolution for names matching the glob '*' (basically, any name).
+	//
+	// So what is a 'name'?  When scala-gazelle parses a scala file, it produces
+	// a proto message that lists all the imports statement in the file, all the
+	// classes, traits, etc that are defined by the file.  It also has an array
+	// (called "Names") that contains a list of raw strings containing basically
+	// any capitalized symbol name found by traversing the AST.  For example, it
+	// may be an array like ["Boolean", "Unit", "Map", "Option", "ToActorId",
+	// ...]
+	//
+	// // Normally we only use the import statements to determine the required
+	// deps for a scala_library rule.  However, the 'omnistac.gum.entity'
+	// package is somewhat unique in that each scala file has its own rule, yet
+	// all the files share the same scala package name.  So, while `Ids.scala`
+	// defines `omnistac.gum.entity.ToActorId`, `User.scala` just uses the
+	// symbol `ToActorId` without any corresponding import.  Yet, `:user_scala`
+	// needs `:ids_scala` in its deps.  So how do we determine that?
+	//
+	// // This is what the resolve_file_symbol_name strategy does.  It permits
+	// the use of the 'Names' metadata to try and find the corresponding
+	// fully-qualified symbol name.  For example, when applying this strategy
+	// for `User.scala`, we do a scope lookup of `ToActorId`, which in this case
+	// completes to `omnistac.gum.entity.ToActorId`.  This fully-qualified
+	// symbol is added to the list of required imports for the file, which is
+	// then used to figure out the correct bazel dependency (':ids_scala').
+	//
+	// # gazelle:resolve_file_symbol_name *.scala *
+	resolveFileSymbolName = "resolve_file_symbol_name"
+
+	// Deal with macros that instantiate a different library or scala target name
+	//
+	// # gazelle:resolve_kind_rewrite_name scala_app %{name} %{name}_lib
+	// # gazelle:resolve_kind_rewrite_name classic_scala_app %{name} scala
+	// # gazelle:resolve_kind_rewrite_name trumid_scala_test %{name} %{name}_testlib
+	// # gazelle:resolve_kind_rewrite_name scala_app_test %{name} %{name}_testlib
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
@@ -276,10 +342,12 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 
 	for _, part := range parts[1:] {
 		intent := collections.ParseIntent(part)
-		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, &fixWildcardImportSpec{
+		spec := &fixWildcardImportSpec{
 			filenamePattern: filenamePattern,
 			importPattern:   *intent,
-		})
+		}
+		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
+		log.Printf("Added fix wildcard import spec: %+v", spec)
 	}
 
 }
@@ -448,6 +516,8 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
 // is returned.
 func (c *Config) ShouldFixWildcardImport(filename, wimp string) bool {
+	// log.Printf("Checking wildcard import spec: %s %s", filename, wimp)
+
 	for _, spec := range c.fixWildcardImportSpecs {
 		hasStarChar := strings.Contains(spec.filenamePattern, "*")
 		if hasStarChar {
