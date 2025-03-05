@@ -308,6 +308,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 
 			// collect the (package) symbol for import
 			if sym, ok := r.ctx.scope.GetSymbol(name); ok {
+				// log.Printf("%v: WARN: resolved name import: %v %v %v", from, sym.Name, file.Filename, sym.Label)
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
 				if debugUnresolved {

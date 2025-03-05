@@ -507,8 +507,8 @@ func (c *Config) ShouldAnnotateRule() bool {
 }
 
 func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
-	return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
-	// return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
+	// return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
