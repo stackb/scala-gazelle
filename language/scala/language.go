@@ -129,12 +129,16 @@ func NewLanguage() language.Language {
 	lang.sourceProvider = provider.NewSourceProvider(progress)
 	semanticProvider := provider.NewSemanticdbProvider(lang.sourceProvider)
 	lang.parser = parser.NewMemoParser(semanticProvider)
+	javaProvider := provider.NewJavaProvider()
 
 	lang.AddSymbolProvider(lang.sourceProvider)
 	lang.AddSymbolProvider(semanticProvider)
-	lang.AddSymbolProvider(provider.NewJavaProvider())
+	lang.AddSymbolProvider(javaProvider)
 	lang.AddSymbolProvider(provider.NewMavenProvider(scalaLangName))
 	lang.AddSymbolProvider(provider.NewProtobufProvider(scalaLangName, scalaLangName, protoc.GlobalResolver().Provided))
+
+	pdcr := resolver.NewPreferredDepsConflictResolver("preferred_deps", javaProvider.GetPreferredDeps())
+	resolver.GlobalConflictResolverRegistry().PutConflictResolver(pdcr.Name(), pdcr)
 
 	return lang
 }

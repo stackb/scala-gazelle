@@ -21,12 +21,13 @@ import (
 type debugAnnotation int
 
 const (
-	DebugUnknown  debugAnnotation = 0
-	DebugImports  debugAnnotation = 1
-	DebugExports  debugAnnotation = 2
-	DebugDeps     debugAnnotation = 3
-	DebugRule     debugAnnotation = 4
-	scalaLangName                 = "scala"
+	DebugUnknown        debugAnnotation = 0
+	DebugImports        debugAnnotation = 1
+	DebugExports        debugAnnotation = 2
+	DebugDeps           debugAnnotation = 3
+	DebugRule           debugAnnotation = 4
+	DebugDepLabelOrigin debugAnnotation = 5
+	scalaLangName                       = "scala"
 )
 
 const (
@@ -347,7 +348,6 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 			importPattern:   *intent,
 		}
 		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
-		log.Printf("Added fix wildcard import spec: %+v", spec)
 	}
 
 }
@@ -501,13 +501,20 @@ func (c *Config) shouldAnnotateDeps() bool {
 	return ok
 }
 
+func (c *Config) shouldAnnotateDepLabelOrigin() bool {
+	_, ok := c.annotations[DebugDepLabelOrigin]
+	return ok
+}
+
 func (c *Config) ShouldAnnotateRule() bool {
 	_, ok := c.annotations[DebugRule]
 	return ok
 }
 
 func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
-	// return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+	if c.shouldAnnotateDepLabelOrigin() {
+		return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+	}
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
@@ -762,6 +769,8 @@ func parseAnnotation(val string) debugAnnotation {
 		return DebugDeps
 	case "rule":
 		return DebugRule
+	case "dep_label_origin":
+		return DebugDepLabelOrigin
 	default:
 		return DebugUnknown
 	}

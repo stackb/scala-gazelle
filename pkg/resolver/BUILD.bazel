@@ -20,6 +20,7 @@ go_library(
         "memo_symbol_resolver.go",
         "override_symbol_resolver.go",
         "predefined_label_conflict_resolver.go",
+        "preferred_deps_conflict_resolver.go",
         "scala_grpc_zio_conflict_resolver.go",
         "scala_proto_package_conflict_resolver.go",
         "scala_scope.go",
