@@ -5,6 +5,6 @@ scala_binary(
     srcs = ["App.scala"],
     main_class = "app.App",
     deps = [
-        "//lib:lib_helper",  # DIRECT (scala_helper_library lib.Helper)
+        "//lib:lib_helper",  # DIRECT
     ],
 )

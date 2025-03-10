@@ -12,7 +12,7 @@ scala_library(
     # import: ✅ org.slf4j.Logger<OVERRIDE> @maven//:org_slf4j_slf4j_api<override> (IMPLICIT via "com.typesafe.scalalogging.LazyLogging")
     srcs = ["Main.scala"],
     deps = [
-        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",  # DIRECT (override com.typesafe.scalalogging.LazyLogging)
-        "@maven//:org_slf4j_slf4j_api",  # IMPLICIT (override org.slf4j.Logger)
+        "@maven//:com_typesafe_scala_logging_scala_logging_2_12",  # DIRECT
+        "@maven//:org_slf4j_slf4j_api",  # IMPLICIT
     ],
 )
