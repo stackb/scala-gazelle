@@ -19,9 +19,9 @@ import (
 
 type DepsMap map[string]string
 
-func MakeKeepDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.KeepDeps {
+func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps {
 	rules := make(map[string]*akpb.RuleDeps)
-	keep := new(akpb.KeepDeps)
+	delta := new(akpb.DeltaDeps)
 	for _, e := range diagnostics.ScalacErrors {
 		rule := rules[e.RuleLabel]
 		if rule == nil {
@@ -35,7 +35,7 @@ func MakeKeepDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.KeepDeps {
 			if label, ok := deps[sym]; ok {
 				log.Println("MATCH: ", sym, "is provided by", label)
 				if len(rule.Deps) == 0 {
-					keep.Rules = append(keep.Rules, rule)
+					delta.Add = append(delta.Add, rule)
 				}
 				rule.Deps = append(rule.Deps, label)
 			} else {
@@ -46,15 +46,19 @@ func MakeKeepDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.KeepDeps {
 			if label, ok := deps[sym]; ok {
 				log.Println("MATCH: ", sym, "is provided by", label)
 				if len(rule.Deps) == 0 {
-					keep.Rules = append(keep.Rules, rule)
+					delta.Add = append(delta.Add, rule)
 				}
 				rule.Deps = append(rule.Deps, label)
 			} else {
 				log.Printf("MISS (not found): %q (%d)", sym, len(deps))
 			}
+		case *akpb.ScalacError_BuildozerUnusedDep:
+			delta.Remove = append(delta.Remove, rule)
+			rule.Deps = append(rule.Deps, t.BuildozerUnusedDep.UnusedDep)
+			rule = nil
 		}
 	}
-	return keep
+	return delta
 }
 
 func MergeDepsFromCacheFile(deps DepsMap, filename string) error {
@@ -118,16 +122,21 @@ func MergeDepsFromImports(deps DepsMap, in io.Reader) error {
 	return nil
 }
 
-func ApplyKeepDeps(keep *akpb.KeepDeps, wantKeepComment bool) error {
-	for _, ruleDeps := range keep.Rules {
-		if err := applyRuleDeps(ruleDeps, wantKeepComment); err != nil {
+func ApplyDeltaDeps(delta *akpb.DeltaDeps, wantKeepComment bool) error {
+	for _, ruleDeps := range delta.Add {
+		if err := add(ruleDeps, wantKeepComment); err != nil {
+			return err
+		}
+	}
+	for _, ruleDeps := range delta.Remove {
+		if err := remove(ruleDeps); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func applyRuleDeps(ruleDeps *akpb.RuleDeps, wantKeepComment bool) error {
+func add(ruleDeps *akpb.RuleDeps, wantKeepComment bool) error {
 	lbl, err := label.Parse(ruleDeps.Label)
 	if err != nil {
 		return err
@@ -156,6 +165,51 @@ func applyRuleDeps(ruleDeps *akpb.RuleDeps, wantKeepComment bool) error {
 		}
 		depsList.List = append(depsList.List, depExpr)
 	}
+	if err := os.WriteFile(ruleDeps.BuildFile, file.Format(), 0o666); err != nil {
+		return err
+	}
+	return nil
+}
+
+func remove(ruleDeps *akpb.RuleDeps) error {
+	lbl, err := label.Parse(ruleDeps.Label)
+	if err != nil {
+		return err
+	}
+	file, err := rule.LoadFile(ruleDeps.BuildFile, lbl.Pkg)
+	if err != nil {
+		return err
+	}
+	r, err := findRuleInFile(file, lbl.Name)
+	if err != nil {
+		return err
+	}
+	depsExpr := r.Attr("deps")
+	if depsExpr == nil {
+		return fmt.Errorf("%v: 'deps' attribute not found", lbl)
+	}
+	depsList, ok := depsExpr.(*build.ListExpr)
+	if !ok {
+		return fmt.Errorf("%v: 'deps' attribute is not a list (%T)", lbl, depsExpr)
+	}
+
+	newList := &build.ListExpr{}
+	for _, item := range depsList.List {
+		keep := true
+		if str, ok := item.(*build.StringExpr); ok {
+			for _, dep := range ruleDeps.Deps {
+				if str.Value == dep {
+					keep = false
+					break
+				}
+			}
+		}
+		if keep {
+			newList.List = append(newList.List, item)
+		}
+	}
+	r.SetAttr("deps", newList)
+
 	if err := os.WriteFile(ruleDeps.BuildFile, file.Format(), 0o666); err != nil {
 		return err
 	}

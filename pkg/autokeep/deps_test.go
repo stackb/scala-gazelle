@@ -12,15 +12,15 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
-func TestMakeKeepDeps(t *testing.T) {
+func TestMakeDeltaDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
 		input *akpb.Diagnostics
 		deps  DepsMap
-		want  *akpb.KeepDeps
+		want  *akpb.DeltaDeps
 	}{
 		"degenerate": {
 			input: &akpb.Diagnostics{},
-			want:  &akpb.KeepDeps{},
+			want:  &akpb.DeltaDeps{},
 		},
 		"not-a-package": {
 			deps: map[string]string{
@@ -40,8 +40,8 @@ func TestMakeKeepDeps(t *testing.T) {
 					},
 				},
 			},
-			want: &akpb.KeepDeps{
-				Rules: []*akpb.RuleDeps{
+			want: &akpb.DeltaDeps{
+				Add: []*akpb.RuleDeps{
 					{
 						Label:     "//contoso/postswarm:grey_it",
 						BuildFile: "/home/user/src/github.com/contoso/unity/contoso/postswarm/BUILD.bazel",
@@ -52,10 +52,10 @@ func TestMakeKeepDeps(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got := MakeKeepDeps(tc.deps, tc.input)
+			got := MakeDeltaDeps(tc.deps, tc.input)
 
 			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
-				akpb.KeepDeps{},
+				akpb.DeltaDeps{},
 				akpb.RuleDeps{},
 			)); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
@@ -64,22 +64,22 @@ func TestMakeKeepDeps(t *testing.T) {
 	}
 }
 
-func TestApplyKeepDeps(t *testing.T) {
+func TestApplyDeltaDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
-		keepDeps    *akpb.KeepDeps
+		DeltaDeps   *akpb.DeltaDeps
 		keepComment bool
 		files       []testtools.FileSpec
 		want        []testtools.FileSpec
 		wantErr     string
 	}{
 		"degenerate": {
-			keepDeps: &akpb.KeepDeps{},
-			files:    []testtools.FileSpec{},
-			want:     []testtools.FileSpec{},
+			DeltaDeps: &akpb.DeltaDeps{},
+			files:     []testtools.FileSpec{},
+			want:      []testtools.FileSpec{},
 		},
 		"adds matching deps": {
-			keepDeps: &akpb.KeepDeps{
-				Rules: []*akpb.RuleDeps{
+			DeltaDeps: &akpb.DeltaDeps{
+				Add: []*akpb.RuleDeps{
 					{
 						Label:     "//contoso/postswarm:tests",
 						BuildFile: "src/github.com/org/repo/contoso/postswarm/BUILD.bazel",
@@ -111,6 +111,40 @@ scala_library(
 				},
 			},
 		},
+		"removes matching deps": {
+			DeltaDeps: &akpb.DeltaDeps{
+				Remove: []*akpb.RuleDeps{
+					{
+						Label:     "//contoso/postswarm:tests",
+						BuildFile: "src/github.com/org/repo/contoso/postswarm/BUILD.bazel",
+						Deps:      []string{"//contoso/postswarm:selective_spot_session_utils_common_scala"},
+					},
+				},
+			},
+			files: []testtools.FileSpec{
+				{
+					Path: "src/github.com/org/repo/contoso/postswarm/BUILD.bazel",
+					Content: `
+scala_library(
+    name = "tests",
+	srcs = glob(["*.scala"]),
+	deps = ["//contoso/postswarm:selective_spot_session_utils_common_scala"],
+)
+`,
+				},
+			},
+			want: []testtools.FileSpec{
+				{
+					Path: "src/github.com/org/repo/contoso/postswarm/BUILD.bazel",
+					Content: `scala_library(
+    name = "tests",
+    srcs = glob(["*.scala"]),
+    deps = [],
+)
+`,
+				},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
@@ -120,11 +154,14 @@ scala_library(
 
 			// Prepend the tmpDir to file paths since actual real-world usage
 			// assumes the files are absolute.
-			for _, rule := range tc.keepDeps.Rules {
+			for _, rule := range tc.DeltaDeps.Add {
+				rule.BuildFile = path.Join(tmpDir, rule.BuildFile)
+			}
+			for _, rule := range tc.DeltaDeps.Remove {
 				rule.BuildFile = path.Join(tmpDir, rule.BuildFile)
 			}
 
-			err := ApplyKeepDeps(tc.keepDeps, tc.keepComment)
+			err := ApplyDeltaDeps(tc.DeltaDeps, tc.keepComment)
 			var gotErr string
 			if err != nil {
 				gotErr = err.Error()
@@ -134,7 +171,14 @@ scala_library(
 			}
 
 			got := make([]testtools.FileSpec, 0, len(tc.files))
-			for _, rule := range tc.keepDeps.Rules {
+			for _, rule := range tc.DeltaDeps.Add {
+				rule.BuildFile = strings.TrimPrefix(strings.TrimPrefix(rule.BuildFile, tmpDir), "/")
+				got = append(got, testtools.FileSpec{
+					Path:    rule.BuildFile,
+					Content: testutil.MustReadTestFile(t, tmpDir, rule.BuildFile),
+				})
+			}
+			for _, rule := range tc.DeltaDeps.Remove {
 				rule.BuildFile = strings.TrimPrefix(strings.TrimPrefix(rule.BuildFile, tmpDir), "/")
 				got = append(got, testtools.FileSpec{
 					Path:    rule.BuildFile,

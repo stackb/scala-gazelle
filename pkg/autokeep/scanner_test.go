@@ -59,24 +59,9 @@ warning: 2 deprecations (since 2025-01-01)
 warning: 3 deprecations in total; re-run with -deprecation for details
 3 warnings
 error: Unused dependencies:
-error: Target '//omnistac/spok/message:trades_query_request_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/omnistac/spok/message/trades_query_request_proto_scala_library.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
-You can use the following buildozer command:
-buildozer 'remove deps //omnistac/spok/message:trades_query_request_proto_scala_library' //omnistac/microswarm:testing
-error: Target '//omnistac/gum/message:counterparty_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/omnistac/gum/message/counterparty_proto_scala_library_java.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
-You can use the following buildozer command:
-buildozer 'remove deps //omnistac/gum/message:counterparty_proto_scala_library' //omnistac/microswarm:testing
-error: Target '//trumid/ats/anonymous/admin/proto:trumid_ats_anonymous_admin_proto_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/trumid/ats/anonymous/admin/proto/trumid_ats_anonymous_admin_proto_proto_scala_library_java.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
-You can use the following buildozer command:
-buildozer 'remove deps //trumid/ats/anonymous/admin/proto:trumid_ats_anonymous_admin_proto_proto_scala_library' //omnistac/microswarm:testing
-error: Target '//omnistac/gum/message:counterparty_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/omnistac/gum/message/counterparty_proto_scala_library.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
-You can use the following buildozer command:
-buildozer 'remove deps //omnistac/gum/message:counterparty_proto_scala_library' //omnistac/microswarm:testing
 error: Target '//omnistac/spok/message:trades_query_request_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/omnistac/spok/message/trades_query_request_proto_scala_library_java.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
 You can use the following buildozer command:
 buildozer 'remove deps //omnistac/spok/message:trades_query_request_proto_scala_library' //omnistac/microswarm:testing
-error: Target '//trumid/ats/anonymous/admin/proto:trumid_ats_anonymous_admin_proto_proto_scala_library' (via jar: ' bazel-out/darwin_arm64-fastbuild/bin/trumid/ats/anonymous/admin/proto/trumid_ats_anonymous_admin_proto_proto_scala_library.jar ')  is specified as a dependency to //omnistac/microswarm:testing but isn't used, please remove it from the deps.
-You can use the following buildozer command:
-buildozer 'remove deps //trumid/ats/anonymous/admin/proto:trumid_ats_anonymous_admin_proto_proto_scala_library' //omnistac/microswarm:testing
 Build failed			
 `,
 			want: &akpb.Diagnostics{
@@ -84,12 +69,12 @@ Build failed
 					{
 						RuleLabel: "//omnistac/microswarm:testing",
 						BuildFile: "/Users/pcj/go/src/github.com/Omnistac/unity/omnistac/microswarm/BUILD.bazel",
-						// Error: &akpb.ScalacError_NotAMemberOfPackage{
-						// 	NotAMemberOfPackage: &akpb.NotAMemberOfPackage{
-						// 		Symbol:      "SelectiveSpotSessionUtils",
-						// 		PackageName: "omnistac.postswarm",
-						// 	},
-						// },
+						Error: &akpb.ScalacError_BuildozerUnusedDep{
+							BuildozerUnusedDep: &akpb.BuildozerUnusedDep{
+								RuleLabel: "//omnistac/microswarm:testing",
+								UnusedDep: "//omnistac/spok/message:trades_query_request_proto_scala_library",
+							},
+						},
 					},
 				},
 			},
@@ -108,6 +93,7 @@ Build failed
 				akpb.Diagnostics{},
 				akpb.ScalacError{},
 				akpb.NotAMemberOfPackage{},
+				akpb.BuildozerUnusedDep{},
 			)); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -24,6 +23,9 @@ var notAMemberOfPackageLine = regexp.MustCompile(`^(.*):\d+: error: .* object ([
 // This symbol is required by 'class omnistac.gum.dao.TradingAccountDao.TradingAccountTable'.
 var symbolRequiredByLine = regexp.MustCompile(`^This symbol is required by '([^']+)'.$`)
 
+// buildozer 'remove deps //omnistac/core/biz/validator/ordervalidation:stubs' //omnistac/postswarm:listtrading_perf
+var buildozerLine = regexp.MustCompile(`^buildozer 'remove deps ([^']+)' (.*)$`)
+
 func ScanOutput(output []byte) (*akpb.Diagnostics, error) {
 	diagnostics := new(akpb.Diagnostics)
 	var scalacError *akpb.ScalacError
@@ -35,38 +37,36 @@ func ScanOutput(output []byte) (*akpb.Diagnostics, error) {
 		if line == "" {
 			continue
 		}
+
 		if match := scalacErrorLine.FindStringSubmatch(line); match != nil {
 			scalacError = new(akpb.ScalacError)
 			scalacError.BuildFile = match[1]
 			scalacError.RuleLabel = strings.TrimSuffix(match[2], "_testlib")
 			diagnostics.ScalacErrors = append(diagnostics.ScalacErrors, scalacError)
 			missingSymbol = nil
-			log.Printf("%s:scala-error:%s", scalacError.BuildFile, scalacError.RuleLabel)
-			continue
-		}
-		if match := missingSymbolLine.FindStringSubmatch(line); match != nil {
-			missingSymbol = new(akpb.MissingSymbol)
-			scalacError.Error = &akpb.ScalacError_MissingSymbol{
-				MissingSymbol: missingSymbol,
-			}
-			missingSymbol.SourceFile = match[1]
-			missingSymbol.Symbol = match[2]
-			log.Printf(" - %s:missing-symbol:%s", match[1], missingSymbol)
-			continue
-		}
-		if match := notAMemberOfPackageLine.FindStringSubmatch(line); match != nil {
-			notAMemberOfPackage := new(akpb.NotAMemberOfPackage)
-			scalacError.Error = &akpb.ScalacError_NotAMemberOfPackage{
-				NotAMemberOfPackage: notAMemberOfPackage,
-			}
-			notAMemberOfPackage.Symbol = match[2]
-			notAMemberOfPackage.PackageName = match[3]
-			continue
-		}
-		if match := symbolRequiredByLine.FindStringSubmatch(line); match != nil {
+		} else if match := symbolRequiredByLine.FindStringSubmatch(line); match != nil {
 			missingSymbol.RequiredBy = match[1]
-			log.Printf(" - required-by:%s", match[1])
-			continue
+		} else if match := missingSymbolLine.FindStringSubmatch(line); match != nil {
+			scalacError.Error = &akpb.ScalacError_MissingSymbol{
+				MissingSymbol: &akpb.MissingSymbol{
+					SourceFile: match[1],
+					Symbol:     match[2],
+				},
+			}
+		} else if match := notAMemberOfPackageLine.FindStringSubmatch(line); match != nil {
+			scalacError.Error = &akpb.ScalacError_NotAMemberOfPackage{
+				NotAMemberOfPackage: &akpb.NotAMemberOfPackage{
+					Symbol:      match[2],
+					PackageName: match[3],
+				},
+			}
+		} else if match := buildozerLine.FindStringSubmatch(line); match != nil {
+			scalacError.Error = &akpb.ScalacError_BuildozerUnusedDep{
+				BuildozerUnusedDep: &akpb.BuildozerUnusedDep{
+					UnusedDep: match[1],
+					RuleLabel: match[2],
+				},
+			}
 		}
 	}
 	if err := scanner.Err(); err != nil {

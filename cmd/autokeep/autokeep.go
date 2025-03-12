@@ -103,10 +103,10 @@ func run(cfg *config) error {
 	}
 
 	log.Printf("diagnostics: %+v", diagnostics)
-	keep := autokeep.MakeKeepDeps(cfg.deps, diagnostics)
+	keep := autokeep.MakeDeltaDeps(cfg.deps, diagnostics)
 	log.Printf("keep: %+v", keep)
 
-	if err := autokeep.ApplyKeepDeps(keep, cfg.keep); err != nil {
+	if err := autokeep.ApplyDeltaDeps(keep, cfg.keep); err != nil {
 		return err
 	}
 

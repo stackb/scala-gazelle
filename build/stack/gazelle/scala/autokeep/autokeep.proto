@@ -18,6 +18,7 @@ message ScalacError {
     oneof error {
         MissingSymbol missing_symbol = 3;
         NotAMemberOfPackage not_a_member_of_package = 4;
+        BuildozerUnusedDep buildozer_unused_dep = 5;
     }
 }
 
@@ -32,12 +33,18 @@ message NotAMemberOfPackage {
     string symbol = 2;
 }
 
+message BuildozerUnusedDep {
+    string rule_label = 1;
+    string unused_dep = 2;
+}
+
 message RuleDeps {
     string label = 1;
     string build_file = 2;
     repeated string deps = 3;
 }
 
-message KeepDeps {
-    repeated RuleDeps rules = 1;
+message DeltaDeps {
+    repeated RuleDeps add = 1;
+    repeated RuleDeps remove = 2;
 }
