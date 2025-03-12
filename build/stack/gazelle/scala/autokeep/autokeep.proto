@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package build.stack.gazelle.scala.autokeep;
+
+import "build/stack/gazelle/scala/parse/rule.proto";
+
+option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep;autokeep";
+option java_package = "build.stack.gazelle.scala.autokeep";
+option java_multiple_files = true;
+
+message Diagnostics {
+    repeated ScalacError scalac_errors = 1;
+}
+
+message ScalacError {
+    string rule_label = 1;
+    string build_file = 2;
+    oneof error {
+        MissingSymbol missing_symbol = 3;
+        NotAMemberOfPackage not_a_member_of_package = 4;
+        BuildozerUnusedDep buildozer_unused_dep = 5;
+    }
+}
+
+message MissingSymbol {
+    string source_file = 1;
+    string symbol = 2;
+    string required_by = 3;
+}
+
+message NotAMemberOfPackage {
+    string package_name = 1;
+    string symbol = 2;
+}
+
+message BuildozerUnusedDep {
+    string rule_label = 1;
+    string unused_dep = 2;
+}
+
+message RuleDeps {
+    string label = 1;
+    string build_file = 2;
+    repeated string deps = 3;
+}
+
+message DeltaDeps {
+    repeated RuleDeps add = 1;
+    repeated RuleDeps remove = 2;
+}

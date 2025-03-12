@@ -43,7 +43,7 @@ func (s *PreferredDepsConflictResolver) ResolveConflict(universe Universe, r *ru
 		}
 		for _, sym := range symbol.Conflicts {
 			if sym.Label == want {
-				return symbol, true
+				return sym, true
 			}
 		}
 	}

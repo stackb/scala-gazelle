@@ -19,9 +19,9 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/amenzhinsky/go-memexec"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/bazel"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 

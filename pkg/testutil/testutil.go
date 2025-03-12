@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/testtools"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
 )
 
 func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
@@ -23,10 +22,7 @@ func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpD
 }
 
 func MustPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
-	tmpDir, err := bazel.NewTmpDir("")
-	if err != nil {
-		t.Fatal(err)
-	}
+	tmpDir = t.TempDir()
 
 	cleanup := func() {
 		os.RemoveAll(tmpDir)

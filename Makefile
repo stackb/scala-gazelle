@@ -37,8 +37,14 @@ semanticdb_protos:
 	mv scala/meta/semanticdb/scala/meta/semanticdb/semanticdb.pb.go scala/meta/semanticdb/semanticdb.pb.go
 	rm -rf scala/meta/semanticdb/scala
 
+.PHONY: autokeep_protos
+autokeep_protos:
+	bazel run //build/stack/gazelle/scala/autokeep:autokeep_go_compiled_sources.update
+	mv build/stack/gazelle/scala/autokeep/build/stack/gazelle/scala/autokeep/autokeep.pb.go build/stack/gazelle/scala/autokeep/autokeep.pb.go
+	rm -rf build/stack/gazelle/scala/autokeep/build
+
 .PHONY: protos
-protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos
+protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos autokeep_protos
 	echo "Done."
 
 .PHONY: docs

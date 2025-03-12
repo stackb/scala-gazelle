@@ -12,12 +12,12 @@ import (
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/testtools"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
 	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
+	"github.com/stackb/scala-gazelle/pkg/bazel"
 )
 
 func TestServerParse(t *testing.T) {

@@ -9,8 +9,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/bazelbuild/buildtools/build"
-	"github.com/bazelbuild/rules_go/go/tools/bazel"
 	"github.com/google/go-cmp/cmp"
+
+	"github.com/stackb/scala-gazelle/pkg/bazel"
 )
 
 // TestParseGlob tests the parsing of a starlark glob.
