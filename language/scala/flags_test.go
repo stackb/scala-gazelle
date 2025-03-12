@@ -119,7 +119,7 @@ func TestCacheFlags(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			tmpDir, _, cleanup := testutil.MustPrepareTestFiles(t, tc.files)
-			if false {
+			if true {
 				defer cleanup()
 			}
 

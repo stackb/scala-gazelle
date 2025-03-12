@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "autokeep_proto",
+    srcs = ["autokeep.proto"],
+    visibility = ["//visibility:public"],
+    deps = ["//build/stack/gazelle/scala/parse:parse_proto"],
+)
+
+proto_compiled_sources(
+    name = "autokeep_go_compiled_sources",
+    srcs = ["autokeep.pb.go"],
+    output_mappings = ["autokeep.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep/autokeep.pb.go"],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "autokeep_proto",
+)
+
+go_library(
+    name = "autokeep",
+    srcs = ["autokeep.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)

@@ -1,0 +1,35 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "autokeep",
+    srcs = [
+        "deps.go",
+        "scanner.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/autokeep",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/autokeep",
+        "//build/stack/gazelle/scala/cache",
+        "//pkg/protobuf",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+    ],
+)
+
+go_test(
+    name = "autokeep_test",
+    srcs = [
+        "deps_test.go",
+        "scanner_test.go",
+    ],
+    embed = [":autokeep"],
+    deps = [
+        "//build/stack/gazelle/scala/autokeep",
+        "//pkg/testutil",
+        "@bazel_gazelle//testtools:go_default_library",
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_google_go_cmp//cmp/cmpopts",
+    ],
+)

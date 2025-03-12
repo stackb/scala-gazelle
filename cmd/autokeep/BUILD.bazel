@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "autokeep_lib",
+    srcs = ["autokeep.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/autokeep",
+    visibility = ["//visibility:private"],
+    deps = ["//pkg/autokeep"],
+)
+
+go_binary(
+    name = "autokeep",
+    embed = [":autokeep_lib"],
+    visibility = ["//visibility:public"],
+)
