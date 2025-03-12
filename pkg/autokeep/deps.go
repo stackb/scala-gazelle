@@ -20,9 +20,6 @@ import (
 type DepsMap map[string]string
 
 func MakeKeepDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.KeepDeps {
-	if len(deps) == 0 {
-		log.Panic("deps map must not be empty")
-	}
 	rules := make(map[string]*akpb.RuleDeps)
 	keep := new(akpb.KeepDeps)
 	for _, e := range diagnostics.ScalacErrors {

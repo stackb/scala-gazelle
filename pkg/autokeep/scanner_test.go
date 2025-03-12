@@ -82,8 +82,8 @@ Build failed
 			want: &akpb.Diagnostics{
 				ScalacErrors: []*akpb.ScalacError{
 					{
-						RuleLabel: "TODO",
-						BuildFile: "TODO",
+						RuleLabel: "//omnistac/microswarm:testing",
+						BuildFile: "/Users/pcj/go/src/github.com/Omnistac/unity/omnistac/microswarm/BUILD.bazel",
 						// Error: &akpb.ScalacError_NotAMemberOfPackage{
 						// 	NotAMemberOfPackage: &akpb.NotAMemberOfPackage{
 						// 		Symbol:      "SelectiveSpotSessionUtils",
