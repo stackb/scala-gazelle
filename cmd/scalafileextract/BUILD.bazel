@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "scalafileextract_lib",
+    srcs = ["scalafileextract.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/scalafileextract",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/parser",
+        "//pkg/protobuf",
+    ],
+)
+
+go_binary(
+    name = "scalafileextract",
+    embed = [":scalafileextract_lib"],
+    visibility = ["//visibility:public"],
+)
