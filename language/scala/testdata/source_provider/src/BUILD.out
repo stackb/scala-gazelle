@@ -4,10 +4,10 @@ scala_library(
     name = "lib",
     srcs = ["a/b/c/Lib.scala"],
     exports = [
-        "@java//util",  # EXTENDS (override java.util.LinkedList)
+        "@java//util",  # EXTENDS
     ],
     deps = [
-        "@java//util",  # DIRECT (override java.util.LinkedList)
+        "@java//util",  # DIRECT
     ],
 )
 
@@ -16,7 +16,7 @@ scala_binary(
     srcs = ["a/b/c/Main.scala"],
     main_class = "a.b.c.Main",
     deps = [
-        ":lib",  # DIRECT (scala_library a.b.c.Lib)
+        ":lib",  # DIRECT
     ],
 )
 

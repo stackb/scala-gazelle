@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	jipb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/jarindex"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 )
@@ -19,6 +20,8 @@ const debug = false
 var (
 	outputFile       string
 	predefinedLabels string
+	preferredDeps    collections.StringSlice
+	preferred        map[string]string
 )
 
 func main() {
@@ -73,6 +76,7 @@ func readParamsFile(filename string) ([]string, error) {
 
 func parseFlags(args []string) (files []string, err error) {
 	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError)
+	fs.Var(&preferredDeps, "preferred", "a repeatable list of mappings of the form PKG=DEP that declares which dependency should be chosen to resolve package ambiguity")
 	fs.StringVar(&predefinedLabels, "predefined", "", "a comma-separated list of labels to be considered predefined")
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Usage = func() {
@@ -85,6 +89,15 @@ func parseFlags(args []string) (files []string, err error) {
 
 	if outputFile == "" {
 		log.Fatal("-output_file is required")
+	}
+
+	preferred = make(map[string]string)
+	for _, v := range preferredDeps {
+		parts := strings.SplitN(v, "=", 2)
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("malformed --preferred argument, wanted PACKAGE=DEP (got %s)", v)
+		}
+		preferred[parts[0]] = parts[1]
 	}
 
 	files = fs.Args()
@@ -123,6 +136,7 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 	}
 
 	index.Predefined = predefined
+	index.Preferred = preferred
 
 	return index, nil
 }

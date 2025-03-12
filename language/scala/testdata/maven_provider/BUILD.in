@@ -1,7 +1,7 @@
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
-# gazelle:scala_debug imports
+# gazelle:scala_debug imports dep_label_origin
 # gazelle:resolve_with scala javax.xml._ javax.inject
 
 scala_library(

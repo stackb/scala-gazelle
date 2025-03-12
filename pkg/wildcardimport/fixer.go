@@ -33,7 +33,7 @@ func NewFixer(options *FixerOptions) *Fixer {
 func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) {
 	targetLine := fmt.Sprintf("import %s._", importPrefix)
 
-	log.Printf("[fixing...][%s](%s): %s", ruleLabel, filename, targetLine)
+	log.Printf("[🚧 fixing...][%s](%s): %s", ruleLabel, filename, targetLine)
 	tf, err := NewTextFileFromFilename(filename, targetLine)
 	if err != nil {
 		if _, isFoundFoundError := err.(*ImportLineNotFoundError); isFoundFoundError {
@@ -52,7 +52,7 @@ func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) 
 		return nil, err
 	}
 
-	log.Printf("[fixed!][%s](%s): %v", ruleLabel, filename, symbols)
+	log.Printf("[✅ fixed][%s](%s): %v", ruleLabel, filename, symbols)
 
 	return symbols, nil
 }

@@ -9,6 +9,9 @@ def merge_action(ctx, output_file, jarindex_files):
     args.use_param_file("@%s", use_always = False)
     args.add("--output_file", output_file)
     args.add_joined("--predefined", [target.label for target in ctx.attr.platform_deps], uniquify = True, join_with = ",")
+    for pkg, dep in ctx.attr.preferred_deps.items():
+        args.add("--preferred=%s=%s" % (pkg, dep))
+
     args.add_all(jarindex_files)
 
     ctx.actions.run(
@@ -74,6 +77,9 @@ java_index = rule(
         "platform_deps": attr.label_list(
             doc = "list of java labels to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
+        ),
+        "preferred_deps": attr.string_dict(
+            doc = "mapping of package name to label that should be used for dependency resolution",
         ),
         "_mergeindex": attr.label(
             default = Label("@build_stack_scala_gazelle//cmd/mergeindex"),

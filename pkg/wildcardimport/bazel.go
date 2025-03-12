@@ -13,10 +13,10 @@ func execBazelBuild(bazelExe string, label string) ([]byte, int, error) {
 	command := exec.Command(bazelExe, args...)
 	command.Dir = GetBuildWorkspaceDirectory()
 
-	log.Println("!!!", command.String())
+	log.Println("🧱", command.String())
 	output, err := command.CombinedOutput()
 	if err != nil {
-		log.Println("cmdErr:", err)
+		// log.Println("cmdErr:", err)
 		// Check for exit errors specifically
 		if exitError, ok := err.(*exec.ExitError); ok {
 			waitStatus := exitError.Sys().(syscall.WaitStatus)

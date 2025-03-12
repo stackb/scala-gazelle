@@ -7,6 +7,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/jarindex",
+        "//pkg/collections",
         "//pkg/jarindex",
         "//pkg/protobuf",
     ],

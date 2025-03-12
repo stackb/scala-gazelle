@@ -15,6 +15,10 @@ message JarIndex {
     // providers is a summary set of the classes in the index and the labels
     // that provide it.
     repeated ClassFileProvider providers = 4;
+    // preferred is a map that states which dependency should be chosen in the
+    // event of package ambiguity.  Key is a string (e.g. 'org.json4s'), Value
+    // is a string (e.g. '@maven//:org_json4s_json4s_core_2_13').
+    map<string,string> preferred = 5;
 }
 
 // ClassFileProvider records the relationship between a jvm class and 
