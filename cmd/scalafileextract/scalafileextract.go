@@ -52,7 +52,10 @@ func run(args []string) error {
 		return fmt.Errorf("failed to parse args: %v", err)
 	}
 
-	cfg.Parser = parser.NewScalametaParser()
+	cfg.Parser = parser.NewScalametaParser(
+		parser.WithHttpClientTimeout(60 * time.Second),
+	)
+
 	if err := cfg.Parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}

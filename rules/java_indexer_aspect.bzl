@@ -11,21 +11,6 @@ load(":providers.bzl", "JarIndexerAspectInfo")
 # does way more than we need.  Consider rewrite it from scratch and collect java
 # info more simply?
 
-_cpp_header_extensions = [
-    "hh",
-    "hxx",
-    "ipp",
-    "hpp",
-]
-
-_c_or_cpp_header_extensions = ["h"] + _cpp_header_extensions
-
-_cpp_extensions = [
-    "cc",
-    "cpp",
-    "cxx",
-] + _cpp_header_extensions
-
 _java_rules = [
     "java_library",
     "java_binary",
@@ -225,26 +210,6 @@ def divide_java_sources(ctx):
 
     return java_sources, gen_java_sources, srcjars
 
-def _is_cpp_target(srcs):
-    fail("not used")
-    if all([src.extension in _c_or_cpp_header_extensions for src in srcs]):
-        return True  # assume header-only lib is c++
-    return any([src.extension in _cpp_extensions for src in srcs])
-
-def _is_objcpp_target(srcs):
-    fail("not used")
-    return any([src.extension == "mm" for src in srcs])
-
-def _sources(ctx, target):
-    fail("not used")
-    srcs = []
-    if hasattr(ctx.rule.attr, "srcs"):
-        srcs += [f for src in ctx.rule.attr.srcs for f in src.files.to_list()]
-    if hasattr(ctx.rule.attr, "hdrs"):
-        srcs += [f for src in ctx.rule.attr.hdrs for f in src.files.to_list()]
-
-    return srcs
-
 def is_valid_aspect_target(target):
     """Returns whether the target has had the aspect run on it."""
     return hasattr(target, "intellij_info")
@@ -344,7 +309,6 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
     class_jars = [output.class_jar for output in java_outputs if output and output.class_jar]
     output_jars = [jar for output in java_outputs for jar in jars_from_output(output)]
     resolve_files = output_jars
-    compile_files = class_jars
 
     gen_jars = []
     for generated_class_jar, generated_source_jar in _collect_generated_files(java):
@@ -373,7 +337,7 @@ def collect_java_info(ctx, target, feature_configuration, cc_toolchain, ide_info
         jdeps = artifact_location(jdeps_file)
         resolve_files.append(jdeps_file)
 
-    java_sources, gen_java_sources, srcjars = divide_java_sources(ctx)
+    _java_sources, _gen_java_sources, srcjars = divide_java_sources(ctx)
 
     if java_semantics:
         srcjars = java_semantics.filter_source_jars(target, ctx, srcjars)

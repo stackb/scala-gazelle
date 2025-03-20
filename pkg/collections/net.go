@@ -14,7 +14,7 @@ const connectionAvailableDuration = 250 * time.Millisecond
 // until it connects and returns true.  If it fails to connect by the timeout
 // deadline, returns false.
 func WaitForConnectionAvailable(host string, port int, timeout time.Duration, progress bool) bool {
-	target := fmt.Sprintf("%s:%d", host, port)
+	target := net.JoinHostPort(host, fmt.Sprintf("%d", port))
 	var wg sync.WaitGroup
 	wg.Add(1)
 

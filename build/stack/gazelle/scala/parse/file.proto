@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package build.stack.gazelle.scala.parse;
 
-import "build/stack/gazelle/scala/parse/symbol.proto";
-
 option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;

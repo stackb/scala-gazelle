@@ -31,8 +31,34 @@ const (
 	debugParse = false
 )
 
-func NewScalametaParser() *ScalametaParser {
-	return &ScalametaParser{}
+type ScalametaParserOption func(*ScalametaParser) *ScalametaParser
+
+func WithHttpPort(port int) ScalametaParserOption {
+	return func(sp *ScalametaParser) *ScalametaParser {
+		sp.httpPort = port
+		return sp
+	}
+}
+
+func WithHttpClientTimeout(timeout time.Duration) ScalametaParserOption {
+	return func(sp *ScalametaParser) *ScalametaParser {
+		sp.httpClientTimout = timeout
+		return sp
+	}
+}
+
+var defaultOptions = []ScalametaParserOption{
+	WithHttpPort(0),
+	WithHttpClientTimeout(60 * time.Second),
+}
+
+func NewScalametaParser(options ...ScalametaParserOption) *ScalametaParser {
+	p := &ScalametaParser{}
+
+	for _, opt := range append(defaultOptions, options...) {
+		p = opt(p)
+	}
+	return p
 }
 
 // ScalametaParser is a service that communicates to a scalameta-js parser
@@ -47,7 +73,8 @@ type ScalametaParser struct {
 	httpClient *http.Client
 	httpUrl    string
 
-	HttpPort int
+	httpClientTimout time.Duration
+	httpPort         int
 }
 
 func (s *ScalametaParser) Stop() {
@@ -100,14 +127,14 @@ func (s *ScalametaParser) Start() error {
 	//
 	// ensure we have a port
 	//
-	if s.HttpPort == 0 {
+	if s.httpPort == 0 {
 		port, err := getFreePort()
 		if err != nil {
 			return status.Errorf(codes.FailedPrecondition, "getting http port: %v", err)
 		}
-		s.HttpPort = port
+		s.httpPort = port
 	}
-	s.httpUrl = fmt.Sprintf("http://127.0.0.1:%d", s.HttpPort)
+	s.httpUrl = fmt.Sprintf("http://127.0.0.1:%d", s.httpPort)
 	if debugParse {
 		log.Println("httpUrl:", s.httpUrl)
 	}
@@ -128,7 +155,7 @@ func (s *ScalametaParser) Start() error {
 	cmd.Dir = processDir
 	cmd.Env = []string{
 		"NODE_PATH=" + processDir,
-		fmt.Sprintf("PORT=%d", s.HttpPort),
+		fmt.Sprintf("PORT=%d", s.httpPort),
 	}
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -157,7 +184,7 @@ func (s *ScalametaParser) Start() error {
 	}
 
 	host := "localhost"
-	port := s.HttpPort
+	port := s.httpPort
 	timeout := 10 * time.Second
 	if !collections.WaitForConnectionAvailable(host, port, timeout, debugParse) {
 		return fmt.Errorf("timeout waiting to connect to scala parse server %s:%d within %s", host, port, timeout)
@@ -171,7 +198,7 @@ func (s *ScalametaParser) Start() error {
 	// Setup the http client
 	//
 	s.httpClient = &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: s.httpClientTimout,
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
 				Timeout: 5 * time.Second,
