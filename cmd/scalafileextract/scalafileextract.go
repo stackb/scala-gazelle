@@ -127,9 +127,14 @@ func batchWork(cfg *Config) error {
 		return fmt.Errorf("source files list must not be empty")
 	}
 
+	now := time.Now()
+	fail := func(err error) error {
+		return fmt.Errorf("%v (%v)", err, time.Since(now))
+	}
+
 	files, err := extract(cfg.Parser, cfg.Cwd, cfg.SourceFiles)
 	if err != nil {
-		return fmt.Errorf("failed to extract files: %v", err)
+		return fail(fmt.Errorf("failed to extract files: %v", err))
 	}
 
 	rule := sppb.Rule{
@@ -139,7 +144,7 @@ func batchWork(cfg *Config) error {
 	}
 
 	if err := protobuf.WriteFile(cfg.OutputFile, &rule); err != nil {
-		return fmt.Errorf("failed to write output file: %v", err)
+		return fail(fmt.Errorf("failed to write output file: %v", err))
 	}
 
 	return nil
