@@ -127,9 +127,6 @@ func (s *scalaFilesRule) Imports(c *config.Config, r *rule.Rule, file *rule.File
 func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
 	var srcs []string
 	var debug bool
-	// if rctx.From.Pkg == "omnistac/core/biz/workbook" {
-	// 	debug = true
-	// }
 	if debug {
 		log.Printf("%s: resolving with %d generated rules", rctx.From, len(s.pkg.GeneratedRules()))
 	}
@@ -155,12 +152,8 @@ func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw inte
 
 	if len(srcs) > 0 {
 		rctx.Rule.SetAttr("srcs", collections.DeduplicateAndSort(srcs))
-		// deps = append(deps, label.New(rctx.Config.RepoName, rctx.From.Pkg, s.Name()).String())
 		deps = append(deps, rctx.From.String())
 	} else {
-		// panic("will delete! " + rctx.From.String())
 		rctx.Rule.Delete()
-		s.rule.Delete()
-		rctx.File.Sync()
 	}
 }

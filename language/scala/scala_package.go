@@ -129,8 +129,13 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 		for _, r := range s.args.File.Rules {
 			fqn := fullyQualifiedLoadName(s.args.File.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
-			if _, ok := s.providerRegistry.LookupProvider(fqn); ok {
-				s.ruleCoverage.total += 1
+			if provider, ok := s.providerRegistry.LookupProvider(fqn); ok {
+				// TOOD(pcj): consider adding .ContributesToCoverage or some
+				// other way of tracking which rules contribute to coverage
+				// calculation.
+				if provider.Name() != "scala_files" && provider.Name() != "scala_fileset" {
+					s.ruleCoverage.total += 1
+				}
 			}
 		}
 	}
@@ -151,8 +156,10 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 			for _, r := range existing {
 				rule := s.resolveRule(ruleConfig, r)
 				if rule != nil {
-					s.ruleCoverage.managed += 1
 					rules = append(rules, rule)
+					if rule.Name() != "scala_files" || rule.Name() != "scala_fileset" {
+						s.ruleCoverage.managed += 1
+					}
 				}
 			}
 		}

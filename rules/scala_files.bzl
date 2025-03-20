@@ -35,7 +35,7 @@ def _parse(ctx, files, output_file):
 
     ctx.actions.run(
         mnemonic = "ParseScala",
-        progress_message = "Parsing %d scala source files" % len(files),
+        progress_message = "Parsing %s (%d files)" % (str(ctx.label), len(files)),
         execution_requirements = {
             "supports-workers": "1",
             "requires-worker-protocol": "proto",

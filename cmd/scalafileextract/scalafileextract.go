@@ -102,7 +102,7 @@ func persistentWork(cfg *Config) error {
 		batchCfg.Cwd = cfg.Cwd
 
 		if err := batchWork(&batchCfg); err != nil {
-			return fmt.Errorf("while performing persistent batch: %v", err)
+			return fmt.Errorf("performing persistent batch!: %v", err)
 		}
 
 		if err := protobuf.WriteDelimitedTo(&resp, os.Stdout); err != nil {
