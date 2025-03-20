@@ -193,6 +193,8 @@ func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sp
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+
 	w, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "response error: %v", err)
@@ -261,6 +263,5 @@ func newHttpParseRequest(url string, in *sppb.ParseRequest) (*http.Request, erro
 		return nil, status.Errorf(codes.InvalidArgument, "creating request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-
 	return req, nil
 }

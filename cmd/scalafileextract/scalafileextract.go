@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"time"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
@@ -178,7 +179,10 @@ func extract(parser *parser.ScalametaParser, dir string, sourceFiles []string) (
 		filenames[filename] = sourceFile
 	}
 
-	response, err := parser.Parse(context.Background(), request)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	response, err := parser.Parse(ctx, request)
 	if err != nil {
 		return nil, err
 	}
