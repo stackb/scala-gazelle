@@ -43,8 +43,14 @@ autokeep_protos:
 	mv build/stack/gazelle/scala/autokeep/build/stack/gazelle/scala/autokeep/autokeep.pb.go build/stack/gazelle/scala/autokeep/autokeep.pb.go
 	rm -rf build/stack/gazelle/scala/autokeep/build
 
+.PHONY: worker_protos
+worker_protos:
+	bazel run //blaze/worker:worker_protocol_go_compiled_sources.update
+	mv blaze/worker/blaze/worker/worker_protocol.pb.go blaze/worker/worker_protocol.pb.go
+	rm -rf blaze/worker/blaze
+
 .PHONY: protos
-protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos autokeep_protos
+protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos autokeep_protos worker_protos
 	echo "Done."
 
 .PHONY: docs

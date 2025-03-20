@@ -388,6 +388,11 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 
 }
 
+// Files implements part of the scalarule.Rule interface.
+func (r *scalaRule) Files() []*sppb.File {
+	return r.files
+}
+
 // Provides implements part of the scalarule.Rule interface.
 func (r *scalaRule) Provides() []resolve.ImportSpec {
 	exports := make([]resolve.ImportSpec, 0, len(r.exports))

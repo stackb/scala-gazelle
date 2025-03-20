@@ -9,7 +9,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
@@ -51,6 +54,9 @@ func (s *ScalaFilesRuleProvider) KindInfo() rule.KindInfo {
 		MergeableAttrs: map[string]bool{
 			"srcs": true,
 		},
+		ResolveAttrs: map[string]bool{
+			"srcs": true,
+		},
 	}
 }
 
@@ -72,14 +78,14 @@ func (s *ScalaFilesRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarul
 			srcs = append(srcs, file)
 		}
 	}
-	if len(srcs) == 0 {
-		return nil
-	}
 
 	r := rule.NewRule(s.kind, s.kind)
-	r.SetAttr("srcs", srcs)
-
-	deps = append(deps, label.New(args.Config.RepoName, args.Rel, s.kind).String())
+	if len(srcs) > 0 {
+		r.SetAttr("srcs", srcs)
+	}
+	r.SetAttr("tags", []string{"manual"})
+	r.SetAttr("visibility", []string{"//visibility:public"})
+	r.SetPrivateAttr(config.GazelleImportsKey, []string{"foo"})
 
 	return &scalaFilesRule{cfg, pkg, r}
 }
@@ -112,12 +118,48 @@ func (s *scalaFilesRule) Rule() *rule.Rule {
 	return s.rule
 }
 
-// Imports implements part of the scalarule.RuleProvider interface.  It always
-// returns nil as semanticdb_index is not an importable rule.
+// Imports implements part of the scalarule.RuleProvider interface.  It retuns a
+// non-nil struct in order to be scheduled by gazelle to resolve.
 func (s *scalaFilesRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
-	return nil
+	return []resolve.ImportSpec{}
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
 func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
+	var srcs []string
+	var debug bool
+	// if rctx.From.Pkg == "omnistac/core/biz/workbook" {
+	// 	debug = true
+	// }
+	if debug {
+		log.Printf("%s: resolving with %d generated rules", rctx.From, len(s.pkg.GeneratedRules()))
+	}
+
+	for _, rule := range s.pkg.GeneratedRules() {
+		scalaFiles := rule.PrivateAttr("_scala_files")
+		if debug {
+			log.Printf("%s: resolving with scala_files: %T", rctx.From, scalaFiles)
+		}
+		if files, ok := scalaFiles.([]*sppb.File); ok {
+			if debug {
+				log.Printf("%s: resolving with %d files", rctx.From, len(files))
+			}
+			for _, file := range files {
+				relativeToPkg := strings.TrimPrefix(file.Filename, s.pkg.GenerateArgs().Rel)
+				srcs = append(srcs, strings.TrimPrefix(relativeToPkg, "/"))
+			}
+		}
+	}
+	if debug {
+		log.Printf("%s: resolved srcs: %v", rctx.From, srcs)
+	}
+
+	if len(srcs) > 0 {
+		rctx.Rule.SetAttr("srcs", collections.DeduplicateAndSort(srcs))
+		deps = append(deps, label.New(rctx.Config.RepoName, rctx.From.Pkg, s.Name()).String())
+	} else {
+		// panic("will delete! " + rctx.From.String())
+		rctx.Rule.Delete()
+		rctx.File.Sync()
+	}
 }

@@ -6,6 +6,7 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/cmd/scalafileextract",
     visibility = ["//visibility:private"],
     deps = [
+        "//blaze/worker",
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/parser",

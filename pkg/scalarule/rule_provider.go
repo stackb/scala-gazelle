@@ -14,6 +14,7 @@ type ResolveContext struct {
 	RuleIndex *resolve.RuleIndex
 	Rule      *rule.Rule
 	From      label.Label
+	File      *rule.File
 }
 
 // RuleProvider implementations are capable of providing a rule and import list

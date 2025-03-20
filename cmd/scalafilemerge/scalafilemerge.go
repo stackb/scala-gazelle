@@ -63,9 +63,9 @@ func parseFlags(args []string) (files []string, err error) {
 	}
 
 	files = fs.Args()
-	if len(files) == 0 {
-		err = fmt.Errorf("scalafilemerge positional args should be a non-empty list of jars or semanticdb files to merge")
-	}
+	// if len(files) == 0 {
+	// 	err = fmt.Errorf("scalafilemerge positional args should be a non-empty list of files to merge")
+	// }
 
 	return
 }

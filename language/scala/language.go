@@ -16,6 +16,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
+	_ "github.com/stackb/scala-gazelle/pkg/scalafiles"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 

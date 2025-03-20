@@ -7,6 +7,7 @@ go_library(
     srcs = [
         "globalscope.go",
         "io.go",
+        "scala_fileset.go",
         "semanticdb.go",
         "semanticdb_index.go",
         "visitor.go",

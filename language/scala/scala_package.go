@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -103,6 +104,7 @@ func (s *scalaPackage) Resolve(
 			RuleIndex: ix,
 			Rule:      r,
 			From:      from,
+			File:      s.args.File,
 		}, importsRaw)
 	}
 	// the first resolve cycle populates the symbol scopes
@@ -199,6 +201,14 @@ func (s *scalaPackage) GenerateArgs() language.GenerateArgs {
 	return s.args
 }
 
+// GeneratedRules implements part of the scalarule.Package interface.
+func (s *scalaPackage) GeneratedRules() (rules []*rule.Rule) {
+	for _, rule := range s.rules {
+		rules = append(rules, rule)
+	}
+	return
+}
+
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
 
@@ -207,13 +217,20 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 	if err != nil {
 		return nil, err
 	}
-	if len(srcs) == 0 {
+	scalaSrcs := make([]string, 0, len(srcs))
+	for _, src := range srcs {
+		if !strings.HasSuffix(src, ".scala") {
+			continue
+		}
+		scalaSrcs = append(scalaSrcs, src)
+	}
+	if len(scalaSrcs) == 0 {
 		return nil, ErrRuleHasNoSrcs
 	}
 
 	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
 
-	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
+	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, scalaSrcs...)
 	if err != nil {
 		return nil, err
 	}

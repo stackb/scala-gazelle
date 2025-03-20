@@ -15,18 +15,23 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/parser"
+	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
+
+const scalaFilesetFileFlagName = "scala_fileset_file"
 
 type progressFunc func(msg string)
 
 // NewSourceProvider constructs a new NewSourceProvider.
 func NewSourceProvider(progress progressFunc) *SourceProvider {
 	return &SourceProvider{
-		progress: progress,
-		parser:   parser.NewScalametaParser(),
+		progress:   progress,
+		parser:     parser.NewScalametaParser(),
+		scalaFiles: make(map[string]*sppb.File),
 	}
 }
 
@@ -41,6 +46,11 @@ type SourceProvider struct {
 	scope resolver.Scope
 	// parser is an instance of the scala source parser
 	parser *parser.ScalametaParser
+	// scalaFilesetFilename is an optional path to a parse.Fileset that provides
+	// pre-parsed scala files.
+	scalaFilesetFilename string
+	// scalaFiles is a mapping that is read from the scalaFilesetFilename, if present
+	scalaFiles map[string]*sppb.File
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -50,10 +60,21 @@ func (r *SourceProvider) Name() string {
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	flags.StringVar(&r.scalaFilesetFilename, scalaFilesetFileFlagName, "", "optional path to an imports file where resolved imports should be written (.json or .pb)")
 }
 
 // CheckFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope resolver.Scope) error {
+	if r.scalaFilesetFilename != "" {
+		filename := r.scalaFilesetFilename
+		if !filepath.IsAbs(filename) {
+			filename = filepath.Join(c.WorkDir, filename)
+		}
+		if err := r.parseScalaFileset(filename); err != nil {
+			return err
+		}
+	}
+
 	r.scope = scope
 	return r.start()
 }
@@ -93,9 +114,7 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 	}
 	sort.Strings(srcs)
 
-	t1 := time.Now()
-
-	files, err := r.parseFiles(dir, srcs)
+	files, err := r.parseFiles(dir, srcs, from, kind)
 	if err != nil {
 		return nil, err
 	}
@@ -111,33 +130,48 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 		}
 	}
 
-	t2 := time.Since(t1).Round(1 * time.Millisecond)
-	if true {
-		log.Printf("Parsed %s%%%s (%d files, %v)", from, kind, len(files), t2)
-	}
-
 	return &sppb.Rule{
-		Label:           from.String(),
-		Kind:            kind,
-		Files:           files,
-		ParseTimeMillis: t2.Milliseconds(),
+		Label: from.String(),
+		Kind:  kind,
+		Files: files,
+		// ParseTimeMillis: t2.Milliseconds(),
 	}, nil
 }
 
-func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, error) {
-	filenames := make([]string, len(srcs))
-	for i, src := range srcs {
-		filenames[i] = filepath.Join(dir, src)
+func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label, kind string) ([]*sppb.File, error) {
+	// haveFiles is the list of haveFiles we already have from pre-computed scalaFiles
+	var haveFiles []*sppb.File
+
+	needFilenames := make([]string, 0, len(srcs))
+	for _, src := range srcs {
+		rel := filepath.Join(from.Pkg, src)
+		if file, ok := r.scalaFiles[rel]; ok {
+			haveFiles = append(haveFiles, file)
+			// log.Println("✅ have:", rel)
+		} else {
+			// log.Println("⭕ need:", src)
+			needFilenames = append(needFilenames, filepath.Join(dir, src))
+		}
+	}
+	if len(needFilenames) == 0 {
+		return haveFiles, nil
 	}
 
+	t1 := time.Now()
+
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
-		Filenames: filenames,
+		Filenames: needFilenames,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("parse error: %v", err)
 	}
 	if response.Error != "" {
 		return nil, fmt.Errorf("parser error: %s", response.Error)
+	}
+
+	t2 := time.Since(t1).Round(1 * time.Millisecond)
+	if true {
+		log.Printf("Parsed %s%%%s (%d files, %v)", from, kind, len(needFilenames), t2)
 	}
 
 	// check for errors and remove dir prefixes
@@ -148,7 +182,7 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string) ([]*sppb.File, er
 		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
 	}
 
-	return response.Files, nil
+	return append(haveFiles, response.Files...), nil
 }
 
 // LoadScalaRule loads the given state.
@@ -182,4 +216,19 @@ func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb
 
 func (r *SourceProvider) putSymbol(from label.Label, kind, imp string, impType sppb.ImportType) {
 	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, kind, from))
+}
+
+func (r *SourceProvider) parseScalaFileset(filename string) error {
+	var ruleset sppb.RuleSet
+	if err := protobuf.ReadFile(filename, &ruleset); err != nil {
+		return fmt.Errorf("reading --%s: %v", scalaFilesetFileFlagName, err)
+	}
+
+	for _, rule := range ruleset.Rules {
+		for _, file := range rule.Files {
+			r.scalaFiles[file.Filename] = file
+		}
+	}
+
+	return nil
 }

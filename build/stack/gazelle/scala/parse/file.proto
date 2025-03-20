@@ -15,7 +15,7 @@ message FileSet {
 
 // File represents a parsed file named in a scala rule.srcs list.
 message File {
-    // filename is the (relative) source filename
+    // filename is the (workspace relative) source filename
     string filename = 1;
     // semantic_imports is a list of types used by the file, typically
     // discovered using semanticdb.

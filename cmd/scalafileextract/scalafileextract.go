@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -12,21 +13,23 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 
+	wppb "github.com/stackb/scala-gazelle/blaze/worker"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-var (
-	outputFile string
-	ruleLabel  string
-	ruleKind   string
-)
-
-type parseContext struct {
-	parser *parser.ScalametaParser
+type Config struct {
+	OutputFile       string
+	RuleLabel        string
+	RuleKind         string
+	PersistentWorker bool
+	SourceFiles      []string
+	Parser           *parser.ScalametaParser
+	Cwd              string
 }
 
 func main() {
 	log.SetPrefix("scalafileextract: ")
+	log.SetOutput(os.Stderr)
 	log.SetFlags(0) // don't print timestamps
 
 	if err := run(os.Args[1:]); err != nil {
@@ -35,80 +38,131 @@ func main() {
 }
 
 func run(args []string) error {
-	args, err := collections.ReadArgsParamsFile(args)
+	log.Println("args:", args)
+
+	parsedArgs, err := collections.ReadArgsParamsFile(args)
+	log.Println("parsedArgs:", parsedArgs)
 	if err != nil {
 		return fmt.Errorf("failed to read params file: %v", err)
 	}
 
-	sourceFiles, err := parseFlags(args)
+	cfg, err := parseFlags(parsedArgs)
 	if err != nil {
 		return fmt.Errorf("failed to parse args: %v", err)
 	}
 
-	parser := parser.NewScalametaParser()
-	if err := parser.Start(); err != nil {
+	cfg.Parser = parser.NewScalametaParser()
+	if err := cfg.Parser.Start(); err != nil {
 		return fmt.Errorf("starting parser: %w", err)
 	}
+	defer func() {
+		cfg.Parser.Stop()
+	}()
 
-	cwd, err := os.Getwd()
+	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("getting os cwd: %v", err)
+	} else {
+		cfg.Cwd = wd
 	}
 
-	files, err := extract(&parseContext{parser}, cwd, sourceFiles)
+	if cfg.PersistentWorker {
+		if err := persistentWork(&cfg); err != nil {
+			return fmt.Errorf("while performing persistent work: %v", err)
+		}
+	} else {
+		if err := batchWork(&cfg); err != nil {
+			return fmt.Errorf("while performing batch work: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func persistentWork(cfg *Config) error {
+	for {
+		var req wppb.WorkRequest
+		if err := protobuf.ReadDelimitedFrom(&req, os.Stdin); err != nil {
+			if err == io.EOF {
+				// this is the signal to terminate the program
+				break
+			}
+			return fmt.Errorf("reading work request: %v", err)
+		}
+
+		var resp wppb.WorkResponse
+		resp.RequestId = req.RequestId
+
+		batchCfg, err := parseFlags(req.Arguments)
+		if err != nil {
+			return fmt.Errorf("parsing work request arguments: %v", err)
+		}
+
+		batchCfg.Parser = cfg.Parser
+		batchCfg.Cwd = cfg.Cwd
+
+		if err := batchWork(&batchCfg); err != nil {
+			return fmt.Errorf("while performing persistent batch: %v", err)
+		}
+
+		if err := protobuf.WriteDelimitedTo(&resp, os.Stdout); err != nil {
+			return fmt.Errorf("writing work response: %v", err)
+		}
+	}
+	return nil
+}
+
+func batchWork(cfg *Config) error {
+	if cfg.OutputFile == "" {
+		return fmt.Errorf("--output_file is required")
+	}
+	if cfg.RuleLabel == "" {
+		return fmt.Errorf("--rule_label is required")
+	}
+	if cfg.RuleKind == "" {
+		return fmt.Errorf("--rule_kind is required")
+	}
+	if len(cfg.SourceFiles) == 0 {
+		return fmt.Errorf("source files list must not be empty")
+	}
+
+	files, err := extract(cfg.Parser, cfg.Cwd, cfg.SourceFiles)
 	if err != nil {
 		return fmt.Errorf("failed to extract files: %v", err)
 	}
 
 	rule := sppb.Rule{
-		Label: ruleLabel,
-		Kind:  ruleKind,
+		Label: cfg.RuleLabel,
+		Kind:  cfg.RuleKind,
 		Files: files,
 	}
 
-	if err := protobuf.WriteFile(outputFile, &rule); err != nil {
+	if err := protobuf.WriteFile(cfg.OutputFile, &rule); err != nil {
 		return fmt.Errorf("failed to write output file: %v", err)
 	}
-	// if err := protobuf.WriteStableJSONFile(outputFile, &rule); err != nil {
-	// 	return fmt.Errorf("failed to write output file: %v", err)
-	// }
 
 	return nil
 }
 
-func parseFlags(args []string) (files []string, err error) {
+func parseFlags(args []string) (cfg Config, err error) {
 	fs := flag.NewFlagSet("scalafileextract", flag.ExitOnError)
-	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
-	fs.StringVar(&ruleLabel, "rule_label", "", "the rule label being parsed")
-	fs.StringVar(&ruleKind, "rule_kind", "", "the rule kind being parsed")
-
+	fs.StringVar(&cfg.OutputFile, "output_file", "", "the output file to write")
+	fs.StringVar(&cfg.RuleLabel, "rule_label", "", "the rule label being parsed")
+	fs.StringVar(&cfg.RuleKind, "rule_kind", "", "the rule kind being parsed")
+	fs.BoolVar(&cfg.PersistentWorker, "persistent_worker", false, "present if this tool is being invokes as a bazel persistent worker")
 	fs.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "usage: scalafileextract @PARAMS_FILE | scalafileextract OPTIONS")
+		fmt.Fprintf(flag.CommandLine.Output(), "usage: scalafileextract @PARAMS_FILE")
 		fs.PrintDefaults()
 	}
+
 	if err = fs.Parse(args); err != nil {
-		return nil, err
+		return
 	}
-
-	if outputFile == "" {
-		log.Fatal("-output_file is required")
-	}
-	if ruleLabel == "" {
-		log.Fatal("-rule_label is required")
-	}
-	if ruleKind == "" {
-		log.Fatal("-rule_kind is required")
-	}
-
-	files = fs.Args()
-	if len(files) == 0 {
-		err = fmt.Errorf("positional args should not be empty")
-	}
-
+	cfg.SourceFiles = fs.Args()
 	return
 }
 
-func extract(ctx *parseContext, dir string, sourceFiles []string) ([]*sppb.File, error) {
+func extract(parser *parser.ScalametaParser, dir string, sourceFiles []string) ([]*sppb.File, error) {
 	request := &sppb.ParseRequest{
 		Filenames: make([]string, len(sourceFiles)),
 	}
@@ -124,7 +178,7 @@ func extract(ctx *parseContext, dir string, sourceFiles []string) ([]*sppb.File,
 		filenames[filename] = sourceFile
 	}
 
-	response, err := ctx.parser.Parse(context.Background(), request)
+	response, err := parser.Parse(context.Background(), request)
 	if err != nil {
 		return nil, err
 	}

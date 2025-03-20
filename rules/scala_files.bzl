@@ -25,7 +25,9 @@ def _merge(ctx, output_file):
 
 def _parse(ctx, files, output_file):
     args = ctx.actions.args()
-    args.use_param_file("@%s", use_always = False)
+    args.use_param_file("@%s", use_always = True)
+    args.set_param_file_format("multiline")
+
     args.add("--rule_kind=%s" % "scala_files")
     args.add("--rule_label=%s" % str(ctx.label))
     args.add("--output_file", output_file)
@@ -34,6 +36,10 @@ def _parse(ctx, files, output_file):
     ctx.actions.run(
         mnemonic = "ParseScala",
         progress_message = "Parsing %d scala source files" % len(files),
+        execution_requirements = {
+            "supports-workers": "1",
+            "requires-worker-protocol": "proto",
+        },
         executable = ctx.executable._parser,
         arguments = [args],
         inputs = files,
@@ -73,6 +79,9 @@ scala_files = rule(
         "deps": attr.label_list(
             doc = "list of child scala_files rules to be merged",
             providers = [ScalaSourceInfo],
+        ),
+        "kinds": attr.string_list(
+            doc = "list of file kinds (for scala_fileset)",
         ),
         "_merger": attr.label(
             default = Label("@build_stack_scala_gazelle//cmd/scalafilemerge"),
