@@ -171,7 +171,7 @@ func (s *ScalametaParser) Start() error {
 	// Setup the http client
 	//
 	s.httpClient = &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 60 * time.Second,
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
 				Timeout: 5 * time.Second,
