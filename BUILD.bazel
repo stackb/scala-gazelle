@@ -1,7 +1,9 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 # -- Gazelle language "walk" ---
 # gazelle:exclude vendor
+# gazelle:ignore bazel-bin bazel-out bazel-scala-gazelle bazel-testlogs
 
 # -- Gazelle language "resolve" ---
 # gazelle:resolve go go github.com/stackb/rules_proto/pkg/protoc @build_stack_rules_proto//pkg/protoc
@@ -44,6 +46,7 @@ gazelle_binary(
         "@bazel_gazelle//language/go",
         "@bazel_gazelle//language/proto",
         "@build_stack_rules_proto//language/protobuf",
+        "//language/files",
     ],
     visibility = ["//visibility:public"],
 )

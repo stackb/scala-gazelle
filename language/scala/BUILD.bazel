@@ -1,6 +1,5 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@bazel_gazelle//:def.bzl", "gazelle_binary")
-# load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
 
@@ -87,7 +86,6 @@ go_test(
         "golden_test.go",
         "language_test.go",
         "loads_test.go",
-        "scala_package_test.go",
         "scala_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),
@@ -125,6 +123,15 @@ go_test(
 #     srcs = glob(["testdata/platform_resolver/*"]),
 #     tags = ["manual"],
 #     workspace_template = "scala.WORKSPACE",
+# )
+
+# sh_test(
+#     name = "it",
+#     srcs = ["it.sh"],
+#     data = [
+#         ":gazelle",
+#         "//:all_files",
+#     ],
 # )
 
 filegroup(
