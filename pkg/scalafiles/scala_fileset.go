@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	ScalaFilesetRuleKind = "scala_fileset2"
+	ScalaFilesetRuleKind = "scala_fileset"
 	ScalaFilesetRuleLoad = "@build_stack_scala_gazelle//rules:scala_files.bzl"
 )
 

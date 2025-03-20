@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
@@ -156,10 +155,12 @@ func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw inte
 
 	if len(srcs) > 0 {
 		rctx.Rule.SetAttr("srcs", collections.DeduplicateAndSort(srcs))
-		deps = append(deps, label.New(rctx.Config.RepoName, rctx.From.Pkg, s.Name()).String())
+		// deps = append(deps, label.New(rctx.Config.RepoName, rctx.From.Pkg, s.Name()).String())
+		deps = append(deps, rctx.From.String())
 	} else {
 		// panic("will delete! " + rctx.From.String())
 		rctx.Rule.Delete()
+		s.rule.Delete()
 		rctx.File.Sync()
 	}
 }
