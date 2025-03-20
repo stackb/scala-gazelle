@@ -1,0 +1,18 @@
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", "scala_test")
+
+scala_library(
+    name = "lib",
+    srcs = ["a/b/c/Lib.scala"],
+)
+
+scala_binary(
+    name = "app",
+    main_class= "a.b.c.Main",
+    srcs = ["a/b/c/Main.scala"],
+)
+
+scala_test(
+    name = "test",
+    srcs = ["a/b/c/LibTest.scala"],
+    deps = [":lib"],
+)
