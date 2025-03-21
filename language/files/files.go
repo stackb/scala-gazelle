@@ -1,4 +1,4 @@
-package noop
+package files
 
 import (
 	"flag"
@@ -20,8 +20,8 @@ func NewLanguage() language.Language {
 
 // FilesLanguage implements language.Language.
 type FilesLanguage struct {
-	name         string
-	allFilesDeps []label.Label
+	name          string
+	filegroupDeps []label.Label
 }
 
 // Name returns the name of the language. This should be a prefix of the kinds
@@ -52,6 +52,7 @@ func (*FilesLanguage) Kinds() map[string]rule.KindInfo {
 			},
 			MergeableAttrs: map[string]bool{
 				"srcs": true,
+				"deps": true,
 			},
 		},
 	}
@@ -118,36 +119,42 @@ func (pl *FilesLanguage) Resolve(
 //
 // Any non-fatal errors this function encounters should be logged using
 // log.Print.
-func (pl *FilesLanguage) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+func (pl *FilesLanguage) GenerateRules(args language.GenerateArgs) (result language.GenerateResult) {
 	var gen []*rule.Rule
 
-	if len(args.RegularFiles) > 0 {
-		allFiles := rule.NewRule("package_filegroup", "allfiles")
-		allFiles.SetAttr("srcs", args.RegularFiles)
-		allFiles.SetAttr("visibility", []string{"//visibility:public"})
-		gen = append(gen, allFiles)
+	if len(args.RegularFiles) > 0 || (args.Rel == "" && len(pl.filegroupDeps) > 0) {
+		filegroup := rule.NewRule("package_filegroup", "filegroup")
+		if len(args.RegularFiles) > 0 {
+			filegroup.SetAttr("srcs", args.RegularFiles)
+		}
+		filegroup.SetAttr("visibility", []string{"//visibility:public"})
+		gen = append(gen, filegroup)
 
 		if args.Rel != "" {
-			dep := label.New(args.Config.RepoName, args.Rel, allFiles.Name())
-			pl.allFilesDeps = append(pl.allFilesDeps, dep)
+			dep := label.New("", args.Rel, filegroup.Name())
+			pl.filegroupDeps = append(pl.filegroupDeps, dep)
 		} else {
-			deps := make([]string, len(pl.allFilesDeps))
-			for i, dep := range pl.allFilesDeps {
+			deps := make([]string, len(pl.filegroupDeps))
+			for i, dep := range pl.filegroupDeps {
 				deps[i] = dep.String()
 			}
 			if len(deps) > 0 {
-				allFiles.SetAttr("deps", deps)
+				filegroup.SetAttr("deps", deps)
 			}
 		}
 	}
 
-	imports := make([]interface{}, len(gen))
+	imports := make([]any, len(gen))
 	for i, r := range gen {
 		imports[i] = r.PrivateAttr(config.GazelleImportsKey)
 	}
 
-	return language.GenerateResult{
+	result = language.GenerateResult{
 		Gen:     gen,
 		Imports: imports,
 	}
+
+	// fmt.Fprintf(os.Stdout, "result: %+v", result)
+
+	return
 }
