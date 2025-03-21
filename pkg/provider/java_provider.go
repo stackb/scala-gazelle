@@ -61,7 +61,7 @@ func (p *JavaProvider) CheckFlags(fs *flag.FlagSet, c *config.Config, scope reso
 		if !filepath.IsAbs(filename) {
 			filename = filepath.Join(c.WorkDir, filename)
 		}
-		if err := p.readJarIndex(filename); err != nil {
+		if err := p.readJarIndex(c, filename); err != nil {
 			return err
 		}
 	}
@@ -103,10 +103,10 @@ func (p *JavaProvider) GetPreferredDeps() map[string]label.Label {
 	return p.preferred
 }
 
-func (p *JavaProvider) readJarIndex(filename string) error {
+func (p *JavaProvider) readJarIndex(c *config.Config, filename string) error {
 	var index jipb.JarIndex
 	if err := protobuf.ReadFile(filename, &index); err != nil {
-		return fmt.Errorf("reading %s: %v", filename, err)
+		return fmt.Errorf("reading jar index file %s: %v (from %s)", filename, err, c.RepoRoot)
 	}
 
 	isPredefined := make(map[label.Label]bool)

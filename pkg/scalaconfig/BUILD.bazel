@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
@@ -38,4 +39,15 @@ go_test(
         "@com_github_google_go_cmp//cmp/cmpopts",
         "@com_github_stretchr_testify//mock",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "config.go",
+        "config_test.go",
+        "test_config.go",
+    ],
+    visibility = ["//visibility:public"],
 )

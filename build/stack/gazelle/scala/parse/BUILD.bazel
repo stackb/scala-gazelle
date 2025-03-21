@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
@@ -65,4 +66,26 @@ go_library(
         "@org_golang_google_protobuf//reflect/protoreflect",
         "@org_golang_google_protobuf//runtime/protoimpl",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "compiler.pb.go",
+        "compiler.proto",
+        "compiler_grpc.pb.go",
+        "file.pb.go",
+        "file.proto",
+        "import.pb.go",
+        "import.proto",
+        "parser.pb.go",
+        "parser.proto",
+        "parser_grpc.pb.go",
+        "rule.pb.go",
+        "rule.proto",
+        "symbol.pb.go",
+        "symbol.proto",
+    ],
+    visibility = ["//visibility:public"],
 )

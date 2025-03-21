@@ -13,10 +13,11 @@ import (
 const debugGenerate = false
 
 // GenerateRules implements part of the language.Language interface
-func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.GenerateResult) {
+	sc := scalaconfig.Get(args.Config)
 
-	if args.File == nil {
-		return language.GenerateResult{}
+	if args.File == nil && !sc.GenerateBuildFiles() {
+		return
 	}
 
 	t1 := time.Now()
@@ -25,7 +26,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	sc := scalaconfig.Get(args.Config)
 	pkg := newScalaPackage(args, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++

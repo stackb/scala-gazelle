@@ -99,6 +99,16 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				},
 			},
 		},
+		"scala_generate_build_files": {
+			directives: []rule.Directive{
+				{Key: "scala_generate_build_files", Value: "true"},
+			},
+			want: &Config{
+				rules:              map[string]*scalarule.Config{},
+				labelNameRewrites:  map[string]resolver.LabelNameRewriteSpec{},
+				generateBuildFiles: true,
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)

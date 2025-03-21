@@ -56,16 +56,16 @@ def scalameta_parsers():
     _maybe(
         http_archive,
         name = "scalameta_parsers",
-        sha256 = "661081f106ebdc9592543223887de999d2a2b6229bd1aa22b1376ba6b695675d",
+        sha256 = "c419383f9fe63da14104416cfc4ba3200d52ad6bddc1d0a9a2058c2a4349f691",
         strip_prefix = "package",
         build_file_content = """
 filegroup(
     name = "module",
-    srcs = ["index.js"],
+    srcs = ["main.js"],
     visibility = ["//visibility:public"],
 )
         """,
-        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.4.17.tgz"],
+        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.13.4.tgz"],
     )
 
 def bazel_gazelle():
@@ -80,7 +80,7 @@ def bazel_gazelle():
         http_archive,
         name = "bazel_gazelle",
         patch_args = ["-p1"],
-        patches = ["//third_party/bazelbuild/bazel-gazelle:pr-1394.patch"],
+        patches = ["@build_stack_scala_gazelle//third_party/bazelbuild/bazel-gazelle:pr-1394.patch"],
         sha256 = "5ebc984c7be67a317175a9527ea1fb027c67f0b57bb0c990bac348186195f1ba",
         strip_prefix = "bazel-gazelle-2d1002926dd160e4c787c1b7ecc60fb7d39b97dc",
         urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc.tar.gz"],

@@ -1,6 +1,7 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
-# gazelle:ignore node_modules
+# gazelle:exclude node_modules
 
 go_library(
     name = "parser",
@@ -73,4 +74,23 @@ genrule(
     outs = ["node.exe"],
     cmd = "cp $< $@",
     executable = True,
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "assets.go",
+        "assets_test.go",
+        "exec.go",
+        "exec_test.go",
+        "memo_parser.go",
+        "node.exe",
+        "package.json",
+        "parser.go",
+        "scalameta_parser.go",
+        "scalameta_parser.mjs",
+        "scalameta_parser_test.go",
+    ],
+    visibility = ["//visibility:public"],
 )

@@ -50,6 +50,9 @@ func (s *ScalaFilesetRuleProvider) Name() string {
 // KindInfo implements part of the scalarule.Provider interface.
 func (s *ScalaFilesetRuleProvider) KindInfo() rule.KindInfo {
 	return rule.KindInfo{
+		NonEmptyAttrs: map[string]bool{
+			"deps": true,
+		},
 		ResolveAttrs: map[string]bool{
 			"deps": true,
 		},
@@ -67,12 +70,17 @@ func (s *ScalaFilesetRuleProvider) LoadInfo() rule.LoadInfo {
 // ProvideRule implements part of the scalarule.Provider interface.  It always
 // returns nil.  The ResolveRule interface is the intended use case.
 func (s *ScalaFilesetRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	return nil
+	// we only generate a new rule if this is a root BUILD file
+	if pkg.GenerateArgs().Rel != "" {
+		return nil
+	}
+	r := rule.NewRule(s.kind, s.kind)
+	return &scalaFilesetRule{cfg, pkg, r}
 }
 
 // ResolveRule implements the RuleResolver interface.
 func (s *ScalaFilesetRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
-	r.SetPrivateAttr(config.GazelleImportsKey, nil)
+	r.SetPrivateAttr(config.GazelleImportsKey, nil) // ensure the rule has the key, but we don't use a value
 	return &scalaFilesetRule{cfg, pkg, r}
 }
 
@@ -99,7 +107,7 @@ func (s *scalaFilesetRule) Rule() *rule.Rule {
 }
 
 // Imports implements part of the scalarule.RuleProvider interface.  It always
-// returns nil as semanticdb_index is not an importable rule.
+// returns nil as this is not an importable rule.
 func (s *scalaFilesetRule) Imports(c *config.Config, r *rule.Rule, file *rule.File) []resolve.ImportSpec {
 	return nil
 }

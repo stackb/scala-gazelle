@@ -1,1 +1,13 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
 exports_files(["pr-1394.patch"])
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        # "BUILD.bazel",
+        "BUILD.bazel",
+        "pr-1394.patch",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -48,8 +48,8 @@ def _java_index_impl(ctx):
         label = ctx.attr.platform_deps[i].label
         jarindex_files.append(jarindexer_action(ctx, label, "bootclasspath", ctx.executable._jarindexer, jar))
 
-    output_proto = ctx.outputs.out_proto
-    output_json = ctx.outputs.out_json
+    output_proto = ctx.outputs.proto
+    output_json = ctx.outputs.json
 
     jarindex_depset = depset(direct = jarindex_files, transitive = transitive_jarindex_files)
     files = jarindex_depset.to_list()
@@ -100,13 +100,9 @@ java_index = rule(
             allow_files = True,
             doc = "the ijar tool",
         ),
-        "out_proto": attr.output(
-            mandatory = True,
-            doc = "the name of the proto output file",
-        ),
-        "out_json": attr.output(
-            mandatory = True,
-            doc = "the name of the json output file",
-        ),
+    },
+    outputs = {
+        "proto": "%{name}.pb",
+        "json": "%{name}.json",
     },
 )

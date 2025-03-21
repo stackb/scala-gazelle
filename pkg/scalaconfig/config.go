@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -20,6 +21,8 @@ import (
 
 type debugAnnotation int
 
+const scalaLangName = "scala"
+
 const (
 	DebugUnknown        debugAnnotation = 0
 	DebugImports        debugAnnotation = 1
@@ -27,7 +30,6 @@ const (
 	DebugDeps           debugAnnotation = 3
 	DebugRule           debugAnnotation = 4
 	DebugDepLabelOrigin debugAnnotation = 5
-	scalaLangName                       = "scala"
 )
 
 const (
@@ -35,6 +37,13 @@ const (
 	//
 	// gazelle:scala_debug true
 	scalaDebugDirective = "scala_debug"
+
+	// Limits scala-gazelle to only consider existing build files.  If false,
+	// scala-gazelle itself will never generate new build files.  Defaults to
+	// false.
+	//
+	// gazelle:scala_build_file_generate true
+	scalaGenerateBuildFilesDirective = "scala_generate_build_files"
 
 	// Turn on the wildcard import fixer
 	//
@@ -110,15 +119,16 @@ const (
 
 func DirectiveNames() []string {
 	return []string{
-		scalaDebugDirective,
-		scalaFixWildcardImportDirective,
-		scalaRuleDirective,
-		resolveGlobDirective,
 		resolveConflictsDirective,
-		scalaDepsCleanerDirective,
-		resolveWithDirective,
 		resolveFileSymbolName,
+		resolveGlobDirective,
 		resolveKindRewriteNameDirective,
+		resolveWithDirective,
+		scalaDebugDirective,
+		scalaDepsCleanerDirective,
+		scalaFixWildcardImportDirective,
+		scalaGenerateBuildFilesDirective,
+		scalaRuleDirective,
 	}
 }
 
@@ -136,6 +146,7 @@ type Config struct {
 	annotations            map[debugAnnotation]interface{}
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
+	generateBuildFiles     bool
 }
 
 // newScalaConfig initializes a new Config.
@@ -175,6 +186,7 @@ func GetOrCreate(universe resolver.Universe, config *config.Config, rel string) 
 // clone copies this config to a new one.
 func (c *Config) clone(config *config.Config, rel string) *Config {
 	clone := New(c.universe, config, rel)
+	clone.generateBuildFiles = c.generateBuildFiles
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
@@ -275,6 +287,10 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			}
 		case scalaDebugDirective:
 			if err := c.parseScalaAnnotation(d); err != nil {
+				return err
+			}
+		case scalaGenerateBuildFilesDirective:
+			if err := c.parseScalaGenerateBuildFilesDirective(d); err != nil {
 				return err
 			}
 		}
@@ -407,6 +423,15 @@ func (c *Config) parseResolveConflictsDirective(d rule.Directive) error {
 	return nil
 }
 
+func (c *Config) parseScalaGenerateBuildFilesDirective(d rule.Directive) error {
+	val, err := strconv.ParseBool(d.Value)
+	if err != nil {
+		return fmt.Errorf("parsing %s: %v", scalaGenerateBuildFilesDirective, err)
+	}
+	c.generateBuildFiles = val
+	return nil
+}
+
 func (c *Config) parseScalaDepsCleanerDirective(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
@@ -509,6 +534,10 @@ func (c *Config) shouldAnnotateDepLabelOrigin() bool {
 func (c *Config) ShouldAnnotateRule() bool {
 	_, ok := c.annotations[DebugRule]
 	return ok
+}
+
+func (c *Config) GenerateBuildFiles() bool {
+	return c.generateBuildFiles
 }
 
 func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {

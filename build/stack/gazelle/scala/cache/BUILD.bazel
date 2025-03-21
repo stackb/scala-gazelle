@@ -29,3 +29,13 @@ go_library(
         "@org_golang_google_protobuf//runtime/protoimpl",
     ],
 )
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "cache.pb.go",
+        "cache.proto",
+    ],
+    visibility = ["//visibility:public"],
+)

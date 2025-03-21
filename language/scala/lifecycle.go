@@ -41,4 +41,8 @@ func (sl *scalaLang) onEnd() {
 	sl.reportCoverage(log.Printf)
 	sl.stopCpuProfiling()
 	sl.stopMemoryProfiling()
+
+	if sl.logFile != nil {
+		sl.logFile.Close()
+	}
 }

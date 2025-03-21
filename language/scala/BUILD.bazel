@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 
@@ -86,6 +87,7 @@ go_test(
         "golden_test.go",
         "language_test.go",
         "loads_test.go",
+        "scala_package_test.go",
         "scala_rule_test.go",
     ],
     data = [":gazelle"] + glob(["testdata/**"]),
@@ -139,5 +141,47 @@ filegroup(
     srcs = [
         "BUILD.bazel",
     ] + glob(["*.go"]),
+    visibility = ["//visibility:public"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "cache.go",
+        "configure.go",
+        "conflict_resolver_registry.go",
+        "coverage.go",
+        "coverage_test.go",
+        "cross_resolve.go",
+        "deps_cleaner_registry.go",
+        "existing_scala_rule.go",
+        "existing_scala_rule_test.go",
+        "fix.go",
+        "flags.go",
+        "flags_test.go",
+        "generate.go",
+        "golden_test.go",
+        "imports.go",
+        "it.sh",
+        "kinds.go",
+        "known_rule_registry.go",
+        "language.go",
+        "language_test.go",
+        "lifecycle.go",
+        "loads.go",
+        "loads_test.go",
+        "package_marker_rule.go",
+        "progress.go",
+        "resolve.go",
+        "scala.WORKSPACE",
+        "scala_package.go",
+        "scala_package_test.go",
+        "scala_rule.go",
+        "scala_rule_test.go",
+        "scope.go",
+        "symbol_provider_registry.go",
+        "symbol_resolver.go",
+    ],
     visibility = ["//visibility:public"],
 )

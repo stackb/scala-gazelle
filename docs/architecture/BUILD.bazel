@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("//tools/plantuml:plantuml.bzl", "plantuml_diagram")
 
 plantuml_diagram(
@@ -10,4 +11,17 @@ plantuml_diagram(
     name = "components",
     src = "components.puml",
     dst = "components.png",
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "README.md",
+        "components.png",
+        "components.puml",
+        "sequence.png",
+        "sequence.puml",
+    ],
+    visibility = ["//visibility:public"],
 )

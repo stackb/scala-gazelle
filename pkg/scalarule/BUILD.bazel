@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -24,4 +25,20 @@ go_library(
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "config.go",
+        "global_provider_registry.go",
+        "package.go",
+        "provider.go",
+        "provider_registry.go",
+        "rule.go",
+        "rule_provider.go",
+        "rule_resolver.go",
+    ],
+    visibility = ["//visibility:public"],
 )

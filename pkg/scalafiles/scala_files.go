@@ -125,7 +125,7 @@ func (s *scalaFilesRule) Imports(c *config.Config, r *rule.Rule, file *rule.File
 
 // Resolve implements part of the scalarule.RuleProvider interface.
 func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
-	var srcs []string
+	srcs := rctx.Rule.AttrStrings("srcs")
 	var debug bool
 	if debug {
 		log.Printf("%s: resolving with %d generated rules", rctx.From, len(s.pkg.GeneratedRules()))

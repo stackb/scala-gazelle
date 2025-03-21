@@ -95,6 +95,8 @@ type scalaLang struct {
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
 	parser *parser.MemoParser
+	// logFile is the open log
+	logFile *os.File
 }
 
 // Name implements part of the language.Language interface
@@ -108,6 +110,12 @@ func (*scalaLang) KnownDirectives() []string {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
+	// logFile, err := os.Create("/tmp/scala-gazelle.log")
+	// if err != nil {
+	// 	panic("cannot open log file: " + err.Error())
+	// }
+	// log.SetOutput(logFile)
+
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
 		cache:                scpb.Cache{},
@@ -119,6 +127,7 @@ func NewLanguage() language.Language {
 		packages:             make(map[string]*scalaPackage),
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
+		// logFile:              logFile,
 	}
 
 	progress := func(msg string) {
