@@ -19,8 +19,8 @@ func TestScala(t *testing.T) {
 			// "override_provider",
 			// "protobuf_provider",
 			// "resolve_kind_rewrite_name",
-			// "source_provider",
-			"scala_fileset",
+			"source_provider",
+			// "scala_fileset",
 		),
 	).Run(t, "gazelle")
 }

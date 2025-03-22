@@ -1,5 +1,7 @@
 package scala
 
+import "os"
+
 type packageRuleCoverage struct {
 	// managed represents the total number of rules that are managed by
 	// scala-gazelle (actual number of rules that we provided deps for)
@@ -23,5 +25,13 @@ func (sl *scalaLang) reportCoverage(printf func(format string, v ...any)) {
 
 	percent := float32(managed) / float32(total) * 100
 
-	printf("scala-gazelle coverage is %0.1f%% (%d/%d)", percent, managed, total)
+	printCoverage := true
+	if val, ok := os.LookupEnv("SCALA_GAZELLE_SHOW_COVERAGE"); ok {
+		if val == "false" || val == "0" {
+			printCoverage = false
+		}
+	}
+	if printCoverage {
+		printf("scala-gazelle coverage is %0.1f%% (%d/%d)", percent, managed, total)
+	}
 }

@@ -27,10 +27,10 @@ const scalaFilesetFileFlagName = "scala_fileset_file"
 type progressFunc func(msg string)
 
 // NewSourceProvider constructs a new NewSourceProvider.
-func NewSourceProvider(progress progressFunc) *SourceProvider {
+func NewSourceProvider(logger *log.Logger, progress progressFunc) *SourceProvider {
 	return &SourceProvider{
+		logger:     logger,
 		progress:   progress,
-		parser:     parser.NewScalametaParser(),
 		scalaFiles: make(map[string]*sppb.File),
 	}
 }
@@ -41,10 +41,14 @@ func NewSourceProvider(progress progressFunc) *SourceProvider {
 // files.  If the cache already has an entry for the filename with matching
 // sha256, the cache hit will be used.
 type SourceProvider struct {
+	// logger instance
+	logger *log.Logger
+	// progress function
 	progress progressFunc
 	// scope is the target we provide symbols to
 	scope resolver.Scope
-	// parser is an instance of the scala source parser
+	// parser is an instance of the scala source parser.  It is initialized
+	// lazily.
 	parser *parser.ScalametaParser
 	// scalaFilesetFilename is an optional path to a parse.Fileset that provides
 	// pre-parsed scala files.
@@ -60,6 +64,7 @@ func (r *SourceProvider) Name() string {
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	r.logger.Println("RegisterFlags")
 	flags.StringVar(&r.scalaFilesetFilename, scalaFilesetFileFlagName, "", "optional path to an imports file where resolved imports should be written (.json or .pb)")
 }
 
@@ -76,12 +81,15 @@ func (r *SourceProvider) CheckFlags(flags *flag.FlagSet, c *config.Config, scope
 	}
 
 	r.scope = scope
-	return r.start()
+
+	return nil
 }
 
 // OnResolve implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) OnResolve() error {
-	r.parser.Stop()
+	if r.parser != nil {
+		r.parser.Stop()
+	}
 	return nil
 }
 
@@ -99,11 +107,21 @@ func (cr *SourceProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr,
 	return false
 }
 
-// start begins the parser process.
-func (r *SourceProvider) start() error {
-	if err := r.parser.Start(); err != nil {
-		return fmt.Errorf("starting parser: %w", err)
+// ensureParserStarted begins the parser process if it hasn't already.
+func (r *SourceProvider) ensureParserStarted() error {
+	if r.parser == nil {
+		r.parser = parser.NewScalametaParser()
+
+		now := time.Now()
+		r.logger.Printf("[%s] starting parser...", r.Name())
+
+		if err := r.parser.Start(); err != nil {
+			return fmt.Errorf("starting parser: %w", err)
+		}
+
+		r.logger.Printf("[%s] parser started in %v", r.Name(), time.Since(now))
 	}
+
 	return nil
 }
 
@@ -149,7 +167,7 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 			haveFiles = append(haveFiles, file)
 			// log.Println("✅ have:", rel)
 		} else {
-			// log.Println("⭕ need:", src)
+			r.logger.Println("⭕ need to parse:", src)
 			needFilenames = append(needFilenames, filepath.Join(dir, src))
 		}
 	}
@@ -158,6 +176,10 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 	}
 
 	t1 := time.Now()
+
+	if err := r.ensureParserStarted(); err != nil {
+		return nil, err
+	}
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
 		Filenames: needFilenames,

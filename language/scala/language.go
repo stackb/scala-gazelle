@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"log"
 	"os"
 	"strings"
 
@@ -97,6 +98,8 @@ type scalaLang struct {
 	parser *parser.MemoParser
 	// logFile is the open log
 	logFile *os.File
+	// logger instance
+	logger *log.Logger
 }
 
 // Name implements part of the language.Language interface
@@ -110,11 +113,14 @@ func (*scalaLang) KnownDirectives() []string {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	// logFile, err := os.Create("/tmp/scala-gazelle.log")
-	// if err != nil {
-	// 	panic("cannot open log file: " + err.Error())
-	// }
-	// log.SetOutput(logFile)
+	logFile, err := os.Create("/tmp/scala-gazelle.log")
+	if err != nil {
+		panic("cannot open log file: " + err.Error())
+	}
+	logger := log.New(logFile, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	logger.SetOutput(logFile)
+
+	logger.Println(".NewLanguage BEGIN")
 
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
@@ -127,7 +133,8 @@ func NewLanguage() language.Language {
 		packages:             make(map[string]*scalaPackage),
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
-		// logFile:              logFile,
+		logFile:              logFile,
+		logger:               logger,
 	}
 
 	progress := func(msg string) {
@@ -136,7 +143,7 @@ func NewLanguage() language.Language {
 		}
 	}
 
-	lang.sourceProvider = provider.NewSourceProvider(progress)
+	lang.sourceProvider = provider.NewSourceProvider(logger, progress)
 	semanticProvider := provider.NewSemanticdbProvider(lang.sourceProvider)
 	lang.parser = parser.NewMemoParser(semanticProvider)
 	javaProvider := provider.NewJavaProvider()
@@ -149,6 +156,8 @@ func NewLanguage() language.Language {
 
 	pdcr := resolver.NewPreferredDepsConflictResolver("preferred_deps", javaProvider.GetPreferredDeps())
 	resolver.GlobalConflictResolverRegistry().PutConflictResolver(pdcr.Name(), pdcr)
+
+	logger.Println(".NewLanguage END")
 
 	return lang
 }

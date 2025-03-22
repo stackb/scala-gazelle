@@ -2,6 +2,7 @@ package scalarule
 
 import (
 	"fmt"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -33,12 +34,18 @@ type Config struct {
 	Provider Provider
 	// Name is the name of the Rule config
 	Name string
+	// Logger is a logger instance that can be used for debugging.
+	Logger *log.Logger
 }
 
 // NewConfig returns a pointer to a new Config config with the
 // 'Enabled' bit set to true.
-func NewConfig(config *config.Config, name string) *Config {
+func NewConfig(logger *log.Logger, config *config.Config, name string) *Config {
+	if logger == nil {
+		panic("logger is nil")
+	}
 	return &Config{
+		Logger:  logger,
 		Config:  config,
 		Name:    name,
 		Enabled: true,
@@ -89,9 +96,10 @@ func (c *Config) GetAttr(name string) []string {
 
 // Clone copies this config to a new one
 func (c *Config) Clone() *Config {
-	clone := NewConfig(c.Config, c.Name)
+	clone := NewConfig(c.Logger, c.Config, c.Name)
 	clone.Enabled = c.Enabled
 	clone.Implementation = c.Implementation
+
 	for name, vals := range c.Attrs {
 		clone.Attrs[name] = make(map[string]bool)
 		for k, v := range vals {

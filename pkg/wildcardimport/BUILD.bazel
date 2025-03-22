@@ -11,6 +11,7 @@ go_library(
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/wildcardimport",
     visibility = ["//visibility:public"],
+    deps = ["//pkg/procutil"],
 )
 
 go_test(

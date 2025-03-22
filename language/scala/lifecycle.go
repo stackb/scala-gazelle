@@ -9,6 +9,8 @@ import (
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
+	sl.logger.Println("lifecycle resolve BEGIN")
+
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
@@ -17,7 +19,7 @@ func (sl *scalaLang) onResolve() {
 
 	// assign final readonly scala-specific scope
 	if scalaScope, err := resolver.NewScalaScope(sl.globalScope); err != nil {
-		log.Printf("warning: error while setting up final scope: %v (some builtin symbols may not resolve!)", err)
+		sl.logger.Printf("warning: setting up global resolver scope: %v", err)
 	} else {
 		sl.globalScope = scalaScope
 	}
@@ -27,6 +29,8 @@ func (sl *scalaLang) onResolve() {
 			log.Fatalf("failed to write cache: %v", err)
 		}
 	}
+
+	sl.logger.Println("lifecycle resolve DONE")
 }
 
 // onEnd is called when the last rule has been resolved.
@@ -45,4 +49,6 @@ func (sl *scalaLang) onEnd() {
 	if sl.logFile != nil {
 		sl.logFile.Close()
 	}
+
+	sl.logger.Println("lifecycle end DONE")
 }

@@ -1,4 +1,4 @@
-load("@build_stack_scala_gazelle//rules:scala_files.bzl", "scala_fileset")
+load("@build_stack_scala_gazelle//rules:scala_files.bzl", "scala_files", "scala_fileset")
 
 # gazelle:resolve scala scala java.util.LinkedList @java//util
 # gazelle:scala_debug exports
@@ -9,5 +9,15 @@ load("@build_stack_scala_gazelle//rules:scala_files.bzl", "scala_fileset")
 
 scala_fileset(
     name = "scala_fileset",
-    deps = ["//src:scala_files"],
+    deps = [
+        "//:scala_files",
+        "//src:scala_files",
+    ],
+)
+
+scala_files(
+    name = "scala_files",
+    srcs = ["Main.scala"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
 )

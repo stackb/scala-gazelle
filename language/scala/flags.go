@@ -71,6 +71,8 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
+	sl.logger.Println(".CheckFlags BEGIN")
+
 	if sl.debugProcessFlagValue {
 		collections.PrintProcessIdForDelveAndWait()
 	}
@@ -107,6 +109,8 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 	if err := sl.setupMemoryProfiling(c.WorkDir); err != nil {
 		return err
 	}
+
+	sl.logger.Println(".CheckFlags END")
 
 	return nil
 }
