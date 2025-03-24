@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/stackb/scala-gazelle/pkg/procutil"
 )
 
 func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
@@ -131,5 +132,8 @@ func RunGazelle(t *testing.T, workingDir string, env []string, args ...string) (
 	if err != nil {
 		t.Logf("command error: %v", err)
 	}
-	return stdout.String(), stderr.String(), 0, err
+
+	exitCode := procutil.CmdExitCode(cmd, err)
+
+	return stdout.String(), stderr.String(), exitCode, err
 }

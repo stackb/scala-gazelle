@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/logger"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -26,7 +27,6 @@ const (
 	debugNameNotFound        = false
 	debugUnresolved          = false
 	debugExtendsNameNotFound = false
-	debugConflictedExport    = false
 	debugFileScope           = false
 )
 
@@ -42,6 +42,8 @@ type scalaRuleContext struct {
 }
 
 type scalaRule struct {
+	// logger instance
+	logger logger.Log
 	// Rule is the pb representation
 	pb *sppb.Rule
 	// files is a list of files, copied from pb.Files but sorted again
@@ -61,10 +63,12 @@ func init() {
 }
 
 func newScalaRule(
+	logger logger.Log,
 	ctx *scalaRuleContext,
 	rule *sppb.Rule,
 ) *scalaRule {
 	scalaRule := &scalaRule{
+		logger:  logger,
 		pb:      rule,
 		files:   rule.Files,
 		ctx:     ctx,
@@ -100,9 +104,7 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
 		} else {
-			if debugUnresolved {
-				log.Println("unresolved export:", imp)
-			}
+			r.logger.Println(r.pb.Label + ": unresolved export: " + imp.Imp)
 			imp.Error = resolver.ErrSymbolNotFound
 		}
 	}
@@ -130,9 +132,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 
 		} else {
-			if debugUnresolved {
-				log.Println("unresolved import:", imp)
-			}
+			r.logger.Println(r.pb.Label + ": unresolved import: " + imp.Imp)
 			imp.Error = resolver.ErrSymbolNotFound
 		}
 	}
@@ -211,7 +211,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 	scope := resolver.NewChainScope(scopes...)
 
 	if debugFileScope {
-		log.Printf("%s scope:\n%s", file.Filename, scope.String())
+		r.logger.Println(r.infof("%s scope:\n%s", file.Filename, scope.String()))
 	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
@@ -234,9 +234,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 			if sym, ok := scope.GetSymbol(imp); ok {
 				// if the symbol has conflicts, don't export it
 				if len(sym.Conflicts) > 0 {
-					if debugConflictedExport {
-						log.Printf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp)
-					}
+					r.logger.Println(r.warnf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp))
 				} else {
 					putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
 					if resolvedOK && resolved != sym {
@@ -245,21 +243,11 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 				}
 			} else {
 				putExport(resolver.NewExtendsImport(imp, file, name, nil))
-				if debugExtendsNameNotFound {
-					log.Printf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp)
-				}
+				r.logger.Println(r.warnf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp))
 			}
 		}
 	}
 
-}
-
-func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName string) func(*resolver.Import) {
-	return func(imp *resolver.Import) {
-		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
-			imports.Put(imp)
-		}
-	}
 }
 
 // fileSemanticImports gathers needed semantic imports for the given file.
@@ -299,9 +287,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 					if sym, ok := r.ctx.scope.GetSymbol(fqn); ok {
 						putImport(resolver.NewResolvedNameImport(sym.Name, file, fqn, sym))
 					} else {
-						if debugUnresolved {
-							log.Printf("warning: unresolved fix wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
-						}
+						r.logger.Printf("%s: warning: unresolved fix wildcard import: symbol %q: was not found' (%s)", r.pb.Label, name, file.Filename)
 					}
 				}
 			}
@@ -311,9 +297,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 				// log.Printf("%v: WARN: resolved name import: %v %v %v", from, sym.Name, file.Filename, sym.Label)
 				putImport(resolver.NewResolvedNameImport(sym.Name, file, name, sym))
 			} else {
-				if debugUnresolved {
-					log.Printf("warning: unresolved wildcard import: symbol %q: was not found' (%s)", name, file.Filename)
-				}
+				r.logger.Printf("%s: warning: unresolved wildcard import: symbol %q: was not found' (%s)", r.pb.Label, name, file.Filename)
 				imp := resolver.NewDirectImport(name, file)
 				putImport(imp)
 			}
@@ -351,7 +335,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 	scope := resolver.NewChainScope(scopes...)
 
 	if debugFileScope {
-		log.Printf("%s scope:\n%s", file.Filename, scope.String())
+		r.logger.Println(r.infof("%s scope:\n%s", file.Filename, scope.String()))
 	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
@@ -361,7 +345,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		extends := file.Extends[token]
 		parts := strings.SplitN(token, " ", 2)
 		if len(parts) != 2 {
-			log.Fatalf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
+			log.Panicf("invalid extends token: %q: should have form '(class|interface|object) com.foo.Bar' ", token)
 		}
 
 		// kind := parts[0]
@@ -371,7 +355,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 		if !resolvedOK {
-			log.Printf("warning: invalid extends token: symbol %q: was not found' ", name)
+			r.logger.Println(r.warnf("%s: extends symbol not found: %s", file.Filename, name))
 		}
 
 		for _, imp := range extends.Classes {
@@ -380,8 +364,12 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 				if resolvedOK && resolved != sym {
 					resolved.Require(sym)
 				}
-			} else if debugExtendsNameNotFound {
-				putImport(resolver.NewExtendsImport(imp, file, name, nil))
+			} else {
+				r.logger.Println(r.warnf("%s: extends symbol not found: %s", file.Filename, imp))
+
+				if debugExtendsNameNotFound {
+					putImport(resolver.NewExtendsImport(imp, file, name, nil))
+				}
 			}
 		}
 	}
@@ -444,6 +432,26 @@ func (r *scalaRule) fixWildcardImport(filename, wimp string) ([]string, error) {
 	}
 
 	return symbols, nil
+}
+
+func (r *scalaRule) debugf(format string, args ...any) string {
+	return fmt.Sprintf("DEBUG [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+}
+
+func (r *scalaRule) infof(format string, args ...any) string {
+	return fmt.Sprintf("INFO [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+}
+
+func (r *scalaRule) warnf(format string, args ...any) string {
+	return fmt.Sprintf("WARN [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+}
+
+func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName string) func(*resolver.Import) {
+	return func(imp *resolver.Import) {
+		if !resolver.IsSelfImport(imp.Symbol, repo, rel, ruleName) {
+			imports.Put(imp)
+		}
+	}
 }
 
 func isBinaryRule(kind string) bool {

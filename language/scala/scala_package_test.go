@@ -11,6 +11,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func TestScalaPackageParseRule(t *testing.T) {
@@ -27,19 +28,24 @@ func TestScalaPackageParseRule(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			logger := testutil.NewTestLogger(t)
 			universe := mocks.NewUniverse(t)
 			scope := mocks.NewScope(t)
-
 			scope.
 				On("PutSymbol", mock.Anything).
 				Maybe().
 				Return(nil)
 
-			c := config.New()
-			cfg := scalaconfig.New(universe, c, "")
+			cfg := scalaconfig.New(
+				logger,
+				universe,
+				config.New(),
+				"",
+			)
 
 			pkg := scalaPackage{
-				cfg: cfg,
+				cfg:    cfg,
+				logger: logger,
 			}
 
 			var gotErr string

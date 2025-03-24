@@ -39,6 +39,7 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/glob",
+        "//pkg/logger",
         "//pkg/parser",
         "//pkg/protobuf",
         "//pkg/provider",
@@ -81,12 +82,12 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
-        # "coverage_test.go",
         "coverage_test.go",
         "diff_test.go",
         "existing_scala_rule_test.go",
         "flags_test.go",
         "golden_test.go",
+        # "golden_test.go",
         "language_test.go",
         "loads_test.go",
         "scala_package_test.go",
@@ -112,31 +113,6 @@ go_test(
         "@com_github_stretchr_testify//mock",
     ],
 )
-
-# gazelle_testdata_example(
-#     name = "maven_resolver",
-#     size = "large",  # test timeout 900s (15m) for go_bazel_test
-#     srcs = glob(["testdata/maven_resolver/*"]),
-#     tags = ["manual"],
-#     workspace_template = "scala.WORKSPACE",
-# )
-
-# gazelle_testdata_example(
-#     name = "platform_resolver",
-#     size = "large",  # test timeout 900s (15m) for go_bazel_test
-#     srcs = glob(["testdata/platform_resolver/*"]),
-#     tags = ["manual"],
-#     workspace_template = "scala.WORKSPACE",
-# )
-
-# sh_test(
-#     name = "it",
-#     srcs = ["it.sh"],
-#     data = [
-#         ":gazelle",
-#         "//:all_files",
-#     ],
-# )
 
 filegroup(
     name = "all_files",

@@ -67,9 +67,6 @@ func (s *existingScalaRuleProvider) LoadInfo() rule.LoadInfo {
 // ProvideRule implements part of the scalarule.Provider interface.  It always
 // returns nil.  The ResolveRule interface is the intended use case.
 func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	if cfg.Logger == nil {
-		panic("logger is nil!")
-	}
 	cfg.Logger.Printf("existingScalaRuleProvider %s .ProvideRule DONE", s.Name)
 	return nil
 }

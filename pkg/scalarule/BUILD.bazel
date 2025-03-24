@@ -18,6 +18,7 @@ go_library(
     deps = [
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
+        "//pkg/logger",
         "//pkg/resolver",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",

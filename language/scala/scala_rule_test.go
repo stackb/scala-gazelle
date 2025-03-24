@@ -15,6 +15,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
+	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func TestScalaRuleExports(t *testing.T) {
@@ -71,7 +72,7 @@ func TestScalaRuleExports(t *testing.T) {
 				Return(nil)
 
 			c := config.New()
-			sc := scalaconfig.New(universe, c, "")
+			sc := scalaconfig.New(testutil.NewTestLogger(t), universe, c, "")
 
 			ctx := &scalaRuleContext{
 				rule:        tc.rule,
@@ -80,7 +81,7 @@ func TestScalaRuleExports(t *testing.T) {
 				scope:       universe,
 			}
 
-			scalaRule := newScalaRule(ctx, &sppb.Rule{
+			scalaRule := newScalaRule(testutil.NewTestLogger(t), ctx, &sppb.Rule{
 				Label: tc.from.String(),
 				Kind:  tc.rule.Kind(),
 				Files: tc.files,
@@ -262,7 +263,7 @@ func TestScalaRuleImports(t *testing.T) {
 				global.PutSymbol(symbol)
 			}
 
-			sc, err := scalaconfig.NewTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)
+			sc, err := NewTestScalaConfig(t, universe, tc.from.Pkg, makeDirectives(tc.directives)...)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -274,7 +275,7 @@ func TestScalaRuleImports(t *testing.T) {
 				scope:       universe,
 			}
 
-			scalaRule := newScalaRule(ctx, &sppb.Rule{
+			scalaRule := newScalaRule(testutil.NewTestLogger(t), ctx, &sppb.Rule{
 				Label: tc.from.String(),
 				Kind:  tc.rule.Kind(),
 				Files: tc.files,
@@ -334,4 +335,11 @@ func (m *mockGlobalScope) GetSymbol(name string) (*resolver.Symbol, bool) {
 // symbols.
 func (m *mockGlobalScope) GetSymbols(prefix string) []*resolver.Symbol {
 	return m.Global.GetSymbols(prefix)
+}
+
+func NewTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*scalaconfig.Config, error) {
+	c := config.New()
+	sc := scalaconfig.New(testutil.NewTestLogger(t), universe, c, rel)
+	err := sc.ParseDirectives(dd)
+	return sc, err
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
-	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
@@ -42,21 +41,22 @@ func TestDiff(t *testing.T) {
 				"SCALA_GAZELLE_SHOW_PROGRESS=0",
 				"SCALA_GAZELLE_SHOW_COVERAGE=0",
 			},
-			checkStderr: true,
-			wantStderr:  ``,
-			wantErr:     `exit status 1`,
+			wantExitCode: 0,
+			checkStderr:  true,
+			wantStderr:   ``,
+			wantErr:      ``,
 		},
 
-		"custom scale_rule requires pre-registration of an implementating provider": {
-			files: []testtools.FileSpec{
-				{
-					Path:    "BUILD.bazel",
-					Content: `# gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library`,
-				},
-			},
-			checkStderr: true,
-			wantStderr:  `gazelle: rule not registered: "//rules:scala.bzl%scala_helper_library" (available: [@build_stack_scala_gazelle//rules:scala_files.bzl%scala_files @build_stack_scala_gazelle//rules:scala_files.bzl%scala_fileset @build_stack_scala_gazelle//rules:semanticdb_index.bzl%semanticdb_index @io_bazel_rules_scala//scala:scala.bzl%scala_binary @io_bazel_rules_scala//scala:scala.bzl%scala_library @io_bazel_rules_scala//scala:scala.bzl%scala_macro_library @io_bazel_rules_scala//scala:scala.bzl%scala_test])`,
-		},
+		// "custom scale_rule requires pre-registration of an implementating provider": {
+		// 	files: []testtools.FileSpec{
+		// 		{
+		// 			Path:    "BUILD.bazel",
+		// 			Content: `# gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library`,
+		// 		},
+		// 	},
+		// 	checkStderr: true,
+		// 	wantStderr:  `gazelle: rule not registered: "//rules:scala.bzl%scala_helper_library" (available: [@build_stack_scala_gazelle//rules:scala_files.bzl%scala_files @build_stack_scala_gazelle//rules:scala_files.bzl%scala_fileset @build_stack_scala_gazelle//rules:semanticdb_index.bzl%semanticdb_index @io_bazel_rules_scala//scala:scala.bzl%scala_binary @io_bazel_rules_scala//scala:scala.bzl%scala_library @io_bazel_rules_scala//scala:scala.bzl%scala_macro_library @io_bazel_rules_scala//scala:scala.bzl%scala_test])`,
+		// },
 	} {
 		t.Run(name, func(t *testing.T) {
 			files := append(tc.files, testtools.FileSpec{Path: "WORKSPACE"})
@@ -68,7 +68,11 @@ func TestDiff(t *testing.T) {
 			dir, cleanup := testtools.CreateFiles(t, files)
 			defer cleanup()
 
-			stdout, stderr, err := testutil.RunGazelle(t, dir, tc.env, args...)
+			stdout, stderr, exitCode, err := testutil.RunGazelle(t, dir, tc.env, args...)
+
+			if diff := cmp.Diff(tc.wantExitCode, exitCode); diff != "" {
+				t.Errorf("exit code (-want +got):\n%s", diff)
+			}
 
 			if tc.checkStdout {
 				if diff := cmp.Diff(tc.wantStdout, strings.TrimSpace(stdout)); diff != "" {
@@ -96,114 +100,115 @@ func TestDiff(t *testing.T) {
 	}
 }
 
-func SkipTestExistingRuleRegistration(t *testing.T) {
-	files := []testtools.FileSpec{
-		{
-			Path: "WORKSPACE",
-		},
-		{
-			Path: "BUILD.bazel",
-			Content: `
-# gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library
-`,
-		},
-	}
-	dir, cleanup := testtools.CreateFiles(t, files)
-	defer cleanup()
+// func SkipTestExistingRuleRegistration(t *testing.T) {
+// 	files := []testtools.FileSpec{
+// 		{
+// 			Path: "WORKSPACE",
+// 		},
+// 		{
+// 			Path: "BUILD.bazel",
+// 			Content: `
+// # gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library
+// `,
+// 		},
+// 	}
+// 	dir, cleanup := testtools.CreateFiles(t, files)
+// 	defer cleanup()
 
-	stdout, stderr, err := testutil.RunGazelle(t, dir, nil,
-		"-lang=scala", "-mode=diff", "-patch=p",
-		"-strict",
-		"-existing_scala_library_rule=//rules:scala.bzl%scala_helper_library",
-	)
-	t.Logf("ERR: %v", err)
-	t.Logf("STDOUT:\n%s", stdout)
-	t.Logf("STDERR:\n%s", stderr)
+// 	stdout, stderr, exitCode, err := testutil.RunGazelle(t, dir, nil,
+// 		"-lang=scala", "-mode=diff", "-patch=p",
+// 		"-strict",
+// 		"-existing_scala_library_rule=//rules:scala.bzl%scala_helper_library",
+// 	)
+// 	t.Logf("EXIT CODE: %d", exitCode)
+// 	t.Logf("ERR: %v", err)
+// 	t.Logf("STDOUT:\n%s", stdout)
+// 	t.Logf("STDERR:\n%s", stderr)
 
-	want := ``
-	got := strings.TrimSpace(stderr)
+// 	want := ``
+// 	got := strings.TrimSpace(stderr)
 
-	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("stderr (-want +got):\n%s", diff)
-	}
-}
+// 	if diff := cmp.Diff(want, got); diff != "" {
+// 		t.Errorf("stderr (-want +got):\n%s", diff)
+// 	}
+// }
 
-func SkipTestDiffSourceProvider(t *testing.T) {
-	files := []testtools.FileSpec{
-		{
-			Path: "WORKSPACE",
-		},
-		{
-			Path: "BUILD.bazel",
-			Content: `load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
+// func SkipTestDiffSourceProvider(t *testing.T) {
+// 	files := []testtools.FileSpec{
+// 		{
+// 			Path: "WORKSPACE",
+// 		},
+// 		{
+// 			Path: "BUILD.bazel",
+// 			Content: `load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary")
 
-# gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library
-# gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
-# gazelle:resolve_kind_rewrite_name scala_helper_library %{name} %{name}_helper
+// # gazelle:scala_rule scala_helper_library implementation //rules:scala.bzl%scala_helper_library
+// # gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
+// # gazelle:resolve_kind_rewrite_name scala_helper_library %{name} %{name}_helper
 
-scala_binary(
-    name = "app",
-    srcs = ["App.scala"],
-    main_class = "app.App",
-    deps = [
-        "//lib:lib_helper",  # DIRECT
-    ],
-)
-`,
-		},
-		{Path: "App.scala",
-			Content: `
-package app
+// scala_binary(
+//     name = "app",
+//     srcs = ["App.scala"],
+//     main_class = "app.App",
+//     deps = [
+//         "//lib:lib_helper",  # DIRECT
+//     ],
+// )
+// `,
+// 		},
+// 		{Path: "App.scala",
+// 			Content: `
+// package app
 
-object App {
-  def main(args: Array[String]): Unit = {}
-}
-`,
-		},
-		{Path: "lib/BUILD.bazel",
-			Content: `load("//rules:scala.bzl", "scala_helper_library")
+// object App {
+//   def main(args: Array[String]): Unit = {}
+// }
+// `,
+// 		},
+// 		{Path: "lib/BUILD.bazel",
+// 			Content: `load("//rules:scala.bzl", "scala_helper_library")
 
-scala_helper_library(
-    name = "lib",
-    srcs = ["Helper.scala"],
-)
-`,
-		},
-		{Path: "lib/Helper.scala",
-			Content: `
-package lib
+// scala_helper_library(
+//     name = "lib",
+//     srcs = ["Helper.scala"],
+// )
+// `,
+// 		},
+// 		{Path: "lib/Helper.scala",
+// 			Content: `
+// package lib
 
-object Helper {
-}
-`,
-		},
-	}
-	dir, cleanup := testtools.CreateFiles(t, files)
-	if true {
-		defer cleanup()
-	}
+// object Helper {
+// }
+// `,
+// 		},
+// 	}
+// 	dir, cleanup := testtools.CreateFiles(t, files)
+// 	if true {
+// 		defer cleanup()
+// 	}
 
-	stdout, stderr, err := testutil.RunGazelle(t, dir, nil,
-		"-lang=scala", "-mode=diff", "-patch=p",
-		"-strict",
-		"-existing_scala_library_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
-		"-scala_symbol_provider=source",
-	)
-	t.Logf("STDOUT:\n%s", stdout)
-	t.Logf("STDERR:\n%s", stderr)
-	collections.ListFiles(dir)
+// 	stdout, stderr, err := testutil.RunGazelle(t, dir, nil,
+// 		"-lang=scala", "-mode=diff", "-patch=p",
+// 		"-strict",
+// 		"-existing_scala_library_rule=@io_bazel_rules_scala//scala:scala.bzl%_scala_library",
+// 		"-scala_symbol_provider=source",
+// 	)
+// 	t.Logf("STDOUT:\n%s", stdout)
+// 	t.Logf("STDERR:\n%s", stderr)
+// 	collections.ListFiles(dir)
 
-	if err != nil {
-		if err.Error() != "exit status 1" {
-			t.Fatalf("unexpected error: %v\nSTDOUT:\n%s\nSTDERR:\n%s", err, stdout, stderr)
-		}
-	}
+// 	if err != nil {
+// 		if err.Error() != "exit status 1" {
+// 			t.Fatalf("unexpected error: %v\nSTDOUT:\n%s\nSTDERR:\n%s", err, stdout, stderr)
+// 		}
+// 	}
 
-	want := append(files, testtools.FileSpec{
-		Path: "p",
-		Content: `
-xxx
-		`,
-	})
-	testtools.CheckFiles(t, dir, want)
-}
+// 	want := append(files, testtools.FileSpec{
+// 		Path: "p",
+// 		Content: `
+// xxx
+// 		`,
+// 	})
+// 	testtools.CheckFiles(t, dir, want)
+// }

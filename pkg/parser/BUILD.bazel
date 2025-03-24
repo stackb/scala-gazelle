@@ -23,6 +23,7 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "//pkg/bazel",
         "//pkg/collections",
+        "//pkg/procutil",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
         "@org_golang_google_grpc//codes",

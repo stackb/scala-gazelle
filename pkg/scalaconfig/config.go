@@ -15,6 +15,7 @@ import (
 	"github.com/bmatcuk/doublestar/v4"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/logger"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -147,14 +148,11 @@ type Config struct {
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
-	logger                 *log.Logger
+	logger                 logger.Log
 }
 
 // New initializes a new Config.
-func New(logger *log.Logger, universe resolver.Universe, config *config.Config, rel string) *Config {
-	if logger == nil {
-		panic("logger cannot be nil")
-	}
+func New(logger logger.Log, universe resolver.Universe, config *config.Config, rel string) *Config {
 	return &Config{
 		logger:            logger,
 		config:            config,
@@ -177,7 +175,7 @@ func Get(config *config.Config) *Config {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func GetOrCreate(logger *log.Logger, universe resolver.Universe, config *config.Config, rel string) *Config {
+func GetOrCreate(logger logger.Log, universe resolver.Universe, config *config.Config, rel string) *Config {
 	var cfg *Config
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*Config).clone(config, rel)
@@ -190,10 +188,8 @@ func GetOrCreate(logger *log.Logger, universe resolver.Universe, config *config.
 
 // clone copies this config to a new one.
 func (c *Config) clone(config *config.Config, rel string) *Config {
-	if c.logger == nil {
-		panic("how can the logger be nil here?")
-	}
 	clone := New(c.logger, c.universe, config, rel)
+
 	clone.generateBuildFiles = c.generateBuildFiles
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
@@ -485,12 +481,8 @@ func (c *Config) parseScalaAnnotation(d rule.Directive) error {
 func (c *Config) getOrCreateScalaRuleConfig(name string) (*scalarule.Config, error) {
 	r, ok := c.rules[name]
 	if !ok {
-		if c.logger == nil {
-			panic("jhow?")
-		}
 		r = scalarule.NewConfig(c.logger, c.config, name)
 		r.Implementation = name
-		r.Logger = c.logger
 		c.rules[name] = r
 	}
 	return r, nil

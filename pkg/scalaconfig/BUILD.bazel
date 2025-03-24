@@ -5,12 +5,12 @@ go_library(
     name = "scalaconfig",
     srcs = [
         "config.go",
-        "test_config.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaconfig",
     visibility = ["//visibility:public"],
     deps = [
         "//pkg/collections",
+        "//pkg/logger",
         "//pkg/resolver",
         "//pkg/scalarule",
         "@bazel_gazelle//config:go_default_library",

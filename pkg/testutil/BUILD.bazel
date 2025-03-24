@@ -4,16 +4,23 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "testutil",
     testonly = True,
-    srcs = ["testutil.go"],
+    srcs = [
+        "test_logger.go",
+        "testutil.go",
+    ],
     importpath = "github.com/stackb/scala-gazelle/pkg/testutil",
     visibility = ["//visibility:public"],
-    deps = ["@bazel_gazelle//testtools:go_default_library"],
+    deps = [
+        "//pkg/procutil",
+        "@bazel_gazelle//testtools:go_default_library",
+    ],
 )
 
 package_filegroup(
     name = "filegroup",
     srcs = [
         "BUILD.bazel",
+        "test_logger.go",
         "testutil.go",
     ],
     visibility = ["//visibility:public"],

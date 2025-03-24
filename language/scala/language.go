@@ -13,6 +13,7 @@ import (
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/logger"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -99,7 +100,7 @@ type scalaLang struct {
 	// logFile is the open log
 	logFile *os.File
 	// logger instance
-	logger *log.Logger
+	logger logger.Log
 }
 
 // Name implements part of the language.Language interface

@@ -18,6 +18,13 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
+func NewTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*Config, error) {
+	c := config.New()
+	sc := New(testutil.NewTestLogger(t), universe, c, rel)
+	err := sc.ParseDirectives(dd)
+	return sc, err
+}
+
 func TestScalaConfigParseDirectives(t *testing.T) {
 	for name, tc := range map[string]struct {
 		directives []rule.Directive
