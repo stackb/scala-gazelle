@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
+	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
@@ -27,7 +28,7 @@ const scalaFilesetFileFlagName = "scala_fileset_file"
 type progressFunc func(msg string)
 
 // NewSourceProvider constructs a new NewSourceProvider.
-func NewSourceProvider(logger *log.Logger, progress progressFunc) *SourceProvider {
+func NewSourceProvider(logger zerolog.Logger, progress progressFunc) *SourceProvider {
 	return &SourceProvider{
 		logger:     logger,
 		progress:   progress,
@@ -42,7 +43,7 @@ func NewSourceProvider(logger *log.Logger, progress progressFunc) *SourceProvide
 // sha256, the cache hit will be used.
 type SourceProvider struct {
 	// logger instance
-	logger *log.Logger
+	logger zerolog.Logger
 	// progress function
 	progress progressFunc
 	// scope is the target we provide symbols to
@@ -64,7 +65,6 @@ func (r *SourceProvider) Name() string {
 
 // RegisterFlags implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
-	r.logger.Println("RegisterFlags")
 	flags.StringVar(&r.scalaFilesetFilename, scalaFilesetFileFlagName, "", "optional path to an imports file where resolved imports should be written (.json or .pb)")
 }
 
@@ -241,6 +241,7 @@ func (r *SourceProvider) putSymbol(from label.Label, kind, imp string, impType s
 }
 
 func (r *SourceProvider) parseScalaFileset(filename string) error {
+	r.logger.Debug().Msgf("parsing scala_fileset from %s", filename)
 	var ruleset sppb.RuleSet
 	if err := protobuf.ReadFile(filename, &ruleset); err != nil {
 		return fmt.Errorf("reading --%s: %v", scalaFilesetFileFlagName, err)
@@ -248,6 +249,7 @@ func (r *SourceProvider) parseScalaFileset(filename string) error {
 
 	for _, rule := range ruleset.Rules {
 		for _, file := range rule.Files {
+			r.logger.Trace().Msgf("scala_fileset file: %s", file.Filename)
 			r.scalaFiles[file.Filename] = file
 		}
 	}

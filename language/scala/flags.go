@@ -32,10 +32,13 @@ const (
 	scalaGazellePrintCacheKeyFlagName    = "scala_gazelle_print_cache_key"
 	cpuprofileFileFlagName               = "cpuprofile_file"
 	memprofileFileFlagName               = "memprofile_file"
+	logFileFlagName                      = "log_file"
 )
 
 // RegisterFlags implements part of the language.Language interface
 func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Config) {
+	sl.phaseTransition("config")
+
 	flags.BoolVar(&sl.debugProcessFlagValue, scalaGazelleDebugProcessFileFlagName, false, "if true, prints the process ID and waits for debugger to attach")
 	flags.BoolVar(&sl.printCacheKey, scalaGazellePrintCacheKeyFlagName, true, "if a cache key is set, print the version for auditing purposes")
 	flags.BoolVar(&sl.existingScalaRuleCoverageFlagValue, existingScalaRuleCoverageFlagName, true, "report coverage statistics")
@@ -71,13 +74,8 @@ func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, 
 
 // CheckFlags implements part of the language.Language interface
 func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
-	sl.logger.Println(".CheckFlags BEGIN")
-
 	if sl.debugProcessFlagValue {
 		collections.PrintProcessIdForDelveAndWait()
-	}
-	if sl.printCacheKey && sl.cacheKeyFlagValue != "" {
-		fmt.Printf("scala-gazelle: cache v.%s\n", sl.cacheKeyFlagValue)
 	}
 
 	sl.symbolResolver = newUniverseResolver(sl, sl.globalPackages)
@@ -110,12 +108,14 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 
-	sl.logger.Println(".CheckFlags END")
+	sl.phaseTransition("generate")
 
 	return nil
 }
 
 func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config, names []string) error {
+	sl.logger.Debug().Msgf("setting up %d symbol providers", len(names))
+
 	providers, err := resolver.GetNamedSymbolProviders(names)
 	if err != nil {
 		return err
@@ -130,6 +130,8 @@ func (sl *scalaLang) setupSymbolProviders(flags *flag.FlagSet, c *config.Config,
 }
 
 func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Config, names []string) error {
+	sl.logger.Debug().Msgf("setting up %d conflict resolvers", len(names))
+
 	for _, name := range names {
 		resolver, ok := resolver.GlobalConflictResolverRegistry().GetConflictResolver(name)
 		if !ok {
@@ -144,6 +146,8 @@ func (sl *scalaLang) setupConflictResolvers(flags *flag.FlagSet, c *config.Confi
 }
 
 func (sl *scalaLang) setupDepsCleaners(flags *flag.FlagSet, c *config.Config, names []string) error {
+	sl.logger.Debug().Msgf("setting up %d deps cleaners", len(names))
+
 	for _, name := range names {
 		cleaner, ok := resolver.GlobalDepsCleanerRegistry().GetDepsCleaner(name)
 		if !ok {
@@ -158,6 +162,8 @@ func (sl *scalaLang) setupDepsCleaners(flags *flag.FlagSet, c *config.Config, na
 }
 
 func (sl *scalaLang) setupExistingScalaBinaryRules(rules []string) error {
+	sl.logger.Debug().Msgf("setting up %d existing scala binary rules", len(rules))
+
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
@@ -171,6 +177,8 @@ func (sl *scalaLang) setupExistingScalaBinaryRules(rules []string) error {
 }
 
 func (sl *scalaLang) setupExistingScalaLibraryRules(rules []string) error {
+	sl.logger.Debug().Msgf("setting up %d existing scala library rules", len(rules))
+
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
@@ -184,6 +192,8 @@ func (sl *scalaLang) setupExistingScalaLibraryRules(rules []string) error {
 }
 
 func (sl *scalaLang) setupExistingScalaTestRules(rules []string) error {
+	sl.logger.Debug().Msgf("setting up %d existing scala test rules", len(rules))
+
 	for _, fqn := range rules {
 		parts := strings.SplitN(fqn, "%", 2)
 		if len(parts) != 2 {
@@ -250,6 +260,7 @@ func (sl *scalaLang) dumpResolvedImportMap() {
 	if err := sl.writeResolvedImportsMapFile(filename); err != nil {
 		log.Fatalf("writing resolved imports: %v", err)
 	}
+	sl.logger.Debug().Msgf("Wrote resolved import map to: ", filename)
 }
 
 func (sl *scalaLang) setupCpuProfiling(workDir string) error {

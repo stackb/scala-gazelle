@@ -13,9 +13,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/bmatcuk/doublestar/v4"
+	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/logger"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
@@ -148,11 +148,11 @@ type Config struct {
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
-	logger                 logger.Log
+	logger                 zerolog.Logger
 }
 
 // New initializes a new Config.
-func New(logger logger.Log, universe resolver.Universe, config *config.Config, rel string) *Config {
+func New(logger zerolog.Logger, universe resolver.Universe, config *config.Config, rel string) *Config {
 	return &Config{
 		logger:            logger,
 		config:            config,
@@ -175,12 +175,12 @@ func Get(config *config.Config) *Config {
 
 // getOrCreateScalaConfig either inserts a new config into the map under the
 // language name or replaces it with a clone.
-func GetOrCreate(logger logger.Log, universe resolver.Universe, config *config.Config, rel string) *Config {
+func GetOrCreate(logger zerolog.Logger, universe resolver.Universe, config *config.Config, rel string) *Config {
 	var cfg *Config
 	if existingExt, ok := config.Exts[scalaLangName]; ok {
 		cfg = existingExt.(*Config).clone(config, rel)
 	} else {
-		cfg = New(logger, universe, config, rel)
+		cfg = New(logger.With().Str("rel", rel).Logger(), universe, config, rel)
 	}
 	config.Exts[scalaLangName] = cfg
 	return cfg
@@ -517,11 +517,6 @@ func (c *Config) ConfiguredRules() []*scalarule.Config {
 
 func (c *Config) ShouldAnnotateImports() bool {
 	_, ok := c.annotations[DebugImports]
-	return ok
-}
-
-func (c *Config) shouldAnnotateExports() bool {
-	_, ok := c.annotations[DebugExports]
 	return ok
 }
 

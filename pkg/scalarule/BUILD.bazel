@@ -18,13 +18,13 @@ go_library(
     deps = [
         "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
-        "//pkg/logger",
         "//pkg/resolver",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//language:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
+        "@com_github_rs_zerolog//:zerolog",
     ],
 )
 

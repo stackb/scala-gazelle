@@ -15,7 +15,7 @@ const debugGenerate = false
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.GenerateResult) {
 	now := time.Now()
-	sl.logger.Printf("visiting %s...", args.Rel)
+	sl.logger.Debug().Msgf("visiting directory %s", args.Rel)
 
 	sc := scalaconfig.Get(args.Config)
 
@@ -27,9 +27,8 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	sl.logger.Printf("[rel=%q] creating package", args.Rel)
-
-	pkg := newScalaPackage(sl.logger, args, sc, sl.ruleProviderRegistry, sl.parser, sl)
+	logger := sl.logger.With().Str("rel", args.Rel).Logger()
+	pkg := newScalaPackage(logger, args, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++
 
@@ -53,7 +52,7 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.
 		}
 	}
 
-	sl.logger.Printf("[%s] visited %s in %v", sl.Name(), args.Rel, time.Since(now))
+	logger.Debug().Msgf("generated %d rules in %v", len(rules), time.Since(now))
 
 	return language.GenerateResult{
 		Gen:     rules,

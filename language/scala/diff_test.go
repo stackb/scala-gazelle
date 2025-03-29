@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -40,6 +41,7 @@ func TestDiff(t *testing.T) {
 			env: []string{
 				"SCALA_GAZELLE_SHOW_PROGRESS=0",
 				"SCALA_GAZELLE_SHOW_COVERAGE=0",
+				"SCALA_GAZELLE_ANNOUNCE_LOG_FILE=0",
 			},
 			wantExitCode: 0,
 			checkStderr:  true,
@@ -66,9 +68,11 @@ func TestDiff(t *testing.T) {
 			}
 
 			dir, cleanup := testtools.CreateFiles(t, files)
+			env := append(tc.env, fmt.Sprintf("SCALA_GAZELLE_LOG_FILE=%s/scala-gazelle.log", dir))
+
 			defer cleanup()
 
-			stdout, stderr, exitCode, err := testutil.RunGazelle(t, dir, tc.env, args...)
+			stdout, stderr, exitCode, err := testutil.RunGazelle(t, dir, env, args...)
 
 			if diff := cmp.Diff(tc.wantExitCode, exitCode); diff != "" {
 				t.Errorf("exit code (-want +got):\n%s", diff)

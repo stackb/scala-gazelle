@@ -1,17 +1,18 @@
 package scala
 
 import (
+	"os"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
-	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
 
 func TestScalaPackageParseRule(t *testing.T) {
@@ -28,7 +29,7 @@ func TestScalaPackageParseRule(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			logger := testutil.NewTestLogger(t)
+			logger := zerolog.New(os.Stderr)
 			universe := mocks.NewUniverse(t)
 			scope := mocks.NewScope(t)
 			scope.

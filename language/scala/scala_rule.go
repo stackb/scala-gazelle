@@ -12,9 +12,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/logger"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -43,7 +43,7 @@ type scalaRuleContext struct {
 
 type scalaRule struct {
 	// logger instance
-	logger logger.Log
+	logger zerolog.Logger
 	// Rule is the pb representation
 	pb *sppb.Rule
 	// files is a list of files, copied from pb.Files but sorted again
@@ -63,7 +63,7 @@ func init() {
 }
 
 func newScalaRule(
-	logger logger.Log,
+	logger zerolog.Logger,
 	ctx *scalaRuleContext,
 	rule *sppb.Rule,
 ) *scalaRule {

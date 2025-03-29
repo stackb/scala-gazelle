@@ -2,6 +2,7 @@ package scalaconfig
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -10,6 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -20,7 +22,7 @@ import (
 
 func NewTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*Config, error) {
 	c := config.New()
-	sc := New(testutil.NewTestLogger(t), universe, c, rel)
+	sc := New(zerolog.New(os.Stderr), universe, c, rel)
 	err := sc.ParseDirectives(dd)
 	return sc, err
 }
@@ -572,7 +574,7 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 				Times(tc.wantTimes).
 				Return(nil, false)
 
-			sc := New(universe, c, tc.rel)
+			sc := New(zerolog.New(os.Stderr), universe, c, tc.rel)
 
 			sc.GetKnownRule(tc.from)
 

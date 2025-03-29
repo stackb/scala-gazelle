@@ -1,6 +1,8 @@
 package scala
 
-import "os"
+import (
+	"github.com/stackb/scala-gazelle/pkg/procutil"
+)
 
 type packageRuleCoverage struct {
 	// managed represents the total number of rules that are managed by
@@ -25,13 +27,7 @@ func (sl *scalaLang) reportCoverage(printf func(format string, v ...any)) {
 
 	percent := float32(managed) / float32(total) * 100
 
-	printCoverage := true
-	if val, ok := os.LookupEnv("SCALA_GAZELLE_SHOW_COVERAGE"); ok {
-		if val == "false" || val == "0" {
-			printCoverage = false
-		}
-	}
-	if printCoverage {
+	if procutil.LookupBoolEnv(SCALA_GAZELLE_SHOW_COVERAGE, true) {
 		printf("scala-gazelle coverage is %0.1f%% (%d/%d)", percent, managed, total)
 	}
 }

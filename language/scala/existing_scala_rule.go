@@ -67,14 +67,11 @@ func (s *existingScalaRuleProvider) LoadInfo() rule.LoadInfo {
 // ProvideRule implements part of the scalarule.Provider interface.  It always
 // returns nil.  The ResolveRule interface is the intended use case.
 func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	cfg.Logger.Printf("existingScalaRuleProvider %s .ProvideRule DONE", s.Name)
 	return nil
 }
 
 // ResolveRule implements the RuleResolver interface.
 func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
-	cfg.Logger.Printf("existingScalaRule %s .ResolveRule BEGIN", s.Name)
-
 	scalaRule, err := pkg.ParseRule(r, "srcs")
 	if err != nil {
 		if err == ErrRuleHasNoSrcs {
@@ -89,8 +86,6 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
 	r.SetPrivateAttr("_scala_files", scalaRule.Files())
-
-	cfg.Logger.Printf("existingScalaRule %s .ResolveRule END", s.Name)
 
 	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinary, s.isLibrary, s.isTest}
 }

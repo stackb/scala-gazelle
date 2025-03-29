@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
-	"github.com/stackb/scala-gazelle/pkg/logger"
 )
 
 // Config carries metadata about a rule and its dependencies.
@@ -35,12 +35,12 @@ type Config struct {
 	// Name is the name of the Rule config
 	Name string
 	// Logger is a logger instance that can be used for debugging.
-	Logger logger.Log
+	Logger zerolog.Logger
 }
 
 // NewConfig returns a pointer to a new Config config with the
 // 'Enabled' bit set to true.
-func NewConfig(logger logger.Log, config *config.Config, name string) *Config {
+func NewConfig(logger zerolog.Logger, config *config.Config, name string) *Config {
 	return &Config{
 		Logger:  logger,
 		Config:  config,
