@@ -56,16 +56,16 @@ def scalameta_parsers():
     _maybe(
         http_archive,
         name = "scalameta_parsers",
-        sha256 = "661081f106ebdc9592543223887de999d2a2b6229bd1aa22b1376ba6b695675d",
+        sha256 = "fe78c3ec6e82a069f4d2307ff3403d85748652b3cb0b609f46a32f3cd4a28389",
         strip_prefix = "package",
         build_file_content = """
 filegroup(
     name = "module",
-    srcs = ["index.js"],
+    srcs = ["main.js"],
     visibility = ["//visibility:public"],
 )
         """,
-        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.4.17.tgz"],
+        urls = ["https://registry.npmjs.org/scalameta-parsers/-/scalameta-parsers-4.7.0.tgz"],
     )
 
 def bazel_gazelle():
