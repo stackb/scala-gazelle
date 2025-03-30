@@ -173,7 +173,7 @@ func getLoggerFilename() string {
 	if name, ok := procutil.LookupEnv(SCALA_GAZELLE_LOG_FILE); ok && len(name) > 0 {
 		return name
 	}
-	if tmpdir, ok := procutil.LookupEnv(TEST_TMPDIR); ok {
+	if tmpdir, ok := procutil.LookupEnv(TEST_TMPDIR); ok && procutil.DirExists(tmpdir) {
 		return filepath.Join(tmpdir, "scala-gazelle.log")
 	}
 

@@ -149,7 +149,6 @@ package_filegroup(
         "generate.go",
         "golden_test.go",
         "imports.go",
-        "it.sh",
         "kinds.go",
         "known_rule_registry.go",
         "language.go",

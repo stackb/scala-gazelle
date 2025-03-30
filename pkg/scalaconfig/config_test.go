@@ -115,6 +115,7 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			want: &Config{
 				rules:              map[string]*scalarule.Config{},
 				labelNameRewrites:  map[string]resolver.LabelNameRewriteSpec{},
+				annotations:        map[debugAnnotation]interface{}{},
 				generateBuildFiles: true,
 			},
 		},
@@ -127,8 +128,8 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			got := sc
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(Config{}),
-				cmpopts.IgnoreFields(Config{}, "config", "universe"),
-				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
+				cmpopts.IgnoreFields(Config{}, "config", "universe", "logger"),
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config", "Logger"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -219,7 +220,9 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 				return
 			}
 			got := sc.rules
-			if diff := cmp.Diff(tc.want, got); diff != "" {
+			if diff := cmp.Diff(tc.want, got,
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config", "Logger"),
+			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})

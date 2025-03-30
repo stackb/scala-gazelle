@@ -375,6 +375,9 @@ class ScalaFile {
             case 'Pkg.Object':
                 this.visitPkgObject(node);
                 break;
+            case 'Pkg.Body':
+                this.visitPkgBody(node);
+                break;
             case 'Defn.Object':
                 this.visitDefnObject(node);
                 break;
@@ -418,8 +421,14 @@ class ScalaFile {
         const name = this.parseName(node.ref);
         this.packages.add(this.packageQualifiedName(name));
         this.pkgs.push(name);
-        this.visitStats(node.stats);
+        // note: this changed in 4.10.0.  The Pkg object added a .Body.
+        // See https://github.com/scalacenter/scalafix/pull/2079 and https://github.com/scalameta/scalameta/issues/3913.
+        this.visitNode(node.body);
         this.pkgs.pop();
+    }
+
+    visitPkgBody(node) {
+        this.visitStats(node.stats);
     }
 
     visitPkgObject(node) {
@@ -640,10 +649,10 @@ class ScalaFile {
                 return names.join('.');
             }
         }
-        if (debug && ref.type) {
-            this.console.warn('parseName: unhandled ref type:', ref.type);
-            this.printNode(ref);
-        }
+        // if (debug && ref.type) {
+        //     this.console.warn('parseName: unhandled ref type:', ref.type);
+        //     this.printNode(ref);
+        // }
     }
 
 }

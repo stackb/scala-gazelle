@@ -25,7 +25,13 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func SkipTestServerParse(t *testing.T) {
+func TestServerParse(t *testing.T) {
+	server := NewScalametaParser()
+	if err := server.Start(); err != nil {
+		t.Fatal("server start:", err)
+	}
+	defer server.Stop()
+
 	for name, tc := range map[string]*struct {
 		files []testtools.FileSpec
 		in    sppb.ParseRequest
@@ -559,11 +565,6 @@ case class TradingAccountUser(
 
 			files := mustWriteTestFiles(t, tmpDir, tc.files)
 			tc.in.Filenames = files
-			server := NewScalametaParser()
-			if err := server.Start(); err != nil {
-				t.Fatal("server start:", err)
-			}
-			defer server.Stop()
 
 			got, err := server.Parse(context.Background(), &tc.in)
 			if err != nil {
@@ -619,16 +620,17 @@ func TestScalaParseTree(t *testing.T) {
 		}
 		t.Run(src, func(t *testing.T) {
 			goldenFile := filepath.Join(dir, src+".golden.json")
-			got, err := server.Parse(context.Background(), &sppb.ParseRequest{
+			response, err := server.Parse(context.Background(), &sppb.ParseRequest{
 				Filenames:     []string{filepath.Join(dir, src)},
 				WantParseTree: true,
 			})
 			if err != nil {
 				t.Fatal(err)
 			}
+			got := response.Files[0].Tree
 
 			if *update {
-				if err := os.WriteFile(goldenFile, []byte(got.Files[0].Tree), os.ModePerm); err != nil {
+				if err := os.WriteFile(goldenFile, []byte(got), os.ModePerm); err != nil {
 					t.Fatal(err)
 				}
 				log.Println("Wrote golden file:", goldenFile)
@@ -642,7 +644,7 @@ func TestScalaParseTree(t *testing.T) {
 				want = string(data)
 			}
 
-			if diff := cmp.Diff(&want, got); diff != "" {
+			if diff := cmp.Diff(want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})

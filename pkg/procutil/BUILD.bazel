@@ -6,6 +6,7 @@ go_library(
     srcs = [
         "cmd.go",
         "env.go",
+        "paths.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/procutil",
     visibility = ["//visibility:public"],
@@ -17,6 +18,7 @@ package_filegroup(
         "BUILD.bazel",
         "cmd.go",
         "env.go",
+        "paths.go",
     ],
     visibility = ["//visibility:public"],
 )
