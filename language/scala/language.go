@@ -177,8 +177,6 @@ func getLoggerFilename() string {
 		return filepath.Join(tmpdir, "scala-gazelle.log")
 	}
 
-	panic("log file not defined")
-
 	return ""
 }
 
