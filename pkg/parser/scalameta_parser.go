@@ -270,8 +270,6 @@ func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sp
 		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
 	}
 
-	s.logger.Debug().Msgf("new parse response: %+v", response)
-
 	return &response, nil
 }
 

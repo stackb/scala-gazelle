@@ -1,7 +1,6 @@
 package scala
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 
@@ -108,14 +107,7 @@ type scalaLang struct {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	logFilename, logFile, logger := setupLogger()
-
-	infoMsg := "scala-gazelle log file: " + logFilename
-	logger.Debug().Msg(infoMsg)
-
-	if procutil.LookupBoolEnv(SCALA_GAZELLE_ANNOUNCE_LOG_FILE, true) {
-		log.Println(infoMsg)
-	}
+	logFile, logger := setupLogger()
 
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
@@ -166,7 +158,7 @@ func (*scalaLang) KnownDirectives() []string {
 }
 
 func wantProgress() bool {
-	return procutil.LookupBoolEnv("SCALA_GAZELLE_SHOW_PROGRESS", true)
+	return procutil.LookupBoolEnv("SCALA_GAZELLE_SHOW_PROGRESS", false)
 }
 
 func getLoggerFilename() string {
@@ -180,11 +172,11 @@ func getLoggerFilename() string {
 	return ""
 }
 
-func setupLogger() (string, *os.File, zerolog.Logger) {
+func setupLogger() (*os.File, zerolog.Logger) {
 	filename := getLoggerFilename()
 
 	if filename == "" {
-		return "", nil, zerolog.Nop()
+		return nil, zerolog.Nop()
 	}
 
 	file, err := os.Create(filename)
@@ -194,5 +186,5 @@ func setupLogger() (string, *os.File, zerolog.Logger) {
 
 	logger := zerolog.New(file).With().Caller().Logger()
 
-	return filename, file, logger
+	return file, logger
 }

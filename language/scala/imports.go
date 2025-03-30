@@ -41,7 +41,7 @@ func (sl *scalaLang) writeResolvedImportsMapFile(filename string) error {
 		}
 	}
 
-	log.Printf("Wrote scala-gazelle import map %s", filename)
+	log.Printf("Wrote scala-gazelle import map: %s", filename)
 
 	return nil
 }
