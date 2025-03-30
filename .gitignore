@@ -1,3 +1,4 @@
 /pkg/parser/node.exe
 /bazel-*
 /.vscode/
+/examples/
