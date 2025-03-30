@@ -110,7 +110,7 @@ func (cr *SourceProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr,
 // ensureParserStarted begins the parser process if it hasn't already.
 func (r *SourceProvider) ensureParserStarted() error {
 	if r.parser == nil {
-		r.parser = parser.NewScalametaParser()
+		r.parser = parser.NewScalametaParser(parser.WithLogger(r.logger.With().Str("parser", "runtime").Logger()))
 
 		now := time.Now()
 		r.logger.Printf("[%s] starting parser...", r.Name())
@@ -167,7 +167,6 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 			haveFiles = append(haveFiles, file)
 			// log.Println("✅ have:", rel)
 		} else {
-			r.logger.Println("⭕ need to parse:", src)
 			needFilenames = append(needFilenames, filepath.Join(dir, src))
 		}
 	}
@@ -180,6 +179,8 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 	if err := r.ensureParserStarted(); err != nil {
 		return nil, err
 	}
+
+	r.logger.Debug().Msgf("⭕ need to parse: %v", needFilenames)
 
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
 		Filenames: needFilenames,
@@ -207,7 +208,7 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 	return append(haveFiles, response.Files...), nil
 }
 
-// LoadScalaRule loads the given state.
+// LoadScalaRule loads the given rule state.
 func (r *SourceProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) error {
 	for _, file := range rule.Files {
 		if err := r.loadScalaFile(from, rule.Kind, file); err != nil {
@@ -218,6 +219,8 @@ func (r *SourceProvider) LoadScalaRule(from label.Label, rule *sppb.Rule) error 
 }
 
 func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb.File) error {
+	r.logger.Debug().Msgf("loading symbols from %s: %+v", file.Filename, file)
+
 	for _, imp := range file.Classes {
 		r.putSymbol(from, kind, imp, sppb.ImportType_CLASS)
 	}
@@ -237,7 +240,9 @@ func (r *SourceProvider) loadScalaFile(from label.Label, kind string, file *sppb
 }
 
 func (r *SourceProvider) putSymbol(from label.Label, kind, imp string, impType sppb.ImportType) {
-	r.scope.PutSymbol(resolver.NewSymbol(impType, imp, kind, from))
+	sym := resolver.NewSymbol(impType, imp, kind, from)
+	r.logger.Debug().Msgf("adding symbol to scope: %v", sym)
+	r.scope.PutSymbol(sym)
 }
 
 func (r *SourceProvider) parseScalaFileset(filename string) error {

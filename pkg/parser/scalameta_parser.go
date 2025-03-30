@@ -19,6 +19,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/amenzhinsky/go-memexec"
+	"github.com/rs/zerolog"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/bazel"
@@ -47,6 +48,13 @@ func WithHttpClientTimeout(timeout time.Duration) ScalametaParserOption {
 	}
 }
 
+func WithLogger(logger zerolog.Logger) ScalametaParserOption {
+	return func(sp *ScalametaParser) *ScalametaParser {
+		sp.logger = logger
+		return sp
+	}
+}
+
 var defaultOptions = []ScalametaParserOption{
 	WithHttpPort(0),
 	WithHttpClientTimeout(60 * time.Second),
@@ -65,6 +73,8 @@ func NewScalametaParser(options ...ScalametaParserOption) *ScalametaParser {
 // backend over HTTP.
 type ScalametaParser struct {
 	sppb.UnimplementedParserServer
+
+	logger zerolog.Logger
 
 	process    *memexec.Exec
 	processDir string
@@ -139,6 +149,8 @@ func (s *ScalametaParser) Start() error {
 		log.Println("httpUrl:", s.httpUrl)
 	}
 
+	s.logger.Debug().Msgf("Starting parser: %s", s.httpUrl)
+
 	//
 	// Setup the node process
 	//
@@ -194,6 +206,8 @@ func (s *ScalametaParser) Start() error {
 		log.Println("parse connection available!")
 	}
 
+	s.logger.Debug().Msgf("Started parser: %s", s.httpUrl)
+
 	//
 	// Setup the http client
 	//
@@ -216,6 +230,8 @@ func (s *ScalametaParser) Start() error {
 }
 
 func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sppb.ParseResponse, error) {
+	s.logger.Debug().Msgf("new parse request: %+v", in)
+
 	req, err := newHttpParseRequest(s.httpUrl, in)
 	if err != nil {
 		return nil, err
@@ -253,6 +269,8 @@ func (s *ScalametaParser) Parse(ctx context.Context, in *sppb.ParseRequest) (*sp
 	if err := protojson.Unmarshal(data, &response); err != nil {
 		return nil, status.Errorf(codes.Internal, "response body error: %v\n%s", err, string(data))
 	}
+
+	s.logger.Debug().Msgf("new parse response: %+v", response)
 
 	return &response, nil
 }

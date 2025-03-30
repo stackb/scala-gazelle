@@ -104,7 +104,7 @@ func (r *scalaRule) ResolveExports(rctx *scalarule.ResolveContext) resolver.Impo
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
 			imp.Symbol = symbol
 		} else {
-			r.logger.Println(r.pb.Label + ": unresolved export: " + imp.Imp)
+			r.logger.Print(r.pb.Label + ": unresolved export: " + imp.Imp)
 			imp.Error = resolver.ErrSymbolNotFound
 		}
 	}
@@ -132,7 +132,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			}
 
 		} else {
-			r.logger.Println(r.pb.Label + ": unresolved import: " + imp.Imp)
+			r.logger.Print(r.pb.Label + ": unresolved import: " + imp.Imp)
 			imp.Error = resolver.ErrSymbolNotFound
 		}
 	}
@@ -211,7 +211,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 	scope := resolver.NewChainScope(scopes...)
 
 	if debugFileScope {
-		r.logger.Println(r.infof("%s scope:\n%s", file.Filename, scope.String()))
+		r.logger.Print(r.infof("%s scope:\n%s", file.Filename, scope.String()))
 	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
@@ -234,7 +234,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 			if sym, ok := scope.GetSymbol(imp); ok {
 				// if the symbol has conflicts, don't export it
 				if len(sym.Conflicts) > 0 {
-					r.logger.Println(r.warnf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp))
+					r.logger.Print(r.warnf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp))
 				} else {
 					putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
 					if resolvedOK && resolved != sym {
@@ -243,7 +243,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 				}
 			} else {
 				putExport(resolver.NewExtendsImport(imp, file, name, nil))
-				r.logger.Println(r.warnf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp))
+				r.logger.Print(r.warnf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp))
 			}
 		}
 	}
@@ -335,7 +335,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 	scope := resolver.NewChainScope(scopes...)
 
 	if debugFileScope {
-		r.logger.Println(r.infof("%s scope:\n%s", file.Filename, scope.String()))
+		r.logger.Print(r.infof("%s scope:\n%s", file.Filename, scope.String()))
 	}
 
 	// resolve extends clauses in the file.  While these are probably duplicated
@@ -355,7 +355,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 		if !resolvedOK {
-			r.logger.Println(r.warnf("%s: extends symbol not found: %s", file.Filename, name))
+			r.logger.Print(r.warnf("%s: extends symbol not found? %s", file.Filename, name))
 		}
 
 		for _, imp := range extends.Classes {
@@ -365,7 +365,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 					resolved.Require(sym)
 				}
 			} else {
-				r.logger.Println(r.warnf("%s: extends symbol not found: %s", file.Filename, imp))
+				r.logger.Print(r.warnf("%s: extends symbol not found: %s", file.Filename, imp))
 
 				if debugExtendsNameNotFound {
 					putImport(resolver.NewExtendsImport(imp, file, name, nil))
@@ -435,15 +435,19 @@ func (r *scalaRule) fixWildcardImport(filename, wimp string) ([]string, error) {
 }
 
 func (r *scalaRule) debugf(format string, args ...any) string {
-	return fmt.Sprintf("DEBUG [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+	return r.printf("DEBUG", format, args...)
 }
 
 func (r *scalaRule) infof(format string, args ...any) string {
-	return fmt.Sprintf("INFO [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+	return r.printf("INFO", format, args...)
 }
 
 func (r *scalaRule) warnf(format string, args ...any) string {
-	return fmt.Sprintf("WARN [%s]: "+format, r.ctx.scalaConfig.Rel(), args)
+	return r.printf("WARN", format, args...)
+}
+
+func (r *scalaRule) printf(level, format string, args ...any) string {
+	return fmt.Sprintf(level+" ["+r.ctx.scalaConfig.Rel()+": "+format, args...)
 }
 
 func ImportsPutIfNotSelfImport(imports resolver.ImportMap, repo, rel, ruleName string) func(*resolver.Import) {

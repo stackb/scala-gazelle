@@ -41,6 +41,7 @@ func TestDiff(t *testing.T) {
 			env: []string{
 				"SCALA_GAZELLE_SHOW_PROGRESS=0",
 				"SCALA_GAZELLE_SHOW_COVERAGE=0",
+				"SCALA_GAZELLE_LOG_FILE=/tmp/scala-gazelle.log",
 				"SCALA_GAZELLE_ANNOUNCE_LOG_FILE=0",
 			},
 			wantExitCode: 0,

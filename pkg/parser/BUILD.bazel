@@ -26,6 +26,7 @@ go_library(
         "//pkg/procutil",
         "@bazel_gazelle//label:go_default_library",
         "@com_github_amenzhinsky_go_memexec//:go-memexec",
+        "@com_github_rs_zerolog//:zerolog",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",
         "@org_golang_google_protobuf//encoding/protojson",

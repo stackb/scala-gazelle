@@ -133,13 +133,13 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 
 	existingRulesByFQN := make(map[string][]*rule.Rule)
 	if s.args.File != nil {
-		s.logger.Debug().Msgf("correlating existing rules in %s", s.args.File.Path)
+		s.logger.Debug().Msgf("checking for pre-existing rules in %s...", s.args.File.Path)
 
 		for _, r := range s.args.File.Rules {
 			fqn := fullyQualifiedLoadName(s.args.File.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
 			if provider, ok := s.providerRegistry.LookupProvider(fqn); ok {
-				s.logger.Debug().Msgf("rule provider for %s is %T", fqn, provider.Name())
+				s.logger.Debug().Msgf("found: rule provider for %s is %T", fqn, provider.Name())
 
 				// TOOD(pcj): consider adding .ContributesToCoverage or some
 				// other way of tracking which rules contribute to coverage
@@ -151,8 +151,6 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 				s.logger.Debug().Msgf("no known rule provider for %s", fqn)
 			}
 		}
-
-		s.logger.Debug().Msg("parsing build file for existing rules...")
 	}
 
 	configuredRules := s.cfg.ConfiguredRules()
@@ -187,7 +185,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 			for _, r := range existing {
 				resolvedRule := s.resolveRule(rc, r)
 				if resolvedRule != nil {
-					s.logger.Debug().Msgf("new resolved rule: %s%%s", resolvedRule.Name(), resolvedRule.Kind())
+					s.logger.Debug().Msgf("new resolved rule: %s %s", resolvedRule.Name(), resolvedRule.Kind())
 					rules = append(rules, resolvedRule)
 					// TODO: make this an API, not hardcode which rule names contribute to coverage
 					if resolvedRule.Name() != "scala_files" || resolvedRule.Name() != "scala_fileset" {

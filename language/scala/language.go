@@ -3,6 +3,7 @@ package scala
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
@@ -107,7 +108,7 @@ type scalaLang struct {
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
-	logFilename, logFile, logger := mustCreateLogger()
+	logFilename, logFile, logger := setupLogger()
 
 	infoMsg := "scala-gazelle log file: " + logFilename
 	logger.Debug().Msg(infoMsg)
@@ -168,22 +169,32 @@ func wantProgress() bool {
 	return procutil.LookupBoolEnv("SCALA_GAZELLE_SHOW_PROGRESS", true)
 }
 
-func mustCreateLogger() (string, *os.File, zerolog.Logger) {
-	logger := zerolog.Nop()
-	var filename string
-	var logFile *os.File
-	var err error
-
-	// filename := "/tmp/scala-gazelle.log"
-	if name, ok := procutil.LookupEnv(SCALA_GAZELLE_LOG_FILE); ok {
-		filename = name
-		logger = zerolog.New(logFile).With().Caller().Logger()
-		logFile, err = os.Create(filename)
-		if err != nil {
-			panic("cannot open log file: " + err.Error())
-		}
-	} else {
-		log.Fatal(SCALA_GAZELLE_LOG_FILE, " is required")
+func getLoggerFilename() string {
+	if name, ok := procutil.LookupEnv(SCALA_GAZELLE_LOG_FILE); ok && len(name) > 0 {
+		return name
 	}
-	return filename, logFile, logger
+	if tmpdir, ok := procutil.LookupEnv(TEST_TMPDIR); ok {
+		return filepath.Join(tmpdir, "scala-gazelle.log")
+	}
+
+	panic("log file not defined")
+
+	return ""
+}
+
+func setupLogger() (string, *os.File, zerolog.Logger) {
+	filename := getLoggerFilename()
+
+	if filename == "" {
+		return "", nil, zerolog.Nop()
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		panic("cannot open log file: " + err.Error())
+	}
+
+	logger := zerolog.New(file).With().Caller().Logger()
+
+	return filename, file, logger
 }
