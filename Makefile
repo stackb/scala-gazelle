@@ -88,6 +88,5 @@ gen: mocks protos
 .PHONY: goldens
 goldens:
 	bazel run //pkg/semanticdb:semanticdb_test -- -update
-
-update_provider_test_golden_files:
 	bazel run pkg/provider:provider_test -- -update
+	bazel run pkg/parser:parser_test -- -update

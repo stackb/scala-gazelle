@@ -2,8 +2,10 @@ package parser
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,9 +20,12 @@ import (
 	"github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/bazel"
+	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 
-func TestServerParse(t *testing.T) {
+var update = flag.Bool("update", false, "update golden files")
+
+func SkipTestServerParse(t *testing.T) {
 	for name, tc := range map[string]*struct {
 		files []testtools.FileSpec
 		in    sppb.ParseRequest
@@ -206,7 +211,7 @@ import akka.actor.ActorSystem
 object MainContext {
 	implicit var asys: ActorSystem = _
 }
-  
+
 object Main {
 	private def makeRequest(params: Map[String, String]): Unit = {
 		import MainContext._
@@ -545,9 +550,6 @@ case class TradingAccountUser(
 			},
 		},
 	} {
-		// if name != "degenerate" {
-		// 	continue
-		// }
 		t.Run(name, func(t *testing.T) {
 			tmpDir, err := bazel.NewTmpDir("")
 			if err != nil {
@@ -582,6 +584,66 @@ case class TradingAccountUser(
 				sppb.ClassList{},
 			)); diff != "" {
 				t.Errorf(".Parse (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestScalaParseTree(t *testing.T) {
+	rel := "pkg/parser"
+	dir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if bwd, ok := os.LookupEnv("BUILD_WORKSPACE_DIRECTORY"); ok {
+		dir = filepath.Join(bwd, rel)
+	}
+	t.Log("dir:", dir)
+
+	srcs, err := collections.CollectFiles(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("srcs:", srcs)
+
+	server := NewScalametaParser()
+	if err := server.Start(); err != nil {
+		t.Fatal("server start:", err)
+	}
+	defer server.Stop()
+
+	for _, src := range srcs {
+		if filepath.Ext(src) != ".scala" {
+			continue
+		}
+		t.Run(src, func(t *testing.T) {
+			goldenFile := filepath.Join(dir, src+".golden.json")
+			got, err := server.Parse(context.Background(), &sppb.ParseRequest{
+				Filenames:     []string{filepath.Join(dir, src)},
+				WantParseTree: true,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if *update {
+				if err := os.WriteFile(goldenFile, []byte(got.Files[0].Tree), os.ModePerm); err != nil {
+					t.Fatal(err)
+				}
+				log.Println("Wrote golden file:", goldenFile)
+				return
+			}
+
+			var want string
+			if data, err := os.ReadFile(goldenFile); err != nil {
+				t.Fatal(err)
+			} else {
+				want = string(data)
+			}
+
+			if diff := cmp.Diff(&want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
 	}

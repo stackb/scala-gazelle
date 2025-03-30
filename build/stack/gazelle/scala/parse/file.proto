@@ -39,6 +39,9 @@ message File {
     map<string,ClassList> extends = 11;
     // error is a string assigned when a parse error occurs
     string error = 13;
+    // tree is a JSON string representing the parse tree.  This field is only
+    // populated when specifically requested during parsing.
+    string tree = 14;
 }
 
 // ClassList represents a set of files.

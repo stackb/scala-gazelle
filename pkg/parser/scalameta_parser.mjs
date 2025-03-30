@@ -117,6 +117,11 @@ class ScalaFile {
         this.filename = filename;
 
         /**
+         * The raw parse tree.
+         */
+        this.tree;
+
+        /**
          * The root scope.
          */
         this.root = new Scope('root');
@@ -218,6 +223,7 @@ class ScalaFile {
         }
         this.names.add(name);
     }
+
     /**
      * Runs the parse.
      */
@@ -232,6 +238,8 @@ class ScalaFile {
             this.console.log('Parse error:', this.filename);
             this.visitError(tree);
             return;
+        } else {
+            this.tree = tree;
         }
 
         this.traverse(this.root, this.root.name, tree, undefined /* parent */, [], (propName, node, parent, stack) => {
@@ -521,12 +529,20 @@ class ScalaFile {
         });
     }
 
-    toObject() {
+    /**
+     * 
+     * @param {!ParseRequest} request The parse request
+     * @returns {!File} object / JSON representation per file.proto.
+     */
+    toFile(request) {
         const obj = {
             filename: this.filename,
         };
         if (this.error) {
             obj.error = this.error;
+        }
+        if (request.wantParseTree) {
+            obj.tree = JSON.stringify(this.tree, null, 4);
         }
 
         this.resolveExtends();
@@ -635,15 +651,15 @@ class ScalaFile {
 /**
  * parseFile parses a single file.
  * 
- * @param {string>} filename The file to parse (relative or absolute)
+ * @param {!ParseRequest} request The parse request
+ * @param {string} filename The file to parse (relative or absolute)
  * @returns {!ScalaFile}
  */
-function parseFile(filename) {
+function parseFile(request, filename) {
     try {
-        const src = new ScalaFile(filename);
-        src.parse();
-        const result = src.toObject();
-        return result;
+        const file = new ScalaFile(filename);
+        file.parse();
+        return file.toFile(request);
     } catch (e) {
         return {
             filename: filename,
@@ -655,20 +671,22 @@ function parseFile(filename) {
 /**
  * parseFiles takes a list of input files and returns a list of results
  * 
+ * @param {!ParseRequest} request The parse request
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
  * @returns {!Array<ScalaFile>}
  */
-function parseFiles(inputs) {
-    return inputs.map(parseFile);
+function parseFiles(request, inputs) {
+    return inputs.map(filename => parseFile(request, filename));
 }
 
 /**
  * parse takes a list of input files and returns a list of .
  * 
+ * @param {!ParseRequest} request The parse request
  * @param {!Array<string>} inputs The list of files to parse (relative or absolute)
  * @returns {!Promise<!Array<ScalaFile>>}
  */
-async function parseFilesParallel(inputs) {
+async function parseFilesParallel(request, inputs) {
     const work = inputs.map(filename => {
         return new Promise((resolve, reject) => {
             const worker = new Worker(__filename, { workerData: filename });
@@ -691,9 +709,9 @@ async function processJSONRequest(request) {
 
     let files = [];
     if (process.env.PARALLEL_MODE) {
-        files = await parseFilesParallel(request.filenames);
+        files = await parseFilesParallel(request, request.filenames);
     } else {
-        files = parseFiles(request.filenames);
+        files = parseFiles(request, request.filenames);
     }
 
     return { files };

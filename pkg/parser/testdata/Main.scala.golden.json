@@ -1,0 +1,205 @@
+{
+    "type": "Source",
+    "pos": {
+        "start": 0,
+        "end": 77
+    },
+    "stats": [
+        {
+            "type": "Pkg",
+            "pos": {
+                "start": 0,
+                "end": 76
+            },
+            "ref": {
+                "type": "Term.Select",
+                "pos": {
+                    "start": 8,
+                    "end": 13
+                },
+                "qual": {
+                    "type": "Term.Select",
+                    "pos": {
+                        "start": 8,
+                        "end": 11
+                    },
+                    "qual": {
+                        "type": "Term.Name",
+                        "pos": {
+                            "start": 8,
+                            "end": 9
+                        },
+                        "value": "a"
+                    },
+                    "name": {
+                        "type": "Term.Name",
+                        "pos": {
+                            "start": 10,
+                            "end": 11
+                        },
+                        "value": "b"
+                    }
+                },
+                "name": {
+                    "type": "Term.Name",
+                    "pos": {
+                        "start": 12,
+                        "end": 13
+                    },
+                    "value": "c"
+                }
+            },
+            "body": {
+                "type": "Pkg.Body",
+                "pos": {
+                    "start": 15,
+                    "end": 76
+                },
+                "stats": [
+                    {
+                        "type": "Defn.Object",
+                        "pos": {
+                            "start": 15,
+                            "end": 76
+                        },
+                        "mods": [],
+                        "name": {
+                            "type": "Term.Name",
+                            "pos": {
+                                "start": 22,
+                                "end": 26
+                            },
+                            "value": "Main"
+                        },
+                        "templ": {
+                            "type": "Template",
+                            "pos": {
+                                "start": 27,
+                                "end": 76
+                            },
+                            "inits": [],
+                            "body": {
+                                "type": "Template.Body",
+                                "pos": {
+                                    "start": 27,
+                                    "end": 76
+                                },
+                                "stats": [
+                                    {
+                                        "type": "Defn.Def",
+                                        "pos": {
+                                            "start": 31,
+                                            "end": 74
+                                        },
+                                        "mods": [],
+                                        "name": {
+                                            "type": "Term.Name",
+                                            "pos": {
+                                                "start": 35,
+                                                "end": 39
+                                            },
+                                            "value": "main"
+                                        },
+                                        "paramClauseGroups": [
+                                            {
+                                                "type": "Member.ParamClauseGroup",
+                                                "pos": {
+                                                    "start": 39,
+                                                    "end": 60
+                                                },
+                                                "tparamClause": {
+                                                    "type": "Type.ParamClause",
+                                                    "pos": {
+                                                        "start": 39,
+                                                        "end": 39
+                                                    },
+                                                    "values": []
+                                                },
+                                                "paramClauses": [
+                                                    {
+                                                        "type": "Term.ParamClause",
+                                                        "pos": {
+                                                            "start": 39,
+                                                            "end": 60
+                                                        },
+                                                        "values": [
+                                                            {
+                                                                "type": "Term.Param",
+                                                                "pos": {
+                                                                    "start": 40,
+                                                                    "end": 59
+                                                                },
+                                                                "mods": [],
+                                                                "name": {
+                                                                    "type": "Term.Name",
+                                                                    "pos": {
+                                                                        "start": 40,
+                                                                        "end": 44
+                                                                    },
+                                                                    "value": "args"
+                                                                },
+                                                                "decltpe": {
+                                                                    "type": "Type.Apply",
+                                                                    "pos": {
+                                                                        "start": 46,
+                                                                        "end": 59
+                                                                    },
+                                                                    "tpe": {
+                                                                        "type": "Type.Name",
+                                                                        "pos": {
+                                                                            "start": 46,
+                                                                            "end": 51
+                                                                        },
+                                                                        "value": "Array"
+                                                                    },
+                                                                    "argClause": {
+                                                                        "type": "Type.ArgClause",
+                                                                        "pos": {
+                                                                            "start": 51,
+                                                                            "end": 59
+                                                                        },
+                                                                        "values": [
+                                                                            {
+                                                                                "type": "Type.Name",
+                                                                                "pos": {
+                                                                                    "start": 52,
+                                                                                    "end": 58
+                                                                                },
+                                                                                "value": "String"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "decltpe": {
+                                            "type": "Type.Name",
+                                            "pos": {
+                                                "start": 62,
+                                                "end": 66
+                                            },
+                                            "value": "Unit"
+                                        },
+                                        "body": {
+                                            "type": "Term.Block",
+                                            "pos": {
+                                                "start": 69,
+                                                "end": 74
+                                            },
+                                            "stats": []
+                                        }
+                                    }
+                                ]
+                            },
+                            "derives": []
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
