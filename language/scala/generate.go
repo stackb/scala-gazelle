@@ -18,7 +18,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.
 	sl.logger.Debug().Msgf("visiting directory %s", args.Rel)
 
 	sc := scalaconfig.Get(args.Config)
-
 	if args.File == nil && !sc.GenerateBuildFiles() {
 		return
 	}

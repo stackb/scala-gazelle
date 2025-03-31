@@ -17,11 +17,14 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/parser"
+	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
+
+const SCALA_GAZELLE_ALLOW_RUNTIME_PARSING = procutil.EnvVar("SCALA_GAZELLE_ALLOW_RUNTIME_PARSING")
 
 const scalaFilesetFileFlagName = "scala_fileset_file"
 
@@ -110,6 +113,9 @@ func (cr *SourceProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr,
 // ensureParserStarted begins the parser process if it hasn't already.
 func (r *SourceProvider) ensureParserStarted() error {
 	if r.parser == nil {
+		if !procutil.LookupBoolEnv(SCALA_GAZELLE_ALLOW_RUNTIME_PARSING, true) {
+			r.logger.Panic().Msg("runtime parsing is disabled")
+		}
 		r.parser = parser.NewScalametaParser(parser.WithLogger(r.logger.With().Str("parser", "runtime").Logger()))
 
 		now := time.Now()

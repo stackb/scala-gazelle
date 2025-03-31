@@ -20,6 +20,7 @@ go_library(
         "//pkg/collections",
         "//pkg/maven",
         "//pkg/parser",
+        "//pkg/procutil",
         "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/semanticdb",

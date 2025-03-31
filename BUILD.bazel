@@ -84,7 +84,6 @@ package_filegroup(
         "Makefile",
         "README.md",
         "WORKSPACE",
-        "a.txt",
         "go.mod",
         "go.sum",
         "go_repos.bzl",
