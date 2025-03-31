@@ -93,22 +93,28 @@ func ListFiles(t *testing.T, dir string) {
 	}
 }
 
+type GazelleResult struct {
+	Stdout   string
+	Stderr   string
+	ExitCode int
+}
+
 // RunGazelle executes the gazelle command with the specified working directory,
 // environment variables, and command-line arguments. It returns the command
 // output (stdout and stderr) and any error that occurred.
-func RunGazelle(t *testing.T, workingDir string, env []string, args ...string) (string, string, int, error) {
+func RunGazelle(t *testing.T, workingDir string, env []string, args ...string) (*GazelleResult, error) {
 	t.Helper()
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return "", "", -1, err
+		return nil, err
 	}
 	gazelle := filepath.Join(cwd, "gazelle")
 
 	// Find gazelle in PATH or use an absolute path if needed
 	gazelleCmd, err := exec.LookPath(gazelle)
 	if err != nil {
-		return "", "", -1, fmt.Errorf("gazelle command not found in PATH: %w", err)
+		return nil, fmt.Errorf("gazelle command not found in PATH: %w", err)
 	}
 
 	// Create the command with the provided arguments
@@ -135,5 +141,9 @@ func RunGazelle(t *testing.T, workingDir string, env []string, args ...string) (
 
 	exitCode := procutil.CmdExitCode(cmd, err)
 
-	return stdout.String(), stderr.String(), exitCode, err
+	return &GazelleResult{
+		Stdout:   stdout.String(),
+		Stderr:   stderr.String(),
+		ExitCode: exitCode,
+	}, err
 }
