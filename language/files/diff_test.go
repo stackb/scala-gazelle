@@ -22,9 +22,9 @@ func TestDiffGeneratesPackageFilegroup(t *testing.T) {
 	dir, cleanup := testtools.CreateFiles(t, files)
 	defer cleanup()
 
-	if stdout, stderr, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
+	if result, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
 		if err.Error() != "exit status 1" {
-			t.Fatalf("unexpected error: %v\nSTDOUT:\n%s\nSTDERR:\n%s", err, stdout, stderr)
+			t.Fatalf("unexpected error: %v\n%+v", err, result)
 		}
 	}
 
@@ -77,9 +77,9 @@ package_filegroup(
 	dir, cleanup := testtools.CreateFiles(t, files)
 	defer cleanup()
 
-	if stdout, stderr, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
+	if result, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
 		if err.Error() != "exit status 1" {
-			t.Fatalf("unexpected error: %v\nSTDOUT:\n%s\nSTDERR:\n%s", err, stdout, stderr)
+			t.Fatalf("unexpected error: %v\n%+v", err, result)
 		}
 	}
 
@@ -121,9 +121,9 @@ func TestDiffGenetatesPackageFilegroupDeps(t *testing.T) {
 	dir, cleanup := testtools.CreateFiles(t, files)
 	defer cleanup()
 
-	if stdout, stderr, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
+	if result, err := testutil.RunGazelle(t, dir, nil, "-lang=files", "-mode=diff", "-patch=p"); err != nil {
 		if err.Error() != "exit status 1" {
-			t.Fatalf("unexpected error: %v\nSTDOUT:\n%s\nSTDERR:\n%s", err, stdout, stderr)
+			t.Fatalf("unexpected error: %v\n%+v", err, result)
 		}
 	}
 

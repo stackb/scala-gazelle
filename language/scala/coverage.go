@@ -25,7 +25,10 @@ func (sl *scalaLang) reportCoverage(printf func(format string, v ...any)) {
 		total += pkg.ruleCoverage.total
 	}
 
-	percent := float32(managed) / float32(total) * 100
+	var percent float32
+	if total > 0 {
+		percent = float32(managed) / float32(total) * 100
+	}
 
 	if procutil.LookupBoolEnv(SCALA_GAZELLE_SHOW_COVERAGE, true) {
 		printf("scala-gazelle coverage is %0.1f%% (%d/%d)", percent, managed, total)

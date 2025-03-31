@@ -355,7 +355,7 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		// scope rather than involving package scopes.
 		resolved, resolvedOK := r.ctx.scope.GetSymbol(name)
 		if !resolvedOK {
-			r.logger.Print(r.warnf("%s: extends symbol not found? %s", file.Filename, name))
+			r.logger.Print(r.warnf("%s: extends symbol not found: %s", file.Filename, name))
 		}
 
 		for _, imp := range extends.Classes {
