@@ -649,10 +649,10 @@ class ScalaFile {
                 return names.join('.');
             }
         }
-        // if (debug && ref.type) {
-        //     this.console.warn('parseName: unhandled ref type:', ref.type);
-        //     this.printNode(ref);
-        // }
+        if (debug && ref.type) {
+            this.console.warn('parseName: unhandled ref type:', ref.type);
+            this.printNode(ref);
+        }
     }
 
 }

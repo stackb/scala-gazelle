@@ -116,7 +116,6 @@ package_filegroup(
         "//pkg/collections:filegroup",
         "//pkg/glob:filegroup",
         "//pkg/jarindex:filegroup",
-        "//pkg/logger:filegroup",
         "//pkg/maven:filegroup",
         "//pkg/parser:filegroup",
         "//pkg/parser/mocks:filegroup",
