@@ -75,7 +75,7 @@ func TestScalaScope(t *testing.T) {
 		wantErr error
 	}{
 		"missing everything": {
-			wantErr: fmt.Errorf("scala.* package not found"),
+			wantErr: fmt.Errorf("scala.* package not found (scala builtins will not resolve)"),
 		},
 		"missing java": {
 			known: []*resolver.Symbol{
@@ -85,7 +85,7 @@ func TestScalaScope(t *testing.T) {
 					Provider: "java",
 				},
 			},
-			wantErr: fmt.Errorf("java.lang.* package not found"),
+			wantErr: fmt.Errorf("java.lang.* package not found (java builtins will not resolve)"),
 		},
 		"resolves expected": {
 			known: []*resolver.Symbol{

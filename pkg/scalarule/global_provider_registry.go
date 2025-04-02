@@ -39,7 +39,7 @@ func (p *ProviderRegistryMap) ProviderNames() []string {
 func (p *ProviderRegistryMap) RegisterProvider(name string, provider Provider) error {
 	_, ok := p.providers[name]
 	if ok {
-		return fmt.Errorf("provider already registered: %q", name)
+		return fmt.Errorf("duplicate rule provider registration: %q", name)
 	}
 	p.providers[name] = provider
 	return nil

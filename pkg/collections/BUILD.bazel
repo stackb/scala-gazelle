@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -17,4 +18,22 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/collections",
     visibility = ["//visibility:public"],
     deps = ["@com_github_dghubble_trie//:trie"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "box_type.go",
+        "debugging.go",
+        "fs.go",
+        "intent.go",
+        "net.go",
+        "path_trie.go",
+        "sha256.go",
+        "string_slice.go",
+        "string_stack.go",
+        "uint32stack.go",
+    ],
+    visibility = ["//visibility:public"],
 )

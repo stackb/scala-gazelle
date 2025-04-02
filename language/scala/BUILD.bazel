@@ -1,6 +1,6 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 load("@bazel_gazelle//:def.bzl", "gazelle_binary")
-# load("@build_stack_rules_proto//rules:example.bzl", "gazelle_testdata_example")
 
 # gazelle:exclude testdata
 
@@ -13,6 +13,7 @@ go_library(
         "coverage.go",
         "cross_resolve.go",
         "deps_cleaner_registry.go",
+        "environment.go",
         "existing_scala_rule.go",
         "fix.go",
         "flags.go",
@@ -40,10 +41,12 @@ go_library(
         "//pkg/collections",
         "//pkg/glob",
         "//pkg/parser",
+        "//pkg/procutil",
         "//pkg/protobuf",
         "//pkg/provider",
         "//pkg/resolver",
         "//pkg/scalaconfig",
+        "//pkg/scalafiles",
         "//pkg/scalarule",
         "//pkg/wildcardimport",
         "@bazel_gazelle//config:go_default_library",
@@ -55,6 +58,7 @@ go_library(
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_pcj_mobyprogress//:mobyprogress",
+        "@com_github_rs_zerolog//:zerolog",
     ],
 )
 
@@ -80,7 +84,12 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
+        # "coverage_test.go",
+        # "diff_test.go",
+        # "existing_scala_rule_test.go",
+        # "flags_test.go",
         "coverage_test.go",
+        "diff_test.go",
         "existing_scala_rule_test.go",
         "flags_test.go",
         "golden_test.go",
@@ -106,30 +115,58 @@ go_test(
         "@bazel_gazelle//testtools:go_default_library",
         "@build_stack_rules_proto//pkg/goldentest",
         "@com_github_google_go_cmp//cmp",
+        "@com_github_rs_zerolog//:zerolog",
         "@com_github_stretchr_testify//mock",
     ],
 )
-
-# gazelle_testdata_example(
-#     name = "maven_resolver",
-#     size = "large",  # test timeout 900s (15m) for go_bazel_test
-#     srcs = glob(["testdata/maven_resolver/*"]),
-#     tags = ["manual"],
-#     workspace_template = "scala.WORKSPACE",
-# )
-
-# gazelle_testdata_example(
-#     name = "platform_resolver",
-#     size = "large",  # test timeout 900s (15m) for go_bazel_test
-#     srcs = glob(["testdata/platform_resolver/*"]),
-#     tags = ["manual"],
-#     workspace_template = "scala.WORKSPACE",
-# )
 
 filegroup(
     name = "all_files",
     srcs = [
         "BUILD.bazel",
     ] + glob(["*.go"]),
+    visibility = ["//visibility:public"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "cache.go",
+        "configure.go",
+        "conflict_resolver_registry.go",
+        "coverage.go",
+        "coverage_test.go",
+        "cross_resolve.go",
+        "deps_cleaner_registry.go",
+        "diff_test.go",
+        "environment.go",
+        "existing_scala_rule.go",
+        "existing_scala_rule_test.go",
+        "fix.go",
+        "flags.go",
+        "flags_test.go",
+        "generate.go",
+        "golden_test.go",
+        "imports.go",
+        "kinds.go",
+        "known_rule_registry.go",
+        "language.go",
+        "language_test.go",
+        "lifecycle.go",
+        "loads.go",
+        "loads_test.go",
+        "package_marker_rule.go",
+        "progress.go",
+        "resolve.go",
+        "scala.WORKSPACE",
+        "scala_package.go",
+        "scala_package_test.go",
+        "scala_rule.go",
+        "scala_rule_test.go",
+        "scope.go",
+        "symbol_provider_registry.go",
+        "symbol_resolver.go",
+    ],
     visibility = ["//visibility:public"],
 )

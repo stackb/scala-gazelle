@@ -12,6 +12,8 @@ option java_multiple_files = true;
 message ParseRequest {
     // filenames is the file list.
     repeated string filenames = 1;
+    // if true, files parsed should return the raw parse tree.
+    bool want_parse_tree = 2;
 }
 
 // ParseResponse holds the parsed file data.

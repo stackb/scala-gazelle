@@ -1,0 +1,30 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "scalafiles",
+    srcs = [
+        "scala_files.go",
+        "scala_fileset.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/scalafiles",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/scalarule",
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+    ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "scala_files.go",
+        "scala_fileset.go",
+    ],
+    visibility = ["//visibility:public"],
+)

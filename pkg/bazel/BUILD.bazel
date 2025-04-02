@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -6,4 +7,13 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/bazel",
     visibility = ["//visibility:public"],
     deps = ["@io_bazel_rules_go//go/tools/bazel:go_default_library"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "bazel.go",
+    ],
+    visibility = ["//visibility:public"],
 )

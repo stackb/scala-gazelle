@@ -1,0 +1,39 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+
+proto_library(
+    name = "worker_protocol_proto",
+    srcs = ["worker_protocol.proto"],
+    visibility = ["//visibility:public"],
+)
+
+proto_compiled_sources(
+    name = "worker_protocol_go_compiled_sources",
+    srcs = ["worker_protocol.pb.go"],
+    output_mappings = ["worker_protocol.pb.go=github.com/stackb/scala-gazelle/blaze/worker/worker_protocol/worker_protocol.pb.go"],
+    plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
+    proto = "worker_protocol_proto",
+)
+
+go_library(
+    name = "worker",
+    srcs = ["worker_protocol.pb.go"],
+    importpath = "github.com/stackb/scala-gazelle/blaze/worker",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_golang_google_protobuf//reflect/protoreflect",
+        "@org_golang_google_protobuf//runtime/protoimpl",
+    ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "worker_protocol.pb.go",
+        "worker_protocol.proto",
+    ],
+    visibility = ["//visibility:public"],
+)

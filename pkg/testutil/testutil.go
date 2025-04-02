@@ -1,11 +1,15 @@
 package testutil
 
 import (
+	"bytes"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/testtools"
+	"github.com/stackb/scala-gazelle/pkg/procutil"
 )
 
 func MustReadAndPrepareTestFiles(t *testing.T, files []testtools.FileSpec) (tmpDir string, filenames []string, clean func()) {
@@ -87,4 +91,59 @@ func ListFiles(t *testing.T, dir string) {
 	}); err != nil {
 		t.Fatal(err)
 	}
+}
+
+type GazelleResult struct {
+	Stdout   string
+	Stderr   string
+	ExitCode int
+}
+
+// RunGazelle executes the gazelle command with the specified working directory,
+// environment variables, and command-line arguments. It returns the command
+// output (stdout and stderr) and any error that occurred.
+func RunGazelle(t *testing.T, workingDir string, env []string, args ...string) (*GazelleResult, error) {
+	t.Helper()
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+	gazelle := filepath.Join(cwd, "gazelle")
+
+	// Find gazelle in PATH or use an absolute path if needed
+	gazelleCmd, err := exec.LookPath(gazelle)
+	if err != nil {
+		return nil, fmt.Errorf("gazelle command not found in PATH: %w", err)
+	}
+
+	// Create the command with the provided arguments
+	cmd := exec.Command(gazelleCmd, args...)
+
+	// Set working directory
+	cmd.Dir = workingDir
+
+	// Set environment variables (appending to or replacing the current environment)
+	if env != nil {
+		cmd.Env = append(os.Environ(), env...)
+	}
+
+	// Capture both stdout and stderr
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	// Run the command
+	err = cmd.Run()
+	if err != nil {
+		t.Logf("command error: %v", err)
+	}
+
+	exitCode := procutil.CmdExitCode(cmd, err)
+
+	return &GazelleResult{
+		Stdout:   stdout.String(),
+		Stderr:   stderr.String(),
+		ExitCode: exitCode,
+	}, err
 }

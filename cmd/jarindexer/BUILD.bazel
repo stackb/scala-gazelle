@@ -1,3 +1,7 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+# gazelle:exclude testdata
+
 java_library(
     name = "jarindexer",
     srcs = ["JarIndexer.java"],
@@ -41,4 +45,15 @@ genrule(
     outs = ["testdata/indexer/indexer.jar"],
     cmd = "cp $(location :jarindexer) $@",
     executable = False,
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "JarIndexer.java",
+        "JarIndexerTest.java",
+        "README.md",
+    ],
+    visibility = ["//visibility:public"],
 )

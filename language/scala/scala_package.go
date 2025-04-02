@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -11,6 +12,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/repo"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
@@ -27,6 +29,8 @@ var ErrRuleHasNoSrcs = fmt.Errorf("rule has no source files")
 
 // scalaPackage provides a set of proto_library derived rules for the package.
 type scalaPackage struct {
+	// logger instance
+	logger zerolog.Logger
 	// args are the generateArgs
 	args language.GenerateArgs
 	// parser is the file parser
@@ -50,12 +54,15 @@ type scalaPackage struct {
 
 // newScalaPackage constructs a Package given a list of scala files.
 func newScalaPackage(
+	logger zerolog.Logger,
 	args language.GenerateArgs,
 	cfg *scalaconfig.Config,
 	providerRegistry scalarule.ProviderRegistry,
 	parser parser.Parser,
 	universe resolver.Universe) *scalaPackage {
+
 	s := &scalaPackage{
+		logger:           logger,
 		args:             args,
 		parser:           parser,
 		universe:         universe,
@@ -65,6 +72,7 @@ func newScalaPackage(
 		resolveWork:      make([]func(), 0),
 		ruleCoverage:     &packageRuleCoverage{},
 	}
+
 	s.gen = s.generateRules(true)
 	// s.empty = s.generateRules(false)
 
@@ -103,6 +111,7 @@ func (s *scalaPackage) Resolve(
 			RuleIndex: ix,
 			Rule:      r,
 			From:      from,
+			File:      s.args.File,
 		}, importsRaw)
 	}
 	// the first resolve cycle populates the symbol scopes
@@ -112,8 +121,8 @@ func (s *scalaPackage) Resolve(
 
 // Finalize is called when all rules in the package have been resolved.
 func (s *scalaPackage) Finalize() {
-	for _, fn := range s.resolveWork {
-		fn()
+	for _, work := range s.resolveWork {
+		work()
 	}
 }
 
@@ -124,70 +133,76 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 
 	existingRulesByFQN := make(map[string][]*rule.Rule)
 	if s.args.File != nil {
+		s.logger.Debug().Msgf("checking for pre-existing rules in %s...", s.args.File.Path)
+
 		for _, r := range s.args.File.Rules {
 			fqn := fullyQualifiedLoadName(s.args.File.Loads, r.Kind())
 			existingRulesByFQN[fqn] = append(existingRulesByFQN[fqn], r)
-			if _, ok := s.providerRegistry.LookupProvider(fqn); ok {
-				s.ruleCoverage.total += 1
+			if provider, ok := s.providerRegistry.LookupProvider(fqn); ok {
+				s.logger.Debug().Msgf("found: rule provider for %s is %T", fqn, provider.Name())
+
+				// TOOD(pcj): consider adding .ContributesToCoverage or some
+				// other way of tracking which rules contribute to coverage
+				// calculation.
+				if provider.Name() != "scala_files" && provider.Name() != "scala_fileset" {
+					s.ruleCoverage.total += 1
+				}
+			} else {
+				s.logger.Debug().Msgf("no known rule provider for %s", fqn)
 			}
 		}
 	}
 
 	configuredRules := s.cfg.ConfiguredRules()
 
-	for _, ruleConfig := range configuredRules {
-		if !ruleConfig.Enabled {
-			// log.Printf("%s: skipping rule config %s (not enabled)", s.args.Rel, ruleConfig.Name)
+	for _, rc := range configuredRules {
+		if !rc.Enabled {
+			s.logger.Debug().Msgf("%s configuration not enabled, skipping rule generation", rc.Name)
 			continue
 		}
-		rule := s.provideRule(ruleConfig)
-		if rule != nil {
-			rules = append(rules, rule)
+
+		if rc.Provider == nil {
+			provider, ok := s.providerRegistry.LookupProvider(rc.Implementation)
+			if !ok {
+				log.Fatalf(
+					"rule not registered: %q (available: %v)",
+					rc.Implementation,
+					s.providerRegistry.ProviderNames(),
+				)
+			}
+			s.logger.Debug().Msgf("rule %s provider is %T", rc.Name, provider)
+			rc.Provider = provider
 		}
-		existing := existingRulesByFQN[ruleConfig.Implementation]
+
+		providedRule := rc.Provider.ProvideRule(rc, s)
+		if providedRule != nil {
+			s.logger.Debug().Msgf("new provided rule: %s%%s", providedRule.Name(), providedRule.Kind())
+			rules = append(rules, providedRule)
+		}
+
+		existing := existingRulesByFQN[rc.Implementation]
 		if len(existing) > 0 {
 			for _, r := range existing {
-				rule := s.resolveRule(ruleConfig, r)
-				if rule != nil {
-					s.ruleCoverage.managed += 1
-					rules = append(rules, rule)
+				resolvedRule := s.resolveRule(rc, r)
+				if resolvedRule != nil {
+					s.logger.Debug().Msgf("new resolved rule: %s %s", resolvedRule.Name(), resolvedRule.Kind())
+					rules = append(rules, resolvedRule)
+					// TODO: make this an API, not hardcode which rule names contribute to coverage
+					if resolvedRule.Name() != "scala_files" || resolvedRule.Name() != "scala_fileset" {
+						s.ruleCoverage.managed += 1
+					}
 				}
 			}
 		}
-		delete(existingRulesByFQN, ruleConfig.Implementation)
+		delete(existingRulesByFQN, rc.Implementation)
 	}
 
 	return rules
 }
 
-func (s *scalaPackage) provideRule(rc *scalarule.Config) scalarule.RuleProvider {
-	provider, ok := s.providerRegistry.LookupProvider(rc.Implementation)
-	if !ok {
-		log.Fatalf(
-			"%s: rule provider not registered: %q (available: %v)",
-			s.args.Rel,
-			rc.Implementation,
-			s.providerRegistry.ProviderNames(),
-		)
-	}
-	rc.Provider = provider
-
-	return provider.ProvideRule(rc, s)
-}
-
 func (s *scalaPackage) resolveRule(rc *scalarule.Config, r *rule.Rule) scalarule.RuleProvider {
-	provider, ok := s.providerRegistry.LookupProvider(rc.Implementation)
-	if !ok {
-		log.Fatalf(
-			"%s: rule not registered: %q (available: %v)",
-			s.args.Rel,
-			rc.Implementation,
-			s.providerRegistry.ProviderNames(),
-		)
-	}
-	rc.Provider = provider
-
-	if rr, ok := provider.(scalarule.RuleResolver); ok {
+	if rr, ok := rc.Provider.(scalarule.RuleResolver); ok {
+		s.logger.Debug().Msgf("resolving rule %s with implementation %T", rc.Name, rc.Provider)
 		return rr.ResolveRule(rc, s, r)
 	}
 
@@ -199,22 +214,41 @@ func (s *scalaPackage) GenerateArgs() language.GenerateArgs {
 	return s.args
 }
 
+// GeneratedRules implements part of the scalarule.Package interface.
+func (s *scalaPackage) GeneratedRules() (rules []*rule.Rule) {
+	for _, rule := range s.rules {
+		rules = append(rules, rule)
+	}
+	return
+}
+
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
-
 	dir := filepath.Join(s.repoRootDir(), s.args.Rel)
 	srcs, err := glob.CollectFilenames(s.args.File, dir, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
-	if len(srcs) == 0 {
+	scalaSrcs := make([]string, 0, len(srcs))
+	for _, src := range srcs {
+		if !strings.HasSuffix(src, ".scala") {
+			continue
+		}
+		scalaSrcs = append(scalaSrcs, src)
+	}
+
+	logger := s.logger.With().Str("kind", r.Kind()).Str("name", r.Name()).Logger()
+	logger.Debug().Msgf("%d scala files collected from %s", len(scalaSrcs), attrName)
+
+	if len(scalaSrcs) == 0 {
 		return nil, ErrRuleHasNoSrcs
 	}
 
 	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
 
-	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, srcs...)
+	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, scalaSrcs...)
 	if err != nil {
+		logger.Warn().Err(err).Msg("parse error")
 		return nil, err
 	}
 
@@ -225,7 +259,7 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scope:       s.universe,
 	}
 
-	return newScalaRule(ctx, rule), nil
+	return newScalaRule(logger, ctx, rule), nil
 }
 
 // repoRootDir return the root directory of the repo.
@@ -268,4 +302,8 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 		rules = append(rules, r)
 	}
 	return rules
+}
+
+func (p *scalaPackage) infof(format string, args ...any) string {
+	return fmt.Sprintf("INFO ["+p.args.Rel+"]: "+format, args...)
 }

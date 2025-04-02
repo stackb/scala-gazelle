@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package build.stack.gazelle.scala.parse;
 
-import "build/stack/gazelle/scala/parse/symbol.proto";
-
 option go_package = "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse;parse";
 option java_package = "build.stack.gazelle.scala.parse";
 option java_multiple_files = true;
@@ -15,7 +13,7 @@ message FileSet {
 
 // File represents a parsed file named in a scala rule.srcs list.
 message File {
-    // filename is the (relative) source filename
+    // filename is the (workspace relative) source filename
     string filename = 1;
     // semantic_imports is a list of types used by the file, typically
     // discovered using semanticdb.
@@ -41,6 +39,9 @@ message File {
     map<string,ClassList> extends = 11;
     // error is a string assigned when a parse error occurs
     string error = 13;
+    // tree is a JSON string representing the parse tree.  This field is only
+    // populated when specifically requested during parsing.
+    string tree = 14;
 }
 
 // ClassList represents a set of files.

@@ -2,20 +2,23 @@ package scala
 
 import (
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
+	"github.com/rs/zerolog"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
+	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/provider"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
+	_ "github.com/stackb/scala-gazelle/pkg/scalafiles"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
@@ -94,19 +97,18 @@ type scalaLang struct {
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
 	parser *parser.MemoParser
-}
-
-// Name implements part of the language.Language interface
-func (sl *scalaLang) Name() string { return scalaLangName }
-
-// KnownDirectives implements part of the language.Language interface
-func (*scalaLang) KnownDirectives() []string {
-	return scalaconfig.DirectiveNames()
+	// logFileName is the name of the log file
+	// logFile is the open log
+	logFile *os.File
+	// logger instance
+	logger zerolog.Logger
 }
 
 // NewLanguage is called by Gazelle to install this language extension in a
 // binary.
 func NewLanguage() language.Language {
+	logFile, logger := setupLogger()
+
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
 		cache:                scpb.Cache{},
@@ -118,7 +120,11 @@ func NewLanguage() language.Language {
 		packages:             make(map[string]*scalaPackage),
 		progress:             mobyprogress.NewProgressOutput(mobyprogress.NewOut(os.Stderr)),
 		ruleProviderRegistry: scalarule.GlobalProviderRegistry(),
+		logFile:              logFile,
+		logger:               logger,
 	}
+
+	lang.phaseTransition("initialize")
 
 	progress := func(msg string) {
 		if lang.wantProgress {
@@ -126,7 +132,7 @@ func NewLanguage() language.Language {
 		}
 	}
 
-	lang.sourceProvider = provider.NewSourceProvider(progress)
+	lang.sourceProvider = provider.NewSourceProvider(logger.With().Str("provider", "source").Logger(), progress)
 	semanticProvider := provider.NewSemanticdbProvider(lang.sourceProvider)
 	lang.parser = parser.NewMemoParser(semanticProvider)
 	javaProvider := provider.NewJavaProvider()
@@ -143,15 +149,42 @@ func NewLanguage() language.Language {
 	return lang
 }
 
+// Name implements part of the language.Language interface
+func (sl *scalaLang) Name() string { return scalaLangName }
+
+// KnownDirectives implements part of the language.Language interface
+func (*scalaLang) KnownDirectives() []string {
+	return scalaconfig.DirectiveNames()
+}
+
 func wantProgress() bool {
-	if val, ok := os.LookupEnv("SCALA_GAZELLE_SHOW_PROGRESS"); ok {
-		switch strings.ToLower(val) {
-		case "true", "1":
-			return true
-		case "false", "0":
-			return false
-		}
+	return procutil.LookupBoolEnv("SCALA_GAZELLE_SHOW_PROGRESS", false)
+}
+
+func getLoggerFilename() string {
+	if name, ok := procutil.LookupEnv(SCALA_GAZELLE_LOG_FILE); ok && len(name) > 0 {
+		return name
 	}
-	// default to true
-	return true
+	if tmpdir, ok := procutil.LookupEnv(TEST_TMPDIR); ok && procutil.DirExists(tmpdir) {
+		return filepath.Join(tmpdir, "scala-gazelle.log")
+	}
+
+	return ""
+}
+
+func setupLogger() (*os.File, zerolog.Logger) {
+	filename := getLoggerFilename()
+
+	if filename == "" {
+		return nil, zerolog.Nop()
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		panic("cannot open log file: " + err.Error())
+	}
+
+	logger := zerolog.New(file).With().Caller().Logger()
+
+	return file, logger
 }

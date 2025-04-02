@@ -1,0 +1,23 @@
+load("@build_stack_scala_gazelle//rules:scala_files.bzl", "scala_files", "scala_fileset")
+
+# gazelle:resolve scala scala java.util.LinkedList @java//util
+# gazelle:scala_debug exports
+# gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
+# gazelle:scala_rule scala_binary implementation @io_bazel_rules_scala//scala:scala.bzl%scala_binary
+# gazelle:scala_rule @build_stack_scala_gazelle//rules:scala_files.bzl%scala_files enabled true
+# gazelle:scala_rule @build_stack_scala_gazelle//rules:scala_files.bzl%scala_fileset enabled true
+
+scala_fileset(
+    name = "scala_fileset",
+    deps = [
+        "//:scala_files",
+        "//src:scala_files",
+    ],
+)
+
+scala_files(
+    name = "scala_files",
+    srcs = ["Main.scala"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)

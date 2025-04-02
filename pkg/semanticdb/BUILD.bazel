@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 # gazelle:exclude testdata
@@ -40,4 +41,20 @@ go_test(
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "README.md",
+        "globalscope.go",
+        "io.go",
+        "semanticdb.go",
+        "semanticdb_index.go",
+        "semanticdb_test.go",
+        "visitor.go",
+        "visitor_test.go",
+    ],
+    visibility = ["//visibility:public"],
 )

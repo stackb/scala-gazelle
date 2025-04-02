@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 # gazelle:exclude testdata
@@ -19,6 +20,7 @@ go_library(
         "//pkg/collections",
         "//pkg/maven",
         "//pkg/parser",
+        "//pkg/procutil",
         "//pkg/protobuf",
         "//pkg/resolver",
         "//pkg/semanticdb",
@@ -27,6 +29,7 @@ go_library(
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_rs_zerolog//:zerolog",
     ],
 )
 
@@ -55,6 +58,26 @@ go_test(
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
+        "@com_github_rs_zerolog//:zerolog",
         "@com_github_stretchr_testify//mock",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "README.md",
+        "java_provider.go",
+        "java_provider_test.go",
+        "maven_provider.go",
+        "maven_provider_test.go",
+        "protobuf_provider.go",
+        "protobuf_provider_test.go",
+        "semanticdb_provider.go",
+        "semanticdb_provider_test.go",
+        "source_provider.go",
+        "source_provider_test.go",
+    ],
+    visibility = ["//visibility:public"],
 )

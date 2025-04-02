@@ -13,20 +13,21 @@ import (
 const debugGenerate = false
 
 // GenerateRules implements part of the language.Language interface
-func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.GenerateResult {
+func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.GenerateResult) {
+	now := time.Now()
+	sl.logger.Debug().Msgf("visiting directory %s", args.Rel)
 
-	if args.File == nil {
-		return language.GenerateResult{}
+	sc := scalaconfig.Get(args.Config)
+	if args.File == nil && !sc.GenerateBuildFiles() {
+		return
 	}
-
-	t1 := time.Now()
 
 	if sl.wantProgress && sl.cache.PackageCount > 0 {
 		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
 	}
 
-	sc := scalaconfig.Get(args.Config)
-	pkg := newScalaPackage(args, sc, sl.ruleProviderRegistry, sl.parser, sl)
+	logger := sl.logger.With().Str("rel", args.Rel).Logger()
+	pkg := newScalaPackage(logger, args, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg
 	sl.remainingPackages++
 
@@ -44,14 +45,17 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) language.Generate
 	}
 
 	if debugGenerate {
-		t2 := time.Since(t1).Round(1 * time.Millisecond)
+		t2 := time.Since(now).Round(1 * time.Millisecond)
 		if len(rules) > 1 {
 			log.Printf("Visited %q (%d rules, %v)", args.Rel, len(rules)-1, t2)
 		}
 	}
 
+	logger.Debug().Msgf("generated %d rules in %v", len(rules), time.Since(now))
+
 	return language.GenerateResult{
 		Gen:     rules,
 		Imports: imports,
+		Empty:   pkg.Empty(),
 	}
 }

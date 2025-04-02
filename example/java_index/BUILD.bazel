@@ -1,9 +1,0 @@
-load("@build_stack_scala_gazelle//rules:java_index.bzl", "java_index")
-
-java_index(
-    name = "java_index",
-    out_json = "java_index.json",
-    out_proto = "java_index.pb",
-    platform_deps = ["@bazel_tools//tools/jdk:platformclasspath"],
-    deps = ["@maven//:com_google_code_gson_gson"],
-)

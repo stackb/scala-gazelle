@@ -1,0 +1,57 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle_binary")
+
+go_library(
+    name = "files",
+    srcs = ["files.go"],
+    importpath = "github.com/stackb/scala-gazelle/language/files",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@bazel_gazelle//config:go_default_library",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//language:go_default_library",
+        "@bazel_gazelle//repo:go_default_library",
+        "@bazel_gazelle//resolve:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+    ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "diff_test.go",
+        "files.go",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+genrule(
+    name = "gazelle_tool",
+    outs = ["gazelle"],
+    cmd = "cp $(location :gazelle-scala) $@",
+    executable = True,
+    tools = [":gazelle-scala"],
+)
+
+gazelle_binary(
+    name = "gazelle-scala",
+    languages = [
+        "@bazel_gazelle//language/go",
+        "@bazel_gazelle//language/proto",
+        ":files",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "files_test",
+    srcs = ["diff_test.go"],
+    data = [":gazelle"] + glob(["testdata/**"]),
+    embed = [":files"],
+    deps = [
+        "//pkg/testutil",
+        "@bazel_gazelle//testtools:go_default_library",
+    ],
+)

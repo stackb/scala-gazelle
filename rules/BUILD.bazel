@@ -1,0 +1,16 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "artifacts.bzl",
+        "java_index.bzl",
+        "java_indexer_aspect.bzl",
+        "package_filegroup.bzl",
+        "providers.bzl",
+        "scala_files.bzl",
+        "semanticdb_index.bzl",
+    ],
+    visibility = ["//visibility:public"],
+)

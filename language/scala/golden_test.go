@@ -20,6 +20,7 @@ func TestScala(t *testing.T) {
 			"protobuf_provider",
 			"resolve_kind_rewrite_name",
 			"source_provider",
+			"scala_fileset",
 		),
 	).Run(t, "gazelle")
 }

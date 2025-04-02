@@ -1,11 +1,13 @@
 package scala
 
 import (
+	"os"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
@@ -27,19 +29,24 @@ func TestScalaPackageParseRule(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
+			logger := zerolog.New(os.Stderr)
 			universe := mocks.NewUniverse(t)
 			scope := mocks.NewScope(t)
-
 			scope.
 				On("PutSymbol", mock.Anything).
 				Maybe().
 				Return(nil)
 
-			c := config.New()
-			cfg := scalaconfig.New(universe, c, "")
+			cfg := scalaconfig.New(
+				logger,
+				universe,
+				config.New(),
+				"",
+			)
 
 			pkg := scalaPackage{
-				cfg: cfg,
+				cfg:    cfg,
+				logger: logger,
 			}
 
 			var gotErr string

@@ -16,12 +16,12 @@ type ScalaScope struct {
 func NewScalaScope(parent Scope) (*ScalaScope, error) {
 	scala, ok := parent.GetScope("scala")
 	if !ok {
-		return nil, fmt.Errorf("scala.* package not found")
+		return nil, fmt.Errorf("scala.* package not found (scala builtins will not resolve)")
 	}
 
 	javaLang, ok := parent.GetScope("java.lang")
 	if !ok {
-		return nil, fmt.Errorf("java.lang.* package not found")
+		return nil, fmt.Errorf("java.lang.* package not found (java builtins will not resolve)")
 	}
 
 	root := NewTrimPrefixScope("_root_.", parent)

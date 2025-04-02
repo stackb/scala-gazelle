@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -21,4 +22,18 @@ go_library(
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_stretchr_testify//mock",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "ConflictResolver.go",
+        "Scope.go",
+        "SymbolProvider.go",
+        "SymbolResolver.go",
+        "Universe.go",
+        "symbol_capturer.go",
+    ],
+    visibility = ["//visibility:public"],
 )

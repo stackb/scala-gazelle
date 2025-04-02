@@ -1,6 +1,14 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 # -- Gazelle language "walk" ---
+# gazelle:exclude .github
+# gazelle:exclude .vscode
+# gazelle:exclude bazel-bin
+# gazelle:exclude bazel-out
+# gazelle:exclude bazel-scala-gazelle
+# gazelle:exclude bazel-testlogs
+# gazelle:exclude bin
 # gazelle:exclude vendor
 
 # -- Gazelle language "resolve" ---
@@ -44,6 +52,7 @@ gazelle_binary(
         "@bazel_gazelle//language/go",
         "@bazel_gazelle//language/proto",
         "@build_stack_rules_proto//language/protobuf",
+        "//language/files",
     ],
     visibility = ["//visibility:public"],
 )
@@ -64,18 +73,69 @@ gazelle(
     command = "update-repos",
 )
 
-# ----------------------------------------------------
-# Test-Related
-# ----------------------------------------------------
-
-filegroup(
-    name = "all_files",
+package_filegroup(
+    name = "filegroup",
     srcs = [
+        ".bazelrc",
+        ".bazelversion",
+        ".gitignore",
         "BUILD.bazel",
+        "LICENSE",
+        "Makefile",
+        "README.md",
         "WORKSPACE",
+        "go.mod",
+        "go.sum",
         "go_repos.bzl",
+        "maven_install.json",
         "workspace_deps.bzl",
-        "//language/scala:all_files",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//blaze/worker:filegroup",
+        "//build/stack/gazelle/scala/autokeep:filegroup",
+        "//build/stack/gazelle/scala/cache:filegroup",
+        "//build/stack/gazelle/scala/jarindex:filegroup",
+        "//build/stack/gazelle/scala/parse:filegroup",
+        "//cmd/autokeep:filegroup",
+        "//cmd/jarindexer:filegroup",
+        "//cmd/mergeindex:filegroup",
+        "//cmd/scalafileextract:filegroup",
+        "//cmd/scalafilemerge:filegroup",
+        "//cmd/semanticdbextract:filegroup",
+        "//cmd/semanticdbmerge:filegroup",
+        "//cmd/wildcardimportfixer:filegroup",
+        "//docs/architecture:filegroup",
+        "//examples:filegroup",
+        "//examples/java_index:filegroup",
+        "//examples/protobuf_index:filegroup",
+        "//language/files:filegroup",
+        "//language/scala:filegroup",
+        "//pkg/autokeep:filegroup",
+        "//pkg/bazel:filegroup",
+        "//pkg/collections:filegroup",
+        "//pkg/glob:filegroup",
+        "//pkg/jarindex:filegroup",
+        "//pkg/maven:filegroup",
+        "//pkg/parser:filegroup",
+        "//pkg/parser/mocks:filegroup",
+        "//pkg/procutil:filegroup",
+        "//pkg/protobuf:filegroup",
+        "//pkg/provider:filegroup",
+        "//pkg/resolver:filegroup",
+        "//pkg/resolver/mocks:filegroup",
+        "//pkg/scalaconfig:filegroup",
+        "//pkg/scalafiles:filegroup",
+        "//pkg/scalarule:filegroup",
+        "//pkg/scalarule/mocks:filegroup",
+        "//pkg/semanticdb:filegroup",
+        "//pkg/starlarkeval:filegroup",
+        "//pkg/testutil:filegroup",
+        "//pkg/wildcardimport:filegroup",
+        "//rules:filegroup",
+        "//scala/meta/semanticdb:filegroup",
+        "//scalapb:filegroup",
+        "//third_party/bazelbuild/bazel-gazelle:filegroup",
+        "//tools/plantuml:filegroup",
+    ],
 )

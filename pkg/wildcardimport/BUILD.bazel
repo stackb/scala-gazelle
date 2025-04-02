@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
@@ -10,6 +11,7 @@ go_library(
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/wildcardimport",
     visibility = ["//visibility:public"],
+    deps = ["//pkg/procutil"],
 )
 
 go_test(
@@ -46,3 +48,17 @@ go_test(
 # 		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
 # 	}
 # }
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "bazel.go",
+        "fixer.go",
+        "fixer_test.go",
+        "scanner.go",
+        "scanner_test.go",
+        "text_file.go",
+    ],
+    visibility = ["//visibility:public"],
+)

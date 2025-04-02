@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
@@ -8,7 +9,17 @@ go_library(
     deps = [
         "@org_golang_google_protobuf//encoding/protojson",
         "@org_golang_google_protobuf//encoding/prototext",
+        "@org_golang_google_protobuf//encoding/protowire",
         "@org_golang_google_protobuf//proto",
         "@org_golang_google_protobuf//reflect/protoreflect",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "io.go",
+    ],
+    visibility = ["//visibility:public"],
 )

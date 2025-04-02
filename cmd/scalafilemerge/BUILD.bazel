@@ -1,0 +1,29 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "scalafilemerge_lib",
+    srcs = ["scalafilemerge.go"],
+    importpath = "github.com/stackb/scala-gazelle/cmd/scalafilemerge",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/collections",
+        "//pkg/protobuf",
+    ],
+)
+
+go_binary(
+    name = "scalafilemerge",
+    embed = [":scalafilemerge_lib"],
+    visibility = ["//visibility:public"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "scalafilemerge.go",
+    ],
+    visibility = ["//visibility:public"],
+)

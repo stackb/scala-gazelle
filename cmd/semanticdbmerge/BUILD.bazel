@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_library(
@@ -17,5 +18,14 @@ go_library(
 go_binary(
     name = "semanticdbmerge",
     embed = [":semanticdbmerge_lib"],
+    visibility = ["//visibility:public"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "semanticdbmerge.go",
+    ],
     visibility = ["//visibility:public"],
 )

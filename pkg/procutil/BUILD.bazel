@@ -1,0 +1,24 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+go_library(
+    name = "procutil",
+    srcs = [
+        "cmd.go",
+        "env.go",
+        "paths.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/procutil",
+    visibility = ["//visibility:public"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "cmd.go",
+        "env.go",
+        "paths.go",
+    ],
+    visibility = ["//visibility:public"],
+)

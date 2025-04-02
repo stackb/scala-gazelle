@@ -2,6 +2,7 @@ package scalaconfig
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -10,6 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -17,6 +19,13 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
 )
+
+func NewTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*Config, error) {
+	c := config.New()
+	sc := New(zerolog.New(os.Stderr), universe, c, rel)
+	err := sc.ParseDirectives(dd)
+	return sc, err
+}
 
 func TestScalaConfigParseDirectives(t *testing.T) {
 	for name, tc := range map[string]struct {
@@ -99,6 +108,17 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 				},
 			},
 		},
+		"scala_generate_build_files": {
+			directives: []rule.Directive{
+				{Key: "scala_generate_build_files", Value: "true"},
+			},
+			want: &Config{
+				rules:              map[string]*scalarule.Config{},
+				labelNameRewrites:  map[string]resolver.LabelNameRewriteSpec{},
+				annotations:        map[debugAnnotation]interface{}{},
+				generateBuildFiles: true,
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			sc, err := NewTestScalaConfig(t, mocks.NewUniverse(t), "", tc.directives...)
@@ -108,8 +128,8 @@ func TestScalaConfigParseDirectives(t *testing.T) {
 			got := sc
 			if diff := cmp.Diff(tc.want, got,
 				cmp.AllowUnexported(Config{}),
-				cmpopts.IgnoreFields(Config{}, "config", "universe"),
-				cmpopts.IgnoreFields(scalarule.Config{}, "Config"),
+				cmpopts.IgnoreFields(Config{}, "config", "universe", "logger"),
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config", "Logger"),
 			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
@@ -200,7 +220,9 @@ func TestScalaConfigParseRuleDirective(t *testing.T) {
 				return
 			}
 			got := sc.rules
-			if diff := cmp.Diff(tc.want, got); diff != "" {
+			if diff := cmp.Diff(tc.want, got,
+				cmpopts.IgnoreFields(scalarule.Config{}, "Config", "Logger"),
+			); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
@@ -555,7 +577,7 @@ func TestScalaConfigGetKnownRule(t *testing.T) {
 				Times(tc.wantTimes).
 				Return(nil, false)
 
-			sc := New(universe, c, tc.rel)
+			sc := New(zerolog.New(os.Stderr), universe, c, tc.rel)
 
 			sc.GetKnownRule(tc.from)
 

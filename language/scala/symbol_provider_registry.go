@@ -11,5 +11,6 @@ func (sl *scalaLang) SymbolProviders() []resolver.SymbolProvider {
 // AddSymbolProvider implements part of the
 // resolver.SymbolProviderRegistry interface.
 func (sl *scalaLang) AddSymbolProvider(provider resolver.SymbolProvider) error {
+	sl.logger.Debug().Msgf("adding symbol provider: %s", provider.Name())
 	return resolver.GlobalSymbolProviderRegistry().AddSymbolProvider(provider)
 }

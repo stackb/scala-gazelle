@@ -1,0 +1,38 @@
+load("@build_stack_scala_gazelle//rules:scala_files.bzl", "scala_files")
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_binary", "scala_library", "scala_test")
+
+scala_library(
+    name = "lib",
+    srcs = ["a/b/c/Lib.scala"],
+    exports = [
+        "@java//util",  # EXTENDS
+    ],
+    deps = [
+        "@java//util",  # DIRECT
+    ],
+)
+
+scala_binary(
+    name = "app",
+    srcs = ["a/b/c/Main.scala"],
+    main_class = "a.b.c.Main",
+    deps = [
+        ":lib",  # DIRECT
+    ],
+)
+
+scala_test(
+    name = "test",
+    srcs = ["a/b/c/LibTest.scala"],
+    deps = [":lib"],
+)
+
+scala_files(
+    name = "scala_files",
+    srcs = [
+        "a/b/c/Lib.scala",
+        "a/b/c/Main.scala",
+    ],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)

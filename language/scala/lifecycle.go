@@ -9,6 +9,8 @@ import (
 // onResolve is called when gazelle transitions from the generate phase to the
 // resolve phase
 func (sl *scalaLang) onResolve() {
+	sl.phaseTransition("resolve")
+
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnResolve(); err != nil {
 			log.Fatalf("provider.OnResolve transition error %s: %v", provider.Name(), err)
@@ -17,7 +19,7 @@ func (sl *scalaLang) onResolve() {
 
 	// assign final readonly scala-specific scope
 	if scalaScope, err := resolver.NewScalaScope(sl.globalScope); err != nil {
-		log.Printf("warning: error while setting up final scope: %v (some builtin symbols may not resolve!)", err)
+		sl.logger.Printf("warning: setting up global resolver scope: %v", err)
 	} else {
 		sl.globalScope = scalaScope
 	}
@@ -31,6 +33,8 @@ func (sl *scalaLang) onResolve() {
 
 // onEnd is called when the last rule has been resolved.
 func (sl *scalaLang) onEnd() {
+	sl.phaseTransition("end")
+
 	for _, provider := range sl.symbolProviders {
 		if err := provider.OnEnd(); err != nil {
 			log.Fatalf("provider.OnEnd transition error %s: %v", provider.Name(), err)
@@ -41,4 +45,12 @@ func (sl *scalaLang) onEnd() {
 	sl.reportCoverage(log.Printf)
 	sl.stopCpuProfiling()
 	sl.stopMemoryProfiling()
+
+	if sl.logFile != nil {
+		sl.logFile.Close()
+	}
+}
+
+func (sl *scalaLang) phaseTransition(phase string) {
+	sl.logger.Debug().Msgf("transitioning to phase: %s", phase)
 }

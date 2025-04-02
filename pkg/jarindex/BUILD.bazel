@@ -1,3 +1,4 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
@@ -17,4 +18,14 @@ go_test(
         "@com_github_google_go_cmp//cmp",
         "@org_golang_google_protobuf//testing/protocmp",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "merge.go",
+        "merge_test.go",
+    ],
+    visibility = ["//visibility:public"],
 )

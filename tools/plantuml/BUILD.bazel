@@ -1,7 +1,19 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
 java_binary(
     name = "plantuml",
     srcs = ["Main.java"],
     main_class = "Main",
     visibility = ["//visibility:public"],
     deps = ["@plantuml_jar//jar"],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "Main.java",
+        "plantuml.bzl",
+    ],
+    visibility = ["//visibility:public"],
 )

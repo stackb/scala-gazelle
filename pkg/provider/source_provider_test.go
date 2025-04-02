@@ -11,6 +11,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/rs/zerolog"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -35,7 +36,7 @@ func TestScalaSourceProviderParseScalaRule(t *testing.T) {
 
 	scope := resolver.NewTrieScope()
 
-	provider := provider.NewSourceProvider(func(msg string) {})
+	provider := provider.NewSourceProvider(zerolog.New(os.Stderr), func(msg string) {})
 
 	fs := flag.NewFlagSet("", flag.ExitOnError)
 	c := &config.Config{

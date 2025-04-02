@@ -22,3 +22,8 @@ message Rule {
     int64 parse_time_millis = 5;
 }
 
+// RuleSet represents a set of Rule(s).
+message RuleSet {
+    repeated Rule rules = 1;
+}
+

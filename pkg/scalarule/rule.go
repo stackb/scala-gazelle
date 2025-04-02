@@ -4,6 +4,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
@@ -16,4 +17,6 @@ type Rule interface {
 	Imports(from label.Label) resolver.ImportMap
 	// Import returns the list of required exports for the rule.
 	Exports(from label.Label) resolver.ImportMap
+	// Files returns the list of files in the Rule
+	Files() []*sppb.File
 }

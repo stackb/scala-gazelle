@@ -1,11 +1,9 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "scalaconfig",
-    srcs = [
-        "config.go",
-        "test_config.go",
-    ],
+    srcs = ["config.go"],
     importpath = "github.com/stackb/scala-gazelle/pkg/scalaconfig",
     visibility = ["//visibility:public"],
     deps = [
@@ -18,6 +16,7 @@ go_library(
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_bmatcuk_doublestar_v4//:doublestar",
+        "@com_github_rs_zerolog//:zerolog",
     ],
 )
 
@@ -36,6 +35,17 @@ go_test(
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
+        "@com_github_rs_zerolog//:zerolog",
         "@com_github_stretchr_testify//mock",
     ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "config.go",
+        "config_test.go",
+    ],
+    visibility = ["//visibility:public"],
 )
