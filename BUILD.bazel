@@ -132,7 +132,6 @@ package_filegroup(
         "//pkg/starlarkeval:filegroup",
         "//pkg/testutil:filegroup",
         "//pkg/wildcardimport:filegroup",
-        "//quickstart:filegroup",
         "//rules:filegroup",
         "//scala/meta/semanticdb:filegroup",
         "//scalapb:filegroup",
