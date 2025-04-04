@@ -21,6 +21,7 @@ func ExampleLanguage_KnownDirectives() {
 	// resolve_kind_rewrite_name
 	// resolve_with
 	// scala_debug
+	// scala_log_level
 	// scala_deps_cleaner
 	// scala_fix_wildcard_imports
 	// scala_generate_build_files

@@ -13,15 +13,15 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-// ProvidedImports is the protoc.ImportProvider interface func.
+// ProvidedImports is the protoc.ImportProvider interface func.  This is
+// implemented by protoc.GlobalResolver from stackb/rules_proto.
 type ProvidedImports func(lang, impLang string) map[label.Label][]string
 
 // ProtobufProvider is a provider of symbols for the
 // stackb/rules_proto gazelle extension.
 type ProtobufProvider struct {
-	lang    string
-	impLang string
-	// indexFile      string
+	lang           string
+	impLang        string
 	scope          resolver.Scope
 	importProvider ProvidedImports
 }

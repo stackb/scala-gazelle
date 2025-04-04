@@ -100,6 +100,33 @@ func TestScalaGrpcZioConflictResolver(t *testing.T) {
 				Label: label.Label{Pkg: "proto/api", Name: "user_grpc_zio_scala_library"},
 			},
 		},
+		"selects-symbol-from-grpc-zio-label-when-zio-import-present-contains-grpc": {
+			symbol: resolver.Symbol{
+				Name:  "proto.api.UserGrpc",
+				Type:  sppb.ImportType_PROTO_SERVICE,
+				Label: label.Label{Pkg: "proto/api", Name: "user_grpc_scala_library"},
+				Conflicts: []*resolver.Symbol{
+					{
+						Name:  "proto.api.UserGrpc",
+						Type:  sppb.ImportType_PROTO_SERVICE,
+						Label: label.Label{Pkg: "proto/api", Name: "user_grpc_zio_scala_library"},
+					},
+				},
+			},
+			imports: resolver.NewImportMap(
+				&resolver.Import{
+					// in this case, the string .Zio is not the suffix of the
+					// last symbol, but somewhere higher up in the string.
+					Symbol: &resolver.Symbol{Name: "proto.api.ZioUser.X"},
+				},
+			),
+			wantOk: true,
+			want: &resolver.Symbol{
+				Name:  "proto.api.UserGrpc",
+				Type:  sppb.ImportType_PROTO_SERVICE,
+				Label: label.Label{Pkg: "proto/api", Name: "user_grpc_zio_scala_library"},
+			},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			universe := mocks.NewUniverse(t)
