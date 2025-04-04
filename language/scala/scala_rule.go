@@ -126,11 +126,19 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			if len(imp.Symbol.Conflicts) > 0 {
 				if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, imp, imp.Symbol); ok {
 					imp.Symbol = resolved
+					r.logger.Debug().
+						Msgf("conflict resolved import %s to %s", imp.Imp, symbol.String())
 				} else {
-					fmt.Println(resolver.SymbolConfictMessage(imp.Symbol, imp, rctx.From))
+					message := resolver.SymbolConfictMessage(imp.Symbol, imp, rctx.From)
+					r.logger.Warn().Msg(message)
+					fmt.Println(message)
+					r.logger.Debug().
+						Msgf("resolved still-conflicted import %s to %s", imp.Imp, symbol.String())
 				}
+			} else {
+				r.logger.Debug().
+					Msgf("resolved unconflicted import %s to %s", imp.Imp, symbol.String())
 			}
-
 		} else {
 			r.logger.Print(r.pb.Label + ": unresolved import: " + imp.Imp)
 			imp.Error = resolver.ErrSymbolNotFound
@@ -234,7 +242,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 			if sym, ok := scope.GetSymbol(imp); ok {
 				// if the symbol has conflicts, don't export it
 				if len(sym.Conflicts) > 0 {
-					r.logger.Print(r.warnf("%s | %s: %q extends %q, but symbol %q is conflicted", r.pb.Label, file.Filename, name, imp, imp))
+					r.logger.Print(r.warnf("%s: %q extends %q, but symbol %q is conflicted", file.Filename, name, imp, imp))
 				} else {
 					putExport(resolver.NewExtendsImport(sym.Name, file, name, sym))
 					if resolvedOK && resolved != sym {
@@ -243,7 +251,7 @@ func (r *scalaRule) fileExports(file *sppb.File, exports resolver.ImportMap, fro
 				}
 			} else {
 				putExport(resolver.NewExtendsImport(imp, file, name, nil))
-				r.logger.Print(r.warnf("%s | %s: %q extends %q, but symbol %q is unknown", r.pb.Label, file.Filename, name, imp, imp))
+				r.logger.Print(r.warnf("%s: %q extends %q, but symbol %q is unknown", file.Filename, name, imp, imp))
 			}
 		}
 	}

@@ -39,6 +39,11 @@ const (
 	// gazelle:scala_debug true
 	scalaDebugDirective = "scala_debug"
 
+	// Change the logging level
+	//
+	// gazelle:scala_log_level WARN|INFO|DEBUG|TRACE
+	scalaLogLevelDirective = "scala_log_level"
+
 	// Limits scala-gazelle to only consider existing build files.  If false,
 	// scala-gazelle itself will never generate new build files.  Defaults to
 	// false.
@@ -126,6 +131,7 @@ func DirectiveNames() []string {
 		resolveKindRewriteNameDirective,
 		resolveWithDirective,
 		scalaDebugDirective,
+		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
@@ -149,11 +155,13 @@ type Config struct {
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
 	logger                 zerolog.Logger
+	logLevel               zerolog.Level
 }
 
 // New initializes a new Config.
 func New(logger zerolog.Logger, universe resolver.Universe, config *config.Config, rel string) *Config {
 	return &Config{
+		logLevel:          zerolog.DebugLevel,
 		logger:            logger,
 		config:            config,
 		rel:               rel,
@@ -190,7 +198,9 @@ func GetOrCreate(logger zerolog.Logger, universe resolver.Universe, config *conf
 func (c *Config) clone(config *config.Config, rel string) *Config {
 	clone := New(c.logger, c.universe, config, rel)
 
+	clone.logLevel = c.logLevel
 	clone.generateBuildFiles = c.generateBuildFiles
+
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
 	}
@@ -219,6 +229,11 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 		clone.fixWildcardImportSpecs = c.fixWildcardImportSpecs[:]
 	}
 	return clone
+}
+
+// Logger returns the child logger set to the configured level
+func (c *Config) Logger(logger zerolog.Logger) zerolog.Logger {
+	return logger.Level(c.logLevel)
 }
 
 // Config returns the parent gazelle configuration
@@ -287,6 +302,10 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			}
 		case scalaDepsCleanerDirective:
 			if err := c.parseScalaDepsCleanerDirective(d); err != nil {
+				return err
+			}
+		case scalaLogLevelDirective:
+			if err := c.parseScalaLogLevelDirective(d); err != nil {
 				return err
 			}
 		case scalaDebugDirective:
@@ -436,6 +455,15 @@ func (c *Config) parseScalaGenerateBuildFilesDirective(d rule.Directive) error {
 	return nil
 }
 
+func (c *Config) parseScalaLogLevelDirective(d rule.Directive) error {
+	level, err := zerolog.ParseLevel(d.Value)
+	if err != nil {
+		return fmt.Errorf("invalid %v: %v", scalaLogLevelDirective, err)
+	}
+	c.logLevel = level
+	return nil
+}
+
 func (c *Config) parseScalaDepsCleanerDirective(d rule.Directive) error {
 	for _, key := range strings.Fields(d.Value) {
 		intent := collections.ParseIntent(key)
@@ -481,7 +509,7 @@ func (c *Config) parseScalaAnnotation(d rule.Directive) error {
 func (c *Config) getOrCreateScalaRuleConfig(name string) (*scalarule.Config, error) {
 	r, ok := c.rules[name]
 	if !ok {
-		r = scalarule.NewConfig(c.logger, c.config, name)
+		r = scalarule.NewConfig(c.Logger(c.logger), c.config, name)
 		r.Implementation = name
 		c.rules[name] = r
 	}
