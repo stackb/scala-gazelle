@@ -15,6 +15,7 @@ const debugGenerate = false
 // GenerateRules implements part of the language.Language interface
 func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.GenerateResult) {
 	now := time.Now()
+
 	sl.logger.Debug().Msgf("visiting directory %s", args.Rel)
 
 	sc := scalaconfig.Get(args.Config)

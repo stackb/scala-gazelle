@@ -260,7 +260,7 @@ func (sl *scalaLang) dumpResolvedImportMap() {
 	if err := sl.writeResolvedImportsMapFile(filename); err != nil {
 		log.Fatalf("writing resolved imports: %v", err)
 	}
-	sl.logger.Debug().Msgf("Wrote resolved import map to: ", filename)
+	sl.logger.Debug().Msgf("Wrote resolved import map to: %s", filename)
 }
 
 func (sl *scalaLang) setupCpuProfiling(workDir string) error {
