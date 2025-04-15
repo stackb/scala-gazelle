@@ -17,6 +17,12 @@ type Fixer struct {
 	bazelExe string
 }
 
+type FixConfig struct {
+	RuleLabel    string
+	Filename     string
+	ImportPrefix string
+}
+
 func NewFixer(options *FixerOptions) *Fixer {
 	bazelExe := options.BazelExecutable
 	if bazelExe == "" {
@@ -30,11 +36,11 @@ func NewFixer(options *FixerOptions) *Fixer {
 
 // Fix uses iterative bazel builds to remove wildcard imports and returns a list
 // of unqualified symbols that were used to complete the import.
-func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) {
-	targetLine := fmt.Sprintf("import %s._", importPrefix)
+func (w *Fixer) Fix(fix *FixConfig) ([]string, error) {
+	targetLine := fmt.Sprintf("import %s._", fix.ImportPrefix)
 
-	log.Printf("[🚧 fixing...][%s](%s): %s", ruleLabel, filename, targetLine)
-	tf, err := NewTextFileFromFilename(filename, targetLine)
+	log.Printf("[🚧 fixing...][%s](%s): %s", fix.RuleLabel, fix.Filename, targetLine)
+	tf, err := NewTextFileFromFilename(fix.Filename, targetLine)
 	if err != nil {
 		if _, isFoundFoundError := err.(*ImportLineNotFoundError); isFoundFoundError {
 			log.Printf("WARN: %v", err)
@@ -47,12 +53,12 @@ func (w *Fixer) Fix(ruleLabel, filename, importPrefix string) ([]string, error) 
 		return nil, nil
 	}
 
-	symbols, err := w.fixFile(ruleLabel, tf, importPrefix)
+	symbols, err := w.fixFile(fix.RuleLabel, tf, fix.ImportPrefix)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("[✅ fixed][%s](%s): %v", ruleLabel, filename, symbols)
+	log.Printf("[✅ fixed][%s](%s): %v", fix.RuleLabel, fix.Filename, symbols)
 
 	return symbols, nil
 }

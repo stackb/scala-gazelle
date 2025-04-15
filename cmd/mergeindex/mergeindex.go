@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -18,66 +17,48 @@ import (
 const debug = false
 
 var (
-	outputFile       string
-	predefinedLabels string
-	preferredDeps    collections.StringSlice
-	preferred        map[string]string
+	outputFile     string
+	predefinedDeps collections.StringSlice
+	preferredDeps  collections.StringSlice
+	preferred      map[string]string
 )
 
 func main() {
 	log.SetPrefix("mergeindex: ")
 	log.SetFlags(0) // don't print timestamps
 
-	args := os.Args[1:]
-	if len(args) == 1 && strings.HasPrefix(args[0], "@") {
-		paramsFile := args[0][1:]
-		var err error
-		args, err = readParamsFile(paramsFile)
-		if err != nil {
-			log.Fatalln("failed to read params file:", paramsFile, err)
-		}
-	}
-
-	files, err := parseFlags(args)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	index, err := merge(files...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := protobuf.WriteFile(outputFile, index); err != nil {
+	if err := run(os.Args[1:]); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func readParamsFile(filename string) ([]string, error) {
-	params := []string{}
-	f, err := os.Open(filename)
+func run(args []string) error {
+	args, err := collections.ReadArgsParamsFile(args)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
-		params = append(params, line)
+
+	files, err := parseFlags(args)
+	if err != nil {
+		return err
 	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
+
+	index, err := merge(files...)
+	if err != nil {
+		return err
 	}
-	return params, nil
+
+	if err := protobuf.WriteFile(outputFile, index); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func parseFlags(args []string) (files []string, err error) {
 	fs := flag.NewFlagSet("mergeindex", flag.ExitOnError)
 	fs.Var(&preferredDeps, "preferred", "a repeatable list of mappings of the form PKG=DEP that declares which dependency should be chosen to resolve package ambiguity")
-	fs.StringVar(&predefinedLabels, "predefined", "", "a comma-separated list of labels to be considered predefined")
+	fs.Var(&predefinedDeps, "predefined", "a repeatable list of labels to be considered predefined")
 	fs.StringVar(&outputFile, "output_file", "", "the output file to write")
 	fs.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "usage: mergeindex @PARAMS_FILE | mergeindex OPTIONS FILES")
@@ -123,19 +104,14 @@ func merge(filenames ...string) (*jipb.JarIndex, error) {
 		}
 	}
 
-	var predefined []string
-	if predefinedLabels != "" {
-		predefined = strings.Split(predefinedLabels, ",")
-	}
-
 	index, err := jarindex.MergeJarFiles(func(format string, args ...interface{}) {
 		log.Printf("warning: "+format, args...)
-	}, predefined, jars)
+	}, predefinedDeps, jars)
 	if err != nil {
 		return nil, err
 	}
 
-	index.Predefined = predefined
+	index.Predefined = predefinedDeps
 	index.Preferred = preferred
 
 	return index, nil

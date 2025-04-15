@@ -42,6 +42,8 @@ func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rul
 	// make list of all symbols
 	symbols := append(symbol.Conflicts, symbol)
 
+	// TODO(pcj): a variation is that the Grpc symbol is not in the list of symbol conflicts, but the dep that is resolves.
+
 	// ensure we have both types needed for comparison
 	grpcSymbol := firstSymbol(symbols, isGrpcLabel)
 	if grpcSymbol == nil {
