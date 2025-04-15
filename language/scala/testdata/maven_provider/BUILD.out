@@ -15,7 +15,7 @@ scala_library(
         # that @atlassian-public deps should be managed by the scala-gazelle
         # extension (so this is left alone despite no # keep directive)
         "@atlassian-public//:junit_junit",
-        "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject)
-        "@maven//:xml_apis_xml_apis",  # DIRECT (maven javax.xml)
+        "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject <filename unknown>)
+        "@maven//:xml_apis_xml_apis",  # DIRECT (maven javax.xml Main.scala)
     ],
 )
