@@ -15,6 +15,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
@@ -284,9 +285,9 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 	// gather direct imports and import scopes
 	for _, name := range file.Imports {
 		if wimp, ok := resolver.IsWildcardImport(name); ok {
-			filename := filepath.Join(r.ctx.scalaConfig.Rel(), file.Filename)
-			if r.ctx.scalaConfig.ShouldFixWildcardImport(filename, name) {
-				symbolNames, err := r.fixWildcardImport(filename, wimp)
+			r.logger.Debug().Msgf("isWildcardImport true %s: %s", name, file.Filename)
+			if r.ctx.scalaConfig.ShouldFixWildcardImport(file.Filename, name) {
+				symbolNames, err := r.fixWildcardImport(r.ctx.scalaConfig.Rel(), file.Filename, wimp)
 				if err != nil {
 					log.Fatalf("fixing wildcard imports for %s (%s): %v", file.Filename, wimp, err)
 				}
@@ -427,14 +428,28 @@ func (r *scalaRule) putExport(imp string) {
 	r.exports[imp] = resolve.ImportSpec{Imp: imp, Lang: scalaLangName}
 }
 
-func (r *scalaRule) fixWildcardImport(filename, wimp string) ([]string, error) {
+func (r *scalaRule) fixWildcardImport(rel, filename, wimp string) ([]string, error) {
 	fixer := wildcardimport.NewFixer(&wildcardimport.FixerOptions{
 		BazelExecutable: bazel,
 	})
 
-	absFilename := filepath.Join(wildcardimport.GetBuildWorkspaceDirectory(), filename)
+	bwd := wildcardimport.GetBuildWorkspaceDirectory()
+
+	// sometimes the filename already include the relative path.
+	// FIXME(pcj): ensure pre-parsed files have the same filenames as non-preparsed ones.
+	absFilename := filepath.Join(bwd, filename)
+	if !procutil.FileExists(absFilename) {
+		absFilename = filepath.Join(bwd, rel, filename)
+	}
+
+	r.logger.Info().Msgf("fixWildcardImport %s: abs=%s", filename, absFilename)
+
 	ruleLabel := label.New("", r.ctx.scalaConfig.Rel(), r.ctx.rule.Name()).String()
-	symbols, err := fixer.Fix(ruleLabel, absFilename, wimp)
+	symbols, err := fixer.Fix(&wildcardimport.FixConfig{
+		RuleLabel:    ruleLabel,
+		Filename:     absFilename,
+		ImportPrefix: wimp,
+	})
 	if err != nil {
 		return nil, err
 	}

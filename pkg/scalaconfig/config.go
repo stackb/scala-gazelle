@@ -569,7 +569,11 @@ func (c *Config) GenerateBuildFiles() bool {
 
 func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 	if c.shouldAnnotateDepLabelOrigin() {
-		return &build.Comment{Token: fmt.Sprintf("# %v (%s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name)}
+		filename := "<filename unknown>"
+		if imp.Source != nil {
+			filename = imp.Source.Filename
+		}
+		return &build.Comment{Token: fmt.Sprintf("# %v (%s %s %s)", imp.Kind, imp.Symbol.Provider, imp.Symbol.Name, filename)}
 	}
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }

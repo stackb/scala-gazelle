@@ -72,10 +72,19 @@ func readParamsFile(filename string) ([]string, error) {
 		if line == "" {
 			continue
 		}
-		params = append(params, line)
+		params = append(params, trimQuotes(line))
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 	return params, nil
+}
+
+func trimQuotes(s string) string {
+	if len(s) >= 2 {
+		if c := s[len(s)-1]; s[0] == c && (c == '"' || c == '\'') {
+			return s[1 : len(s)-1]
+		}
+	}
+	return s
 }

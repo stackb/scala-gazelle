@@ -4,11 +4,14 @@
 load(":providers.bzl", "JarIndexerAspectInfo")
 load(":java_indexer_aspect.bzl", "jarindexer_action", "java_indexer_aspect")
 
+def target_label(target):
+    return str(target.label)
+
 def merge_action(ctx, output_file, jarindex_files):
     args = ctx.actions.args()
-    args.use_param_file("@%s", use_always = False)
+    args.use_param_file("@%s", use_always = True)
     args.add("--output_file", output_file)
-    args.add_joined("--predefined", [target.label for target in ctx.attr.platform_deps], uniquify = True, join_with = ",")
+    args.add_all(ctx.attr.platform_deps, map_each = target_label, format_each = "--predefined=%s", uniquify = True)
     for pkg, dep in ctx.attr.preferred_deps.items():
         args.add("--preferred=%s=%s" % (pkg, dep))
 

@@ -45,7 +45,7 @@ type scalaPackage struct {
 	gen, empty []scalarule.RuleProvider
 	// rules is the final state of generated rules, by name.
 	rules map[string]*rule.Rule
-	// resolveFuncs is a list of resolve work that needs to be deferred until
+	// resolveWork is a list of resolve work that needs to be deferred until
 	// all rules in a package have been processed.
 	resolveWork []func()
 	// used for tracking coverage
