@@ -108,9 +108,9 @@ func (cr *SourceProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr,
 		return true
 	}
 	if dep.Label.Relative {
-		// if _, ok := ruleIndex(dep.Label.Abs()); ok {
-		return true
-		// }
+		if _, ok := ruleIndex(dep.Label.Abs(from.Repo, from.Pkg)); ok {
+			return true
+		}
 	}
 	return false
 }
