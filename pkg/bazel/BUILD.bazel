@@ -6,7 +6,10 @@ go_library(
     srcs = ["bazel.go"],
     importpath = "github.com/stackb/scala-gazelle/pkg/bazel",
     visibility = ["//visibility:public"],
-    deps = ["@io_bazel_rules_go//go/tools/bazel:go_default_library"],
+    deps = [
+        "//pkg/procutil",
+        "@io_bazel_rules_go//go/tools/bazel:go_default_library",
+    ],
 )
 
 package_filegroup(

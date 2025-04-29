@@ -10,22 +10,22 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/mock"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/resolver/mocks"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
-	"github.com/stackb/scala-gazelle/pkg/scalarule"
 )
 
 func TestScalaPackageParseRule(t *testing.T) {
-
 	for name, tc := range map[string]struct {
-		rule     *rule.Rule
-		attrName string
-		want     scalarule.Rule
-		wantErr  string
+		rule      *rule.Rule
+		attrName  string
+		wantFiles []*sppb.File
+		wantErr   string
 	}{
 		"degenerate": {
-			rule:    rule.NewRule("scala_library", "somelib"),
-			wantErr: "rule has no source files",
+			rule:      rule.NewRule("scala_library", "somelib"),
+			wantErr:   "rule has no source files",
+			wantFiles: nil,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestScalaPackageParseRule(t *testing.T) {
 			if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
 				t.Errorf("error (-want +got):\n%s", diff)
 			}
-			if diff := cmp.Diff(tc.want, got); diff != "" {
+			if diff := cmp.Diff(tc.wantFiles, got.Files()); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})
