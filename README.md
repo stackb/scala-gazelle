@@ -472,7 +472,7 @@ func (p *bazelDepsProvider) loadFile(dir string, filename string, scope resolver
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *bazelDepsProvider) CanProvide(dep *resolver.ImportLabel, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *bazelDepsProvider) CanProvide(dep *resolver.ImportLabel, knownRule func(from label.Label) (*rule.Rule, bool), from label.Label) bool {
 	if dep.Label.Repo == "bazel_deps" {
 		return true
 	}

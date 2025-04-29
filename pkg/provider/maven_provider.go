@@ -79,7 +79,7 @@ func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Sco
 }
 
 // CanProvide implements part of the provider.SymbolProvider interface.
-func (p *MavenProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *MavenProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool), from label.Label) bool {
 	// if the resolver is nil, checkflags was never called and we can infer that
 	// this resolver is not enabled
 	if len(p.resolvers) == 0 {

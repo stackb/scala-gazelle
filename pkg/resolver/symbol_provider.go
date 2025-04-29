@@ -31,5 +31,5 @@ type SymbolProvider interface {
 	// example, the maven resolver may return true for labels like
 	// "@maven//:junit_junit". The rule Index can be used to consult what type
 	// of label from is, based on the rule characteristics.
-	CanProvide(dep *ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool
+	CanProvide(dep *ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool), from label.Label) bool
 }

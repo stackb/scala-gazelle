@@ -109,7 +109,7 @@ func TestProtoSymbolProviderCanProvide(t *testing.T) {
 			p.CheckFlags(flags, c, scope)
 			p.OnResolve()
 
-			got := p.CanProvide(&resolver.ImportLabel{Label: tc.from}, tc.expr, tc.indexFunc)
+			got := p.CanProvide(&resolver.ImportLabel{Label: tc.from}, tc.expr, tc.indexFunc, tc.from)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf(".CanProvide (-want +got):\n%s", diff)
