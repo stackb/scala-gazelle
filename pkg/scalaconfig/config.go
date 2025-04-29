@@ -736,6 +736,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		// dependency is not "managed", so leave it alone.
 		if !c.shouldKeep(expr, imp) {
 			dst.List = append(dst.List, expr)
+			// log.Println("non-managed:", from, dep)
 			continue
 		}
 
