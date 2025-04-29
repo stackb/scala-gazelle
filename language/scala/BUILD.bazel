@@ -38,6 +38,7 @@ go_library(
     deps = [
         "//build/stack/gazelle/scala/cache",
         "//build/stack/gazelle/scala/parse",
+        "//pkg/bazel",
         "//pkg/collections",
         "//pkg/glob",
         "//pkg/parser",

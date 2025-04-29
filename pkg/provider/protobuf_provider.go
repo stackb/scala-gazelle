@@ -94,7 +94,7 @@ func (p *ProtobufProvider) OnEnd() error {
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *ProtobufProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *ProtobufProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool), from label.Label) bool {
 	return strings.HasSuffix(dep.Label.Name, "proto_scala_library") ||
 		strings.HasSuffix(dep.Label.Name, "grpc_scala_library")
 }

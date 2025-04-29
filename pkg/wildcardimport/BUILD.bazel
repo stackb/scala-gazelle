@@ -4,14 +4,13 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "wildcardimport",
     srcs = [
-        "bazel.go",
         "fixer.go",
         "scanner.go",
         "text_file.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/wildcardimport",
     visibility = ["//visibility:public"],
-    deps = ["//pkg/procutil"],
+    deps = ["//pkg/bazel"],
 )
 
 go_test(
@@ -24,36 +23,10 @@ go_test(
     deps = ["@com_github_google_go_cmp//cmp"],
 )
 
-# Maybe put this back in after finding conflicts?
-#
-#
-# 				// if r.ctx.scalaConfig.ShouldAnnotateWildcardImports() && item.sym.Type == sppb.ImportType_PROTO_PACKAGE {
-# 				// 	if scope, ok := r.ctx.scope.GetScope(item.imp.Imp); ok {
-# 				// 		wildcardImport := item.imp.Src // original symbol name having underscore suffix
-# 				// 		r.handleWildcardImport(item.imp.Source, wildcardImport, scope)
-# 				// 	} else {
-
-# 				// 	}
-# 				// }
-
-# func (r *scalaRule) handleWildcardImport(file *sppb.File, imp string, scope resolver.Scope) {
-# 	names := make([]string, 0)
-# 	for _, name := range file.Names {
-# 		if _, ok := scope.GetSymbol(name); ok {
-# 			names = append(names, name)
-# 		}
-# 	}
-# 	if len(names) > 0 {
-# 		sort.Strings(names)
-# 		log.Printf("[%s]: import %s.{%s}", file.Filename, strings.TrimSuffix(imp, "._"), strings.Join(names, ", "))
-# 	}
-# }
-
 package_filegroup(
     name = "filegroup",
     srcs = [
         "BUILD.bazel",
-        "bazel.go",
         "fixer.go",
         "fixer_test.go",
         "scanner.go",

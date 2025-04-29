@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/rs/zerolog"
 
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -70,7 +71,9 @@ func newScalaPackage(
 		cfg:              cfg,
 		rules:            make(map[string]*rule.Rule),
 		resolveWork:      make([]func(), 0),
-		ruleCoverage:     &packageRuleCoverage{},
+		ruleCoverage: &packageRuleCoverage{
+			kinds: map[string]int{},
+		},
 	}
 
 	s.gen = s.generateRules(true)
@@ -144,7 +147,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 				// TOOD(pcj): consider adding .ContributesToCoverage or some
 				// other way of tracking which rules contribute to coverage
 				// calculation.
-				if provider.Name() != "scala_files" && provider.Name() != "scala_fileset" {
+				if ruleContributesToCoverage(provider.Name()) {
 					s.ruleCoverage.total += 1
 				}
 			} else {
@@ -158,6 +161,7 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 	for _, rc := range configuredRules {
 		if !rc.Enabled {
 			s.logger.Debug().Msgf("%s configuration not enabled, skipping rule generation", rc.Name)
+			log.Println(s.cfg.Rel(), ": NOT ENABLED RULE:", rc.Name)
 			continue
 		}
 
@@ -188,8 +192,13 @@ func (s *scalaPackage) generateRules(enabled bool) []scalarule.RuleProvider {
 					s.logger.Debug().Msgf("new resolved rule: %s %s", resolvedRule.Name(), resolvedRule.Kind())
 					rules = append(rules, resolvedRule)
 					// TODO: make this an API, not hardcode which rule names contribute to coverage
-					if resolvedRule.Name() != "scala_files" || resolvedRule.Name() != "scala_fileset" {
+					if ruleContributesToCoverage(resolvedRule.Name()) {
 						s.ruleCoverage.managed += 1
+						s.ruleCoverage.kinds[r.Kind()] += 1
+					}
+				} else {
+					if r.Kind() != "scala_files" {
+						log.Println(s.cfg.Rel(), ": SKIPPED RULE:", r.Kind(), r.Name())
 					}
 				}
 			}
@@ -223,12 +232,13 @@ func (s *scalaPackage) GeneratedRules() (rules []*rule.Rule) {
 }
 
 // ParseRule implements part of the scalarule.Package interface.
-func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule, error) {
+func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalaRule scalarule.Rule, err error) {
 	dir := filepath.Join(s.repoRootDir(), s.args.Rel)
 	srcs, err := glob.CollectFilenames(s.args.File, dir, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
+
 	scalaSrcs := make([]string, 0, len(srcs))
 	for _, src := range srcs {
 		if !strings.HasSuffix(src, ".scala") {
@@ -236,20 +246,25 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		}
 		scalaSrcs = append(scalaSrcs, src)
 	}
+	if len(scalaSrcs) == 0 {
+		err = ErrRuleHasNoSrcs
+	}
 
 	logger := s.logger.With().Str("kind", r.Kind()).Str("name", r.Name()).Logger()
 	logger.Debug().Msgf("%d scala files collected from %s", len(scalaSrcs), attrName)
 
-	if len(scalaSrcs) == 0 {
-		return nil, ErrRuleHasNoSrcs
-	}
-
 	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
 
-	rule, err := s.parser.ParseScalaRule(r.Kind(), from, dir, scalaSrcs...)
-	if err != nil {
-		logger.Warn().Err(err).Msg("parse error")
-		return nil, err
+	rule := &sppb.Rule{
+		Label: from.String(),
+		Kind:  r.Kind(),
+	}
+	if len(scalaSrcs) > 0 {
+		rule, err = s.parser.ParseScalaRule(r.Kind(), from, dir, scalaSrcs...)
+		if err != nil {
+			logger.Warn().Err(err).Msg("parse error")
+			return nil, err
+		}
 	}
 
 	ctx := &scalaRuleContext{
@@ -259,7 +274,9 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalarule.Rule,
 		scope:       s.universe,
 	}
 
-	return newScalaRule(logger, ctx, rule), nil
+	scalaRule = newScalaRule(logger, ctx, rule)
+
+	return
 }
 
 // repoRootDir return the root directory of the repo.
@@ -306,4 +323,17 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 
 func (p *scalaPackage) infof(format string, args ...any) string {
 	return fmt.Sprintf("INFO ["+p.args.Rel+"]: "+format, args...)
+}
+
+func ruleContributesToCoverage(name string) bool {
+	switch name {
+	case "scala_files":
+		return false
+	case "scala_fileset":
+		return false
+	case "semanticdb_index":
+		return false
+	default:
+		return true
+	}
 }

@@ -246,9 +246,9 @@ func (c *Config) Rel() string {
 	return c.rel
 }
 
-func (c *Config) shouldKeep(expr build.Expr, dep *resolver.ImportLabel) bool {
+func (c *Config) shouldKeep(expr build.Expr, dep *resolver.ImportLabel, from label.Label) bool {
 	for _, provider := range c.universe.SymbolProviders() {
-		if provider.CanProvide(dep, expr, c.universe.GetKnownRule) {
+		if provider.CanProvide(dep, expr, c.universe.GetKnownRule, from) {
 			return true
 		}
 	}
@@ -734,8 +734,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so leave it alone.
-		if !c.shouldKeep(expr, imp) {
+		if !c.shouldKeep(expr, imp, from) {
 			dst.List = append(dst.List, expr)
+			// log.Println("non-managed:", from, dep)
 			continue
 		}
 

@@ -107,7 +107,7 @@ func (r *SemanticdbProvider) OnEnd() error {
 }
 
 // CanProvide implements the resolver.SymbolProvider interface.
-func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, ruleIndex func(from label.Label) (*rule.Rule, bool)) bool {
+func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, ruleIndex func(from label.Label) (*rule.Rule, bool), from label.Label) bool {
 	hasSemanticDbSuffixComment := false
 	for _, c := range append(expr.Comment().Before, expr.Comment().Suffix...) {
 		text := strings.TrimSpace(strings.TrimPrefix(c.Token, "#"))

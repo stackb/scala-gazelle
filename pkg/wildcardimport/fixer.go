@@ -5,6 +5,8 @@ import (
 	"log"
 	"sort"
 	"strings"
+
+	"github.com/stackb/scala-gazelle/pkg/bazel"
 )
 
 const debug = false
@@ -87,7 +89,7 @@ func (w *Fixer) fixFile(ruleLabel string, tf *TextFile, importPrefix string) ([]
 		}
 
 		// execute the build and gather output
-		output, exitCode, cmdErr := execBazelBuild(w.bazelExe, ruleLabel)
+		output, exitCode, cmdErr := bazel.ExecCommand(w.bazelExe, "build", ruleLabel)
 
 		// must build clean first time
 		if iteration == 0 {

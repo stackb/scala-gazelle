@@ -91,7 +91,7 @@ func (p *JavaProvider) OnEnd() error {
 }
 
 // CanProvide implements part of the resolver.SymbolProvider interface.
-func (p *JavaProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool)) bool {
+func (p *JavaProvider) CanProvide(dep *resolver.ImportLabel, expr build.Expr, knownRule func(from label.Label) (*rule.Rule, bool), from label.Label) bool {
 	if _, ok := p.byLabel[dep.Label]; ok {
 		return true
 	}

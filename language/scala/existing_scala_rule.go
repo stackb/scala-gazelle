@@ -74,11 +74,15 @@ func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scala
 func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
 	scalaRule, err := pkg.ParseRule(r, "srcs")
 	if err != nil {
-		if err == ErrRuleHasNoSrcs {
-			return nil // no need to print a warning
+		if err != ErrRuleHasNoSrcs {
+			log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
+			return nil
 		}
-		log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
-		return nil
+		// rule has no srcs.  This is OK for binary rules, sometimes they only
+		// have a main_class.
+		// if !s.isBinary {
+		// 	return nil // no need to print a warning
+		// }
 	}
 	if scalaRule == nil {
 		log.Panicln("scalaRule should not be nil!")
@@ -133,13 +137,15 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	sc.Imports(imports, rctx.Rule, "deps", rctx.From)
 
 	commentsSrcs := rctx.Rule.AttrComments("srcs")
-	commentsSrcs.Before = nil
-	if sc.ShouldAnnotateImports() {
-		scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
-	}
-	if sc.ShouldAnnotateRule() {
-		ruleComments := makeRuleComments(scalaRule.pb)
-		commentsSrcs.Before = append(commentsSrcs.Before, ruleComments...)
+	if commentsSrcs != nil {
+		commentsSrcs.Before = nil
+		if sc.ShouldAnnotateImports() {
+			scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
+		}
+		if sc.ShouldAnnotateRule() {
+			ruleComments := makeRuleComments(scalaRule.pb)
+			commentsSrcs.Before = append(commentsSrcs.Before, ruleComments...)
+		}
 	}
 
 	if s.isLibrary {

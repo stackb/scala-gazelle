@@ -14,6 +14,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/rs/zerolog"
 
+	"github.com/stackb/scala-gazelle/pkg/bazel"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
@@ -55,11 +56,11 @@ type scalaRule struct {
 	exports map[string]resolve.ImportSpec
 }
 
-var bazel = "bazel"
+var defaultBazelExe = "bazel"
 
 func init() {
 	if bazelExe, ok := os.LookupEnv("SCALA_GAZELLE_BAZEL_EXECUTABLE"); ok {
-		bazel = bazelExe
+		defaultBazelExe = bazelExe
 	}
 }
 
@@ -430,10 +431,10 @@ func (r *scalaRule) putExport(imp string) {
 
 func (r *scalaRule) fixWildcardImport(rel, filename, wimp string) ([]string, error) {
 	fixer := wildcardimport.NewFixer(&wildcardimport.FixerOptions{
-		BazelExecutable: bazel,
+		BazelExecutable: defaultBazelExe,
 	})
 
-	bwd := wildcardimport.GetBuildWorkspaceDirectory()
+	bwd := bazel.GetBuildWorkspaceDirectory()
 
 	// sometimes the filename already include the relative path.
 	// FIXME(pcj): ensure pre-parsed files have the same filenames as non-preparsed ones.

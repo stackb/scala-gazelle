@@ -158,7 +158,7 @@ func TestJavaProviderCanProvide(t *testing.T) {
 
 			got := p.CanProvide(&resolver.ImportLabel{Label: tc.from}, tc.expr, func(from label.Label) (*rule.Rule, bool) {
 				return nil, false
-			})
+			}, tc.from)
 
 			if diff := cmp.Diff(tc.want, got); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
