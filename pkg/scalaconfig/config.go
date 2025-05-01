@@ -56,6 +56,11 @@ const (
 	// gazelle:scala_fix_wildcard_imports .scala examples.aeron.api.proto._
 	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
 
+	// Turn on the autokeep fixer
+	//
+	// gazelle:scala_sweep_transitive_deps true
+	scalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
+
 	// Configure a scala rule
 	//
 	// gazelle:scala_rule RULE_NAME ATTRIBUTE VALUE
@@ -133,6 +138,7 @@ func DirectiveNames() []string {
 		scalaDebugDirective,
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
+		scalaSweepTransitiveDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -154,6 +160,7 @@ type Config struct {
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
+	sweepTransitiveDeps    bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
 }
@@ -200,6 +207,7 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 
 	clone.logLevel = c.logLevel
 	clone.generateBuildFiles = c.generateBuildFiles
+	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
 
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
@@ -278,13 +286,16 @@ func (c *Config) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 // parseDirectives is called in each directory visited by gazelle.  The relative
 // directory name is given by 'rel' and the list of directives in the BUILD file
 // are specified by 'directives'.
-func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
+func (c *Config) ParseDirectives(directives []rule.Directive) error {
 	for _, d := range directives {
 		switch d.Key {
 		case scalaRuleDirective:
-			err = c.parseScalaRuleDirective(d)
-			if err != nil {
+			if err := c.parseScalaRuleDirective(d); err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
+			}
+		case scalaSweepTransitiveDepsDirective:
+			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
+				return err
 			}
 		case scalaFixWildcardImportDirective:
 			c.parseFixWildcardImport(d)
@@ -318,7 +329,7 @@ func (c *Config) ParseDirectives(directives []rule.Directive) (err error) {
 			}
 		}
 	}
-	return
+	return nil
 }
 
 func (c *Config) parseScalaRuleDirective(d rule.Directive) error {
@@ -388,7 +399,19 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 		}
 		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
 	}
+}
 
+func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaSweepTransitiveDepsDirective, parts)
+	}
+	sweepTransitiveDeps, err := strconv.ParseBool(parts[0])
+	if err != nil {
+		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaSweepTransitiveDepsDirective, err)
+	}
+	c.sweepTransitiveDeps = sweepTransitiveDeps
+	return nil
 }
 
 func (c *Config) parseResolveFileSymbolNames(d rule.Directive) {
@@ -578,6 +601,12 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
+// ShouldSweepTransitiveDeps determines whether non-managed deps (not generated, and not
+// marked with # keep) in the current package should be kept.
+func (c *Config) ShouldSweepTransitiveDeps() bool {
+	return c.sweepTransitiveDeps
+}
+
 // ShouldFixWildcardImport tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -676,6 +705,7 @@ func (c *Config) ruleAttrMergeDeps(
 	// Merge the current list against the new incoming ones.  If no deps remain,
 	// delete the attr.
 	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from)
+
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
 	} else {
@@ -685,8 +715,7 @@ func (c *Config) ruleAttrMergeDeps(
 
 // mergeDeps filters out a `deps` list.  Extries are removed from the
 // list if they can be parsed as dependency labels that have a provider.  Others
-// types of expressions are left as-is.  Dependency labels that have no known
-// provider are also left as-is.
+// types of expressions are left as-is.
 func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue != nil {
@@ -726,16 +755,25 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			continue
 		}
 
+		// do we have an entry for the src dep in importLabels?  If so, this is
+		// a "managed" dep that we are generating.  If not, it's not managed,
+		// and should be left alone.  Or, if we are in autokeep mode, aggregate them in a separate list
 		imp, ok := importLabels[dep]
 		if !ok {
-			dst.List = append(dst.List, expr)
+			if c.ShouldSweepTransitiveDeps() {
+				depExpr := &build.StringExpr{Value: dep.String()}
+				depExpr.Suffix = append(depExpr.Suffix, transitiveComment())
+				dst.List = append(dst.List, depExpr)
+			} else {
+				dst.List = append(dst.List, expr)
+			}
 			continue
 		}
 
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so leave it alone.
 		if !c.shouldKeep(expr, imp, from) {
-			dst.List = append(dst.List, expr)
+			// dst.List = append(dst.List, expr)
 			// log.Println("non-managed:", from, dep)
 			continue
 		}
@@ -862,6 +900,12 @@ func depCommentFor(imp *resolver.Import) build.Comment {
 	token := fmt.Sprintf("# imp=%s, type=%v, provider=%s, label=%v, kind=%v, source=%s", imp.Imp, imp.Symbol.Type, imp.Symbol.Provider, imp.Symbol.Label, imp.Kind, source)
 	return build.Comment{
 		Token: token,
+	}
+}
+
+func transitiveComment() build.Comment {
+	return build.Comment{
+		Token: "# TRANSITIVE",
 	}
 }
 

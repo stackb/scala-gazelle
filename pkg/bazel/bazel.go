@@ -33,8 +33,8 @@ func NewTmpDir(prefix string) (string, error) {
 	return os.MkdirTemp("", prefix)
 }
 
-func ExecCommand(bazelExe, command, label string) ([]byte, int, error) {
-	args := []string{command, label}
+func ExecCommand(bazelExe, command string, labels ...string) ([]byte, int, error) {
+	args := append([]string{command}, labels...)
 
 	cmd := exec.Command(bazelExe, args...)
 	cmd.Dir = GetBuildWorkspaceDirectory()
