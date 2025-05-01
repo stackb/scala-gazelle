@@ -1,7 +1,6 @@
 package bazel
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -33,13 +32,13 @@ func NewTmpDir(prefix string) (string, error) {
 	return os.MkdirTemp("", prefix)
 }
 
-func ExecCommand(bazelExe, command, label string) ([]byte, int, error) {
-	args := []string{command, label}
+func ExecCommand(bazelExe, command string, labels ...string) ([]byte, int, error) {
+	args := append([]string{command}, labels...)
 
 	cmd := exec.Command(bazelExe, args...)
 	cmd.Dir = GetBuildWorkspaceDirectory()
 
-	log.Println("🧱", cmd.String())
+	// log.Println("🧱", cmd.String())
 	output, err := cmd.CombinedOutput()
 	exitCode := procutil.CmdExitCode(cmd, err)
 

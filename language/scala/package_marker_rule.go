@@ -5,13 +5,15 @@ import (
 	"github.com/pcj/mobyprogress"
 )
 
-const packageMarkerRuleKind = "_package_marker"
+const packageMarkerRuleKind = "filegroup"
+const packageMarkerRuleName = "package_marker"
 
 // generatePackageMarkerRule creates a dummy rule that forces gazelle to run the
 // resolve phase at least once per package; used for tracking progress during
 // the resolve phase.
 func generatePackageMarkerRule(pkgNum int, pkg *scalaPackage) *rule.Rule {
-	r := rule.NewRule(packageMarkerRuleKind, packageMarkerRuleKind)
+	r := rule.NewRule(packageMarkerRuleKind, packageMarkerRuleName)
+	r.SetAttr("srcs", []string{})
 	r.SetPrivateAttr("n", pkgNum)
 	r.SetPrivateAttr("pkg", pkg)
 	return r
