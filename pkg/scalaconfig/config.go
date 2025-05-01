@@ -23,6 +23,7 @@ import (
 type debugAnnotation int
 
 const scalaLangName = "scala"
+const TransitiveCommentToken = "# TRANSITIVE"
 
 const (
 	DebugUnknown        debugAnnotation = 0
@@ -56,7 +57,13 @@ const (
 	// gazelle:scala_fix_wildcard_imports .scala examples.aeron.api.proto._
 	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
 
-	// Turn on the autokeep fixer
+	// Flag to preserve deps if the label is not known to be needed from the
+	// imports (legacy migration mode).
+	//
+	// gazelle:scala_keep_unknown_deps true
+	scalaKeepUnknownDepsDirective = "scala_keep_unknown_deps"
+
+	// Turn on the dep sweeper
 	//
 	// gazelle:scala_sweep_transitive_deps true
 	scalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
@@ -138,6 +145,7 @@ func DirectiveNames() []string {
 		scalaDebugDirective,
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
+		scalaKeepUnknownDepsDirective,
 		scalaSweepTransitiveDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
@@ -160,6 +168,7 @@ type Config struct {
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
+	keepUnknownDeps        bool
 	sweepTransitiveDeps    bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
@@ -207,6 +216,7 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 
 	clone.logLevel = c.logLevel
 	clone.generateBuildFiles = c.generateBuildFiles
+	clone.keepUnknownDeps = c.keepUnknownDeps
 	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
 
 	for k, v := range c.annotations {
@@ -292,6 +302,10 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 		case scalaRuleDirective:
 			if err := c.parseScalaRuleDirective(d); err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
+			}
+		case scalaKeepUnknownDepsDirective:
+			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
+				return err
 			}
 		case scalaSweepTransitiveDepsDirective:
 			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
@@ -399,6 +413,19 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 		}
 		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
 	}
+}
+
+func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaKeepUnknownDepsDirective, parts)
+	}
+	keepUnknownDeps, err := strconv.ParseBool(parts[0])
+	if err != nil {
+		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnknownDepsDirective, err)
+	}
+	c.keepUnknownDeps = keepUnknownDeps
+	return nil
 }
 
 func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
@@ -607,6 +634,12 @@ func (c *Config) ShouldSweepTransitiveDeps() bool {
 	return c.sweepTransitiveDeps
 }
 
+// shouldKeepUnknownDeps determines whether non-managed deps should be
+// kept.
+func (c *Config) shouldKeepUnknownDeps() bool {
+	return c.keepUnknownDeps
+}
+
 // ShouldFixWildcardImport tests whether the given symbol name pattern
 // should be resolved within the scope of the given filename pattern.
 // resolveFileSymbolNameSpecs represent a whitelist; if no patterns match, false
@@ -750,31 +783,38 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 				}
 				continue
 			}
-			// the expression is still wanted
 			dst.List = append(dst.List, expr)
 			continue
 		}
 
 		// do we have an entry for the src dep in importLabels?  If so, this is
 		// a "managed" dep that we are generating.  If not, it's not managed,
-		// and should be left alone.  Or, if we are in autokeep mode, aggregate them in a separate list
+		// and should be left alone.  Or, if we are in mark mode, mark as transitive
 		imp, ok := importLabels[dep]
 		if !ok {
+			// this dependency is not marked as # keep or definitely known to be
+			// needed via the imports. It may be a transitive dependency.  If we
+			// are in sweep mode, mark it, keep it and it will be checked by the
+			// sweeper process. Otherwise, only keep it if has already been
+			// marked as TRANSITIVE.
 			if c.ShouldSweepTransitiveDeps() {
-				depExpr := &build.StringExpr{Value: dep.String()}
-				depExpr.Suffix = append(depExpr.Suffix, transitiveComment())
-				dst.List = append(dst.List, depExpr)
+				dst.List = append(dst.List, makeTransitiveDep(dep))
 			} else {
-				dst.List = append(dst.List, expr)
+				if isTransitive(expr) {
+					dst.List = append(dst.List, expr)
+				} else {
+					// one more caveat: preserve unmarked deps in legacy mode
+					if c.shouldKeepUnknownDeps() {
+						dst.List = append(dst.List, expr)
+					}
+				}
 			}
 			continue
 		}
 
 		// do we have a known provider for the dependency?  If not, this
-		// dependency is not "managed", so leave it alone.
+		// dependency is not "managed", so delete it.
 		if !c.shouldKeep(expr, imp, from) {
-			// dst.List = append(dst.List, expr)
-			// log.Println("non-managed:", from, dep)
 			continue
 		}
 
@@ -903,13 +943,24 @@ func depCommentFor(imp *resolver.Import) build.Comment {
 	}
 }
 
-func transitiveComment() build.Comment {
-	return build.Comment{
-		Token: "# TRANSITIVE",
-	}
+func makeTransitiveDep(dep label.Label) *build.StringExpr {
+	expr := &build.StringExpr{Value: dep.String()}
+	expr.Comment().Suffix = append(expr.Comment().Suffix, build.Comment{Token: TransitiveCommentToken})
+	return expr
 }
 
 func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
 	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
 	return comment
+}
+
+// isTransitive returns whether e is marked with a "# TRANSITIVE" comment.
+func isTransitive(e build.Expr) bool {
+	for _, c := range e.Comment().Suffix {
+		text := strings.TrimSpace(c.Token)
+		if text == TransitiveCommentToken {
+			return true
+		}
+	}
+	return false
 }

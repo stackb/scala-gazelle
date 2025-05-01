@@ -179,6 +179,11 @@ func (s *existingScalaRule) sweepTransitive(attrName string, r *rule.Rule, from 
 
 	file := s.pkg.GenerateArgs().File
 
+	// target should build first time, otherwise we can't check accurately.
+	if out, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode != 0 {
+		log.Fatalln("sweep failed (must build cleanly on first attempt): %s", string(out))
+	}
+
 	for i := len(deps.List) - 1; i >= 0; i-- {
 		expr := deps.List[i]
 		switch t := expr.(type) {

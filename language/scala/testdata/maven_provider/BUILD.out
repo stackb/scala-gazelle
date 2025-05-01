@@ -3,6 +3,7 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library")
 # gazelle:scala_rule scala_library implementation @io_bazel_rules_scala//scala:scala.bzl%scala_library
 # gazelle:scala_debug imports dep_label_origin
 # gazelle:resolve_with scala javax.xml._ javax.inject
+# gazelle:scala_keep_unknown_deps true
 
 scala_library(
     name = "app",
@@ -13,7 +14,8 @@ scala_library(
     deps = [
         # junit is required for compilation but we haven't specified
         # that @atlassian-public deps should be managed by the scala-gazelle
-        # extension (so this is left alone despite no # keep directive)
+        # extension (this is left alone despite no # keep directive because of
+        # scala_keep_unknown_deps)
         "@atlassian-public//:junit_junit",
         "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject <filename unknown>)
         "@maven//:xml_apis_xml_apis",  # DIRECT (maven javax.xml Main.scala)

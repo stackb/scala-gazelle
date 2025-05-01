@@ -23,6 +23,8 @@ func ExampleLanguage_KnownDirectives() {
 	// scala_debug
 	// scala_log_level
 	// scala_deps_cleaner
+	// scala_keep_unknown_deps
+	// scala_sweep_transitive_deps
 	// scala_fix_wildcard_imports
 	// scala_generate_build_files
 	// scala_rule
