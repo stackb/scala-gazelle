@@ -1,7 +1,6 @@
 package bazel
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -39,7 +38,7 @@ func ExecCommand(bazelExe, command string, labels ...string) ([]byte, int, error
 	cmd := exec.Command(bazelExe, args...)
 	cmd.Dir = GetBuildWorkspaceDirectory()
 
-	log.Println("🧱", cmd.String())
+	// log.Println("🧱", cmd.String())
 	output, err := cmd.CombinedOutput()
 	exitCode := procutil.CmdExitCode(cmd, err)
 

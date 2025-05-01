@@ -180,6 +180,8 @@ func (s *existingScalaRule) sweepTransitive(attrName string, r *rule.Rule, from 
 	file := s.pkg.GenerateArgs().File
 
 	// target should build first time, otherwise we can't check accurately.
+	log.Println("🧱 transitive sweep:", from)
+
 	if out, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode != 0 {
 		log.Fatalln("sweep failed (must build cleanly on first attempt): %s", string(out))
 	}
@@ -206,9 +208,9 @@ func (s *existingScalaRule) sweepTransitive(attrName string, r *rule.Rule, from 
 			}
 
 			if _, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode == 0 {
-				log.Println("🗑️ transitive junk: ", dep, file.Path)
+				log.Println("- 💩 junk:", dep)
 			} else {
-				// log.Println("👑 transitive keep: ", dep, file.Path)
+				log.Println("- 👑 keep:", dep)
 				deps.List = collections.SliceInsertAt(deps.List, i, expr)
 			}
 		}

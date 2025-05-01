@@ -943,12 +943,6 @@ func depCommentFor(imp *resolver.Import) build.Comment {
 	}
 }
 
-func makeTransitiveDep(dep label.Label) *build.StringExpr {
-	expr := &build.StringExpr{Value: dep.String()}
-	expr.Comment().Suffix = append(expr.Comment().Suffix, build.Comment{Token: TransitiveCommentToken})
-	return expr
-}
-
 func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
 	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
 	return comment
@@ -963,4 +957,10 @@ func isTransitive(e build.Expr) bool {
 		}
 	}
 	return false
+}
+
+func makeTransitiveDep(dep label.Label) *build.StringExpr {
+	expr := &build.StringExpr{Value: dep.String()}
+	expr.Comment().Suffix = append(expr.Comment().Suffix, build.Comment{Token: TransitiveCommentToken})
+	return expr
 }
