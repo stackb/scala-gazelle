@@ -1,6 +1,7 @@
 package scala
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -165,10 +166,6 @@ func getLoggerFilename() string {
 	if name, ok := procutil.LookupEnv(SCALA_GAZELLE_LOG_FILE); ok && len(name) > 0 {
 		return name
 	}
-	if tmpdir, ok := procutil.LookupEnv(TEST_TMPDIR); ok && procutil.DirExists(tmpdir) {
-		return filepath.Join(tmpdir, "scala-gazelle.log")
-	}
-
 	return ""
 }
 
@@ -183,6 +180,11 @@ func setupLogger() (*os.File, zerolog.Logger) {
 	if err != nil {
 		panic("cannot open log file: " + err.Error())
 	}
+	abs, err := filepath.Abs(filename)
+	if err != nil {
+		panic("cannot get absolute path of log file: " + err.Error())
+	}
+	fmt.Fprintf(os.Stdout, "gazelle: writing scala-gazelle log to: %s\n", abs)
 
 	logger := zerolog.New(file).With().Caller().Logger()
 
