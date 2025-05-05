@@ -18,12 +18,12 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/sweep"
 )
 
 type debugAnnotation int
 
 const scalaLangName = "scala"
-const TransitiveCommentToken = "# TRANSITIVE"
 
 const (
 	DebugUnknown        debugAnnotation = 0
@@ -56,17 +56,6 @@ const (
 	//
 	// gazelle:scala_fix_wildcard_imports .scala examples.aeron.api.proto._
 	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
-
-	// Flag to preserve deps if the label is not known to be needed from the
-	// imports (legacy migration mode).
-	//
-	// gazelle:scala_keep_unknown_deps true
-	scalaKeepUnknownDepsDirective = "scala_keep_unknown_deps"
-
-	// Turn on the dep sweeper
-	//
-	// gazelle:scala_sweep_transitive_deps true
-	scalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
 
 	// Configure a scala rule
 	//
@@ -145,8 +134,8 @@ func DirectiveNames() []string {
 		scalaDebugDirective,
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
-		scalaKeepUnknownDepsDirective,
-		scalaSweepTransitiveDepsDirective,
+		sweep.ScalaKeepUnknownDepsDirective,
+		sweep.ScalaSweepTransitiveDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -303,11 +292,11 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 			if err := c.parseScalaRuleDirective(d); err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
-		case scalaKeepUnknownDepsDirective:
+		case sweep.ScalaKeepUnknownDepsDirective:
 			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
 				return err
 			}
-		case scalaSweepTransitiveDepsDirective:
+		case sweep.ScalaSweepTransitiveDepsDirective:
 			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
 				return err
 			}
@@ -418,11 +407,11 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaKeepUnknownDepsDirective, parts)
+		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", sweep.ScalaKeepUnknownDepsDirective, parts)
 	}
 	keepUnknownDeps, err := strconv.ParseBool(parts[0])
 	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnknownDepsDirective, err)
+		return fmt.Errorf("invalid gazelle:%s directive: %v", sweep.ScalaKeepUnknownDepsDirective, err)
 	}
 	c.keepUnknownDeps = keepUnknownDeps
 	return nil
@@ -431,11 +420,11 @@ func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
 func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaSweepTransitiveDepsDirective, parts)
+		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", sweep.ScalaSweepTransitiveDepsDirective, parts)
 	}
 	sweepTransitiveDeps, err := strconv.ParseBool(parts[0])
 	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaSweepTransitiveDepsDirective, err)
+		return fmt.Errorf("invalid gazelle:%s directive: %v", sweep.ScalaSweepTransitiveDepsDirective, err)
 	}
 	c.sweepTransitiveDeps = sweepTransitiveDeps
 	return nil
@@ -798,9 +787,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
 			if c.ShouldSweepTransitiveDeps() {
-				dst.List = append(dst.List, makeTransitiveDep(dep))
+				dst.List = append(dst.List, sweep.MakeTransitiveDep(dep))
 			} else {
-				if isTransitive(expr) {
+				if sweep.IsTransitiveDep(expr) {
 					dst.List = append(dst.List, expr)
 				} else {
 					// one more caveat: preserve unmarked deps in legacy mode
@@ -946,21 +935,4 @@ func depCommentFor(imp *resolver.Import) build.Comment {
 func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
 	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
 	return comment
-}
-
-// isTransitive returns whether e is marked with a "# TRANSITIVE" comment.
-func isTransitive(e build.Expr) bool {
-	for _, c := range e.Comment().Suffix {
-		text := strings.TrimSpace(c.Token)
-		if text == TransitiveCommentToken {
-			return true
-		}
-	}
-	return false
-}
-
-func makeTransitiveDep(dep label.Label) *build.StringExpr {
-	expr := &build.StringExpr{Value: dep.String()}
-	expr.Comment().Suffix = append(expr.Comment().Suffix, build.Comment{Token: TransitiveCommentToken})
-	return expr
 }

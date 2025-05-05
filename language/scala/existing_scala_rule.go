@@ -6,16 +6,14 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
-	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	"github.com/stackb/scala-gazelle/pkg/bazel"
-	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/sweep"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -81,11 +79,6 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 			log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
 			return nil
 		}
-		// rule has no srcs.  This is OK for binary rules, sometimes they only
-		// have a main_class.
-		// if !s.isBinary {
-		// 	return nil // no need to print a warning
-		// }
 	}
 	if scalaRule == nil {
 		log.Panicln("scalaRule should not be nil!")
@@ -157,71 +150,10 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	if sc.ShouldSweepTransitiveDeps() {
-		if err := s.sweepTransitive("deps", rctx.Rule, rctx.From); err != nil {
+		if err := sweep.TransitiveAttr("deps", rctx.Rule, s.pkg.GenerateArgs().File, rctx.From); err != nil {
 			log.Panicf("transitive sweep failed: %v", err)
 		}
 	}
-
-}
-
-// sweepTransitive iterates through deps marked "TRANSITIVE" and removes them if
-// the target still builds without it.
-func (s *existingScalaRule) sweepTransitive(attrName string, r *rule.Rule, from label.Label) error {
-	expr := r.Attr(attrName)
-	if expr == nil {
-		return nil
-	}
-
-	deps, isList := expr.(*build.ListExpr)
-	if !isList {
-		return nil // some other condition we can't deal with
-	}
-
-	file := s.pkg.GenerateArgs().File
-
-	// target should build first time, otherwise we can't check accurately.
-	log.Println("🧱 transitive sweep:", from)
-
-	if out, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode != 0 {
-		log.Fatalln("sweep failed (must build cleanly on first attempt): %s", string(out))
-	}
-
-	for i := len(deps.List) - 1; i >= 0; i-- {
-		expr := deps.List[i]
-		switch t := expr.(type) {
-		case *build.StringExpr:
-			if len(t.Comments.Suffix) != 1 {
-				continue
-			}
-			if t.Comments.Suffix[0].Token != "# TRANSITIVE" {
-				continue
-			}
-
-			dep, err := label.Parse(t.Value)
-			if err != nil {
-				return err
-			}
-			deps.List = collections.SliceRemoveIndex(deps.List, i)
-
-			if err := file.Save(file.Path); err != nil {
-				return err
-			}
-
-			if _, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode == 0 {
-				log.Println("- 💩 junk:", dep)
-			} else {
-				log.Println("- 👑 keep:", dep)
-				deps.List = collections.SliceInsertAt(deps.List, i, expr)
-			}
-		}
-
-	}
-
-	if err := file.Save(file.Path); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {
