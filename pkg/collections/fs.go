@@ -3,11 +3,43 @@ package collections
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+// CopyFile is a convenience function to copy file A to B.
+func CopyFile(srcPath, dstPath string) error {
+	// Open the source file
+	src, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Create the destination file
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// Copy the contents from source to destination
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
+
+	// Ensure all data is written to the destination
+	err = dst.Sync()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // ListFiles is a convenience debugging function to log the files under a given dir.
 func ListFiles(dir string) error {

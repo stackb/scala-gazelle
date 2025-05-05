@@ -2,10 +2,12 @@ package scala
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
@@ -149,9 +151,18 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		sc.Exports(exports, rctx.Rule, "exports", rctx.From)
 	}
 
-	if sc.ShouldSweepTransitiveDeps() {
-		if err := sweep.TransitiveAttr("deps", rctx.Rule, s.pkg.GenerateArgs().File, rctx.From); err != nil {
-			log.Panicf("transitive sweep failed: %v", err)
+	if sc.ShouldSweepTransitive("deps") {
+		if !sweep.HasTransitiveRuleComment(rctx.Rule) {
+			if junk, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
+				log.Printf("warning: transitive sweep failed: %v", err)
+			} else {
+				if len(junk) > 0 {
+					log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
+				}
+			}
+			rctx.Rule.AddComment(sweep.TransitiveCommentToken)
+		} else {
+			log.Println("> transitive sweep skipped (already done):", rctx.From)
 		}
 	}
 }
@@ -168,4 +179,8 @@ func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {
 		})
 	}
 	return
+}
+
+func formatBuildozerRemoveDeps(from label.Label, junk []string) string {
+	return fmt.Sprintf("buildozer 'remove deps %s' %s", strings.Join(junk, " "), from.String())
 }
