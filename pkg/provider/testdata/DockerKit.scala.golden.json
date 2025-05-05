@@ -3,7 +3,7 @@
   "kind": "scala_library",
   "files": [
     {
-      "filename": "testdata/DockerKit.scala",
+      "filename": "pkg/provider/testdata/DockerKit.scala",
       "imports": [
         "com.github.dockerjava.api.DockerClient",
         "com.github.dockerjava.api.async.ResultCallback",

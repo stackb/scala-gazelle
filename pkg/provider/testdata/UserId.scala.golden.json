@@ -3,7 +3,7 @@
   "kind": "scala_library",
   "files": [
     {
-      "filename": "testdata/UserId.scala",
+      "filename": "pkg/provider/testdata/UserId.scala",
       "packages": [
         "common.types"
       ],

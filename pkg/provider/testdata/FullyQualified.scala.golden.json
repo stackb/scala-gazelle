@@ -3,7 +3,7 @@
   "kind": "scala_library",
   "files": [
     {
-      "filename": "testdata/FullyQualified.scala",
+      "filename": "pkg/provider/testdata/FullyQualified.scala",
       "imports": [
         "sk.ygor.stackoverflow.q53326545.macros.ExampleMacro.methodName"
       ],

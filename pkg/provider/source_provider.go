@@ -7,7 +7,6 @@ import (
 	"log"
 	"path/filepath"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
@@ -163,7 +162,6 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 		Label: from.String(),
 		Kind:  kind,
 		Files: files,
-		// ParseTimeMillis: t2.Milliseconds(),
 	}, nil
 }
 
@@ -171,14 +169,16 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 	// haveFiles is the list of haveFiles we already have from pre-computed scalaFiles
 	var haveFiles []*sppb.File
 
-	needFilenames := make([]string, 0, len(srcs))
+	// needFilenames is a mapping from the absolute to relative path
+	needFilenames := make(map[string]string)
 	for _, src := range srcs {
 		rel := filepath.Join(from.Pkg, src)
 		if file, ok := r.scalaFiles[rel]; ok {
 			haveFiles = append(haveFiles, file)
 			// log.Println("✅ have:", rel)
 		} else {
-			needFilenames = append(needFilenames, filepath.Join(dir, src))
+			abs := filepath.Join(dir, src)
+			needFilenames[abs] = rel
 		}
 	}
 	if len(needFilenames) == 0 {
@@ -193,8 +193,13 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 
 	r.logger.Debug().Msgf("⭕ need to parse: %v", needFilenames)
 
+	filenames := make([]string, 0, len(needFilenames))
+	for abs := range needFilenames {
+		filenames = append(filenames, abs)
+	}
+	sort.Strings(filenames)
 	response, err := r.parser.Parse(context.Background(), &sppb.ParseRequest{
-		Filenames: needFilenames,
+		Filenames: filenames,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("parse error: %v", err)
@@ -208,12 +213,18 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 		log.Printf("Parsed %s%%%s (%d files, %v)", from, kind, len(needFilenames), t2)
 	}
 
-	// check for errors and remove dir prefixes
+	// check for errors and remove dir prefixes.  haveFiles (files thaat come
+	// pre-parsed) are workspace-relative.  Ensure that the files we just parsed
+	// are also workspace-relative such that they sort similarly.
 	for _, file := range response.Files {
 		if file.Error != "" {
 			return nil, fmt.Errorf("%s parse error: %s", file.Filename, file.Error)
 		}
-		file.Filename = strings.TrimPrefix(strings.TrimPrefix(file.Filename, dir), "/")
+		rel, ok := needFilenames[file.Filename]
+		if !ok {
+			panic("failed to map parsed file (having absolute path) back to relative path: this is a bug: " + file.Filename)
+		}
+		file.Filename = rel
 	}
 
 	return append(haveFiles, response.Files...), nil
