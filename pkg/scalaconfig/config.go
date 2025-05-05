@@ -22,8 +22,10 @@ import (
 
 type debugAnnotation int
 
-const scalaLangName = "scala"
-const TransitiveCommentToken = "# TRANSITIVE"
+const (
+	scalaLangName          = "scala"
+	TransitiveCommentToken = "# TRANSITIVE"
+)
 
 const (
 	DebugUnknown        debugAnnotation = 0
@@ -628,9 +630,12 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
-// ShouldSweepTransitiveDeps determines whether non-managed deps (not generated, and not
-// marked with # keep) in the current package should be kept.
-func (c *Config) ShouldSweepTransitiveDeps() bool {
+// ShouldSweepTransitive determines whether non-managed deps (not generated, and
+// not marked with # keep) in the current package should be kept.
+func (c *Config) ShouldSweepTransitive(attrName string) bool {
+	if attrName != "deps" {
+		return false
+	}
 	return c.sweepTransitiveDeps
 }
 
@@ -797,8 +802,12 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if c.ShouldSweepTransitiveDeps() {
-				dst.List = append(dst.List, makeTransitiveDep(dep))
+			if c.ShouldSweepTransitive(attrName) {
+				// set as TRANSITIVE comment for sweeping
+				if _, ok := expr.(*build.StringExpr); ok {
+					expr.Comment().Suffix = []build.Comment{{Token: TransitiveCommentToken}}
+				}
+				dst.List = append(dst.List, expr)
 			} else {
 				if isTransitive(expr) {
 					dst.List = append(dst.List, expr)
@@ -957,10 +966,4 @@ func isTransitive(e build.Expr) bool {
 		}
 	}
 	return false
-}
-
-func makeTransitiveDep(dep label.Label) *build.StringExpr {
-	expr := &build.StringExpr{Value: dep.String()}
-	expr.Comment().Suffix = append(expr.Comment().Suffix, build.Comment{Token: TransitiveCommentToken})
-	return expr
 }

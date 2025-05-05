@@ -80,9 +80,6 @@ scala_files = rule(
             doc = "list of child scala_files rules to be merged",
             providers = [ScalaSourceInfo],
         ),
-        "kinds": attr.string_list(
-            doc = "list of file kinds (for scala_fileset)",
-        ),
         "_merger": attr.label(
             default = Label("@build_stack_scala_gazelle//cmd/scalafilemerge"),
             cfg = "exec",
