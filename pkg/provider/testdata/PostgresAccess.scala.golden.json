@@ -3,7 +3,7 @@
   "kind": "scala_library",
   "files": [
     {
-      "filename": "testdata/PostgresAccess.scala",
+      "filename": "pkg/provider/testdata/PostgresAccess.scala",
       "packages": [
         "auth.dao"
       ],

@@ -34,7 +34,6 @@ func (tc *testCase) Run(name string, t *testing.T) {
 		env := append(tc.env,
 			"SCALA_GAZELLE_SHOW_PROGRESS=0",
 			"SCALA_GAZELLE_SHOW_COVERAGE=0",
-			fmt.Sprintf("SCALA_GAZELLE_LOG_FILE=%s/scala-gazelle.log", dir),
 		)
 		if !tc.skipCleanup {
 			defer cleanup()

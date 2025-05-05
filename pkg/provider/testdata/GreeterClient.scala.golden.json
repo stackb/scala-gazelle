@@ -3,7 +3,7 @@
   "kind": "scala_library",
   "files": [
     {
-      "filename": "testdata/GreeterClient.scala",
+      "filename": "pkg/provider/testdata/GreeterClient.scala",
       "imports": [
         "akka.Done",
         "akka.NotUsed",

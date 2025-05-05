@@ -234,11 +234,12 @@ func (s *scalaPackage) GeneratedRules() (rules []*rule.Rule) {
 // ParseRule implements part of the scalarule.Package interface.
 func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalaRule scalarule.Rule, err error) {
 	dir := filepath.Join(s.repoRootDir(), s.args.Rel)
+
+	// collect and filter .scala files from the `srcs` attribute.
 	srcs, err := glob.CollectFilenames(s.args.File, dir, r.Attr(attrName))
 	if err != nil {
 		return nil, err
 	}
-
 	scalaSrcs := make([]string, 0, len(srcs))
 	for _, src := range srcs {
 		if !strings.HasSuffix(src, ".scala") {
