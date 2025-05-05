@@ -40,6 +40,11 @@ func (sl *scalaLang) onEnd() {
 			log.Fatalf("provider.OnEnd transition error %s: %v", provider.Name(), err)
 		}
 	}
+	for _, pkg := range sl.packages {
+		if err := pkg.OnEnd(); err != nil {
+			log.Fatalf("pkg.OnEnd transition error %s: %v", pkg.args.Rel, err)
+		}
+	}
 
 	sl.dumpResolvedImportMap()
 	sl.reportCoverage(log.Printf)

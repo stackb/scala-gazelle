@@ -12,11 +12,10 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bazelbuild/buildtools/build"
 
-	"github.com/stackb/scala-gazelle/pkg/bazel"
-	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/sweep"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -82,11 +81,6 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 			log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
 			return nil
 		}
-		// rule has no srcs.  This is OK for binary rules, sometimes they only
-		// have a main_class.
-		// if !s.isBinary {
-		// 	return nil // no need to print a warning
-		// }
 	}
 	if scalaRule == nil {
 		log.Panicln("scalaRule should not be nil!")
@@ -158,110 +152,19 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	if sc.ShouldSweepTransitive("deps") {
-		if !hasTransitiveComment(rctx.Rule) {
-			if junk, err := s.sweepTransitiveAttr("deps", rctx.Rule, rctx.From); err != nil {
+		if !sweep.HasTransitiveRuleComment(rctx.Rule) {
+			if junk, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
 				log.Printf("warning: transitive sweep failed: %v", err)
 			} else {
 				if len(junk) > 0 {
 					log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
 				}
 			}
-			rctx.Rule.AddComment(scalaconfig.TransitiveCommentToken)
+			rctx.Rule.AddComment(sweep.TransitiveCommentToken)
 		} else {
 			log.Println("> transitive sweep skipped (already done):", rctx.From)
 		}
 	}
-}
-
-// sweepTransitiveDeps iterates through deps marked "UNKNOWN" and removes them
-// if the target still builds without it.
-func (s *existingScalaRule) sweepTransitiveAttr(attrName string, r *rule.Rule, from label.Label) ([]string, error) {
-	// get the File to which this Rule belongs
-	file := s.pkg.GenerateArgs().File
-
-	return s.sweepTransitive(attrName, file, r, from)
-}
-
-// sweepTransitive iterates through deps marked "UNKNOWN" and removes them if
-// the target still builds without it.
-func (s *existingScalaRule) sweepTransitive(attrName string, file *rule.File, r *rule.Rule, from label.Label) (junk []string, err error) {
-	expr := r.Attr(attrName)
-	if expr == nil {
-		return nil, nil
-	}
-
-	deps, isList := expr.(*build.ListExpr)
-	if !isList {
-		return nil, nil // some other condition we can't deal with
-	}
-
-	// check that the deps have at least one unknown dep
-	var hasTransitiveDeps bool
-	for _, expr := range deps.List {
-		if str, ok := expr.(*build.StringExpr); ok {
-			for _, suffix := range str.Comment().Suffix {
-				if suffix.Token == scalaconfig.TransitiveCommentToken {
-					hasTransitiveDeps = true
-					break
-				}
-			}
-		}
-	}
-	if !hasTransitiveDeps {
-		return nil, nil // nothing to do
-	}
-
-	// target should build first time, otherwise we can't check accurately.
-	log.Println("🧱 transitive sweep:", from)
-
-	if out, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode != 0 {
-		log.Fatalln("sweep failed (must build cleanly on first attempt): %s", string(out))
-	}
-
-	// iterate the list backwards
-	for i := len(deps.List) - 1; i >= 0; i-- {
-		expr := deps.List[i]
-
-		// look for transitive string dep expressions
-		dep, ok := expr.(*build.StringExpr)
-		if !ok {
-			continue
-		}
-		var isTransitiveDep bool
-		for _, suffix := range dep.Comment().Suffix {
-			if suffix.Token == scalaconfig.TransitiveCommentToken {
-				isTransitiveDep = true
-				break
-			}
-		}
-		if !isTransitiveDep {
-			continue
-		}
-
-		// reference of original list in case it does not build
-		original := deps.List
-		// reset deps with this one spliced out
-		deps.List = collections.SliceRemoveIndex(deps.List, i)
-		// save file to reflect change
-		if err := file.Save(file.Path); err != nil {
-			return nil, err
-		}
-		// see if it still builds
-		if _, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode == 0 {
-			log.Println("- 💩 junk:", dep.Value)
-			junk = append(junk, dep.Value)
-		} else {
-			log.Println("- 👑 keep:", dep.Value)
-			deps.List = original
-		}
-	}
-
-	// final save with possible last change
-	if err := file.Save(file.Path); err != nil {
-		return nil, err
-	}
-
-	return
 }
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {
@@ -280,13 +183,4 @@ func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {
 
 func formatBuildozerRemoveDeps(from label.Label, junk []string) string {
 	return fmt.Sprintf("buildozer 'remove deps %s' %s", strings.Join(junk, " "), from.String())
-}
-
-func hasTransitiveComment(r *rule.Rule) bool {
-	for _, before := range r.Comments() {
-		if before == scalaconfig.TransitiveCommentToken {
-			return true
-		}
-	}
-	return false
 }

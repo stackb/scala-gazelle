@@ -10,6 +10,7 @@ go_library(
         "//pkg/collections",
         "//pkg/resolver",
         "//pkg/scalarule",
+        "//pkg/sweep",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//resolve:go_default_library",

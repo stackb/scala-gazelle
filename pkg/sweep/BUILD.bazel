@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+go_library(
+    name = "sweep",
+    srcs = ["sweep.go"],
+    importpath = "github.com/stackb/scala-gazelle/pkg/sweep",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//pkg/bazel",
+        "//pkg/collections",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+    ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "sweep.go",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -49,6 +49,7 @@ go_library(
         "//pkg/scalaconfig",
         "//pkg/scalafiles",
         "//pkg/scalarule",
+        "//pkg/sweep",
         "//pkg/wildcardimport",
         "@bazel_gazelle//config:go_default_library",
         "@bazel_gazelle//label:go_default_library",
