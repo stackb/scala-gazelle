@@ -42,6 +42,8 @@ message File {
     // tree is a JSON string representing the parse tree.  This field is only
     // populated when specifically requested during parsing.
     string tree = 14;
+    // sha256 is the sha256 hash value of the file contents
+    string sha256 = 15;
 }
 
 // ClassList represents a set of files.

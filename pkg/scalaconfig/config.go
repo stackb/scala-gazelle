@@ -136,6 +136,7 @@ func DirectiveNames() []string {
 		scalaDepsCleanerDirective,
 		sweep.ScalaKeepUnknownDepsDirective,
 		sweep.ScalaSweepTransitiveDepsDirective,
+		sweep.ScalaFixDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -159,6 +160,7 @@ type Config struct {
 	generateBuildFiles     bool
 	keepUnknownDeps        bool
 	sweepTransitiveDeps    bool
+	fixDeps                bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
 }
@@ -207,6 +209,7 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 	clone.generateBuildFiles = c.generateBuildFiles
 	clone.keepUnknownDeps = c.keepUnknownDeps
 	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
+	clone.fixDeps = c.fixDeps
 
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
@@ -293,12 +296,22 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
 		case sweep.ScalaKeepUnknownDepsDirective:
-			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
+			if value, err := parseBoolDirective(d); err != nil {
 				return err
+			} else {
+				c.keepUnknownDeps = value
+			}
+		case sweep.ScalaFixDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
+				return err
+			} else {
+				c.fixDeps = value
 			}
 		case sweep.ScalaSweepTransitiveDepsDirective:
-			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
+			if value, err := parseBoolDirective(d); err != nil {
 				return err
+			} else {
+				c.sweepTransitiveDeps = value
 			}
 		case scalaFixWildcardImportDirective:
 			c.parseFixWildcardImport(d)
@@ -402,32 +415,6 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 		}
 		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
 	}
-}
-
-func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", sweep.ScalaKeepUnknownDepsDirective, parts)
-	}
-	keepUnknownDeps, err := strconv.ParseBool(parts[0])
-	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", sweep.ScalaKeepUnknownDepsDirective, err)
-	}
-	c.keepUnknownDeps = keepUnknownDeps
-	return nil
-}
-
-func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", sweep.ScalaSweepTransitiveDepsDirective, parts)
-	}
-	sweepTransitiveDeps, err := strconv.ParseBool(parts[0])
-	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", sweep.ScalaSweepTransitiveDepsDirective, err)
-	}
-	c.sweepTransitiveDeps = sweepTransitiveDeps
-	return nil
 }
 
 func (c *Config) parseResolveFileSymbolNames(d rule.Directive) {
@@ -624,6 +611,11 @@ func (c *Config) ShouldSweepTransitive(attrName string) bool {
 		return false
 	}
 	return c.sweepTransitiveDeps
+}
+
+// ShouldFixDeps determines whether dep fixer should be applied.
+func (c *Config) ShouldFixDeps() bool {
+	return c.fixDeps
 }
 
 // shouldKeepUnknownDeps determines whether non-managed deps should be
@@ -909,6 +901,18 @@ func parseAnnotation(val string) debugAnnotation {
 	default:
 		return DebugUnknown
 	}
+}
+
+func parseBoolDirective(d rule.Directive) (bool, error) {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		return false, fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", d.Key, parts)
+	}
+	value, err := strconv.ParseBool(parts[0])
+	if err != nil {
+		return false, fmt.Errorf("invalid gazelle:%s directive: %v", d.Key, err)
+	}
+	return value, nil
 }
 
 func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {

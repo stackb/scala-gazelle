@@ -200,6 +200,13 @@ func extract(parser *parser.ScalametaParser, dir string, sourceFiles []string) (
 			return nil, fmt.Errorf(file.Error)
 		}
 		file.Filename = filenames[file.Filename]
+		if false {
+			sha256, err := collections.FileSha256(file.Filename)
+			if err != nil {
+				return nil, err
+			}
+			file.Sha256 = sha256
+		}
 	}
 
 	return response.Files, nil
