@@ -15,7 +15,6 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
-	"github.com/stackb/scala-gazelle/pkg/sweep"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -75,7 +74,7 @@ func (s *existingScalaRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scala
 
 // ResolveRule implements the RuleResolver interface.
 func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
-	scalaRule, err := pkg.ParseRule(r, "srcs")
+	scalaRule, err := pkg.NewScalaRule(r)
 	if err != nil {
 		if err != ErrRuleHasNoSrcs {
 			log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
@@ -86,8 +85,9 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 		log.Panicln("scalaRule should not be nil!")
 	}
 
+	// stash the scalaRule instance as the GazelleImportsKey so that it triggers
+	// the resolve phase.
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
-	r.SetPrivateAttr("_scala_files", scalaRule.Files())
 
 	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinary, s.isLibrary, s.isTest}
 }
@@ -131,40 +131,50 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	}
 
 	sc := scalaconfig.Get(rctx.Config)
-	imports := scalaRule.ResolveImports(rctx)
-	sc.Imports(imports, rctx.Rule, "deps", rctx.From)
 
-	commentsSrcs := rctx.Rule.AttrComments("srcs")
-	if commentsSrcs != nil {
-		commentsSrcs.Before = nil
-		if sc.ShouldAnnotateImports() {
-			scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
-		}
-		if sc.ShouldAnnotateRule() {
-			ruleComments := makeRuleComments(scalaRule.pb)
-			commentsSrcs.Before = append(commentsSrcs.Before, ruleComments...)
-		}
-	}
+	resolveClosure := func() {
+		imports := scalaRule.ResolveImports(rctx)
 
-	if s.isLibrary {
-		exports := scalaRule.ResolveExports(rctx)
-		sc.Exports(exports, rctx.Rule, "exports", rctx.From)
-	}
+		sc.MergeDepsAttr(imports, rctx.Rule, "deps", rctx.From)
 
-	if sc.ShouldSweepTransitive("deps") {
-		if !sweep.HasTransitiveRuleComment(rctx.Rule) {
-			if junk, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
-				log.Printf("warning: transitive sweep failed: %v", err)
-			} else {
-				if len(junk) > 0 {
-					log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
-				}
+		commentsSrcs := rctx.Rule.AttrComments("srcs")
+		if commentsSrcs != nil {
+			commentsSrcs.Before = nil
+			if sc.ShouldAnnotateImports() {
+				scalaconfig.AnnotateImports(imports, commentsSrcs, "import: ")
 			}
-			rctx.Rule.AddComment(sweep.TransitiveCommentToken)
-		} else {
-			log.Println("> transitive sweep skipped (already done):", rctx.From)
+			if sc.ShouldAnnotateRule() {
+				ruleComments := makeRuleComments(scalaRule.pb)
+				commentsSrcs.Before = append(commentsSrcs.Before, ruleComments...)
+			}
 		}
+
+		if s.isLibrary {
+			exports := scalaRule.ResolveExports(rctx)
+			sc.MergeDepsAttr(exports, rctx.Rule, "exports", rctx.From)
+		}
+
+		// if sc.ShouldSweepTransitive("deps") {
+		// 	if !sweep.HasTransitiveRuleComment(rctx.Rule) {
+		// 		if junk, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
+		// 			log.Printf("warning: transitive sweep failed: %v", err)
+		// 		} else {
+		// 			if len(junk) > 0 {
+		// 				log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
+		// 			}
+		// 		}
+		// 		rctx.Rule.AddComment(sweep.TransitiveCommentToken)
+		// 	} else {
+		// 		log.Println("> transitive sweep skipped (already done):", rctx.From)
+		// 	}
+		// }
 	}
+
+	// wow... this cannot be good programming practive, but I need to store the
+	// ability to re-resolve dependencies, so stashing this in the rule...
+	rctx.Rule.SetPrivateAttr("_scala_resolve_closure", resolveClosure)
+
+	resolveClosure()
 }
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {

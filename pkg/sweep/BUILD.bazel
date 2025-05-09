@@ -10,13 +10,17 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/sweep",
     visibility = ["//visibility:public"],
     deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/autokeep",
         "//pkg/bazel",
         "//pkg/collections",
         "//pkg/procutil",
-        "@bazel_gazelle//config:go_default_library",
+        "//pkg/resolver",
+        "//pkg/scalarule",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_pcj_mobyprogress//:mobyprogress",
     ],
 )
 

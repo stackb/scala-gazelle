@@ -23,7 +23,10 @@ import (
 
 type debugAnnotation int
 
-const scalaLangName = "scala"
+const (
+	// scalaLangName is the scala language name
+	scalaLangName = "scala"
+)
 
 const (
 	DebugUnknown        debugAnnotation = 0
@@ -692,15 +695,8 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
-func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(imports, r, attrName, from)
-}
-
-func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(exports, r, attrName, from)
-}
-
-func (c *Config) ruleAttrMergeDeps(
+// MergeDepsAttr takes an importMap and the rule, and merges the imports into the attr.
+func (c *Config) MergeDepsAttr(
 	imports resolver.ImportMap,
 	r *rule.Rule,
 	attrName string,
@@ -730,9 +726,9 @@ func (c *Config) ruleAttrMergeDeps(
 	}
 }
 
-// mergeDeps filters out a `deps` list.  Extries are removed from the
-// list if they can be parsed as dependency labels that have a provider.  Others
-// types of expressions are left as-is.
+// mergeDeps filters out a `deps` list.  Extries are removed from the list if
+// they can be parsed as dependency labels that have a provider.  Others types
+// of expressions are left as-is.
 func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue != nil {

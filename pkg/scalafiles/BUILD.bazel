@@ -10,7 +10,6 @@ go_library(
     importpath = "github.com/stackb/scala-gazelle/pkg/scalafiles",
     visibility = ["//visibility:public"],
     deps = [
-        "//build/stack/gazelle/scala/parse",
         "//pkg/collections",
         "//pkg/scalarule",
         "@bazel_gazelle//config:go_default_library",

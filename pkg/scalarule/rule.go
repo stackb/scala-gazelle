@@ -10,6 +10,8 @@ import (
 
 // Rule represents a collection of files with their imports and exports.
 type Rule interface {
+	// Parse evaluates the source glob and populates the files state
+	ParseSrcs() error
 	// Exports returns the list of provided symbols that are importable by other
 	// rules.
 	Provides() []resolve.ImportSpec
@@ -17,6 +19,6 @@ type Rule interface {
 	Imports(from label.Label) resolver.ImportMap
 	// Import returns the list of required exports for the rule.
 	Exports(from label.Label) resolver.ImportMap
-	// Files returns the list of files in the Rule
-	Files() []*sppb.File
+	// Rule returns the protobuf representation of the rule
+	Rule() *sppb.Rule
 }

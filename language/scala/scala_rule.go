@@ -16,6 +16,8 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/bazel"
 	"github.com/stackb/scala-gazelle/pkg/collections"
+	"github.com/stackb/scala-gazelle/pkg/glob"
+	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
@@ -33,14 +35,21 @@ const (
 )
 
 type scalaRuleContext struct {
+	repoRoot string
 	// the parent config
 	scalaConfig *scalaconfig.Config
 	// rule (lowercase) is the parent gazelle rule
 	rule *rule.Rule
+	// file to which the rule belongs
+	file *rule.File
 	// scope is a map of symbols that are outside the rule.
 	scope resolver.Scope
 	// the global import resolver
 	resolver resolver.SymbolResolver
+	// the global scope registry
+	knownScopes resolver.KnownScopeRegistry
+	// instance of the scala rule parser
+	parser parser.Parser
 }
 
 type scalaRule struct {
@@ -48,10 +57,10 @@ type scalaRule struct {
 	logger zerolog.Logger
 	// Rule is the pb representation
 	pb *sppb.Rule
-	// files is a list of files, copied from pb.Files but sorted again
-	files []*sppb.File
 	// ctx is the rule context
 	ctx *scalaRuleContext
+	// from is the label for the rule
+	from label.Label
 	// exports keyed by their import
 	exports map[string]resolve.ImportSpec
 }
@@ -64,32 +73,59 @@ func init() {
 	}
 }
 
-func newScalaRule(
-	logger zerolog.Logger,
-	ctx *scalaRuleContext,
-	rule *sppb.Rule,
-) *scalaRule {
-	scalaRule := &scalaRule{
+func newScalaRule(logger zerolog.Logger, ctx *scalaRuleContext, from label.Label) *scalaRule {
+	return &scalaRule{
 		logger:  logger,
-		pb:      rule,
-		files:   rule.Files,
 		ctx:     ctx,
+		from:    from,
 		exports: make(map[string]resolve.ImportSpec),
+		pb: &sppb.Rule{
+			Label: from.String(),
+			Kind:  ctx.rule.Kind(),
+		},
+	}
+}
+
+// ParseSrcs implements part of the scalarule.Rule interface
+func (r *scalaRule) ParseSrcs() error {
+	dir := filepath.Join(r.ctx.repoRoot, r.from.Pkg)
+
+	// collect and filter .scala files from the `srcs` attribute.
+	srcs, err := glob.CollectFilenames(r.ctx.file, dir, r.ctx.rule.Attr("srcs"))
+	if err != nil {
+		return err
+	}
+	scalaSrcs := make([]string, 0, len(srcs))
+	for _, src := range srcs {
+		if !strings.HasSuffix(src, ".scala") {
+			continue
+		}
+		scalaSrcs = append(scalaSrcs, src)
+	}
+	if len(scalaSrcs) == 0 {
+		err = ErrRuleHasNoSrcs
 	}
 
-	sort.Slice(scalaRule.files, func(i, j int) bool {
-		a := scalaRule.files[i]
-		b := scalaRule.files[j]
-		return a.Filename < b.Filename
-	})
+	if len(scalaSrcs) > 0 {
+		rule, err := r.ctx.parser.ParseScalaRule(r.ctx.rule.Kind(), r.from, dir, scalaSrcs...)
+		if err != nil {
+			r.logger.Warn().Err(err).Msg("parse error")
+			return err
+		}
+		// TODO(pcj): use the pb.struct as-is, or just copy over the files?
+		r.pb.Files = rule.Files
+		r.pb.Sha256 = rule.Sha256
+	}
 
-	if !isBinaryRule(ctx.rule.Kind()) {
-		for _, file := range scalaRule.files {
-			scalaRule.putExports(file)
+	r.logger.Debug().Msgf("%d scala files collected", len(scalaSrcs))
+
+	if !isBinaryRule(r.ctx.rule.Kind()) {
+		for _, file := range r.pb.Files {
+			r.putExports(file)
 		}
 	}
 
-	return scalaRule
+	return nil
 }
 
 // ResolveExports performs symbol resolution for exports of the rule.
@@ -166,13 +202,13 @@ func (r *scalaRule) Imports(from label.Label) resolver.ImportMap {
 	}
 
 	// direct
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		r.fileImports(imports, file, from)
 	}
 
 	// semantic add in semantic imports after direct ones to minimize the delta
 	// between running gazelle with and without semanticdb info.
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		r.fileSemanticImports(imports, file, from)
 	}
 
@@ -200,7 +236,7 @@ func (r *scalaRule) Imports(from label.Label) resolver.ImportMap {
 func (r *scalaRule) Exports(from label.Label) resolver.ImportMap {
 	exports := resolver.NewImportMap()
 
-	for _, file := range r.files {
+	for _, file := range r.pb.Files {
 		r.fileExports(file, exports, from)
 	}
 
@@ -348,6 +384,9 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 		r.logger.Print(r.infof("%s scope:\n%s", file.Filename, scope.String()))
 	}
 
+	// register the scope under workspace-relative path
+	r.ctx.knownScopes.PutKnownScope(file.Filename, scope)
+
 	// resolve extends clauses in the file.  While these are probably duplicated
 	// in the 'Names' slice, do it anyway.
 	tokens := extendsKeysSorted(file.Extends)
@@ -388,7 +427,12 @@ func (r *scalaRule) fileImports(imports resolver.ImportMap, file *sppb.File, fro
 
 // Files implements part of the scalarule.Rule interface.
 func (r *scalaRule) Files() []*sppb.File {
-	return r.files
+	return r.pb.Files
+}
+
+// Rule implements part of the scalarule.Rule interface.
+func (r *scalaRule) Rule() *sppb.Rule {
+	return r.pb
 }
 
 // Provides implements part of the scalarule.Rule interface.

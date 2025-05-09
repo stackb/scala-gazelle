@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"github.com/bazelbuild/bazel-gazelle/label"
-	"github.com/bazelbuild/buildtools/build"
 )
 
 // ImportLabel is a pair of (Import,Label)
@@ -11,16 +10,17 @@ type ImportLabel struct {
 	Label  label.Label
 }
 
+// ImportMap is a map-like entity that is capable of producing a list of
+// dependencies relative to a Label.
 type ImportMap interface {
 	Keys() []string
 	Values() []*Import
 	Deps(from label.Label) map[label.Label]*ImportLabel
 	Put(imp *Import)
 	Get(name string) (*Import, bool)
-	Annotate(comments *build.Comments, accept func(imp *Import) bool)
 }
 
-// OrderedImportMap is a map if imports keyed by the import string.
+// OrderedImportMap is a map of imports keyed by the import string.
 type OrderedImportMap struct {
 	values []*Import
 	has    map[string]bool
@@ -107,13 +107,4 @@ func (imports *OrderedImportMap) Put(imp *Import) {
 	}
 	imports.has[imp.Imp] = true
 	imports.values = append(imports.values, imp)
-}
-
-func (imports *OrderedImportMap) Annotate(comments *build.Comments, accept func(imp *Import) bool) {
-	for _, imp := range imports.values {
-		if !accept(imp) {
-			continue
-		}
-		comments.Before = append(comments.Before, build.Comment{Token: "# " + imp.String()})
-	}
 }

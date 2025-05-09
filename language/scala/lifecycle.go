@@ -23,12 +23,6 @@ func (sl *scalaLang) onResolve() {
 	} else {
 		sl.globalScope = scalaScope
 	}
-
-	if sl.cacheFileFlagValue != "" {
-		if err := sl.writeScalaRuleCacheFile(); err != nil {
-			log.Fatalf("failed to write cache: %v", err)
-		}
-	}
 }
 
 // onEnd is called when the last rule has been resolved.
@@ -46,6 +40,7 @@ func (sl *scalaLang) onEnd() {
 		}
 	}
 
+	sl.repair()
 	sl.dumpResolvedImportMap()
 	sl.reportCoverage(log.Printf)
 	sl.stopCpuProfiling()

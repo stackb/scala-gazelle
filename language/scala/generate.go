@@ -23,10 +23,6 @@ func (sl *scalaLang) GenerateRules(args language.GenerateArgs) (result language.
 		return
 	}
 
-	if sl.wantProgress && sl.cache.PackageCount > 0 {
-		writeGenerateProgress(sl.progress, len(sl.packages), int(sl.cache.PackageCount))
-	}
-
 	logger := sl.logger.With().Str("rel", args.Rel).Logger()
 	pkg := newScalaPackage(logger, args, sc, sl.ruleProviderRegistry, sl.parser, sl)
 	sl.packages[args.Rel] = pkg

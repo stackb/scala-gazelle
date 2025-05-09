@@ -9,20 +9,27 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/label"
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
-func (sl *scalaLang) writeResolvedImportsMapFile(filename string) error {
+func makeResolvedImports(scope resolver.Scope) *scpb.ResolvedImports {
 	imports := &scpb.ResolvedImports{
 		Imports: make(map[string]string),
 	}
 
-	for _, sym := range sl.globalScope.GetSymbols("") {
+	for _, sym := range scope.GetSymbols("") {
 		dep := "NO_LABEL"
 		if sym.Label != label.NoLabel {
 			dep = sym.Label.String()
 		}
 		imports.Imports[sym.Name] = dep
 	}
+
+	return imports
+}
+
+func (sl *scalaLang) writeResolvedImportsMapFile(filename string) error {
+	imports := makeResolvedImports(sl.globalScope)
 
 	if filepath.Ext(filename) == ".txt" {
 		f, err := os.Create(filename)

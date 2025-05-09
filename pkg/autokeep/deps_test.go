@@ -14,19 +14,19 @@ import (
 
 func TestMakeDeltaDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
-		input *akpb.Diagnostics
-		deps  DepsMap
-		want  *akpb.DeltaDeps
+		diagnostics *akpb.Diagnostics
+		deps        DepsMap
+		want        *akpb.DeltaDeps
 	}{
 		"degenerate": {
-			input: &akpb.Diagnostics{},
-			want:  &akpb.DeltaDeps{},
+			diagnostics: &akpb.Diagnostics{},
+			want:        &akpb.DeltaDeps{},
 		},
 		"not-a-package": {
 			deps: map[string]string{
 				"contoso.postswarm.SelectiveSpotSessionUtils": "//contoso/postswarm:selective_spot_session_utils_common_scala",
 			},
-			input: &akpb.Diagnostics{
+			diagnostics: &akpb.Diagnostics{
 				ScalacErrors: []*akpb.ScalacError{
 					{
 						RuleLabel: "//contoso/postswarm:grey_it",
@@ -52,7 +52,7 @@ func TestMakeDeltaDeps(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got := MakeDeltaDeps(tc.deps, tc.input)
+			got := MakeDeltaDeps(tc.diagnostics, tc.deps, nil, nil)
 
 			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
 				akpb.DeltaDeps{},

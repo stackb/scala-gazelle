@@ -6,7 +6,10 @@ go_library(
     srcs = ["autokeep.go"],
     importpath = "github.com/stackb/scala-gazelle/cmd/autokeep",
     visibility = ["//visibility:private"],
-    deps = ["//pkg/autokeep"],
+    deps = [
+        "//pkg/autokeep",
+        "//pkg/resolver",
+    ],
 )
 
 go_binary(

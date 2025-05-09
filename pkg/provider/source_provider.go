@@ -15,6 +15,7 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/rs/zerolog"
 
+	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/procutil"
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
@@ -58,6 +59,14 @@ type SourceProvider struct {
 	scalaFilesetFilename string
 	// scalaFiles is a mapping that is read from the scalaFilesetFilename, if present
 	scalaFiles map[string]*sppb.File
+	// hasLifecycleEnded flags whether we have seen the OnEnd() call at least
+	// once.  This affects whether we choose to double-check sha256 values
+	// during the haveFiles check.  For the first go, assume all files we
+	// already have are up-to-date (don't check sha256's again).  If it happens
+	// late, assume we are in watch/repair mode and the gazelle process is
+	// long-lived, possibly needing to reparse files that could be changed by a
+	// developer since the gazelle process strated.
+	hasLifecycleEnded bool
 }
 
 // Name implements part of the resolver.SymbolProvider interface.
@@ -97,6 +106,7 @@ func (r *SourceProvider) OnResolve() error {
 
 // OnEnd implements part of the resolver.SymbolProvider interface.
 func (r *SourceProvider) OnEnd() error {
+	r.hasLifecycleEnded = true
 	return nil
 }
 
@@ -166,20 +176,41 @@ func (r *SourceProvider) ParseScalaRule(kind string, from label.Label, dir strin
 }
 
 func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label, kind string) ([]*sppb.File, error) {
-	// haveFiles is the list of haveFiles we already have from pre-computed scalaFiles
+	// haveFiles is the list of haveFiles we already have from pre-computed
+	// scalaFiles whose sha256 values are up-to-date.
 	var haveFiles []*sppb.File
 
-	// needFilenames is a mapping from the absolute to relative path
+	// needFilenames is a mapping from the absolute to relative path of the files we need to parse
 	needFilenames := make(map[string]string)
 	for _, src := range srcs {
+		abs := filepath.Join(dir, src)
 		rel := filepath.Join(from.Pkg, src)
 		if file, ok := r.scalaFiles[rel]; ok {
-			haveFiles = append(haveFiles, file)
-			// log.Println("✅ have:", rel)
-		} else {
-			abs := filepath.Join(dir, src)
-			needFilenames[abs] = rel
+			var isUpToDate bool
+
+			if r.hasLifecycleEnded {
+				// this is a later pass during gazelle execution such as in
+				// watch/repair mode, we need to re-check sha256s
+				sha256, err := collections.FileSha256(abs)
+				if err != nil {
+					return nil, err
+				}
+				if sha256 == file.Sha256 {
+					isUpToDate = true
+				}
+			} else {
+				// this is the (normal) first pass during gazelle execution, no
+				// need to re-check sha256s
+				isUpToDate = true
+			}
+
+			if isUpToDate {
+				haveFiles = append(haveFiles, file)
+				// log.Println("✅ have:", rel)
+				continue
+			}
 		}
+		needFilenames[abs] = rel
 	}
 	if len(needFilenames) == 0 {
 		return haveFiles, nil
@@ -225,6 +256,8 @@ func (r *SourceProvider) parseFiles(dir string, srcs []string, from label.Label,
 			panic("failed to map parsed file (having absolute path) back to relative path: this is a bug: " + file.Filename)
 		}
 		file.Filename = rel
+		// update saved cache
+		r.scalaFiles[rel] = file
 	}
 
 	return append(haveFiles, response.Files...), nil

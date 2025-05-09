@@ -13,13 +13,16 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 type DepsMap map[string]string
+type FileMap map[string]*sppb.File
 
-func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps {
+func MakeDeltaDeps(diagnostics *akpb.Diagnostics, deps DepsMap, files FileMap, scopes resolver.KnownScopeRegistry) *akpb.DeltaDeps {
 	rules := make(map[string]*akpb.RuleDeps)
 	delta := new(akpb.DeltaDeps)
 	for _, e := range diagnostics.ScalacErrors {
@@ -30,6 +33,22 @@ func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps 
 			rule.BuildFile = e.BuildFile
 		}
 		switch t := e.Error.(type) {
+		case *akpb.ScalacError_NotFound:
+			if scope, ok := scopes.GetKnownScope(t.NotFound.SourceFile); ok {
+				if sym, ok := scope.GetSymbol(t.NotFound.Type); ok {
+					if sym.Label != label.NoLabel {
+						log.Println("MATCH: ", sym, "satisfies not found type", t.NotFound.Type)
+						if len(rule.Deps) == 0 {
+							delta.Add = append(delta.Add, rule)
+						}
+						rule.Deps = append(rule.Deps, sym.Label.String())
+					}
+				} else {
+					log.Printf("MISS (scope not found): %s", t.NotFound.SourceFile)
+				}
+			} else {
+				log.Printf("MISS (unknown source file): %q", t.NotFound.SourceFile)
+			}
 		case *akpb.ScalacError_MissingSymbol:
 			sym := t.MissingSymbol.Symbol
 			if label, ok := deps[sym]; ok {

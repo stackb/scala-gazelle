@@ -12,7 +12,9 @@ go_library(
     deps = [
         "//build/stack/gazelle/scala/autokeep",
         "//build/stack/gazelle/scala/cache",
+        "//build/stack/gazelle/scala/parse",
         "//pkg/protobuf",
+        "//pkg/resolver",
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",

@@ -7,7 +7,6 @@ load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 go_library(
     name = "scala",
     srcs = [
-        "cache.go",
         "configure.go",
         "conflict_resolver_registry.go",
         "coverage.go",
@@ -21,11 +20,13 @@ go_library(
         "imports.go",
         "kinds.go",
         "known_rule_registry.go",
+        "known_scope_registry.go",
         "language.go",
         "lifecycle.go",
         "loads.go",
         "package_marker_rule.go",
         "progress.go",
+        "repair.go",
         "resolve.go",
         "scala_package.go",
         "scala_rule.go",
@@ -86,10 +87,6 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
-        # "coverage_test.go",
-        # "diff_test.go",
-        # "existing_scala_rule_test.go",
-        # "flags_test.go",
         "coverage_test.go",
         "diff_test.go",
         "existing_scala_rule_test.go",
@@ -134,7 +131,6 @@ package_filegroup(
     name = "filegroup",
     srcs = [
         "BUILD.bazel",
-        "cache.go",
         "configure.go",
         "conflict_resolver_registry.go",
         "coverage.go",
@@ -153,6 +149,7 @@ package_filegroup(
         "imports.go",
         "kinds.go",
         "known_rule_registry.go",
+        "known_scope_registry.go",
         "language.go",
         "language_test.go",
         "lifecycle.go",
@@ -160,6 +157,7 @@ package_filegroup(
         "loads_test.go",
         "package_marker_rule.go",
         "progress.go",
+        "repair.go",
         "resolve.go",
         "scala.WORKSPACE",
         "scala_package.go",

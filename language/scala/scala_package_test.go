@@ -15,10 +15,9 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 )
 
-func TestScalaPackageParseRule(t *testing.T) {
+func TestScalaPackageNewScalaRule(t *testing.T) {
 	for name, tc := range map[string]struct {
 		rule      *rule.Rule
-		attrName  string
 		wantFiles []*sppb.File
 		wantErr   string
 	}{
@@ -50,7 +49,7 @@ func TestScalaPackageParseRule(t *testing.T) {
 			}
 
 			var gotErr string
-			got, gotError := pkg.ParseRule(tc.rule, tc.attrName)
+			got, gotError := pkg.NewScalaRule(tc.rule)
 			if gotError != nil {
 				gotErr = gotError.Error()
 			}
@@ -58,7 +57,7 @@ func TestScalaPackageParseRule(t *testing.T) {
 			if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
 				t.Errorf("error (-want +got):\n%s", diff)
 			}
-			if diff := cmp.Diff(tc.wantFiles, got.Files()); diff != "" {
+			if diff := cmp.Diff(tc.wantFiles, got.Rule().Files); diff != "" {
 				t.Errorf("(-want +got):\n%s", diff)
 			}
 		})

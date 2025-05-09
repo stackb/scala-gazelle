@@ -1,10 +1,8 @@
 package scala
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -28,8 +26,8 @@ const (
 	scalaGazelleCacheFileFlagName        = "scala_gazelle_cache_file"
 	scalaGazelleImportsFileFlagName      = "scala_gazelle_imports_file"
 	scalaGazelleDebugProcessFileFlagName = "scala_gazelle_debug_process"
-	scalaGazelleCacheKeyFlagName         = "scala_gazelle_cache_key"
 	scalaGazellePrintCacheKeyFlagName    = "scala_gazelle_print_cache_key"
+	scalaGazelleFixDepsModeFlagName      = "scala_gazelle_fix_deps_mode"
 	cpuprofileFileFlagName               = "cpuprofile_file"
 	memprofileFileFlagName               = "memprofile_file"
 	logFileFlagName                      = "log_file"
@@ -44,7 +42,6 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.BoolVar(&sl.existingScalaRuleCoverageFlagValue, existingScalaRuleCoverageFlagName, true, "report coverage statistics")
 	flags.StringVar(&sl.cacheFileFlagValue, scalaGazelleCacheFileFlagName, "", "optional path a cache file (.json or .pb)")
 	flags.StringVar(&sl.importsFileFlagValue, scalaGazelleImportsFileFlagName, "", "optional path to an imports file where resolved imports should be written (.json or .pb)")
-	flags.StringVar(&sl.cacheKeyFlagValue, scalaGazelleCacheKeyFlagName, "", "optional string that can be used to bust the cache file")
 	flags.StringVar(&sl.cpuprofileFlagValue, cpuprofileFileFlagName, "", "optional path a cpuprofile file (.prof)")
 	flags.StringVar(&sl.memprofileFlagValue, memprofileFileFlagName, "", "optional path a memory profile file (.prof)")
 	flags.Var(&sl.symbolProviderNamesFlagValue, scalaSymbolProviderFlagName, "name of a symbol provider implementation to enable")
@@ -53,6 +50,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.Var(&sl.existingScalaBinaryRulesFlagValue, existingScalaBinaryRuleFlagName, "LOAD%NAME mapping for a custom existing scala binary rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scalabinary'")
 	flags.Var(&sl.existingScalaLibraryRulesFlagValue, existingScalaLibraryRuleFlagName, "LOAD%NAME mapping for a custom existing scala library rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 	flags.Var(&sl.existingScalaTestRulesFlagValue, existingScalaTestRuleFlagName, "LOAD%NAME mapping for a custom existing scala test rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_test'")
+	flags.Var(&sl.repairMode, scalaGazelleFixDepsModeFlagName, "optional deps repair mode (one of 'none', 'batch', 'watch')")
 
 	sl.registerSymbolProviders(flags, cmd, c)
 	sl.registerConflictResolvers(flags, cmd, c)
@@ -78,6 +76,7 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		collections.PrintProcessIdForDelveAndWait()
 	}
 
+	sl.repoRoot = c.RepoRoot
 	sl.symbolResolver = newUniverseResolver(sl, sl.globalPackages)
 
 	if err := sl.setupSymbolProviders(flags, c, sl.symbolProviderNamesFlagValue); err != nil {
@@ -96,9 +95,6 @@ func (sl *scalaLang) CheckFlags(flags *flag.FlagSet, c *config.Config) error {
 		return err
 	}
 	if err := sl.setupExistingScalaTestRules(sl.existingScalaTestRulesFlagValue); err != nil {
-		return err
-	}
-	if err := sl.setupCache(); err != nil {
 		return err
 	}
 	if err := sl.setupCpuProfiling(c.WorkDir); err != nil {
@@ -237,19 +233,6 @@ func (sl *scalaLang) setupExistingScalaTestRule(fqn, load, kind string) error {
 		isTest:    true,
 	}
 	return sl.ruleProviderRegistry.RegisterProvider(fqn, provider)
-}
-
-func (sl *scalaLang) setupCache() error {
-	if sl.cacheFileFlagValue != "" {
-		sl.cacheFileFlagValue = os.ExpandEnv(sl.cacheFileFlagValue)
-		if err := sl.readScalaRuleCacheFile(); err != nil {
-			// don't report error if the file does not exist yet
-			if !errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("reading cache file: %w", err)
-			}
-		}
-	}
-	return nil
 }
 
 func (sl *scalaLang) dumpResolvedImportMap() {

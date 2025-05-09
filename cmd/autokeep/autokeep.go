@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/stackb/scala-gazelle/pkg/autokeep"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 // autokeep is a program that consumes a scala-gazelle cache file, runs 'bazel
@@ -103,7 +104,11 @@ func run(cfg *config) error {
 	}
 
 	log.Printf("diagnostics: %+v", diagnostics)
-	keep := autokeep.MakeDeltaDeps(cfg.deps, diagnostics)
+
+	// FIXME(pcj): how to derive the global scope again from this command?
+	scope := resolver.NewTrieScope()
+
+	keep := autokeep.MakeDeltaDeps(diagnostics, scope, cfg.deps)
 	log.Printf("keep: %+v", keep)
 
 	if err := autokeep.ApplyDeltaDeps(keep, cfg.keep); err != nil {

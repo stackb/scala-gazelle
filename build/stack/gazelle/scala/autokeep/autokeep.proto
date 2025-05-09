@@ -19,6 +19,7 @@ message ScalacError {
         MissingSymbol missing_symbol = 3;
         NotAMemberOfPackage not_a_member_of_package = 4;
         BuildozerUnusedDep buildozer_unused_dep = 5;
+        TypeNotFound not_found = 6;
     }
 }
 
@@ -36,6 +37,11 @@ message NotAMemberOfPackage {
 message BuildozerUnusedDep {
     string rule_label = 1;
     string unused_dep = 2;
+}
+
+message TypeNotFound {
+    string source_file = 1;
+    string type = 2;
 }
 
 message RuleDeps {
