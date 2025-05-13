@@ -50,7 +50,7 @@ func (sl *scalaLang) RegisterFlags(flags *flag.FlagSet, cmd string, c *config.Co
 	flags.Var(&sl.existingScalaBinaryRulesFlagValue, existingScalaBinaryRuleFlagName, "LOAD%NAME mapping for a custom existing scala binary rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scalabinary'")
 	flags.Var(&sl.existingScalaLibraryRulesFlagValue, existingScalaLibraryRuleFlagName, "LOAD%NAME mapping for a custom existing scala library rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_library'")
 	flags.Var(&sl.existingScalaTestRulesFlagValue, existingScalaTestRuleFlagName, "LOAD%NAME mapping for a custom existing scala test rule implementation (e.g. '@io_bazel_rules_scala//scala:scala.bzl%scala_test'")
-	flags.Var(&sl.repairMode, scalaGazelleFixDepsModeFlagName, "optional deps repair mode (one of 'none', 'batch', 'watch')")
+	flags.Var(&sl.repairMode, scalaGazelleFixDepsModeFlagName, "optional deps repair mode (one of 'none', 'batch', 'watch', 'transitive')")
 
 	sl.registerSymbolProviders(flags, cmd, c)
 	sl.registerConflictResolvers(flags, cmd, c)

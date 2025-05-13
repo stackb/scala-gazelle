@@ -43,6 +43,7 @@ omnistac/postswarm/src/it/scala/omnistac/postswarm/grey/SelectiveSpottingTest.sc
 						BuildFile: "/Users/pcj/go/src/github.com/Omnistac/unity/omnistac/postswarm/BUILD.bazel",
 						Error: &akpb.ScalacError_NotAMemberOfPackage{
 							NotAMemberOfPackage: &akpb.NotAMemberOfPackage{
+								SourceFile:  "omnistac/postswarm/src/it/scala/omnistac/postswarm/grey/SelectiveSpottingTest.scala",
 								Symbol:      "SelectiveSpotSessionUtils",
 								PackageName: "omnistac.postswarm",
 							},

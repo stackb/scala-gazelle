@@ -15,6 +15,7 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/sweep"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -154,20 +155,13 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 			sc.MergeDepsAttr(exports, rctx.Rule, "exports", rctx.From)
 		}
 
-		// if sc.ShouldSweepTransitive("deps") {
-		// 	if !sweep.HasTransitiveRuleComment(rctx.Rule) {
-		// 		if junk, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
-		// 			log.Printf("warning: transitive sweep failed: %v", err)
-		// 		} else {
-		// 			if len(junk) > 0 {
-		// 				log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
-		// 			}
-		// 		}
-		// 		rctx.Rule.AddComment(sweep.TransitiveCommentToken)
-		// 	} else {
-		// 		log.Println("> transitive sweep skipped (already done):", rctx.From)
-		// 	}
-		// }
+		if sc.ShouldSweepTransitive(rctx.Rule, "deps") {
+			if _, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
+				log.Printf("warning: transitive sweep failed: %v", err)
+			} else {
+				sweep.RemoveSweepTransitiveDepsTag(rctx.Rule)
+			}
+		}
 	}
 
 	// wow... this cannot be good programming practive, but I need to store the
@@ -175,6 +169,12 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 	rctx.Rule.SetPrivateAttr("_scala_resolve_closure", resolveClosure)
 
 	resolveClosure()
+
+	if sc.ShouldRepairTransitiveDeps() {
+		log.Println("Marking", rctx.From)
+		// mark this rule as needing to be repaired
+		sweep.MarkForTransitiveRepair(rctx.Rule, rctx.From, sc.MaybeRewrite(rctx.Rule.Kind(), rctx.From))
+	}
 }
 
 func makeRuleComments(pb *sppb.Rule) (comments []build.Comment) {

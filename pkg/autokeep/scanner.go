@@ -84,6 +84,7 @@ func ScanOutput(output []byte) (*akpb.Diagnostics, error) {
 			addError(&akpb.ScalacError{
 				Error: &akpb.ScalacError_NotAMemberOfPackage{
 					NotAMemberOfPackage: &akpb.NotAMemberOfPackage{
+						SourceFile:  match[1],
 						Symbol:      match[2],
 						PackageName: match[3],
 					},

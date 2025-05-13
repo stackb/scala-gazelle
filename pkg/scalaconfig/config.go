@@ -139,6 +139,7 @@ func DirectiveNames() []string {
 		scalaDepsCleanerDirective,
 		sweep.ScalaKeepUnknownDepsDirective,
 		sweep.ScalaSweepTransitiveDepsDirective,
+		sweep.ScalaRepairTransitiveDepsDirective,
 		sweep.ScalaFixDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
@@ -163,6 +164,7 @@ type Config struct {
 	generateBuildFiles     bool
 	keepUnknownDeps        bool
 	sweepTransitiveDeps    bool
+	repairTransitiveDeps   bool
 	fixDeps                bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
@@ -212,6 +214,7 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 	clone.generateBuildFiles = c.generateBuildFiles
 	clone.keepUnknownDeps = c.keepUnknownDeps
 	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
+	clone.repairTransitiveDeps = c.repairTransitiveDeps
 	clone.fixDeps = c.fixDeps
 
 	for k, v := range c.annotations {
@@ -315,6 +318,12 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 				return err
 			} else {
 				c.sweepTransitiveDeps = value
+			}
+		case sweep.ScalaRepairTransitiveDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
+				return err
+			} else {
+				c.repairTransitiveDeps = value
 			}
 		case scalaFixWildcardImportDirective:
 			c.parseFixWildcardImport(d)
@@ -609,9 +618,12 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 
 // ShouldSweepTransitive determines whether non-managed deps (not generated, and
 // not marked with # keep) in the current package should be kept.
-func (c *Config) ShouldSweepTransitive(attrName string) bool {
+func (c *Config) ShouldSweepTransitive(r *rule.Rule, attrName string) bool {
 	if attrName != "deps" {
 		return false
+	}
+	if sweep.HasSweepTransitiveDepsTag(r) {
+		return true
 	}
 	return c.sweepTransitiveDeps
 }
@@ -625,6 +637,12 @@ func (c *Config) ShouldFixDeps() bool {
 // kept.
 func (c *Config) shouldKeepUnknownDeps() bool {
 	return c.keepUnknownDeps
+}
+
+// ShouldRepairTransitiveDeps determines whether non-managed deps should be
+// kept.
+func (c *Config) ShouldRepairTransitiveDeps() bool {
+	return c.repairTransitiveDeps
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
@@ -717,7 +735,7 @@ func (c *Config) MergeDepsAttr(
 
 	// Merge the current list against the new incoming ones.  If no deps remain,
 	// delete the attr.
-	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from)
+	next := c.mergeDeps(deps, labels, attrName, r, from)
 
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
@@ -729,7 +747,9 @@ func (c *Config) MergeDepsAttr(
 // mergeDeps filters out a `deps` list.  Extries are removed from the list if
 // they can be parsed as dependency labels that have a provider.  Others types
 // of expressions are left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
+func (c *Config) mergeDeps(deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, r *rule.Rule, from label.Label) *build.ListExpr {
+	attrValue := r.Attr(attrName)
+
 	var src *build.ListExpr
 	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
@@ -777,7 +797,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if c.ShouldSweepTransitive(attrName) {
+			if c.ShouldSweepTransitive(r, attrName) {
 				// set as TRANSITIVE comment for sweeping
 				if _, ok := expr.(*build.StringExpr); ok {
 					expr.Comment().Suffix = []build.Comment{sweep.MakeTransitiveComment()}

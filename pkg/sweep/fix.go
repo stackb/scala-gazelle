@@ -7,9 +7,9 @@ import (
 	"log"
 	"os/exec"
 	"path"
-	"sort"
 	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/pcj/mobyprogress"
 	"github.com/stackb/scala-gazelle/pkg/autokeep"
 	"github.com/stackb/scala-gazelle/pkg/bazel"
@@ -40,11 +40,11 @@ type DepFixer struct {
 	imports autokeep.DepsMap
 	// global knownScopes
 	knownScopes resolver.KnownScopeRegistry
-	// scala file Parser
-
+	// the global scope
+	globalScope resolver.Scope
 }
 
-func NewDepFixer(progress mobyprogress.Output, repoRoot, pkg string, resolvers ResolvableScalaRuleMap, imports map[string]string, knownScopes resolver.KnownScopeRegistry) *DepFixer {
+func NewDepFixer(progress mobyprogress.Output, repoRoot, pkg string, resolvers ResolvableScalaRuleMap, imports map[string]string, knownScopes resolver.KnownScopeRegistry, globalScope resolver.Scope) *DepFixer {
 	fixer := &DepFixer{
 		progress:    progress,
 		repoRoot:    repoRoot,
@@ -54,6 +54,7 @@ func NewDepFixer(progress mobyprogress.Output, repoRoot, pkg string, resolvers R
 		files:       make(map[string]*sppb.File),
 		imports:     imports,
 		knownScopes: knownScopes,
+		globalScope: globalScope,
 	}
 	for r := range resolvers {
 		files := r.Rule().Files
@@ -65,11 +66,62 @@ func NewDepFixer(progress mobyprogress.Output, repoRoot, pkg string, resolvers R
 	return fixer
 }
 
+func (d *DepFixer) Watch(dir string) error {
+	// Create new watcher.
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	// Start listening for events.
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				log.Println("event:", event)
+				if event.Has(fsnotify.Write) {
+					rel := strings.TrimPrefix(strings.TrimPrefix(event.Name, d.repoRoot), "/")
+					log.Println("modified file:", event.Name, rel)
+					if err := d.handleChangedFiles(rel); err != nil {
+						log.Println("watch error:", err)
+					}
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	err = watcher.Add(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("watching", dir)
+
+	// Block main goroutine forever.
+	<-make(chan struct{})
+
+	return nil
+}
+
 func (d *DepFixer) Batch() error {
 	changedFiles, err := listChangedScalaFiles(d.repoRoot, d.pkg)
 	if err != nil {
 		return err
 	}
+
+	return d.handleChangedFiles(changedFiles...)
+}
+
+func (d *DepFixer) handleChangedFiles(changedFiles ...string) error {
 
 	log.Println("changed files:", changedFiles)
 
@@ -86,7 +138,9 @@ func (d *DepFixer) Batch() error {
 		}
 	}
 
+	targets := make([]string, 0, len(toBuild))
 	for label, rule := range toBuild {
+		targets = append(targets, label)
 		// re-parse the srcs
 		if err := rule.ParseSrcs(); err != nil {
 			return fmt.Errorf("parse %s failed: %v", label, err)
@@ -94,30 +148,44 @@ func (d *DepFixer) Batch() error {
 		// call the resolver for the rule
 		d.resolvers[rule]()
 	}
-	if err := d.fix(toBuild); err != nil {
-		return fmt.Errorf("building rule: %v", err)
-	}
+	// if err := d.Repair(targets...); err != nil {
+	// 	return fmt.Errorf("building rule: %v", err)
+	// }
 
 	return nil
 }
 
-func (d *DepFixer) fix(toBuild map[string]scalarule.Rule) error {
-	labels := make([]string, 0, len(toBuild))
-	for label := range toBuild {
-		labels = append(labels, label)
-	}
-	if len(labels) == 0 {
+type RepairHandler interface {
+	// Targets returns the list of build targets that should be repaired
+	Targets() []string
+	// Add is a callback when the given target should add (missing) deps
+	Add(target string, deps []string)
+	// Remove is a callback when the given target should remove (unused) deps
+	Remove(target string, deps []string)
+	// Apply signals that the current actions should be applied.
+	Apply(iteration int) error
+	// Done signals that the repair process has completed
+	Done()
+}
+
+func (d *DepFixer) Repair(handler RepairHandler) error {
+	return d.repairIteration(handler, 1)
+}
+
+func (d *DepFixer) repairIteration(handler RepairHandler, iteration int) error {
+	targets := collections.DeduplicateAndSort(handler.Targets())
+	if len(targets) == 0 {
 		return nil
 	}
-	sort.Strings(labels)
 
-	log.Println("fixing:", labels)
+	log.Println("fixing:", targets)
 
-	writeBuildProgress(d.progress, fmt.Sprintf("> bazel build %s", strings.Join(labels, " ")))
+	writeBuildProgress(d.progress, fmt.Sprintf("> bazel build %s", strings.Join(targets, " ")))
 
-	out, exitCode, _ := bazel.ExecCommand("bazel", "build", labels...)
+	out, exitCode, _ := bazel.ExecCommand("bazel", "build", targets...)
 	if exitCode == 0 {
 		log.Println("builds cleanly (no action needed)")
+		handler.Done()
 		return nil
 	}
 
@@ -126,17 +194,17 @@ func (d *DepFixer) fix(toBuild map[string]scalarule.Rule) error {
 		return fmt.Errorf("failed to scan build output: %v", err)
 	}
 
-	delta := autokeep.MakeDeltaDeps(diagnostics, d.imports, d.files, d.knownScopes)
+	delta := autokeep.MakeDeltaDeps(diagnostics, d.imports, d.files, d.knownScopes, d.globalScope)
 
 	toAdd := make(map[string][]string)
 	toRemove := make(map[string][]string)
 
 	for _, ruleDeps := range delta.Add {
-		toBuild[ruleDeps.Label] = nil
+		targets = append(targets, ruleDeps.Label)
 		toAdd[ruleDeps.Label] = append(toAdd[ruleDeps.Label], ruleDeps.Deps...)
 	}
 	for _, ruleDeps := range delta.Remove {
-		toBuild[ruleDeps.Label] = nil
+		targets = append(targets, ruleDeps.Label)
 		toRemove[ruleDeps.Label] = append(toRemove[ruleDeps.Label], ruleDeps.Deps...)
 	}
 
@@ -146,45 +214,17 @@ func (d *DepFixer) fix(toBuild map[string]scalarule.Rule) error {
 	}
 
 	for ruleLabel, deps := range toAdd {
-		deps := collections.SliceDeduplicate(deps)
-		log.Printf("buildozer 'add deps %s' %s", strings.Join(deps, " "), ruleLabel)
-		if err := runBuildozer(
-			d.progress,
-			fmt.Sprintf("add deps %s", strings.Join(deps, " ")),
-			ruleLabel,
-		); err != nil {
-			return err
-		}
+		handler.Add(ruleLabel, collections.SliceDeduplicate(deps))
 	}
 	for ruleLabel, deps := range toRemove {
-		deps := collections.SliceDeduplicate(deps)
-		log.Printf("buildozer 'remove deps %s' %s", strings.Join(deps, " "), ruleLabel)
-		if err := runBuildozer(
-			d.progress,
-			fmt.Sprintf("remove deps %s", strings.Join(deps, " ")),
-			ruleLabel,
-		); err != nil {
-			return err
-		}
+		handler.Remove(ruleLabel, collections.SliceDeduplicate(deps))
 	}
 
-	return d.fix(toBuild)
-}
-
-func runBuildozer(progress mobyprogress.Output, args ...string) error {
-	writeBuildProgress(progress, fmt.Sprintf("> buildozer %s", strings.Join(args, " ")))
-
-	cmd := exec.Command("buildozer", args...)
-	cmd.Dir = bazel.GetBuildWorkspaceDirectory()
-
-	output, err := cmd.CombinedOutput()
-	exitCode := procutil.CmdExitCode(cmd, err)
-
-	if exitCode != 0 {
-		return fmt.Errorf("buildozer failed with exit code %d: %s", exitCode, string(output))
+	if err := handler.Apply(iteration); err != nil {
+		return err
 	}
 
-	return nil
+	return d.repairIteration(handler, iteration+1)
 }
 
 func listChangedScalaFiles(repoDir, pkg string) ([]string, error) {
@@ -231,3 +271,36 @@ func writeBuildProgress(output mobyprogress.Output, message string) {
 		Message: message,
 	})
 }
+
+// log.Printf("buildozer 'add deps %s' %s", strings.Join(deps, " "), ruleLabel)
+// if err := runBuildozer(
+// 	d.progress,
+// 	fmt.Sprintf("add deps %s", strings.Join(deps, " ")),
+// 	ruleLabel,
+// ); err != nil {
+// 	return err
+// }
+// log.Printf("buildozer 'remove deps %s' %s", strings.Join(deps, " "), ruleLabel)
+// if err := runBuildozer(
+// 	d.progress,
+// 	fmt.Sprintf("remove deps %s", strings.Join(deps, " ")),
+// 	ruleLabel,
+// ); err != nil {
+// 	return err
+// }
+
+// func runBuildozer(args ...string) error {
+// 	// writeBuildProgress(progress, fmt.Sprintf("> buildozer %s", strings.Join(args, " ")))
+
+// 	cmd := exec.Command("buildozer", args...)
+// 	cmd.Dir = bazel.GetBuildWorkspaceDirectory()
+
+// 	output, err := cmd.CombinedOutput()
+// 	exitCode := procutil.CmdExitCode(cmd, err)
+
+// 	if exitCode != 0 {
+// 		return fmt.Errorf("buildozer failed with exit code %d: %s", exitCode, string(output))
+// 	}
+
+// 	return nil
+// }

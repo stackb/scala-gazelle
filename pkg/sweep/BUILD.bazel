@@ -6,6 +6,7 @@ go_library(
     srcs = [
         "fix.go",
         "sweep.go",
+        "transitive.go",
     ],
     importpath = "github.com/stackb/scala-gazelle/pkg/sweep",
     visibility = ["//visibility:public"],
@@ -20,6 +21,7 @@ go_library(
         "@bazel_gazelle//label:go_default_library",
         "@bazel_gazelle//rule:go_default_library",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_fsnotify_fsnotify//:fsnotify",
         "@com_github_pcj_mobyprogress//:mobyprogress",
     ],
 )

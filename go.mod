@@ -23,6 +23,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/emicklei/proto v1.9.0 // indirect
+	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
@@ -32,7 +33,7 @@ require (
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.2.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect

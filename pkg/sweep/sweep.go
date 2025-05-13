@@ -20,6 +20,11 @@ const (
 	// gazelle:scala_sweep_transitive_deps true
 	ScalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
 
+	// Turn on the dep repair
+	//
+	// gazelle:scala_repair_transitive_deps true
+	ScalaRepairTransitiveDepsDirective = "scala_repair_transitive_deps"
+
 	// Flag to preserve deps if the label is not known to be needed from the
 	// imports (legacy migration mode).
 	//

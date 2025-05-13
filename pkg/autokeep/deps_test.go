@@ -8,8 +8,9 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
+
+	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 )
 
 func TestMakeDeltaDeps(t *testing.T) {
@@ -52,7 +53,7 @@ func TestMakeDeltaDeps(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got := MakeDeltaDeps(tc.diagnostics, tc.deps, nil, nil)
+			got := MakeDeltaDeps(tc.diagnostics, tc.deps, nil, nil, nil)
 
 			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
 				akpb.DeltaDeps{},
