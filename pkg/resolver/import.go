@@ -11,9 +11,6 @@ import (
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
-// TODO(pcj): rename this to 'Requirement' or something.  Not all Imports are
-// actually from an import statement.
-
 // Import is used to trace import provenance.
 type Import struct {
 	// Kind is the import type

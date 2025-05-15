@@ -6,6 +6,9 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
+
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
@@ -19,6 +22,7 @@ func init() {
 
 // ScalaGrpcZioConflictResolver implements a strategy
 type ScalaGrpcZioConflictResolver struct {
+	logger zerolog.Logger
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
@@ -27,7 +31,8 @@ func (s *ScalaGrpcZioConflictResolver) Name() string {
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *ScalaGrpcZioConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (s *ScalaGrpcZioConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config, logger zerolog.Logger) {
+	s.logger = logger
 }
 
 // CheckFlags implements part of the resolver.ConflictResolver interface.
@@ -60,8 +65,9 @@ func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rul
 	}
 
 	// search all imports for Zio symbols.  If we find one, assume we want Zio.
-	// the string pattern we are looking for is a symbol name whose last dotted
-	// name starts with "Zio" (e.g. 'com.contoso.proto.api.ZioUserService').
+	// the string pattern we are looking for is a proto service symbol name
+	// whose last dotted name starts with "Zio" (e.g.
+	// 'com.contoso.proto.api.ZioUserService').
 	for _, imp := range imports.Values() {
 		if imp.Symbol == nil || imp.Error != nil {
 			continue
@@ -69,13 +75,22 @@ func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rul
 		if imp.Symbol == symbol {
 			continue
 		}
+		if imp.Symbol.Type != sppb.ImportType_PROTO_SERVICE {
+			continue
+		}
 		if !strings.Contains(imp.Symbol.Name, ".Zio") {
 			continue
 		}
+		var filename string
+		if imp.Source != nil {
+			filename = imp.Source.Filename
+		}
+		s.logger.Debug().Str("import", imp.Imp).Str("selected", grpcZioSymbol.String()).Msgf("resolved to zio dep because %s in file %s", imp.Imp, filename)
 		return grpcZioSymbol, true
 	}
 
 	// did not find a zio like activity in the imports, so use non-zio one.
+	s.logger.Debug().Str("import", imp.Imp).Str("selected", grpcSymbol.String()).Msgf("resolved to grcp dep (no zio imports found)")
 	return grpcSymbol, true
 }
 

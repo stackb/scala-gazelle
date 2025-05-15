@@ -6,6 +6,7 @@ import (
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
 
 	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
@@ -41,7 +42,7 @@ func (s *ScalaProtoPackageConflictResolver) Name() string {
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *ScalaProtoPackageConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (s *ScalaProtoPackageConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config, logger zerolog.Logger) {
 }
 
 // CheckFlags implements part of the resolver.ConflictResolver interface.
