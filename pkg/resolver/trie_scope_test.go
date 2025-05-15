@@ -15,7 +15,7 @@ func makeSymbol(typ sppb.ImportType, name string, from label.Label) *Symbol {
 	return &Symbol{
 		Type:     typ,
 		Name:     name,
-		Label:    label.NoLabel,
+		Label:    from,
 		Provider: "test",
 	}
 }

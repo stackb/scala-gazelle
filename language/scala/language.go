@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/stackb/rules_proto/pkg/protoc"
 
-	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/procutil"
@@ -27,6 +26,8 @@ const scalaLangName = "scala"
 
 // scalaLang implements language.Language.
 type scalaLang struct {
+	// repoRoot is the config.RepoRoot
+	repoRoot string
 	// debugProcessFlagValue halts processing and prints the PID for attaching a
 	// delve debugger.
 	debugProcessFlagValue bool
@@ -56,12 +57,12 @@ type scalaLang struct {
 	existingScalaLibraryRulesFlagValue collections.StringSlice
 	// existingScalaLibraryRulesFlagValue is the value of the
 	// existing_scala_test_rule repeatable flag
-	existingScalaTestRulesFlagValue    collections.StringSlice
+	existingScalaTestRulesFlagValue collections.StringSlice
+	// repairMode for fixing scala deps
+	repairMode                         repairMode
 	cpuprofileFlagValue                string
 	existingScalaRuleCoverageFlagValue bool
 	memprofileFlagValue                string
-	// cache is the loaded cache, if configured
-	cache scpb.Cache
 	// ruleProviderRegistry is the rule registry implementation.  This holds the
 	// rules configured via gazelle directives by the user.
 	ruleProviderRegistry scalarule.ProviderRegistry
@@ -80,6 +81,8 @@ type scalaLang struct {
 	progress mobyprogress.Output
 	// knownRules is a map of all known generated rules
 	knownRules map[label.Label]*rule.Rule
+	// knownScopes is a map of all known scopes
+	knownScopes map[string]resolver.Scope
 	// conflictResolvers is a map of all known conflict resolver implementations
 	conflictResolvers map[string]resolver.ConflictResolver
 	// depsCleaners is a map of all known deps cleaner implementations
@@ -97,7 +100,7 @@ type scalaLang struct {
 	// sourceProvider is the sourceProvider implementation.
 	sourceProvider *provider.SourceProvider
 	// parser is the parser instance
-	parser *parser.MemoParser
+	parser parser.Parser
 	// logFileName is the name of the log file
 	// logFile is the open log
 	logFile *os.File
@@ -112,10 +115,10 @@ func NewLanguage() language.Language {
 
 	lang := &scalaLang{
 		wantProgress:         wantProgress(),
-		cache:                scpb.Cache{},
 		globalScope:          resolver.NewTrieScope(),
 		globalPackages:       resolver.NewTrieScope(),
 		knownRules:           make(map[label.Label]*rule.Rule),
+		knownScopes:          make(map[string]resolver.Scope),
 		conflictResolvers:    make(map[string]resolver.ConflictResolver),
 		depsCleaners:         make(map[string]resolver.DepsCleaner),
 		packages:             make(map[string]*scalaPackage),
@@ -135,7 +138,7 @@ func NewLanguage() language.Language {
 
 	lang.sourceProvider = provider.NewSourceProvider(logger.With().Str("provider", "source").Logger(), progress)
 	semanticProvider := provider.NewSemanticdbProvider(lang.sourceProvider)
-	lang.parser = parser.NewMemoParser(semanticProvider)
+	lang.parser = semanticProvider
 	javaProvider := provider.NewJavaProvider()
 
 	lang.AddSymbolProvider(lang.sourceProvider)

@@ -10,8 +10,6 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
-
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
@@ -132,18 +130,13 @@ func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw inte
 	}
 
 	for _, rule := range s.pkg.GeneratedRules() {
-		scalaFiles := rule.PrivateAttr("_scala_files")
-		if debug {
-			log.Printf("%s: resolving with scala_files: %T", rctx.From, scalaFiles)
+		scalaRule, ok := scalarule.GetRule(rule)
+		if !ok {
+			continue
 		}
-		if files, ok := scalaFiles.([]*sppb.File); ok {
-			if debug {
-				log.Printf("%s: resolving with %d files", rctx.From, len(files))
-			}
-			for _, file := range files {
-				relativeToPkg := strings.TrimPrefix(file.Filename, s.pkg.GenerateArgs().Rel)
-				srcs = append(srcs, strings.TrimPrefix(relativeToPkg, "/"))
-			}
+		for _, file := range scalaRule.Rule().Files {
+			relativeToPkg := strings.TrimPrefix(file.Filename, s.pkg.GenerateArgs().Rel)
+			srcs = append(srcs, strings.TrimPrefix(relativeToPkg, "/"))
 		}
 	}
 	if debug {

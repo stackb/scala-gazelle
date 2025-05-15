@@ -1,0 +1,37 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+go_library(
+    name = "sweep",
+    srcs = [
+        "fix.go",
+        "sweep.go",
+        "transitive.go",
+    ],
+    importpath = "github.com/stackb/scala-gazelle/pkg/sweep",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//build/stack/gazelle/scala/parse",
+        "//pkg/autokeep",
+        "//pkg/bazel",
+        "//pkg/collections",
+        "//pkg/procutil",
+        "//pkg/resolver",
+        "//pkg/scalarule",
+        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//rule:go_default_library",
+        "@com_github_bazelbuild_buildtools//build:go_default_library",
+        "@com_github_fsnotify_fsnotify//:fsnotify",
+        "@com_github_pcj_mobyprogress//:mobyprogress",
+    ],
+)
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "BUILD.bazel",
+        "fix.go",
+        "sweep.go",
+    ],
+    visibility = ["//visibility:public"],
+)

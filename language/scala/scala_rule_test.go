@@ -80,13 +80,11 @@ func TestScalaRuleExports(t *testing.T) {
 				scalaConfig: sc,
 				resolver:    universe,
 				scope:       universe,
+				knownScopes: universe,
 			}
 
-			scalaRule := newScalaRule(zerolog.New(os.Stderr), ctx, &sppb.Rule{
-				Label: tc.from.String(),
-				Kind:  tc.rule.Kind(),
-				Files: tc.files,
-			})
+			scalaRule := newScalaRule(zerolog.New(os.Stderr), ctx, tc.from)
+			scalaRule.Rule().Files = tc.files
 
 			got := scalaRule.Provides()
 
@@ -276,11 +274,8 @@ func TestScalaRuleImports(t *testing.T) {
 				scope:       universe,
 			}
 
-			scalaRule := newScalaRule(zerolog.New(os.Stderr), ctx, &sppb.Rule{
-				Label: tc.from.String(),
-				Kind:  tc.rule.Kind(),
-				Files: tc.files,
-			})
+			scalaRule := newScalaRule(zerolog.New(os.Stderr), ctx, tc.from)
+			scalaRule.Rule().Files = tc.files
 
 			imports := scalaRule.Imports(tc.from)
 			got := make([]string, len(imports.Keys()))

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/rs/zerolog"
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
@@ -38,8 +39,8 @@ type Config struct {
 	Logger zerolog.Logger
 }
 
-// NewConfig returns a pointer to a new Config config with the
-// 'Enabled' bit set to true.
+// NewConfig returns a pointer to a new config with the 'Enabled' bit set to
+// true.
 func NewConfig(logger zerolog.Logger, config *config.Config, name string) *Config {
 	return &Config{
 		Logger:  logger,
@@ -169,4 +170,17 @@ func (c *Config) ParseDirective(d, param, value string) error {
 	}
 
 	return nil
+}
+
+// GetRule returns the scalarule.Rule interface that was previously stashed in
+// the rule.Rule.
+func GetRule(r *rule.Rule) (Rule, bool) {
+	value := r.PrivateAttr(config.GazelleImportsKey)
+	impl, ok := value.(Rule)
+	return impl, ok
+}
+
+// PutRule stashes the scalarule.Rule interface in the rule.Rule.
+func PutRule(r *rule.Rule, sr Rule) {
+	r.SetPrivateAttr(config.GazelleImportsKey, sr)
 }

@@ -26,3 +26,19 @@ func SliceInsertAt[T any](slice []T, i int, value T) []T {
 
 	return result
 }
+
+// SliceDeduplicate removes duplicate entries
+func SliceDeduplicate[T any](in []T) (out []T) {
+	if len(in) == 0 {
+		return in
+	}
+	seen := make(map[any]bool)
+	for _, v := range in {
+		if seen[v] {
+			continue
+		}
+		seen[v] = true
+		out = append(out, v)
+	}
+	return
+}

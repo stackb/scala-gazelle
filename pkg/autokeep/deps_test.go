@@ -8,25 +8,26 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/testtools"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 	"github.com/stackb/scala-gazelle/pkg/testutil"
+
+	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 )
 
 func TestMakeDeltaDeps(t *testing.T) {
 	for name, tc := range map[string]struct {
-		input *akpb.Diagnostics
-		deps  DepsMap
-		want  *akpb.DeltaDeps
+		diagnostics *akpb.Diagnostics
+		deps        DepsMap
+		want        *akpb.DeltaDeps
 	}{
 		"degenerate": {
-			input: &akpb.Diagnostics{},
-			want:  &akpb.DeltaDeps{},
+			diagnostics: &akpb.Diagnostics{},
+			want:        &akpb.DeltaDeps{},
 		},
 		"not-a-package": {
 			deps: map[string]string{
 				"contoso.postswarm.SelectiveSpotSessionUtils": "//contoso/postswarm:selective_spot_session_utils_common_scala",
 			},
-			input: &akpb.Diagnostics{
+			diagnostics: &akpb.Diagnostics{
 				ScalacErrors: []*akpb.ScalacError{
 					{
 						RuleLabel: "//contoso/postswarm:grey_it",
@@ -52,7 +53,7 @@ func TestMakeDeltaDeps(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			got := MakeDeltaDeps(tc.deps, tc.input)
+			got := MakeDeltaDeps(tc.diagnostics, tc.deps, nil, nil, nil)
 
 			if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(
 				akpb.DeltaDeps{},

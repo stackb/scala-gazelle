@@ -3,8 +3,6 @@ package scala
 import (
 	"fmt"
 	"log"
-	"path/filepath"
-	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -14,8 +12,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/rs/zerolog"
 
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
-	"github.com/stackb/scala-gazelle/pkg/glob"
 	"github.com/stackb/scala-gazelle/pkg/parser"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalaconfig"
@@ -231,53 +227,30 @@ func (s *scalaPackage) GeneratedRules() (rules []*rule.Rule) {
 	return
 }
 
-// ParseRule implements part of the scalarule.Package interface.
-func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalaRule scalarule.Rule, err error) {
-	dir := filepath.Join(s.repoRootDir(), s.args.Rel)
-
-	// collect and filter .scala files from the `srcs` attribute.
-	srcs, err := glob.CollectFilenames(s.args.File, dir, r.Attr(attrName))
-	if err != nil {
-		return nil, err
-	}
-	scalaSrcs := make([]string, 0, len(srcs))
-	for _, src := range srcs {
-		if !strings.HasSuffix(src, ".scala") {
-			continue
-		}
-		scalaSrcs = append(scalaSrcs, src)
-	}
-	if len(scalaSrcs) == 0 {
-		err = ErrRuleHasNoSrcs
-	}
-
-	logger := s.logger.With().Str("kind", r.Kind()).Str("name", r.Name()).Logger()
-	logger.Debug().Msgf("%d scala files collected from %s", len(scalaSrcs), attrName)
-
-	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
-
-	rule := &sppb.Rule{
-		Label: from.String(),
-		Kind:  r.Kind(),
-	}
-	if len(scalaSrcs) > 0 {
-		rule, err = s.parser.ParseScalaRule(r.Kind(), from, dir, scalaSrcs...)
-		if err != nil {
-			logger.Warn().Err(err).Msg("parse error")
-			return nil, err
-		}
-	}
+// NewScalaRule implements part of the scalarule.Package interface.
+func (s *scalaPackage) NewScalaRule(r *rule.Rule) (scalarule.Rule, error) {
 
 	ctx := &scalaRuleContext{
+		repoRoot:    s.repoRootDir(),
+		file:        s.args.File,
 		rule:        r,
 		scalaConfig: s.cfg,
 		resolver:    s.universe,
 		scope:       s.universe,
+		knownScopes: s.universe,
+		parser:      s.parser,
 	}
 
-	scalaRule = newScalaRule(logger, ctx, rule)
+	logger := s.logger.With().Str("kind", r.Kind()).Str("name", r.Name()).Logger()
+	from := s.cfg.MaybeRewrite(r.Kind(), label.Label{Pkg: s.args.Rel, Name: r.Name()})
 
-	return
+	scalaRule := newScalaRule(logger, ctx, from)
+
+	if err := scalaRule.ParseSrcs(); err != nil {
+		return nil, err
+	}
+
+	return scalaRule, nil
 }
 
 // repoRootDir return the root directory of the repo.
@@ -324,6 +297,12 @@ func (s *scalaPackage) getProvidedRules(providers []scalarule.RuleProvider, shou
 
 func (p *scalaPackage) infof(format string, args ...any) string {
 	return fmt.Sprintf("INFO ["+p.args.Rel+"]: "+format, args...)
+}
+
+// OnEnd is a lifecycle hook that gets called when the resolve phase has
+// ended.
+func (p *scalaPackage) OnEnd() error {
+	return nil
 }
 
 func ruleContributesToCoverage(name string) bool {

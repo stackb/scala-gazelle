@@ -128,6 +128,36 @@ func (_m *Universe) GetKnownRule(from label.Label) (*rule.Rule, bool) {
 	return r0, r1
 }
 
+// GetKnownScope provides a mock function with given fields: name
+func (_m *Universe) GetKnownScope(name string) (resolver.Scope, bool) {
+	ret := _m.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetKnownScope")
+	}
+
+	var r0 resolver.Scope
+	var r1 bool
+	if rf, ok := ret.Get(0).(func(string) (resolver.Scope, bool)); ok {
+		return rf(name)
+	}
+	if rf, ok := ret.Get(0).(func(string) resolver.Scope); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(resolver.Scope)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) bool); ok {
+		r1 = rf(name)
+	} else {
+		r1 = ret.Get(1).(bool)
+	}
+
+	return r0, r1
+}
+
 // GetScope provides a mock function with given fields: name
 func (_m *Universe) GetScope(name string) (resolver.Scope, bool) {
 	ret := _m.Called(name)
@@ -255,6 +285,24 @@ func (_m *Universe) PutKnownRule(from label.Label, r *rule.Rule) error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func(label.Label, *rule.Rule) error); ok {
 		r0 = rf(from, r)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// PutKnownScope provides a mock function with given fields: name, scope
+func (_m *Universe) PutKnownScope(name string, scope resolver.Scope) error {
+	ret := _m.Called(name, scope)
+
+	if len(ret) == 0 {
+		panic("no return value specified for PutKnownScope")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, resolver.Scope) error); ok {
+		r0 = rf(name, scope)
 	} else {
 		r0 = ret.Error(0)
 	}

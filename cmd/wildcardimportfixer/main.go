@@ -66,7 +66,11 @@ func run(cfg *config) error {
 		BazelExecutable: cfg.bazelExe,
 	})
 
-	symbols, err := fixer.Fix(cfg.ruleLabel, cfg.targetFilename, cfg.importPrefix)
+	symbols, err := fixer.Fix(&wildcardimport.FixConfig{
+		RuleLabel:    cfg.ruleLabel,
+		Filename:     cfg.targetFilename,
+		ImportPrefix: cfg.importPrefix,
+	})
 	if err != nil {
 		return err
 	}

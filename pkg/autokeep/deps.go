@@ -13,13 +13,16 @@ import (
 	"github.com/bazelbuild/buildtools/build"
 	akpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep"
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
+	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 
 	"github.com/stackb/scala-gazelle/pkg/protobuf"
+	"github.com/stackb/scala-gazelle/pkg/resolver"
 )
 
 type DepsMap map[string]string
+type FileMap map[string]*sppb.File
 
-func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps {
+func MakeDeltaDeps(diagnostics *akpb.Diagnostics, deps DepsMap, files FileMap, scopes resolver.KnownScopeRegistry, globalScope resolver.Scope) *akpb.DeltaDeps {
 	rules := make(map[string]*akpb.RuleDeps)
 	delta := new(akpb.DeltaDeps)
 	for _, e := range diagnostics.ScalacErrors {
@@ -29,7 +32,32 @@ func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps 
 			rule.Label = e.RuleLabel
 			rule.BuildFile = e.BuildFile
 		}
+
+		lookup := func(sourceFile string, name string) (*resolver.Symbol, bool) {
+			scope, ok := scopes.GetKnownScope(sourceFile)
+			if !ok {
+				return nil, false
+			}
+			sym, ok := scope.GetSymbol(name)
+			if !ok {
+				return nil, false
+			}
+			return sym, true
+		}
+
 		switch t := e.Error.(type) {
+		case *akpb.ScalacError_NotFound:
+			if sym, ok := lookup(t.NotFound.SourceFile, t.NotFound.Type); ok {
+				if sym.Label != label.NoLabel {
+					log.Println("MATCH: ", sym, "satisfies not found type", t.NotFound.Type)
+					if len(rule.Deps) == 0 {
+						delta.Add = append(delta.Add, rule)
+					}
+					rule.Deps = append(rule.Deps, sym.Label.String())
+				}
+			} else {
+				log.Println("MISS (not found):", t.NotFound.SourceFile, t.NotFound.Type)
+			}
 		case *akpb.ScalacError_MissingSymbol:
 			sym := t.MissingSymbol.Symbol
 			if label, ok := deps[sym]; ok {
@@ -42,16 +70,25 @@ func MakeDeltaDeps(deps DepsMap, diagnostics *akpb.Diagnostics) *akpb.DeltaDeps 
 				log.Printf("MISS (missing symbol not found): %q", sym)
 			}
 		case *akpb.ScalacError_NotAMemberOfPackage:
-			sym := fmt.Sprintf("%s.%s", t.NotAMemberOfPackage.PackageName, t.NotAMemberOfPackage.Symbol)
-			if label, ok := deps[sym]; ok {
-				log.Println("MATCH: ", sym, "is provided by", label)
-				if len(rule.Deps) == 0 {
-					delta.Add = append(delta.Add, rule)
+			name := fmt.Sprintf("%s.%s", t.NotAMemberOfPackage.PackageName, t.NotAMemberOfPackage.Symbol)
+			if sym, ok := lookup(t.NotAMemberOfPackage.SourceFile, name); ok {
+				if sym.Label != label.NoLabel {
+					log.Println("MATCH: ", sym, "satisfies not a member of package type", name)
+					if len(rule.Deps) == 0 {
+						delta.Add = append(delta.Add, rule)
+					}
+					rule.Deps = append(rule.Deps, sym.Label.String())
 				}
-				rule.Deps = append(rule.Deps, label)
-			} else {
-				log.Printf("MISS (not found): %q (%d)", sym, len(deps))
 			}
+			// if label, ok := deps[sym]; ok {
+			// 	log.Println("MATCH: ", sym, "is provided by", label)
+			// 	if len(rule.Deps) == 0 {
+			// 		delta.Add = append(delta.Add, rule)
+			// 	}
+			// 	rule.Deps = append(rule.Deps, label)
+			// } else {
+			// 	log.Printf("MISS (not found): %q (%d)", sym, len(deps))
+			// }
 		case *akpb.ScalacError_BuildozerUnusedDep:
 			delta.Remove = append(delta.Remove, rule)
 			rule.Deps = append(rule.Deps, t.BuildozerUnusedDep.UnusedDep)

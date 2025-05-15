@@ -18,13 +18,14 @@ import (
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/resolver"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
+	"github.com/stackb/scala-gazelle/pkg/sweep"
 )
 
 type debugAnnotation int
 
 const (
-	scalaLangName          = "scala"
-	TransitiveCommentToken = "# TRANSITIVE"
+	// scalaLangName is the scala language name
+	scalaLangName = "scala"
 )
 
 const (
@@ -58,17 +59,6 @@ const (
 	//
 	// gazelle:scala_fix_wildcard_imports .scala examples.aeron.api.proto._
 	scalaFixWildcardImportDirective = "scala_fix_wildcard_imports"
-
-	// Flag to preserve deps if the label is not known to be needed from the
-	// imports (legacy migration mode).
-	//
-	// gazelle:scala_keep_unknown_deps true
-	scalaKeepUnknownDepsDirective = "scala_keep_unknown_deps"
-
-	// Turn on the dep sweeper
-	//
-	// gazelle:scala_sweep_transitive_deps true
-	scalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
 
 	// Configure a scala rule
 	//
@@ -147,8 +137,10 @@ func DirectiveNames() []string {
 		scalaDebugDirective,
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
-		scalaKeepUnknownDepsDirective,
-		scalaSweepTransitiveDepsDirective,
+		sweep.ScalaKeepUnknownDepsDirective,
+		sweep.ScalaSweepTransitiveDepsDirective,
+		sweep.ScalaRepairTransitiveDepsDirective,
+		sweep.ScalaFixDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -172,6 +164,8 @@ type Config struct {
 	generateBuildFiles     bool
 	keepUnknownDeps        bool
 	sweepTransitiveDeps    bool
+	repairTransitiveDeps   bool
+	fixDeps                bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
 }
@@ -220,6 +214,8 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 	clone.generateBuildFiles = c.generateBuildFiles
 	clone.keepUnknownDeps = c.keepUnknownDeps
 	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
+	clone.repairTransitiveDeps = c.repairTransitiveDeps
+	clone.fixDeps = c.fixDeps
 
 	for k, v := range c.annotations {
 		clone.annotations[k] = v
@@ -305,13 +301,29 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 			if err := c.parseScalaRuleDirective(d); err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
-		case scalaKeepUnknownDepsDirective:
-			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
+		case sweep.ScalaKeepUnknownDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
 				return err
+			} else {
+				c.keepUnknownDeps = value
 			}
-		case scalaSweepTransitiveDepsDirective:
-			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
+		case sweep.ScalaFixDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
 				return err
+			} else {
+				c.fixDeps = value
+			}
+		case sweep.ScalaSweepTransitiveDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
+				return err
+			} else {
+				c.sweepTransitiveDeps = value
+			}
+		case sweep.ScalaRepairTransitiveDepsDirective:
+			if value, err := parseBoolDirective(d); err != nil {
+				return err
+			} else {
+				c.repairTransitiveDeps = value
 			}
 		case scalaFixWildcardImportDirective:
 			c.parseFixWildcardImport(d)
@@ -415,32 +427,6 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 		}
 		c.fixWildcardImportSpecs = append(c.fixWildcardImportSpecs, spec)
 	}
-}
-
-func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaKeepUnknownDepsDirective, parts)
-	}
-	keepUnknownDeps, err := strconv.ParseBool(parts[0])
-	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnknownDepsDirective, err)
-	}
-	c.keepUnknownDeps = keepUnknownDeps
-	return nil
-}
-
-func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaSweepTransitiveDepsDirective, parts)
-	}
-	sweepTransitiveDeps, err := strconv.ParseBool(parts[0])
-	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaSweepTransitiveDepsDirective, err)
-	}
-	c.sweepTransitiveDeps = sweepTransitiveDeps
-	return nil
 }
 
 func (c *Config) parseResolveFileSymbolNames(d rule.Directive) {
@@ -632,17 +618,31 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 
 // ShouldSweepTransitive determines whether non-managed deps (not generated, and
 // not marked with # keep) in the current package should be kept.
-func (c *Config) ShouldSweepTransitive(attrName string) bool {
+func (c *Config) ShouldSweepTransitive(r *rule.Rule, attrName string) bool {
 	if attrName != "deps" {
 		return false
 	}
+	if sweep.HasSweepTransitiveDepsTag(r) {
+		return true
+	}
 	return c.sweepTransitiveDeps
+}
+
+// ShouldFixDeps determines whether dep fixer should be applied.
+func (c *Config) ShouldFixDeps() bool {
+	return c.fixDeps
 }
 
 // shouldKeepUnknownDeps determines whether non-managed deps should be
 // kept.
 func (c *Config) shouldKeepUnknownDeps() bool {
 	return c.keepUnknownDeps
+}
+
+// ShouldRepairTransitiveDeps determines whether non-managed deps should be
+// kept.
+func (c *Config) ShouldRepairTransitiveDeps() bool {
+	return c.repairTransitiveDeps
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
@@ -713,15 +713,8 @@ func (c *Config) MaybeRewrite(kind string, from label.Label) label.Label {
 	return from
 }
 
-func (c *Config) Imports(imports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(imports, r, attrName, from)
-}
-
-func (c *Config) Exports(exports resolver.ImportMap, r *rule.Rule, attrName string, from label.Label) {
-	c.ruleAttrMergeDeps(exports, r, attrName, from)
-}
-
-func (c *Config) ruleAttrMergeDeps(
+// MergeDepsAttr takes an importMap and the rule, and merges the imports into the attr.
+func (c *Config) MergeDepsAttr(
 	imports resolver.ImportMap,
 	r *rule.Rule,
 	attrName string,
@@ -742,7 +735,7 @@ func (c *Config) ruleAttrMergeDeps(
 
 	// Merge the current list against the new incoming ones.  If no deps remain,
 	// delete the attr.
-	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from)
+	next := c.mergeDeps(deps, labels, attrName, r, from)
 
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
@@ -751,10 +744,12 @@ func (c *Config) ruleAttrMergeDeps(
 	}
 }
 
-// mergeDeps filters out a `deps` list.  Extries are removed from the
-// list if they can be parsed as dependency labels that have a provider.  Others
-// types of expressions are left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
+// mergeDeps filters out a `deps` list.  Extries are removed from the list if
+// they can be parsed as dependency labels that have a provider.  Others types
+// of expressions are left as-is.
+func (c *Config) mergeDeps(deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, r *rule.Rule, from label.Label) *build.ListExpr {
+	attrValue := r.Attr(attrName)
+
 	var src *build.ListExpr
 	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
@@ -765,6 +760,8 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 	if src == nil {
 		src = new(build.ListExpr)
 	}
+
+	var unknown []string
 
 	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
@@ -802,14 +799,15 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if c.ShouldSweepTransitive(attrName) {
+			if c.ShouldSweepTransitive(r, attrName) {
 				// set as TRANSITIVE comment for sweeping
-				if _, ok := expr.(*build.StringExpr); ok {
-					expr.Comment().Suffix = []build.Comment{{Token: TransitiveCommentToken}}
-				}
+				// if _, ok := expr.(*build.StringExpr); ok {
+				// 	expr.Comment().Suffix = []build.Comment{sweep.MakeTransitiveComment()}
+				// }
+				unknown = append(unknown, dep.String())
 				dst.List = append(dst.List, expr)
 			} else {
-				if isTransitive(expr) {
+				if sweep.IsTransitiveDep(expr) {
 					dst.List = append(dst.List, expr)
 				} else {
 					// one more caveat: preserve unmarked deps in legacy mode
@@ -820,6 +818,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			}
 			continue
 		}
+
+		// set a private attr so that they can be potentially removed later
+		r.SetPrivateAttr("_unknown_"+attrName, unknown)
 
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so delete it.
@@ -924,6 +925,18 @@ func parseAnnotation(val string) debugAnnotation {
 	}
 }
 
+func parseBoolDirective(d rule.Directive) (bool, error) {
+	parts := strings.Fields(d.Value)
+	if len(parts) != 1 {
+		return false, fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", d.Key, parts)
+	}
+	value, err := strconv.ParseBool(parts[0])
+	if err != nil {
+		return false, fmt.Errorf("invalid gazelle:%s directive: %v", d.Key, err)
+	}
+	return value, nil
+}
+
 func removeConflictResolver(slice []resolver.ConflictResolver, index int) []resolver.ConflictResolver {
 	return append(slice[:index], slice[index+1:]...)
 }
@@ -955,15 +968,4 @@ func depCommentFor(imp *resolver.Import) build.Comment {
 func setCommentPrefix(comment build.Comment, prefix string) build.Comment {
 	comment.Token = "# " + prefix + strings.TrimSpace(strings.TrimPrefix(comment.Token, "#"))
 	return comment
-}
-
-// isTransitive returns whether e is marked with a "# TRANSITIVE" comment.
-func isTransitive(e build.Expr) bool {
-	for _, c := range e.Comment().Suffix {
-		text := strings.TrimSpace(c.Token)
-		if text == TransitiveCommentToken {
-			return true
-		}
-	}
-	return false
 }

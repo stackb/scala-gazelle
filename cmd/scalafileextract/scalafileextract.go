@@ -106,7 +106,7 @@ func persistentWork(cfg *Config) error {
 		batchCfg.Cwd = cfg.Cwd
 
 		if err := batchWork(&batchCfg); err != nil {
-			return fmt.Errorf("performing persistent batch!: %v", err)
+			return fmt.Errorf("performing persistent batch: %v", err)
 		}
 
 		if err := protobuf.WriteDelimitedTo(&resp, os.Stdout); err != nil {
@@ -200,6 +200,13 @@ func extract(parser *parser.ScalametaParser, dir string, sourceFiles []string) (
 			return nil, fmt.Errorf(file.Error)
 		}
 		file.Filename = filenames[file.Filename]
+		if false {
+			sha256, err := collections.FileSha256(file.Filename)
+			if err != nil {
+				return nil, err
+			}
+			file.Sha256 = sha256
+		}
 	}
 
 	return response.Files, nil
