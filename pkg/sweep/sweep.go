@@ -107,15 +107,57 @@ func TransitiveAttr(attrName string, file *rule.File, r *rule.Rule, from label.L
 		if _, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode == 0 {
 			log.Println("- 💩 junk:", dep.Value)
 			junk = append(junk, dep.Value)
+			AddPostGazelleBuildozerCommand("remove deps "+dep.Value, from.String())
 		} else {
 			log.Println("- 👑 keep:", dep.Value)
 			deps.List = original
+			AddPostGazelleBuildozerCommand("commaent deps "+dep.Value+" TRANSITIVE", from.String())
 		}
 	}
 
 	// final save with possible last change
 	if err := file.Save(file.Path); err != nil {
 		return nil, err
+	}
+
+	return
+}
+
+// UnknownAttr iterates through deps in the private attr given and removes them
+// if the target still builds without it.
+func UnknownAttr(attrName string, file *rule.File, r *rule.Rule, from label.Label) (junk []string, err error) {
+	unknown, ok := r.PrivateAttr("_unknown_" + attrName).([]string)
+	if !ok || len(unknown) == 0 {
+		return nil, nil
+	}
+
+	// target should build first time, otherwise we can't check accurately.
+	log.Println("🧱 transitive sweep:", from, len(unknown))
+
+	if out, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode != 0 {
+		log.Fatalf("sweep failed (must build cleanly on first attempt): %s", string(out))
+	}
+
+	// iterate the deps in the unknown list.  Foreach one, remove it and then
+	// see if the target still builds.  If so, put it in the
+	for _, dep := range unknown {
+		// remove this dep
+		if err := runBuildozerCommands(fmt.Sprintf("remove deps %s|%v", dep, from)); err != nil {
+			return nil, err
+		}
+		// see if it still builds
+		if _, exitCode, _ := bazel.ExecCommand("bazel", "build", from.String()); exitCode == 0 {
+			log.Println("- 💩 junk:", dep)
+			junk = append(junk, dep)
+			AddPostGazelleBuildozerCommand("remove deps "+dep, from.String())
+		} else {
+			log.Println("- 👑 keep:", dep)
+			AddPostGazelleBuildozerCommand("comment deps "+dep+" TRANSITIVE", from.String())
+		}
+		// restore it
+		if err := runBuildozerCommands(fmt.Sprintf("add deps %s|%v", dep, from)); err != nil {
+			return nil, err
+		}
 	}
 
 	return

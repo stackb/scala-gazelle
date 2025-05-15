@@ -761,6 +761,8 @@ func (c *Config) mergeDeps(deps map[label.Label]bool, importLabels map[label.Lab
 		src = new(build.ListExpr)
 	}
 
+	var unknown []string
+
 	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
 		// try and parse the expression as a label
@@ -799,9 +801,10 @@ func (c *Config) mergeDeps(deps map[label.Label]bool, importLabels map[label.Lab
 			// marked as TRANSITIVE.
 			if c.ShouldSweepTransitive(r, attrName) {
 				// set as TRANSITIVE comment for sweeping
-				if _, ok := expr.(*build.StringExpr); ok {
-					expr.Comment().Suffix = []build.Comment{sweep.MakeTransitiveComment()}
-				}
+				// if _, ok := expr.(*build.StringExpr); ok {
+				// 	expr.Comment().Suffix = []build.Comment{sweep.MakeTransitiveComment()}
+				// }
+				unknown = append(unknown, dep.String())
 				dst.List = append(dst.List, expr)
 			} else {
 				if sweep.IsTransitiveDep(expr) {
@@ -815,6 +818,9 @@ func (c *Config) mergeDeps(deps map[label.Label]bool, importLabels map[label.Lab
 			}
 			continue
 		}
+
+		// set a private attr so that they can be potentially removed later
+		r.SetPrivateAttr("_unknown_"+attrName, unknown)
 
 		// do we have a known provider for the dependency?  If not, this
 		// dependency is not "managed", so delete it.

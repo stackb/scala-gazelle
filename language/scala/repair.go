@@ -26,7 +26,8 @@ const (
 )
 
 var (
-	CI = procutil.EnvVar("CI")
+	CI                           = procutil.EnvVar("CI")
+	SCALA_GAZELLE_BUILDOZER_FILE = procutil.EnvVar("SCALA_GAZELLE_BUILDOZER_FILE")
 )
 
 // String partially implements the flag.Value interface.
@@ -69,9 +70,22 @@ func (i *repairMode) Set(value string) error {
 }
 
 func (sl *scalaLang) repair() {
+	if err := sl.maybeWritePostGazelleBuildozerFile(); err != nil {
+		log.Printf("post-gazelle buildozer file write error: %v", err)
+	}
+
 	if err := sl.repairDeps(sl.repairMode); err != nil {
 		log.Printf("warning: repair failed: %v", err)
 	}
+}
+
+func (sl *scalaLang) maybeWritePostGazelleBuildozerFile() error {
+	if filename, ok := procutil.LookupEnv(SCALA_GAZELLE_BUILDOZER_FILE); ok {
+		if err := sweep.WritePostGazelleBuildozerFile(filename); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (sl *scalaLang) repairDeps(mode repairMode) error {

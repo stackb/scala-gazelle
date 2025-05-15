@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"os/exec"
 	"sort"
 	"strings"
@@ -14,12 +15,27 @@ import (
 )
 
 const (
-	REPAIRED = "REPAIRED"
+	REPAIRED               = "REPAIRED"
+	SweepTransitiveDepsTag = "sweep-transitive-deps"
 )
 
 var (
-	forRepair = make(map[string]*repairSpec)
+	forRepair                    = make(map[string]*repairSpec)
+	postGazelleBuildozerCommands = []string{}
 )
+
+func AddPostGazelleBuildozerCommand(action, target string) {
+	command := fmt.Sprintf("%s|%s", action, target)
+	postGazelleBuildozerCommands = append(postGazelleBuildozerCommands, command)
+}
+
+func WritePostGazelleBuildozerFile(filename string) error {
+	if len(postGazelleBuildozerCommands) == 0 {
+		return nil
+	}
+	content := strings.Join(postGazelleBuildozerCommands, "\n")
+	return os.WriteFile(filename, []byte(content), os.ModePerm)
+}
 
 type repairSpec struct {
 	// rule is the rule object to be repaired
@@ -162,7 +178,7 @@ func runBuildozerCommands(commands ...string) error {
 
 func HasSweepTransitiveDepsTag(r *rule.Rule) bool {
 	for _, tag := range r.AttrStrings("tags") {
-		if tag == "sweep-transitive-deps" {
+		if tag == SweepTransitiveDepsTag {
 			return true
 		}
 	}
@@ -173,7 +189,7 @@ func RemoveSweepTransitiveDepsTag(r *rule.Rule) {
 	tags := make([]string, 0)
 
 	for _, tag := range r.AttrStrings("tags") {
-		if tag == "sweep-transitive-deps" {
+		if tag == SweepTransitiveDepsTag {
 			continue
 		}
 		tags = append(tags, tag)

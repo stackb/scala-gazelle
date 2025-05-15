@@ -156,10 +156,11 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		}
 
 		if sc.ShouldSweepTransitive(rctx.Rule, "deps") {
-			if _, err := sweep.TransitiveAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
+			if _, err := sweep.UnknownAttr("deps", rctx.File, rctx.Rule, rctx.From); err != nil {
 				log.Printf("warning: transitive sweep failed: %v", err)
 			} else {
-				sweep.RemoveSweepTransitiveDepsTag(rctx.Rule)
+				// sweep.RemoveSweepTransitiveDepsTag(rctx.Rule)
+				sweep.AddPostGazelleBuildozerCommand("remove tags "+sweep.SweepTransitiveDepsTag, rctx.From.String())
 			}
 		}
 	}
