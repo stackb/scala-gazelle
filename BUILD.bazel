@@ -130,6 +130,7 @@ package_filegroup(
         "//pkg/scalarule/mocks:filegroup",
         "//pkg/semanticdb:filegroup",
         "//pkg/starlarkeval:filegroup",
+        "//pkg/sweep:filegroup",
         "//pkg/testutil:filegroup",
         "//pkg/wildcardimport:filegroup",
         "//rules:filegroup",

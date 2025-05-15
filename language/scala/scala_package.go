@@ -326,6 +326,22 @@ func (p *scalaPackage) infof(format string, args ...any) string {
 	return fmt.Sprintf("INFO ["+p.args.Rel+"]: "+format, args...)
 }
 
+// OnEnd is a lifecycle hook that gets called when the resolve phase has
+// ended.
+func (p *scalaPackage) OnEnd() error {
+	// if p.cfg.ShouldSweepTransitiveDeps() {
+	// 	// strip off the sweep directive if we got this far in the process
+	// 	if err := sweep.RemoveSweepDirective(p.args.File); err != nil {
+	// 		return err
+	// 	}
+	// 	// flip the keep_deps to false
+	// 	if err := sweep.SetKeepDepsDirective(p.args.File, false); err != nil {
+	// 		return err
+	// 	}
+	// }
+	return nil
+}
+
 func ruleContributesToCoverage(name string) bool {
 	switch name {
 	case "scala_files":
