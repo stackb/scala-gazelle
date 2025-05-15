@@ -6,6 +6,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
 )
 
 func init() {
@@ -23,7 +24,7 @@ func (s *PredefinedLabelConflictResolver) Name() string {
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *PredefinedLabelConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (s *PredefinedLabelConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config, logger zerolog.Logger) {
 }
 
 // CheckFlags implements part of the resolver.ConflictResolver interface.

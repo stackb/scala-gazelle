@@ -6,6 +6,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/rule"
+	"github.com/rs/zerolog"
 )
 
 func NewPreferredDepsConflictResolver(name string, preferred map[string]label.Label) *PreferredDepsConflictResolver {
@@ -24,7 +25,7 @@ func (s *PreferredDepsConflictResolver) Name() string {
 }
 
 // RegisterFlags implements part of the resolver.ConflictResolver interface.
-func (s *PreferredDepsConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config) {
+func (s *PreferredDepsConflictResolver) RegisterFlags(fs *flag.FlagSet, cmd string, c *config.Config, logger zerolog.Logger) {
 }
 
 // CheckFlags implements part of the resolver.ConflictResolver interface.
