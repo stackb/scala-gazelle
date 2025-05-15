@@ -65,11 +65,6 @@ const (
 	// gazelle:scala_keep_unknown_deps true
 	scalaKeepUnknownDepsDirective = "scala_keep_unknown_deps"
 
-	// Turn on the dep sweeper
-	//
-	// gazelle:scala_sweep_transitive_deps true
-	scalaSweepTransitiveDepsDirective = "scala_sweep_transitive_deps"
-
 	// Configure a scala rule
 	//
 	// gazelle:scala_rule RULE_NAME ATTRIBUTE VALUE
@@ -137,6 +132,15 @@ const (
 	resolveKindRewriteNameDirective = "resolve_kind_rewrite_name"
 )
 
+const (
+	// CleanupTransitiveDepsTagName is the name of a tag that, if present, triggers
+	// the recording of deps that may need to be removed or labeled as TRANSITIVE.
+	CleanupTransitiveDepsTagName = "cleanup-transitive-deps"
+	// UncorrelatedPrivateAttrName is a private attr key where uncorrelated deps
+	// are stored.
+	UncorrelatedDepsPrivateAttrName = "_uncorrelated_deps"
+)
+
 func DirectiveNames() []string {
 	return []string{
 		resolveConflictsDirective,
@@ -148,7 +152,6 @@ func DirectiveNames() []string {
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
 		scalaKeepUnknownDepsDirective,
-		scalaSweepTransitiveDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -309,10 +312,6 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
 				return err
 			}
-		case scalaSweepTransitiveDepsDirective:
-			if err := c.parseSweepTransitiveDepsDirective(d); err != nil {
-				return err
-			}
 		case scalaFixWildcardImportDirective:
 			c.parseFixWildcardImport(d)
 		case resolveGlobDirective:
@@ -427,19 +426,6 @@ func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
 		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnknownDepsDirective, err)
 	}
 	c.keepUnknownDeps = keepUnknownDeps
-	return nil
-}
-
-func (c *Config) parseSweepTransitiveDepsDirective(d rule.Directive) error {
-	parts := strings.Fields(d.Value)
-	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaSweepTransitiveDepsDirective, parts)
-	}
-	sweepTransitiveDeps, err := strconv.ParseBool(parts[0])
-	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaSweepTransitiveDepsDirective, err)
-	}
-	c.sweepTransitiveDeps = sweepTransitiveDeps
 	return nil
 }
 
@@ -630,15 +616,6 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
-// ShouldSweepTransitive determines whether non-managed deps (not generated, and
-// not marked with # keep) in the current package should be kept.
-func (c *Config) ShouldSweepTransitive(attrName string) bool {
-	if attrName != "deps" {
-		return false
-	}
-	return c.sweepTransitiveDeps
-}
-
 // shouldKeepUnknownDeps determines whether non-managed deps should be
 // kept.
 func (c *Config) shouldKeepUnknownDeps() bool {
@@ -742,7 +719,7 @@ func (c *Config) ruleAttrMergeDeps(
 
 	// Merge the current list against the new incoming ones.  If no deps remain,
 	// delete the attr.
-	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from)
+	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from, r)
 
 	if len(next.List) > 0 {
 		r.SetAttr(attrName, next)
@@ -754,7 +731,7 @@ func (c *Config) ruleAttrMergeDeps(
 // mergeDeps filters out a `deps` list.  Extries are removed from the
 // list if they can be parsed as dependency labels that have a provider.  Others
 // types of expressions are left as-is.
-func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label) *build.ListExpr {
+func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, importLabels map[label.Label]*resolver.ImportLabel, attrName string, from label.Label, r *rule.Rule) *build.ListExpr {
 	var src *build.ListExpr
 	if attrValue != nil {
 		if current, ok := attrValue.(*build.ListExpr); ok {
@@ -765,6 +742,10 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 	if src == nil {
 		src = new(build.ListExpr)
 	}
+
+	// possibly accumulate a list of dependencies that are present on the
+	// current deps but not correlated to an actual import.
+	var uncorrelated []string
 
 	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
@@ -802,12 +783,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if c.ShouldSweepTransitive(attrName) {
-				// set as TRANSITIVE comment for sweeping
-				if _, ok := expr.(*build.StringExpr); ok {
-					expr.Comment().Suffix = []build.Comment{{Token: TransitiveCommentToken}}
-				}
+			if hasTag(r, CleanupTransitiveDepsTagName) {
 				dst.List = append(dst.List, expr)
+				uncorrelated = append(uncorrelated, dep.String())
 			} else {
 				if isTransitive(expr) {
 					dst.List = append(dst.List, expr)
@@ -846,6 +824,10 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		}
 
 		dst.List = append(dst.List, depExpr)
+	}
+
+	if len(uncorrelated) > 0 && attrName == "deps" {
+		r.SetPrivateAttr(UncorrelatedDepsPrivateAttrName, uncorrelated)
 	}
 
 	return dst
@@ -962,6 +944,16 @@ func isTransitive(e build.Expr) bool {
 	for _, c := range e.Comment().Suffix {
 		text := strings.TrimSpace(c.Token)
 		if text == TransitiveCommentToken {
+			return true
+		}
+	}
+	return false
+}
+
+// hasTag returns whether a rule has a given tag
+func hasTag(r *rule.Rule, want string) bool {
+	for _, tag := range r.AttrStrings("tags") {
+		if tag == want {
 			return true
 		}
 	}
