@@ -41,6 +41,7 @@ func (sl *scalaLang) onEnd() {
 		}
 	}
 
+	sl.cleanup()
 	sl.dumpResolvedImportMap()
 	sl.reportCoverage(log.Printf)
 	sl.stopCpuProfiling()
