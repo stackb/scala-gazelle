@@ -129,17 +129,17 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 				if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, imp, imp.Symbol); ok {
 					imp.Symbol = resolved
 					r.logger.Debug().
-						Msgf("conflict resolved import %s to %s", imp.Imp, symbol.String())
+						Msgf("conflict resolved import %s to %v", imp.Imp, resolved)
 				} else {
 					message := resolver.SymbolConfictMessage(imp.Symbol, imp, rctx.From)
 					r.logger.Warn().Msg(message)
 					fmt.Println(message)
 					r.logger.Debug().
-						Msgf("resolved still-conflicted import %s to %s", imp.Imp, symbol.String())
+						Msgf("resolved still-conflicted import %s to %v", imp.Imp, symbol)
 				}
 			} else {
 				r.logger.Debug().
-					Msgf("resolved unconflicted import %s to %s", imp.Imp, symbol.String())
+					Msgf("resolved unconflicted import %s to %v", imp.Imp, symbol)
 			}
 		} else {
 			r.logger.Print(r.pb.Label + ": unresolved import: " + imp.Imp)

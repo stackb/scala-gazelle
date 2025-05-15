@@ -68,7 +68,8 @@ func (sl *scalaLang) registerSymbolProviders(flags *flag.FlagSet, cmd string, c 
 func (sl *scalaLang) registerConflictResolvers(flags *flag.FlagSet, cmd string, c *config.Config) {
 	resolver := resolver.GlobalConflictResolvers()
 	for _, provider := range resolver {
-		provider.RegisterFlags(flags, cmd, c)
+		logger := sl.logger.With().Str("conflict_resolver", provider.Name()).Logger()
+		provider.RegisterFlags(flags, cmd, c, logger)
 	}
 }
 
