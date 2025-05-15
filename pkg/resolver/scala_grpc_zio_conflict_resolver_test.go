@@ -75,7 +75,7 @@ func TestScalaGrpcZioConflictResolver(t *testing.T) {
 			},
 			wantOk: true,
 		},
-		"selects-symbol-from-grpc-zio-label-when-zio-import-present-suffix-grpc": {
+		"selects-symbol-from-grpc-label-when-zio-import-is-not-of-type-PROTO_SERVICE": {
 			symbol: resolver.Symbol{
 				Name:  "proto.api.UserGrpc",
 				Type:  sppb.ImportType_PROTO_SERVICE,
@@ -91,6 +91,41 @@ func TestScalaGrpcZioConflictResolver(t *testing.T) {
 			imports: resolver.NewImportMap(
 				&resolver.Import{
 					Symbol: &resolver.Symbol{Name: "proto.api.ZioUser"},
+				},
+			),
+			wantOk: true,
+			want: &resolver.Symbol{
+				Name:  "proto.api.UserGrpc",
+				Type:  sppb.ImportType_PROTO_SERVICE,
+				Label: label.Label{Pkg: "proto/api", Name: "user_grpc_scala_library"},
+				Conflicts: []*resolver.Symbol{
+					{
+						Name:  "proto.api.UserGrpc",
+						Type:  sppb.ImportType_PROTO_SERVICE,
+						Label: label.Label{Pkg: "proto/api", Name: "user_grpc_zio_scala_library"},
+					},
+				},
+			},
+		},
+		"selects-symbol-from-grpc-zio-label-when-zio-import-present-suffix-grpc": {
+			symbol: resolver.Symbol{
+				Name:  "proto.api.UserGrpc",
+				Type:  sppb.ImportType_PROTO_SERVICE,
+				Label: label.Label{Pkg: "proto/api", Name: "user_grpc_scala_library"},
+				Conflicts: []*resolver.Symbol{
+					{
+						Name:  "proto.api.UserGrpc",
+						Type:  sppb.ImportType_PROTO_SERVICE,
+						Label: label.Label{Pkg: "proto/api", Name: "user_grpc_zio_scala_library"},
+					},
+				},
+			},
+			imports: resolver.NewImportMap(
+				&resolver.Import{
+					Symbol: &resolver.Symbol{
+						Name: "proto.api.ZioUser",
+						Type: sppb.ImportType_PROTO_SERVICE,
+					},
 				},
 			),
 			wantOk: true,
@@ -117,7 +152,10 @@ func TestScalaGrpcZioConflictResolver(t *testing.T) {
 				&resolver.Import{
 					// in this case, the string .Zio is not the suffix of the
 					// last symbol, but somewhere higher up in the string.
-					Symbol: &resolver.Symbol{Name: "proto.api.ZioUser.X"},
+					Symbol: &resolver.Symbol{
+						Name: "proto.api.ZioUser.X",
+						Type: sppb.ImportType_PROTO_SERVICE,
+					},
 				},
 			),
 			wantOk: true,

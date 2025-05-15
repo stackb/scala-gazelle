@@ -128,9 +128,6 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			if len(imp.Symbol.Conflicts) > 0 {
 				if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, imp, imp.Symbol); ok {
 					imp.Symbol = resolved
-					// if imp.Imp == "trumid.ats.autoex.rules.proto.AutoExRulesServiceClient" && imp.Source.Filename == "trumid/ats/rfq/edge/ui/server/src/client/AutoExRulesClient.scala" {
-					// 	log.Panicf("ResolveImports CONFLICT! %+v resolved to %v", imp, resolved)
-					// }
 					r.logger.Debug().
 						Msgf("conflict resolved import %s to %v", imp.Imp, resolved)
 				} else {

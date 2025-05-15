@@ -81,7 +81,11 @@ func (s *ScalaGrpcZioConflictResolver) ResolveConflict(universe Universe, r *rul
 		if !strings.Contains(imp.Symbol.Name, ".Zio") {
 			continue
 		}
-		s.logger.Debug().Str("import", imp.Imp).Str("selected", grpcZioSymbol.String()).Msgf("resolved to zio dep because %s in file %s", imp.Imp, imp.Source.Filename)
+		var filename string
+		if imp.Source != nil {
+			filename = imp.Source.Filename
+		}
+		s.logger.Debug().Str("import", imp.Imp).Str("selected", grpcZioSymbol.String()).Msgf("resolved to zio dep because %s in file %s", imp.Imp, filename)
 		return grpcZioSymbol, true
 	}
 
