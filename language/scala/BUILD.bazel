@@ -8,6 +8,7 @@ go_library(
     name = "scala",
     srcs = [
         "cache.go",
+        "cleanup.go",
         "configure.go",
         "conflict_resolver_registry.go",
         "coverage.go",
@@ -134,6 +135,7 @@ package_filegroup(
     srcs = [
         "BUILD.bazel",
         "cache.go",
+        "cleanup.go",
         "configure.go",
         "conflict_resolver_registry.go",
         "coverage.go",

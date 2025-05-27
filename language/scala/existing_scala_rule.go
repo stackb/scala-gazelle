@@ -156,21 +156,6 @@ func (s *existingScalaRule) Resolve(rctx *scalarule.ResolveContext, importsRaw i
 		exports := scalaRule.ResolveExports(rctx)
 		sc.Exports(exports, rctx.Rule, "exports", rctx.From)
 	}
-
-	if sc.ShouldSweepTransitive("deps") {
-		if !hasTransitiveComment(rctx.Rule) {
-			if junk, err := s.sweepTransitiveAttr("deps", rctx.Rule, rctx.From); err != nil {
-				log.Printf("warning: transitive sweep failed: %v", err)
-			} else {
-				if len(junk) > 0 {
-					log.Println(formatBuildozerRemoveDeps(rctx.From, junk))
-				}
-			}
-			rctx.Rule.AddComment(scalaconfig.TransitiveCommentToken)
-		} else {
-			log.Println("> transitive sweep skipped (already done):", rctx.From)
-		}
-	}
 }
 
 // sweepTransitiveDeps iterates through deps marked "UNKNOWN" and removes them
