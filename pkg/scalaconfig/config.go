@@ -137,10 +137,10 @@ const (
 	// triggers the recording of deps that may need to be removed or labeled as
 	// TRANSITIVE.
 	CleanupUnmanagedDepsTagName = "cleanup-unmanaged-deps"
-	// NoUnknownDepsTagName is the name of a tag that, if present on a scala
+	// NoUnmanagedDepsTagName is the name of a tag that, if present on a scala
 	// target, has the same effect as the directive 'scala_keep_unmanaged_deps
 	// false'
-	NoUnknownDepsTagName = "no-unknown-deps"
+	NoUnmanagedDepsTagName = "no-unmanaged-deps"
 	// UnmanagedDepsPrivateAttrName is a private attr key where unmanaged deps
 	// are stored.
 	UnmanagedDepsPrivateAttrName = "_unmanaged_deps"
@@ -624,7 +624,7 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 // shouldKeepUnmanagedDeps determines whether non-managed deps should be
 // kept.
 func (c *Config) shouldKeepUnmanagedDeps(r *rule.Rule) bool {
-	if hasTag(r, NoUnknownDepsTagName) {
+	if hasTag(r, NoUnmanagedDepsTagName) {
 		return false
 	}
 	return c.keepUnmanagedDeps
@@ -843,14 +843,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 
 	if false {
 		if hasUnmanagedDeps {
-			tags := r.AttrStrings("tags")
-			if tags == nil {
-				tags = []string{}
-			}
-			tags = append(tags, CleanupUnmanagedDepsTagName)
-			r.SetAttr("tags", tags)
+			addTag(r, CleanupUnmanagedDepsTagName)
 		} else {
-			removeTag(r, CleanupUnmanagedDepsTagName)
+			addTag(r, NoUnmanagedDepsTagName)
 		}
 	}
 
@@ -982,6 +977,15 @@ func hasTag(r *rule.Rule, want string) bool {
 		}
 	}
 	return false
+}
+
+func addTag(r *rule.Rule, want string) {
+	tags := r.AttrStrings("tags")
+	if tags == nil {
+		tags = []string{}
+	}
+	tags = append(tags, want)
+	r.SetAttr("tags", tags)
 }
 
 // removeTag removes a given tag on the rule if it exists.
