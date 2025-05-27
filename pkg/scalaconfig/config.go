@@ -141,8 +141,8 @@ const (
 	// target, has the same effect as the directive 'scala_keep_unmanaged_deps
 	// false'
 	NoUnknownDepsTagName = "no-unknown-deps"
-	// UnmanagedDepsPrivateAttrName is a private attr key where uncorrelated
-	// deps are stored.
+	// UnmanagedDepsPrivateAttrName is a private attr key where unmanaged deps
+	// are stored.
 	UnmanagedDepsPrivateAttrName = "_unmanaged_deps"
 )
 
