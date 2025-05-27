@@ -841,15 +841,17 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		r.SetPrivateAttr(UnmanagedDepsPrivateAttrName, unmanaged)
 	}
 
-	if false && hasUnmanagedDeps {
-		tags := r.AttrStrings("tags")
-		if tags == nil {
-			tags = []string{}
+	if false {
+		if hasUnmanagedDeps {
+			tags := r.AttrStrings("tags")
+			if tags == nil {
+				tags = []string{}
+			}
+			tags = append(tags, CleanupUnmanagedDepsTagName)
+			r.SetAttr("tags", tags)
+		} else {
+			removeTag(r, CleanupUnmanagedDepsTagName)
 		}
-		tags = append(tags, CleanupUnmanagedDepsTagName)
-		r.SetAttr("tags", tags)
-	} else {
-		removeTag(r, CleanupUnmanagedDepsTagName)
 	}
 
 	return dst
