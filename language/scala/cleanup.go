@@ -14,24 +14,24 @@ import (
 )
 
 const (
-	// SCALA_GAZELLE_UNCORRELATED_DEPS_FILE is an environment variable that, if
+	// SCALA_GAZELLE_UNMANAGED_DEPS_FILE is an environment variable that, if
 	// defined, activates the saving of uncorrelated deps for a given set of
 	// rules that have recorded it.
-	SCALA_GAZELLE_UNCORRELATED_DEPS_FILE = procutil.EnvVar("SCALA_GAZELLE_UNCORRELATED_DEPS_FILE")
+	SCALA_GAZELLE_UNMANAGED_DEPS_FILE = procutil.EnvVar("SCALA_GAZELLE_UNMANAGED_DEPS_FILE")
 )
 
 // cleanup is the top-level function for various cleanup related features.
 func (sl *scalaLang) cleanup() {
-	if err := sl.cleanupUncorrelatedDeps(); err != nil {
+	if err := sl.cleanupUnmanagedDeps(); err != nil {
 		log.Println("warning: cleanup uncorrelated deps failed: %v", err)
 	}
 }
 
-func (sl *scalaLang) cleanupUncorrelatedDeps() error {
-	if filename, ok := procutil.LookupEnv(SCALA_GAZELLE_UNCORRELATED_DEPS_FILE); ok {
+func (sl *scalaLang) cleanupUnmanagedDeps() error {
+	if filename, ok := procutil.LookupEnv(SCALA_GAZELLE_UNMANAGED_DEPS_FILE); ok {
 		return sl.saveUncorrelatedDepsFile(filename)
 	} else {
-		sl.logger.Debug().Msg("SCALA_GAZELLE_UNCORRELATED_DEPS_FILE not set")
+		sl.logger.Debug().Msg("SCALA_GAZELLE_UNMANAGED_DEPS_FILE not set")
 	}
 	return nil
 }
@@ -39,7 +39,7 @@ func (sl *scalaLang) cleanupUncorrelatedDeps() error {
 func (sl *scalaLang) saveUncorrelatedDepsFile(filename string) error {
 	deps := sl.makeUncorrelatedDeps()
 	if len(deps) == 0 {
-		sl.logger.Debug().Msg("SCALA_GAZELLE_UNCORRELATED_DEPS_FILE not written (no uncorrelated deps to write)")
+		sl.logger.Debug().Msg("SCALA_GAZELLE_UNMANAGED_DEPS_FILE not written (no uncorrelated deps to write)")
 		return nil
 	}
 
@@ -62,7 +62,7 @@ func (sl *scalaLang) makeUncorrelatedDeps() []UncorrelatedDeps {
 	nonDirect := make(map[label.Label]UncorrelatedDeps)
 
 	for from, rule := range sl.knownRules {
-		if deps, ok := rule.PrivateAttr(scalaconfig.UncorrelatedDepsPrivateAttrName).([]string); ok {
+		if deps, ok := rule.PrivateAttr(scalaconfig.UnmanagedDepsPrivateAttrName).([]string); ok {
 			nonDirect[from] = UncorrelatedDeps{from: from, deps: deps}
 			sl.logger.Debug().Str("from", from.String()).Msgf("uncorrelated deps: %v", deps)
 		}

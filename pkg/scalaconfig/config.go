@@ -62,8 +62,8 @@ const (
 	// Flag to preserve deps if the label is not known to be needed from the
 	// imports (legacy migration mode).
 	//
-	// gazelle:scala_keep_unknown_deps true
-	scalaKeepUnknownDepsDirective = "scala_keep_unknown_deps"
+	// gazelle:scala_keep_unmanaged_deps true
+	scalaKeepUnmanagedDepsDirective = "scala_keep_unmanaged_deps"
 
 	// Configure a scala rule
 	//
@@ -133,12 +133,17 @@ const (
 )
 
 const (
-	// CleanupTransitiveDepsTagName is the name of a tag that, if present, triggers
-	// the recording of deps that may need to be removed or labeled as TRANSITIVE.
-	CleanupTransitiveDepsTagName = "cleanup-transitive-deps"
-	// UncorrelatedPrivateAttrName is a private attr key where uncorrelated deps
-	// are stored.
-	UncorrelatedDepsPrivateAttrName = "_uncorrelated_deps"
+	// CleanupUnmanagedDepsTagName is the name of a tag that, if present,
+	// triggers the recording of deps that may need to be removed or labeled as
+	// TRANSITIVE.
+	CleanupUnmanagedDepsTagName = "cleanup-unmanaged-deps"
+	// NoUnknownDepsTagName is the name of a tag that, if present on a scala
+	// target, has the same effect as the directive 'scala_keep_unmanaged_deps
+	// false'
+	NoUnknownDepsTagName = "no-unknown-deps"
+	// UnmanagedDepsPrivateAttrName is a private attr key where uncorrelated
+	// deps are stored.
+	UnmanagedDepsPrivateAttrName = "_unmanaged_deps"
 )
 
 func DirectiveNames() []string {
@@ -151,7 +156,7 @@ func DirectiveNames() []string {
 		scalaDebugDirective,
 		scalaLogLevelDirective,
 		scalaDepsCleanerDirective,
-		scalaKeepUnknownDepsDirective,
+		scalaKeepUnmanagedDepsDirective,
 		scalaFixWildcardImportDirective,
 		scalaGenerateBuildFilesDirective,
 		scalaRuleDirective,
@@ -173,7 +178,7 @@ type Config struct {
 	conflictResolvers      []resolver.ConflictResolver
 	depsCleaners           []resolver.DepsCleaner
 	generateBuildFiles     bool
-	keepUnknownDeps        bool
+	keepUnmanagedDeps      bool
 	sweepTransitiveDeps    bool
 	logger                 zerolog.Logger
 	logLevel               zerolog.Level
@@ -221,7 +226,7 @@ func (c *Config) clone(config *config.Config, rel string) *Config {
 
 	clone.logLevel = c.logLevel
 	clone.generateBuildFiles = c.generateBuildFiles
-	clone.keepUnknownDeps = c.keepUnknownDeps
+	clone.keepUnmanagedDeps = c.keepUnmanagedDeps
 	clone.sweepTransitiveDeps = c.sweepTransitiveDeps
 
 	for k, v := range c.annotations {
@@ -308,8 +313,8 @@ func (c *Config) ParseDirectives(directives []rule.Directive) error {
 			if err := c.parseScalaRuleDirective(d); err != nil {
 				return fmt.Errorf(`invalid directive: "gazelle:%s %s": %w`, d.Key, d.Value, err)
 			}
-		case scalaKeepUnknownDepsDirective:
-			if err := c.parseKeepUnknownDepsDirective(d); err != nil {
+		case scalaKeepUnmanagedDepsDirective:
+			if err := c.parseKeepUnmanagedDepsDirective(d); err != nil {
 				return err
 			}
 		case scalaFixWildcardImportDirective:
@@ -416,16 +421,16 @@ func (c *Config) parseFixWildcardImport(d rule.Directive) {
 	}
 }
 
-func (c *Config) parseKeepUnknownDepsDirective(d rule.Directive) error {
+func (c *Config) parseKeepUnmanagedDepsDirective(d rule.Directive) error {
 	parts := strings.Fields(d.Value)
 	if len(parts) != 1 {
-		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaKeepUnknownDepsDirective, parts)
+		return fmt.Errorf("invalid gazelle:%s directive: expected [true|false], got %v", scalaKeepUnmanagedDepsDirective, parts)
 	}
-	keepUnknownDeps, err := strconv.ParseBool(parts[0])
+	keepUnmanagedDeps, err := strconv.ParseBool(parts[0])
 	if err != nil {
-		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnknownDepsDirective, err)
+		return fmt.Errorf("invalid gazelle:%s directive: %v", scalaKeepUnmanagedDepsDirective, err)
 	}
-	c.keepUnknownDeps = keepUnknownDeps
+	c.keepUnmanagedDeps = keepUnmanagedDeps
 	return nil
 }
 
@@ -616,10 +621,13 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 	return &build.Comment{Token: fmt.Sprintf("# %v", imp.Kind)}
 }
 
-// shouldKeepUnknownDeps determines whether non-managed deps should be
+// shouldKeepUnmanagedDeps determines whether non-managed deps should be
 // kept.
-func (c *Config) shouldKeepUnknownDeps() bool {
-	return c.keepUnknownDeps
+func (c *Config) shouldKeepUnmanagedDeps(r *rule.Rule) bool {
+	if hasTag(r, NoUnknownDepsTagName) {
+		return false
+	}
+	return c.keepUnmanagedDeps
 }
 
 // ShouldFixWildcardImport tests whether the given symbol name pattern
@@ -745,7 +753,9 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 
 	// possibly accumulate a list of dependencies that are present on the
 	// current deps but not correlated to an actual import.
-	var uncorrelated []string
+	var unmanaged []string
+	var hasUnmanagedDeps bool
+	shouldKeepUnmanagedDeps := c.shouldKeepUnmanagedDeps(r)
 
 	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
@@ -778,20 +788,21 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		// and should be left alone.  Or, if we are in mark mode, mark as transitive
 		imp, ok := importLabels[dep]
 		if !ok {
+			hasUnmanagedDeps = true
 			// this dependency is not marked as # keep or definitely known to be
 			// needed via the imports. It may be a transitive dependency.  If we
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if hasTag(r, CleanupTransitiveDepsTagName) {
+			if hasTag(r, CleanupUnmanagedDepsTagName) {
 				dst.List = append(dst.List, expr)
-				uncorrelated = append(uncorrelated, dep.String())
+				unmanaged = append(unmanaged, dep.String())
 			} else {
 				if isTransitive(expr) {
 					dst.List = append(dst.List, expr)
 				} else {
 					// one more caveat: preserve unmarked deps in legacy mode
-					if c.shouldKeepUnknownDeps() {
+					if shouldKeepUnmanagedDeps {
 						dst.List = append(dst.List, expr)
 					}
 				}
@@ -826,8 +837,19 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		dst.List = append(dst.List, depExpr)
 	}
 
-	if len(uncorrelated) > 0 && attrName == "deps" {
-		r.SetPrivateAttr(UncorrelatedDepsPrivateAttrName, uncorrelated)
+	if len(unmanaged) > 0 && attrName == "deps" {
+		r.SetPrivateAttr(UnmanagedDepsPrivateAttrName, unmanaged)
+	}
+
+	if false && hasUnmanagedDeps {
+		tags := r.AttrStrings("tags")
+		if tags == nil {
+			tags = []string{}
+		}
+		tags = append(tags, CleanupUnmanagedDepsTagName)
+		r.SetAttr("tags", tags)
+	} else {
+		removeTag(r, CleanupUnmanagedDepsTagName)
 	}
 
 	return dst
@@ -958,4 +980,25 @@ func hasTag(r *rule.Rule, want string) bool {
 		}
 	}
 	return false
+}
+
+// removeTag removes a given tag on the rule if it exists.
+func removeTag(r *rule.Rule, want string) bool {
+	var found bool
+	var tags []string
+	for _, tag := range r.AttrStrings("tags") {
+		if tag == want {
+			found = true
+		} else {
+			tags = append(tags, tag)
+		}
+	}
+	if found {
+		if len(tags) > 0 {
+			r.SetAttr("tags", tags)
+		} else {
+			r.DelAttr("tags")
+		}
+	}
+	return found
 }
