@@ -623,7 +623,10 @@ func (c *Config) depSuffixComment(imp *resolver.Import) *build.Comment {
 
 // shouldKeepUnmanagedDeps determines whether non-managed deps should be
 // kept.
-func (c *Config) shouldKeepUnmanagedDeps(r *rule.Rule) bool {
+func (c *Config) shouldKeepUnmanagedDeps(r *rule.Rule, attrName string) bool {
+	if attrName != "deps" {
+		return true
+	}
 	if hasTag(r, NoUnmanagedDepsTagName) {
 		return false
 	}
@@ -755,7 +758,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 	// current deps but not correlated to an actual import.
 	var unmanaged []string
 	var hasUnmanagedDeps bool
-	shouldKeepUnmanagedDeps := c.shouldKeepUnmanagedDeps(r)
+	shouldKeepUnmanagedDeps := c.shouldKeepUnmanagedDeps(r, attrName)
 
 	var dst = new(build.ListExpr)
 	for _, expr := range src.List {
@@ -784,11 +787,12 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		}
 
 		// do we have an entry for the src dep in importLabels?  If so, this is
-		// a "managed" dep that we are generating.  If not, it's not managed,
-		// and should be left alone.  Or, if we are in mark mode, mark as transitive
+		// a "managed" dep that we are generating.  If not, it's unmanaged.
 		imp, ok := importLabels[dep]
 		if !ok {
-			hasUnmanagedDeps = true
+			if attrName == "deps" {
+				hasUnmanagedDeps = true
+			}
 			// this dependency is not marked as # keep or definitely known to be
 			// needed via the imports. It may be a transitive dependency.  If we
 			// are in sweep mode, mark it, keep it and it will be checked by the
@@ -841,11 +845,18 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		r.SetPrivateAttr(UnmanagedDepsPrivateAttrName, unmanaged)
 	}
 
-	if false {
-		if hasUnmanagedDeps {
-			addTag(r, CleanupUnmanagedDepsTagName)
-		} else {
-			addTag(r, NoUnmanagedDepsTagName)
+	if attrName == "deps" {
+		if true {
+			if hasUnmanagedDeps {
+				// addTag(r, CleanupUnmanagedDepsTagName)
+			} else {
+				removeTag(r, CleanupUnmanagedDepsTagName)
+				// addTag(r, NoUnmanagedDepsTagName)
+			}
+		}
+
+		if hasTag(r, NoUnmanagedDepsTagName) {
+			removeTag(r, CleanupUnmanagedDepsTagName)
 		}
 	}
 
