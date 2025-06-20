@@ -83,7 +83,8 @@ func newScalaRule(
 		return a.Filename < b.Filename
 	})
 
-	if !isBinaryRule(ctx.rule.Kind()) {
+	if isImportable(ctx.scalaConfig, ctx.rule) {
+		logger.Debug().Msgf("%s: rule is importable, setting up exports: %s/%s", ctx.scalaConfig.Rel(), ctx.rule.Kind(), ctx.rule.Name())
 		for _, file := range scalaRule.files {
 			scalaRule.putExports(file)
 		}
@@ -501,4 +502,16 @@ func extendsKeysSorted(collection map[string]*sppb.ClassList) []string {
 	}
 	sort.Strings(keys)
 	return keys
+}
+
+// isImportable takes a given rule and determines if it is importable by other
+// rules.
+func isImportable(cfg *scalaconfig.Config, rule *rule.Rule) bool {
+	if isBinaryRule(rule.Kind()) {
+		return false
+	}
+	if scalaconfig.HasTag(rule, "non-exportable") {
+		return false
+	}
+	return true
 }
