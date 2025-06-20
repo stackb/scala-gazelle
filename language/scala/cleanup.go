@@ -31,7 +31,6 @@ func (sl *scalaLang) cleanupUnmanagedDeps() error {
 	if filename, ok := procutil.LookupEnv(SCALA_GAZELLE_UNMANAGED_DEPS_FILE); ok {
 		return sl.saveUnmanagedDepsFile(filename)
 	} else {
-		log.Println("SCALA_GAZELLE_UNMANAGED_DEPS_FILE not set")
 		sl.logger.Debug().Msg("SCALA_GAZELLE_UNMANAGED_DEPS_FILE not set")
 	}
 	return nil

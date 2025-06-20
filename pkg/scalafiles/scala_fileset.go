@@ -70,7 +70,7 @@ func (s *ScalaFilesetRuleProvider) LoadInfo() rule.LoadInfo {
 // ProvideRule implements part of the scalarule.Provider interface.  It always
 // returns nil.  The ResolveRule interface is the intended use case.
 func (s *ScalaFilesetRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	// we only generate a new rule if this is a root BUILD file
+	// we only generate a new rule if this is the root BUILD file
 	if pkg.GenerateArgs().Rel != "" {
 		return nil
 	}

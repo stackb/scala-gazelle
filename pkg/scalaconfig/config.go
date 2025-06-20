@@ -627,7 +627,7 @@ func (c *Config) shouldKeepUnmanagedDeps(r *rule.Rule, attrName string) bool {
 	if attrName != "deps" {
 		return true
 	}
-	if hasTag(r, NoUnmanagedDepsTagName) {
+	if HasTag(r, NoUnmanagedDepsTagName) {
 		return false
 	}
 	return c.keepUnmanagedDeps
@@ -798,7 +798,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			// are in sweep mode, mark it, keep it and it will be checked by the
 			// sweeper process. Otherwise, only keep it if has already been
 			// marked as TRANSITIVE.
-			if hasTag(r, CleanupUnmanagedDepsTagName) {
+			if HasTag(r, CleanupUnmanagedDepsTagName) {
 				dst.List = append(dst.List, expr)
 				unmanaged = append(unmanaged, dep.String())
 			} else {
@@ -855,7 +855,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 			}
 		}
 
-		if hasTag(r, NoUnmanagedDepsTagName) {
+		if HasTag(r, NoUnmanagedDepsTagName) {
 			removeTag(r, CleanupUnmanagedDepsTagName)
 		}
 	}
@@ -980,8 +980,8 @@ func isTransitive(e build.Expr) bool {
 	return false
 }
 
-// hasTag returns whether a rule has a given tag
-func hasTag(r *rule.Rule, want string) bool {
+// HasTag returns whether a rule has a given tag
+func HasTag(r *rule.Rule, want string) bool {
 	for _, tag := range r.AttrStrings("tags") {
 		if tag == want {
 			return true
