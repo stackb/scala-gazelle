@@ -10,8 +10,6 @@ import (
 
 	"github.com/stackb/scala-gazelle/pkg/collections"
 	"github.com/stackb/scala-gazelle/pkg/scalarule"
-
-	sppb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/parse"
 )
 
 const (
@@ -69,22 +67,10 @@ func (s *ScalaFilesRuleProvider) LoadInfo() rule.LoadInfo {
 
 // ProvideRule implements part of the scalarule.Provider interface.
 func (s *ScalaFilesRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	args := pkg.GenerateArgs()
-
-	var srcs []string
-	for _, file := range args.RegularFiles {
-		if strings.HasSuffix(file, ".scala") {
-			srcs = append(srcs, file)
-		}
-	}
-
 	r := rule.NewRule(s.kind, s.kind)
-	if len(srcs) > 0 {
-		r.SetAttr("srcs", srcs)
-	}
 	r.SetAttr("tags", []string{"manual"})
 	r.SetAttr("visibility", []string{"//visibility:public"})
-	r.SetPrivateAttr(config.GazelleImportsKey, []string{"foo"})
+	r.SetPrivateAttr(config.GazelleImportsKey, []string{})
 
 	return &scalaFilesRule{cfg, pkg, r}
 }
@@ -126,33 +112,16 @@ func (s *scalaFilesRule) Imports(c *config.Config, r *rule.Rule, file *rule.File
 // Resolve implements part of the scalarule.RuleProvider interface.
 func (s *scalaFilesRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
 	srcs := rctx.Rule.AttrStrings("srcs")
-	var debug bool
-	if debug {
-		log.Printf("%s: resolving with %d generated rules", rctx.From, len(s.pkg.GeneratedRules()))
-	}
 
-	for _, rule := range s.pkg.GeneratedRules() {
-		scalaFiles := rule.PrivateAttr("_scala_files")
-		if debug {
-			log.Printf("%s: resolving with scala_files: %T", rctx.From, scalaFiles)
-		}
-		if files, ok := scalaFiles.([]*sppb.File); ok {
-			if debug {
-				log.Printf("%s: resolving with %d files", rctx.From, len(files))
-			}
-			for _, file := range files {
-				relativeToPkg := strings.TrimPrefix(file.Filename, s.pkg.GenerateArgs().Rel)
-				srcs = append(srcs, strings.TrimPrefix(relativeToPkg, "/"))
-			}
-		}
-	}
-	if debug {
-		log.Printf("%s: resolved srcs: %v", rctx.From, srcs)
+	rel := s.pkg.GenerateArgs().Rel
+	for _, file := range s.pkg.Files() {
+		relativeToPkg := strings.TrimPrefix(file.Filename, rel)
+		srcs = append(srcs, strings.TrimPrefix(relativeToPkg, "/"))
 	}
 
 	if len(srcs) > 0 {
 		rctx.Rule.SetAttr("srcs", collections.DeduplicateAndSort(srcs))
-		deps = append(deps, rctx.From.String())
+		filesets.Add(rctx.From)
 	} else {
 		rctx.Rule.Delete()
 	}

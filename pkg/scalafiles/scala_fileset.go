@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
+	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/resolve"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 
@@ -19,8 +20,16 @@ const (
 var (
 	// deps holds the list of final deps for the aggregating rule.  This value
 	// is modified as a package global.
-	deps = make([]string, 0)
+	filesets = &scalaFilesetDeps{}
 )
+
+type scalaFilesetDeps struct {
+	deps []string
+}
+
+func (d *scalaFilesetDeps) Add(dep label.Label) {
+	d.deps = append(d.deps, dep.String())
+}
 
 func init() {
 	mustRegister := func(load, kind string) {
@@ -37,7 +46,7 @@ func NewScalaFilesetRuleProvider(load, kind string) *ScalaFilesetRuleProvider {
 	return &ScalaFilesetRuleProvider{load, kind}
 }
 
-// ScalaFilesetRuleProvider implements a scalarule.Provider for the semanticdb_index.
+// ScalaFilesetRuleProvider implements a scalarule.Provider for the scala_fileset rule.
 type ScalaFilesetRuleProvider struct {
 	load, kind string
 }
@@ -67,20 +76,14 @@ func (s *ScalaFilesetRuleProvider) LoadInfo() rule.LoadInfo {
 	}
 }
 
-// ProvideRule implements part of the scalarule.Provider interface.  It always
-// returns nil.  The ResolveRule interface is the intended use case.
+// ProvideRule implements part of the scalarule.Provider interface.
 func (s *ScalaFilesetRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarule.Package) scalarule.RuleProvider {
-	// we only generate a new rule if this is the root BUILD file
-	if pkg.GenerateArgs().Rel != "" {
-		return nil
-	}
-	r := rule.NewRule(s.kind, s.kind)
-	return &scalaFilesetRule{cfg, pkg, r}
+	return nil
 }
 
 // ResolveRule implements the RuleResolver interface.
 func (s *ScalaFilesetRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scalarule.Package, r *rule.Rule) scalarule.RuleProvider {
-	r.SetPrivateAttr(config.GazelleImportsKey, nil) // ensure the rule has the key, but we don't use a value
+	r.SetPrivateAttr(config.GazelleImportsKey, filesets)
 	return &scalaFilesetRule{cfg, pkg, r}
 }
 
@@ -113,7 +116,8 @@ func (s *scalaFilesetRule) Imports(c *config.Config, r *rule.Rule, file *rule.Fi
 }
 
 // Resolve implements part of the scalarule.RuleProvider interface.
-func (s *scalaFilesetRule) Resolve(rctx *scalarule.ResolveContext, importsRaw interface{}) {
-	sort.Strings(deps)
-	rctx.Rule.SetAttr("deps", deps)
+func (s *scalaFilesetRule) Resolve(rctx *scalarule.ResolveContext, importsRaw any) {
+	filesets := importsRaw.(*scalaFilesetDeps)
+	sort.Strings(filesets.deps)
+	rctx.Rule.SetAttr("deps", filesets.deps)
 }
