@@ -72,6 +72,16 @@ func (s *ScalaFilesRuleProvider) ProvideRule(cfg *scalarule.Config, pkg scalarul
 	r.SetAttr("visibility", []string{"//visibility:public"})
 	r.SetPrivateAttr(config.GazelleImportsKey, []string{})
 
+	var srcs []string
+	for _, file := range pkg.GenerateArgs().RegularFiles {
+		if strings.HasSuffix(file, ".scala") {
+			srcs = append(srcs, file)
+		}
+	}
+	if len(srcs) > 0 {
+		r.SetAttr("srcs", srcs)
+	}
+
 	return &scalaFilesRule{cfg, pkg, r}
 }
 
