@@ -51,6 +51,8 @@ type scalaPackage struct {
 	resolveWork []func()
 	// used for tracking coverage
 	ruleCoverage *packageRuleCoverage
+	// files is a list of scala files that are within this package.
+	files []*sppb.File
 }
 
 // newScalaPackage constructs a Package given a list of scala files.
@@ -276,13 +278,18 @@ func (s *scalaPackage) ParseRule(r *rule.Rule, attrName string) (scalaRule scala
 	}
 
 	scalaRule = newScalaRule(logger, ctx, rule)
-
+	s.files = append(s.files, scalaRule.Files()...)
 	return
 }
 
 // repoRootDir return the root directory of the repo.
 func (s *scalaPackage) repoRootDir() string {
 	return s.cfg.Config().RepoRoot
+}
+
+// Files implements part of the scalarule.Package interface.
+func (r *scalaPackage) Files() []*sppb.File {
+	return r.files
 }
 
 // Rules provides the aggregated rule list for the package.

@@ -82,18 +82,12 @@ func (s *existingScalaRuleProvider) ResolveRule(cfg *scalarule.Config, pkg scala
 			log.Printf("skipping %s %s: unable to collect srcs: %v", r.Kind(), r.Name(), err)
 			return nil
 		}
-		// rule has no srcs.  This is OK for binary rules, sometimes they only
-		// have a main_class.
-		// if !s.isBinary {
-		// 	return nil // no need to print a warning
-		// }
 	}
 	if scalaRule == nil {
 		log.Panicln("scalaRule should not be nil!")
 	}
 
 	r.SetPrivateAttr(config.GazelleImportsKey, scalaRule)
-	r.SetPrivateAttr("_scala_files", scalaRule.Files())
 
 	return &existingScalaRule{cfg, pkg, r, scalaRule, s.isBinary, s.isLibrary, s.isTest}
 }
