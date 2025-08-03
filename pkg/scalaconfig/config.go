@@ -3,6 +3,7 @@ package scalaconfig
 import (
 	"fmt"
 	"log"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -733,6 +734,9 @@ func (c *Config) ruleAttrMergeDeps(
 	next := c.mergeDeps(r.Attr(attrName), deps, labels, attrName, from, r)
 
 	if len(next.List) > 0 {
+	    slices.SortFunc(next.List, func (a,b build.Expr) int {
+            return strings.Compare(labelFromDepExpr(a).String(), labelFromDepExpr(b).String())
+        })
 		r.SetAttr(attrName, next)
 	} else {
 		r.DelAttr(attrName)

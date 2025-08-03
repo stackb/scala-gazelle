@@ -2,3 +2,4 @@
 /bazel-*
 /.vscode/
 /examples/
+.idea/
