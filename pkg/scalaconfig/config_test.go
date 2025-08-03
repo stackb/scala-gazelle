@@ -608,7 +608,7 @@ test(
 	expr = "@@@",
 )
 			`,
-			want: label.NoLabel,
+			want: label.New("@", "", "@"),
 		},
 		"valid label": {
 			in: `

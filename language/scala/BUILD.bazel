@@ -86,10 +86,6 @@ gazelle_binary(
 go_test(
     name = "scala_test",
     srcs = [
-        # "coverage_test.go",
-        # "diff_test.go",
-        # "existing_scala_rule_test.go",
-        # "flags_test.go",
         "coverage_test.go",
         "diff_test.go",
         "existing_scala_rule_test.go",

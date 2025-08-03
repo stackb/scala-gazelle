@@ -39,17 +39,15 @@ def protobuf_core_deps():
     com_google_protobuf()  # via <TOP>
 
 def io_bazel_rules_go():
-    # Release: v0.35.0
-    # TargetCommitish: release-0.35
-    # Date: 2022-09-11 15:59:49 +0000 UTC
-    # URL: https://github.com/bazelbuild/rules_go/releases/tag/v0.35.0
-    # Size: 931734 (932 kB)
+    # Release: v0.56.0
     _maybe(
         http_archive,
         name = "io_bazel_rules_go",
-        sha256 = "cc027f11f98aef8bc52c472ced0714994507a16ccd3a0820b2df2d6db695facd",
-        strip_prefix = "rules_go-0.35.0",
-        urls = ["https://github.com/bazelbuild/rules_go/archive/v0.35.0.tar.gz"],
+        sha256 = "94643c4ce02f3b62f3be7d13d527a5c780a568073b7562606e78399929005f98",
+        urls = [
+                "https://mirror.bazel.build/github.com/bazel-contrib/rules_go/releases/download/v0.56.0/rules_go-v0.56.0.zip",
+                "https://github.com/bazel-contrib/rules_go/releases/download/v0.56.0/rules_go-v0.56.0.zip",
+        ],
     )
 
 def scalameta_parsers():
@@ -69,21 +67,14 @@ filegroup(
     )
 
 def bazel_gazelle():
-    # Branch: master
-    # Commit: 2d1002926dd160e4c787c1b7ecc60fb7d39b97dc
-    # Date: 2022-11-14 04:43:02 +0000 UTC
-    # URL: https://github.com/bazelbuild/bazel-gazelle/commit/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc
-    #
-    # fix updateStmt makeslice panic (#1371)
-    # Size: 1859745 (1.9 MB)
+    # Release: v0.39.1
     _maybe(
         http_archive,
         name = "bazel_gazelle",
-        patch_args = ["-p1"],
-        patches = ["@build_stack_scala_gazelle//third_party/bazelbuild/bazel-gazelle:pr-1394.patch"],
-        sha256 = "5ebc984c7be67a317175a9527ea1fb027c67f0b57bb0c990bac348186195f1ba",
-        strip_prefix = "bazel-gazelle-2d1002926dd160e4c787c1b7ecc60fb7d39b97dc",
-        urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/2d1002926dd160e4c787c1b7ecc60fb7d39b97dc.tar.gz"],
+        integrity = "sha256-t2D3/nUXOIYAf3wuYWohJBII89kOhlfcZdNqdx6Ra2o=",
+        urls = [
+            "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.39.1/bazel-gazelle-v0.39.1.tar.gz",
+        ],
     )
 
 def local_bazel_gazelle():
@@ -111,21 +102,12 @@ def rules_proto():
     )
 
 def build_stack_rules_proto():
-    # Branch: master
-    # Commit: aa380e4421057b35228544bc234f816bb6b72c1c
-    # Date: 2022-12-08 05:19:32 +0000 UTC
-    # URL: https://github.com/stackb/rules_proto/commit/aa380e4421057b35228544bc234f816bb6b72c1c
-    #
-    # use distinct impLang for scala proto exports (#304)
-    #
-    # * use distinct impLang for scala proto exports
-    # * fix test
-    # Size: 2074364 (2.1 MB)
+    # Release: v3.2.0
     http_archive(
         name = "build_stack_rules_proto",
-        sha256 = "820dc71f2e265a50104671d323caba53790dfe20e9f7249a0e6beeaee39b4597",
-        strip_prefix = "rules_proto-aa380e4421057b35228544bc234f816bb6b72c1c",
-        urls = ["https://github.com/stackb/rules_proto/archive/aa380e4421057b35228544bc234f816bb6b72c1c.tar.gz"],
+        sha256 = "b7cbaf457d91e1d3c295df53b80f24e1d6da71c94ee61c42277ab938db6d1c68",
+        strip_prefix = "rules_proto-3.2.0",
+        url = "https://github.com/stackb/rules_proto/archive/refs/tags/v3.2.0.tar.gz",
     )
 
 def rules_jvm_external():
