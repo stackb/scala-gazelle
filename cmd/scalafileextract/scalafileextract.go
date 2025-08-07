@@ -135,9 +135,24 @@ func batchWork(cfg *Config) error {
 		return fmt.Errorf("%v (%v)", err, time.Since(now))
 	}
 
-	files, err := extract(cfg.Parser, cfg.Cwd, cfg.SourceFiles)
+	var files []*sppb.File
+	var err error
+	maxRetries := 3
+
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		files, err = extract(cfg.Parser, cfg.Cwd, cfg.SourceFiles)
+		if err == nil {
+			break
+		}
+
+		if attempt < maxRetries {
+			log.Printf("parse attempt %d/%d failed: %v, retrying...", attempt, maxRetries, err)
+			time.Sleep(time.Duration(attempt) * time.Second)
+		}
+	}
+
 	if err != nil {
-		return fail(fmt.Errorf("failed to extract files: %v", err))
+		return fail(fmt.Errorf("failed to extract files after %d attempts: %v", maxRetries, err))
 	}
 
 	rule := sppb.Rule{
