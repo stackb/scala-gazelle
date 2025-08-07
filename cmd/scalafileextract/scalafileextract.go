@@ -187,7 +187,7 @@ func extract(parser *parser.ScalametaParser, dir string, sourceFiles []string) (
 		filenames[filename] = sourceFile
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	response, err := parser.Parse(ctx, request)
