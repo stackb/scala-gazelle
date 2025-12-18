@@ -169,8 +169,11 @@ func (s *ScalametaParser) Start() error {
 		"NODE_PATH=" + processDir,
 		fmt.Sprintf("PORT=%d", s.httpPort),
 	}
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
+	// Don't inherit stdin from parent process
+	cmd.Stdin = nil
+	// Redirect stdout to stderr to avoid polluting the persistent worker protocol
+	// (only WorkResponses should go to stdout in persistent worker mode)
+	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	s.cmd = cmd
 

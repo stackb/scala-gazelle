@@ -106,11 +106,17 @@ func persistentWork(cfg *Config) error {
 		batchCfg.Cwd = cfg.Cwd
 
 		if err := batchWork(&batchCfg); err != nil {
-			return fmt.Errorf("performing persistent batch!: %v", err)
+			// Don't terminate the worker on batch errors; report via WorkResponse
+			resp.ExitCode = 1
+			resp.Output = fmt.Sprintf("performing persistent batch: %v", err)
 		}
 
 		if err := protobuf.WriteDelimitedTo(&resp, os.Stdout); err != nil {
 			return fmt.Errorf("writing work response: %v", err)
+		}
+		// Flush stdout to ensure the WorkResponse is immediately available to Bazel
+		if err := os.Stdout.Sync(); err != nil {
+			return fmt.Errorf("flushing work response: %v", err)
 		}
 	}
 	return nil
