@@ -1,3 +1,6 @@
+# use remove java
+build --java_runtime_version=remotejdk_21
+
 # Keep until @io_bazel_rules_scala is upgraded
 build --incompatible_java_common_parameters=false
 

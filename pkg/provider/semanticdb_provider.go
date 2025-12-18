@@ -136,7 +136,7 @@ func (cr *SemanticdbProvider) CanProvide(dep *resolver.ImportLabel, expr build.E
 func (r *SemanticdbProvider) ParseScalaRule(kind string, from label.Label, dir string, srcs ...string) (*sppb.Rule, error) {
 	rule, err := r.delegate.ParseScalaRule(kind, from, dir, srcs...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("semanticdb: %v", err)
 	}
 	for _, file := range rule.Files {
 		r.visitFile(from.Pkg, file)
