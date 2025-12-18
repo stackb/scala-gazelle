@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
@@ -84,6 +85,9 @@ func run(args []string) error {
 }
 
 func persistentWork(cfg *Config) error {
+	// Use a buffered writer for stdout to ensure we can flush properly
+	stdout := bufio.NewWriter(os.Stdout)
+
 	for {
 		var req wppb.WorkRequest
 		if err := protobuf.ReadDelimitedFrom(&req, os.Stdin); err != nil {
@@ -111,11 +115,11 @@ func persistentWork(cfg *Config) error {
 			resp.Output = fmt.Sprintf("performing persistent batch: %v", err)
 		}
 
-		if err := protobuf.WriteDelimitedTo(&resp, os.Stdout); err != nil {
+		if err := protobuf.WriteDelimitedTo(&resp, stdout); err != nil {
 			return fmt.Errorf("writing work response: %v", err)
 		}
 		// Flush stdout to ensure the WorkResponse is immediately available to Bazel
-		if err := os.Stdout.Sync(); err != nil {
+		if err := stdout.Flush(); err != nil {
 			return fmt.Errorf("flushing work response: %v", err)
 		}
 	}
