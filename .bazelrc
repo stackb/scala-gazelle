@@ -1,7 +1,5 @@
-# use remove java
-build --java_runtime_version=remotejdk_21
+common --enable_bzlmod=true
 
-# Keep until @io_bazel_rules_scala is upgraded
-build --incompatible_java_common_parameters=false
+build --java_runtime_version=remotejdk_21
 
 query --output=label_kind

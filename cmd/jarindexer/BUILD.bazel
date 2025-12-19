@@ -9,7 +9,6 @@ java_library(
     deps = [
         "//build/stack/gazelle/scala/jarindex:jarindex_java_library",
         "@classgraph_jar//jar",
-        "@protobuf_java_jar//jar",
     ],
 )
 
