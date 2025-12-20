@@ -12,7 +12,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//pkg/procutil",
-        "@bazel_gazelle//testtools:go_default_library",
+        "@bazel_gazelle//testtools",
     ],
 )
 

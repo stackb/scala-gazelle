@@ -605,7 +605,7 @@ test(
 		"invalid label": {
 			in: `
 test(
-	expr = "@@@",
+	expr = "@@@@",
 )
 			`,
 			want: label.NoLabel,

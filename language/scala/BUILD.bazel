@@ -1,6 +1,6 @@
+load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
-load("@bazel_gazelle//:def.bzl", "gazelle_binary")
 
 # gazelle:exclude testdata
 
@@ -51,12 +51,12 @@ go_library(
         "//pkg/scalafiles",
         "//pkg/scalarule",
         "//pkg/wildcardimport",
-        "@bazel_gazelle//config:go_default_library",
-        "@bazel_gazelle//label:go_default_library",
-        "@bazel_gazelle//language:go_default_library",
-        "@bazel_gazelle//repo:go_default_library",
-        "@bazel_gazelle//resolve:go_default_library",
-        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//config",
+        "@bazel_gazelle//label",
+        "@bazel_gazelle//language",
+        "@bazel_gazelle//repo",
+        "@bazel_gazelle//resolve",
+        "@bazel_gazelle//rule",
         "@build_stack_rules_proto//pkg/protoc",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
         "@com_github_pcj_mobyprogress//:mobyprogress",
@@ -110,11 +110,11 @@ go_test(
         "//pkg/scalaconfig",
         "//pkg/scalarule",
         "//pkg/testutil",
-        "@bazel_gazelle//config:go_default_library",
-        "@bazel_gazelle//label:go_default_library",
-        "@bazel_gazelle//resolve:go_default_library",
-        "@bazel_gazelle//rule:go_default_library",
-        "@bazel_gazelle//testtools:go_default_library",
+        "@bazel_gazelle//config",
+        "@bazel_gazelle//label",
+        "@bazel_gazelle//resolve",
+        "@bazel_gazelle//rule",
+        "@bazel_gazelle//testtools",
         "@build_stack_rules_proto//pkg/goldentest",
         "@com_github_google_go_cmp//cmp",
         "@com_github_rs_zerolog//:zerolog",

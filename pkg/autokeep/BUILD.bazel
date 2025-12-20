@@ -13,8 +13,8 @@ go_library(
         "//build/stack/gazelle/scala/autokeep",
         "//build/stack/gazelle/scala/cache",
         "//pkg/protobuf",
-        "@bazel_gazelle//label:go_default_library",
-        "@bazel_gazelle//rule:go_default_library",
+        "@bazel_gazelle//label",
+        "@bazel_gazelle//rule",
         "@com_github_bazelbuild_buildtools//build:go_default_library",
     ],
 )
@@ -29,7 +29,7 @@ go_test(
     deps = [
         "//build/stack/gazelle/scala/autokeep",
         "//pkg/testutil",
-        "@bazel_gazelle//testtools:go_default_library",
+        "@bazel_gazelle//testtools",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
     ],

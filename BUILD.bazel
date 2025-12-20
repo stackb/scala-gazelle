@@ -1,5 +1,5 @@
-load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 
 # -- Gazelle language "walk" ---
 # gazelle:exclude .github
@@ -81,14 +81,14 @@ package_filegroup(
         ".gitignore",
         "BUILD.bazel",
         "LICENSE",
+        "MODULE.bazel",
+        "MODULE.bazel.lock",
         "Makefile",
         "README.md",
         "WORKSPACE",
         "go.mod",
         "go.sum",
-        "go_repos.bzl",
         "maven_install.json",
-        "workspace_deps.bzl",
     ],
     visibility = ["//visibility:public"],
     deps = [

@@ -8,7 +8,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//build/stack/gazelle/scala/parse",
-        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//label",
         "@com_github_stretchr_testify//mock",
     ],
 )

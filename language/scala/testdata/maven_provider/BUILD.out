@@ -17,7 +17,7 @@ scala_library(
         # extension (this is left alone despite no # keep directive because of
         # scala_keep_unmanaged_deps)
         "@atlassian-public//:junit_junit",
-        "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject <filename unknown>)
         "@maven//:xml_apis_xml_apis",  # DIRECT (maven javax.xml Main.scala)
+        "@maven//:javax_inject_javax_inject",  # IMPLICIT (maven javax.inject <filename unknown>)
     ],
 )

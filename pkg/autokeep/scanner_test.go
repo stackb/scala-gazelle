@@ -28,7 +28,7 @@ INFO: Analyzed target //omnistac/postswarm:grey_it (0 packages loaded, 0 targets
 INFO: Found 1 target...
 [0 / 3] [Prepa] BazelWorkspaceStatusAction stable-status.txt ... (3 actions, 0 running)
 [1 / 3] scala @//omnistac/postswarm:grey_it_testlib; 1s remote-cache, worker ... (4 actions running)
-ERROR: /Users/pcj/go/src/github.com/Omnistac/unity/omnistac/postswarm/BUILD.bazel:1000:18: scala @//omnistac/postswarm:grey_it_testlib failed: (Exit 1): scalac failed: error executing command (from target //omnistac/postswarm:grey_it_testlib) bazel-out/darwin_arm64-opt-exec-C7777A24/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac '--jvm_flag=-Xss32M' '--jvm_flag=-Djava.security.manager=allow' ... (remaining 1 argument skipped)
+ERROR: /Users/pcj/go/src/github.com/Omnistac/unity/omnistac/postswarm/BUILD.bazel:1000:18: scala @//omnistac/postswarm:grey_it_testlib failed: (Exit 1): scalac failed: error executing command (from target //omnistac/postswarm:grey_it_testlib) bazel-out/darwin_arm64-opt-exec-C7777A24/bin/external/rules_scala/src/java/io/bazel/rulesscala/scalac/scalac '--jvm_flag=-Xss32M' '--jvm_flag=-Djava.security.manager=allow' ... (remaining 1 argument skipped)
 omnistac/postswarm/src/it/scala/omnistac/postswarm/grey/SelectiveSpottingTest.scala:22: error: [rewritten by -quickfix] object SelectiveSpotSessionUtils is not a member of package omnistac.postswarm
 import omnistac.postswarm.{PostSwarmUtils, SelectiveSpotSessionUtils}
        ^
@@ -53,7 +53,7 @@ omnistac/postswarm/src/it/scala/omnistac/postswarm/grey/SelectiveSpottingTest.sc
 		},
 		"buildozer": {
 			input: `
-ERROR: /Users/pcj/go/src/github.com/Omnistac/unity/omnistac/microswarm/BUILD.bazel:205:14: scala @//omnistac/microswarm:testing failed: (Exit 1): scalac failed: error executing command (from target //omnistac/microswarm:testing) bazel-out/darwin_arm64-opt-exec-C7777A24/bin/external/io_bazel_rules_scala/src/java/io/bazel/rulesscala/scalac/scalac '--jvm_flag=-Djava.security.manager=allow' ... (remaining 1 argument skipped)
+ERROR: /Users/pcj/go/src/github.com/Omnistac/unity/omnistac/microswarm/BUILD.bazel:205:14: scala @//omnistac/microswarm:testing failed: (Exit 1): scalac failed: error executing command (from target //omnistac/microswarm:testing) bazel-out/darwin_arm64-opt-exec-C7777A24/bin/external/rules_scala/src/java/io/bazel/rulesscala/scalac/scalac '--jvm_flag=-Djava.security.manager=allow' ... (remaining 1 argument skipped)
 warning: 1 deprecation (since 2.13.0)
 warning: 2 deprecations (since 2025-01-01)
 warning: 3 deprecations in total; re-run with -deprecation for details

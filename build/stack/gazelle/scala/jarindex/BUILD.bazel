@@ -1,9 +1,9 @@
-load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
-load("@build_stack_rules_proto//rules/java:proto_java_library.bzl", "proto_java_library")
 load("@build_stack_rules_proto//rules:proto_compile.bzl", "proto_compile")
+load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
+load("@build_stack_rules_proto//rules/java:proto_java_library.bzl", "proto_java_library")
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@build_stack_rules_proto//rules:proto_compiled_sources.bzl", "proto_compiled_sources")
 
 # gazelle:proto_language java enabled true
 
@@ -44,8 +44,8 @@ proto_java_library(
     name = "jarindex_java_library",
     srcs = ["jarindex.srcjar"],
     visibility = ["//visibility:public"],
-    exports = ["@protobuf_java_jar//jar"],
-    deps = ["@protobuf_java_jar//jar"],
+    exports = ["@com_google_protobuf//:protobuf_java"],
+    deps = ["@com_google_protobuf//:protobuf_java"],
 )
 
 package_filegroup(

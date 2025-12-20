@@ -10,5 +10,3 @@ build --disk_cache=$HOME/.cache/bazel
 build --repository_cache=$HOME/.cache/bazel-repo
 # Allows tests to run bazelisk-in-bazel, since this is the cache folder used
 test --test_env=XDG_CACHE_HOME
-# Keep until @io_bazel_rules_scala is upgraded
-build --incompatible_java_common_parameters=false

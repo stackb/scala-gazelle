@@ -15,7 +15,7 @@ go_library(
         "//build/stack/gazelle/scala/parse",
         "//pkg/bazel",
         "//pkg/resolver",
-        "@bazel_gazelle//label:go_default_library",
+        "@bazel_gazelle//label",
     ],
 )
 
