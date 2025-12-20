@@ -31,9 +31,9 @@ func TestDiffGeneratesPackageFilegroup(t *testing.T) {
 	want := append(files, testtools.FileSpec{
 		Path: "p",
 		Content: `
---- BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-+++ BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-@@ -0,0 +1,12 @@
+--- BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
++++ BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
+@@ -0,0 +1,11 @@
 +load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 +
 +package_filegroup(
@@ -45,7 +45,6 @@ func TestDiffGeneratesPackageFilegroup(t *testing.T) {
 +    ],
 +    visibility = ["//visibility:public"],
 +)
-+
 `,
 	})
 	testtools.CheckFiles(t, dir, want)
@@ -86,8 +85,8 @@ package_filegroup(
 	want := append(files, testtools.FileSpec{
 		Path: "p",
 		Content: `
---- BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-+++ BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
+--- BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
++++ BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
 @@ -1,4 +1,3 @@
 -
  load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
@@ -130,9 +129,9 @@ func TestDiffGenetatesPackageFilegroupDeps(t *testing.T) {
 	want := append(files, testtools.FileSpec{
 		Path: "p",
 		Content: `
---- a/BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-+++ a/BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-@@ -0,0 +1,8 @@
+--- a/BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
++++ a/BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
+@@ -0,0 +1,7 @@
 +load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 +
 +package_filegroup(
@@ -140,10 +139,9 @@ func TestDiffGenetatesPackageFilegroupDeps(t *testing.T) {
 +    srcs = ["BUILD.bazel"],
 +    visibility = ["//visibility:public"],
 +)
-+
---- b/BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-+++ b/BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-@@ -0,0 +1,8 @@
+--- b/BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
++++ b/BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
+@@ -0,0 +1,7 @@
 +load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 +
 +package_filegroup(
@@ -151,10 +149,9 @@ func TestDiffGenetatesPackageFilegroupDeps(t *testing.T) {
 +    srcs = ["BUILD.bazel"],
 +    visibility = ["//visibility:public"],
 +)
-+
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ BUILD.bazel	1970-01-01 00:00:00.000000000 +0000
-@@ -0,0 +1,12 @@
+--- /dev/null	1970-01-01 00:00:00.000000001 +0000
++++ BUILD.bazel	1970-01-01 00:00:00.000000001 +0000
+@@ -0,0 +1,11 @@
 +load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 +
 +package_filegroup(
@@ -166,7 +163,6 @@ func TestDiffGenetatesPackageFilegroupDeps(t *testing.T) {
 +        "//b:filegroup",
 +    ],
 +)
-+
 `,
 	})
 	testtools.CheckFiles(t, dir, want)
