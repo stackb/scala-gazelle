@@ -19,6 +19,7 @@ proto_compiled_sources(
     output_mappings = ["jarindex.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/jarindex/jarindex.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "jarindex_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(

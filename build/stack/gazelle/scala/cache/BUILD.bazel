@@ -16,6 +16,7 @@ proto_compiled_sources(
     output_mappings = ["cache.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache/cache.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "cache_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(

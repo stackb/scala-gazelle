@@ -1,15 +1,18 @@
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+load("@build_stack_rules_proto//rules:proto_compile_assets.bzl", "proto_compile_assets")
 load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 
 # -- Gazelle language "walk" ---
 # gazelle:exclude .github
 # gazelle:exclude .vscode
+# gazelle:exclude .bcr
 # gazelle:exclude bazel-bin
 # gazelle:exclude bazel-out
 # gazelle:exclude bazel-scala-gazelle
 # gazelle:exclude bazel-testlogs
 # gazelle:exclude bin
 # gazelle:exclude vendor
+# gazelle:exclude examples
 
 # -- Gazelle language "resolve" ---
 # gazelle:resolve go go github.com/stackb/rules_proto/v4/pkg/protoc @build_stack_rules_proto//pkg/protoc
@@ -63,17 +66,6 @@ gazelle(
     gazelle = ":gazelle-protobuf",
 )
 
-gazelle(
-    name = "update_go_repositories",
-    args = [
-        "-from_file=go.mod",
-        "-to_macro=go_repos.bzl%go_repositories",
-        "-build_file_proto_mode=disable_global",
-        "-prune=true",
-    ],
-    command = "update-repos",
-)
-
 package_filegroup(
     name = "filegroup",
     srcs = [
@@ -108,9 +100,6 @@ package_filegroup(
         "//cmd/semanticdbmerge:filegroup",
         "//cmd/wildcardimportfixer:filegroup",
         "//docs/architecture:filegroup",
-        "//examples:filegroup",
-        "//examples/java_index:filegroup",
-        "//examples/protobuf_index:filegroup",
         "//language/files:filegroup",
         "//language/scala:filegroup",
         "//pkg/autokeep:filegroup",
@@ -139,5 +128,18 @@ package_filegroup(
         "//scalapb:filegroup",
         "//third_party/bazelbuild/bazel-gazelle:filegroup",
         "//tools/plantuml:filegroup",
+    ],
+)
+
+proto_compile_assets(
+    name = "proto_compile_assets",
+    deps = [
+        "//blaze/worker:worker_protocol_go_compiled_sources",
+        "//build/stack/gazelle/scala/autokeep:autokeep_go_compiled_sources",
+        "//build/stack/gazelle/scala/cache:cache_go_compiled_sources",
+        "//build/stack/gazelle/scala/jarindex:jarindex_go_compiled_sources",
+        "//build/stack/gazelle/scala/parse:parse_go_compiled_sources",
+        "//scala/meta/semanticdb:semanticdb_go_compiled_sources",
+        "//scalapb:scalapb_go_compiled_sources",
     ],
 )

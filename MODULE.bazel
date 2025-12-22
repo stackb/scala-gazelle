@@ -4,7 +4,7 @@ module(
     compatibility_level = 1,
 )
 
-bazel_dep(name = "build_stack_rules_proto", version = "4.1.2")
+bazel_dep(name = "build_stack_rules_proto", version = "4.2.0")
 bazel_dep(name = "gazelle", version = "0.47.0", repo_name = "bazel_gazelle")
 bazel_dep(name = "protobuf", version = "32.1", repo_name = "com_google_protobuf")
 bazel_dep(name = "rules_go", version = "0.59.0", repo_name = "io_bazel_rules_go")
@@ -12,20 +12,6 @@ bazel_dep(name = "rules_java", version = "9.3.0")
 bazel_dep(name = "rules_jvm_external", version = "6.9")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_scala", version = "7.1.5", repo_name = "io_bazel_rules_scala")
-
-# Branch: master
-# Commit: f863b2d88e062d1d11630c88c603ec2350834525
-# Date: 2025-12-22 22:38:08 +0000 UTC
-# URL: https://github.com/stackb/rules_proto/commit/f863b2d88e062d1d11630c88c603ec2350834525
-#
-# Upgrade to rules_go 0.59.0 for bazelci (#414)
-# Size: 4093498 (4.1 MB)
-archive_override(
-    module_name = "build_stack_rules_proto",
-    sha256 = "7685f36afa721165b1ab2ba548b1cf20f65178c0b14566fdf63378e8ae68f4d7",
-    strip_prefix = "rules_proto-f863b2d88e062d1d11630c88c603ec2350834525",
-    urls = ["https://github.com/stackb/rules_proto/archive/f863b2d88e062d1d11630c88c603ec2350834525.tar.gz"],
-)
 
 # -------------------------------------------------------------------
 # Configuration: Go
@@ -108,7 +94,7 @@ use_repo(
 )
 
 # -------------------------------------------------------------------
-# Configuration: classgraph
+# Configuration: misc jars
 # -------------------------------------------------------------------
 
 http_jar = use_repo_rule("@rules_java//java:http_jar.bzl", "http_jar")
@@ -117,6 +103,12 @@ http_jar(
     name = "classgraph_jar",
     sha256 = "ece8abfe1277450a8b95e57fc56991dca1fd42ffefdad88f65fe171ac576f604",
     url = "https://repo1.maven.org/maven2/io/github/classgraph/classgraph/4.8.149/classgraph-4.8.149.jar",
+)
+
+http_jar(
+    name = "plantuml_jar",
+    sha256 = "5a8dc3b37fe133a4744e55be80caf6080a70350aba716d95400a0f0cbd79e846",
+    url = "https://github.com/plantuml/plantuml/releases/download/v1.2024.6/plantuml-1.2024.6.jar",
 )
 
 # -------------------------------------------------------------------

@@ -16,6 +16,7 @@ proto_compiled_sources(
     output_mappings = ["autokeep.pb.go=github.com/stackb/scala-gazelle/build/stack/gazelle/scala/autokeep/autokeep.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "autokeep_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(
