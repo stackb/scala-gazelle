@@ -5,12 +5,14 @@ load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegro
 # -- Gazelle language "walk" ---
 # gazelle:exclude .github
 # gazelle:exclude .vscode
+# gazelle:exclude .bcr
 # gazelle:exclude bazel-bin
 # gazelle:exclude bazel-out
 # gazelle:exclude bazel-scala-gazelle
 # gazelle:exclude bazel-testlogs
 # gazelle:exclude bin
 # gazelle:exclude vendor
+# gazelle:exclude examples
 
 # -- Gazelle language "resolve" ---
 # gazelle:resolve go go github.com/stackb/rules_proto/v4/pkg/protoc @build_stack_rules_proto//pkg/protoc
@@ -84,7 +86,6 @@ package_filegroup(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//.bcr:filegroup",
         "//blaze/worker:filegroup",
         "//build/stack/gazelle/scala/autokeep:filegroup",
         "//build/stack/gazelle/scala/cache:filegroup",
@@ -99,8 +100,6 @@ package_filegroup(
         "//cmd/semanticdbmerge:filegroup",
         "//cmd/wildcardimportfixer:filegroup",
         "//docs/architecture:filegroup",
-        "//examples:filegroup",
-        "//examples/java_index:filegroup",
         "//language/files:filegroup",
         "//language/scala:filegroup",
         "//pkg/autokeep:filegroup",
