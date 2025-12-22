@@ -1,0 +1,15 @@
+{
+    "homepage": "https://github.com/stackb/scala-gazelle",
+    "maintainers": [
+        {
+            "name": "Paul Cody",
+            "email": "pcj@stack.build",
+            "github": "pcj"
+        }
+    ],
+    "repository": [
+        "github:stackb/scala-gazelle"
+    ],
+    "versions": [],
+    "yanked_versions": {}
+}
