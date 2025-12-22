@@ -7,51 +7,9 @@ test:
 		//language/scala/... \
 		//pkg/... \
 
-.PHONY: jarindex_protos
-jarindex_protos:
-	bazel run //build/stack/gazelle/scala/jarindex:jarindex_go_compiled_sources.update
-	mv build/stack/gazelle/scala/jarindex/build/stack/gazelle/scala/jarindex/*.go build/stack/gazelle/scala/jarindex/
-	rm -rf build/stack/gazelle/scala/jarindex/build
-
-.PHONY: parser_protos
-parser_protos:
-	bazel run //build/stack/gazelle/scala/parse:parse_go_compiled_sources.update
-	mv build/stack/gazelle/scala/parse/build/stack/gazelle/scala/parse/*.go build/stack/gazelle/scala/parse/
-	rm -rf build/stack/gazelle/scala/parse/build
-
-.PHONY: scalacache_protos
-scalacache_protos:
-	bazel run //build/stack/gazelle/scala/cache:cache_go_compiled_sources.update
-	mv build/stack/gazelle/scala/cache/build/stack/gazelle/scala/cache/*.go build/stack/gazelle/scala/cache/
-	rm -rf build/stack/gazelle/scala/cache/build
-
-.PHONY: scalapb_protos
-scalapb_protos:
-	bazel run //scalapb:scalapb_go_compiled_sources.update
-	mv scalapb/scalapb/scalapb.pb.go scalapb/scalapb.pb.go
-	rm -rf scalapb/scalapb
-
-.PHONY: semanticdb_protos
-semanticdb_protos:
-	bazel run //scala/meta/semanticdb:semanticdb_go_compiled_sources.update
-	mv scala/meta/semanticdb/scala/meta/semanticdb/semanticdb.pb.go scala/meta/semanticdb/semanticdb.pb.go
-	rm -rf scala/meta/semanticdb/scala
-
-.PHONY: autokeep_protos
-autokeep_protos:
-	bazel run //build/stack/gazelle/scala/autokeep:autokeep_go_compiled_sources.update
-	mv build/stack/gazelle/scala/autokeep/build/stack/gazelle/scala/autokeep/autokeep.pb.go build/stack/gazelle/scala/autokeep/autokeep.pb.go
-	rm -rf build/stack/gazelle/scala/autokeep/build
-
-.PHONY: worker_protos
-worker_protos:
-	bazel run //blaze/worker:worker_protocol_go_compiled_sources.update
-	mv blaze/worker/blaze/worker/worker_protocol.pb.go blaze/worker/worker_protocol.pb.go
-	rm -rf blaze/worker/blaze
-
 .PHONY: protos
-protos: jarindex_protos parser_protos scalacache_protos scalapb_protos semanticdb_protos autokeep_protos worker_protos
-	echo "Done."
+protos:
+	bazel run //:proto_compile_assets
 
 .PHONY: docs
 docs:
@@ -66,7 +24,7 @@ gazelle:
 .PHONY: tidy
 tidy:
 	bazel run @go_sdk//:bin/go -- mod tidy
-	bazel run //:update_go_repositories
+	bazel mod tidy
 
 .PHONY: tools
 tools:

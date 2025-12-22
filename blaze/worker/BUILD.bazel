@@ -15,6 +15,7 @@ proto_compiled_sources(
     output_mappings = ["worker_protocol.pb.go=github.com/stackb/scala-gazelle/blaze/worker/worker_protocol/worker_protocol.pb.go"],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "worker_protocol_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(

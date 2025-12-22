@@ -18,6 +18,7 @@ proto_compiled_sources(
     ],
     plugins = ["@build_stack_rules_proto//plugin/golang/protobuf:protoc-gen-go"],
     proto = "semanticdb_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(

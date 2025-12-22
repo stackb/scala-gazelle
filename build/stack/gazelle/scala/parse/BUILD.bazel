@@ -43,6 +43,7 @@ proto_compiled_sources(
         "@build_stack_rules_proto//plugin/grpc/grpc-go:protoc-gen-go-grpc",
     ],
     proto = "parse_proto",
+    visibility = ["//:__pkg__"],
 )
 
 go_library(

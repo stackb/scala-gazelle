@@ -89,6 +89,8 @@
     "https://bcr.bazel.build/modules/boringssl/0.20240913.0/MODULE.bazel": "fcaa7503a5213290831a91ed1eb538551cf11ac0bc3a6ad92d0fef92c5bd25fb",
     "https://bcr.bazel.build/modules/boringssl/0.20241024.0/MODULE.bazel": "b540cff73d948cb79cb0bc108d7cef391d2098a25adabfda5043e4ef548dbc87",
     "https://bcr.bazel.build/modules/boringssl/0.20241024.0/source.json": "d843092e682b84188c043ac742965d7f96e04c846c7e338187e03238674909a9",
+    "https://bcr.bazel.build/modules/build_stack_rules_proto/4.2.0/MODULE.bazel": "4603cab4873fbbb4d1b277ddc600baf54fdc3ab72fdd4daa28ccd52bcbd7b3ff",
+    "https://bcr.bazel.build/modules/build_stack_rules_proto/4.2.0/source.json": "051caad2fd35b5abba20e188174053159c88bb1b05901d95a234bb32396be593",
     "https://bcr.bazel.build/modules/buildozer/7.1.2/MODULE.bazel": "2e8dd40ede9c454042645fd8d8d0cd1527966aa5c919de86661e62953cd73d84",
     "https://bcr.bazel.build/modules/buildozer/7.1.2/source.json": "c9028a501d2db85793a6996205c8de120944f50a0d570438fcae0457a5f9d1f8",
     "https://bcr.bazel.build/modules/c-ares/1.15.0/MODULE.bazel": "ba0a78360fdc83f02f437a9e7df0532ad1fbaa59b722f6e715c11effebaa0166",

@@ -524,7 +524,7 @@ def _java_indexer_aspect_impl(target, ctx):
         content = json.encode(info),
         output = ide_info_file,
     )
-    ctx.actions.write(ide_info_file, info.to_json())
+    ctx.actions.write(ide_info_file, json.encode(info))
 
     info_file = depset([ide_info_file], transitive = transitive_info_file)
 
