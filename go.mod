@@ -1,8 +1,8 @@
 module github.com/stackb/scala-gazelle
 
-go 1.24.0
+go 1.23.1
 
-toolchain go1.24.11
+toolchain go1.23.6
 
 require (
 	github.com/amenzhinsky/go-memexec v0.7.1
@@ -15,7 +15,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/pcj/mobyprogress v0.0.0-20221114203314-669a7801d484
 	github.com/rs/zerolog v1.34.0
-	github.com/stackb/rules_proto v0.0.0-20251123165603-5004822ed1af
+	github.com/stackb/rules_proto/v4 v4.2.0
 	github.com/stretchr/testify v1.11.1
 	go.starlark.net v0.0.0-20251109183026-be02852a5e1f
 	google.golang.org/grpc v1.75.1
@@ -32,10 +32,10 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/mod v0.31.0 // indirect
-	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/mod v0.27.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.2.0 // indirect
 	golang.org/x/tools/go/vcs v0.1.0-deprecated // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
