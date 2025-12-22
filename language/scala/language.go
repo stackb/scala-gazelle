@@ -10,7 +10,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/pcj/mobyprogress"
 	"github.com/rs/zerolog"
-	"github.com/stackb/rules_proto/pkg/protoc"
+	"github.com/stackb/rules_proto/v4/pkg/protoc"
 
 	scpb "github.com/stackb/scala-gazelle/build/stack/gazelle/scala/cache"
 	"github.com/stackb/scala-gazelle/pkg/collections"

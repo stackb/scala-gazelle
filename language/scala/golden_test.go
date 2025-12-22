@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stackb/rules_proto/pkg/goldentest"
+	"github.com/stackb/rules_proto/v4/pkg/goldentest"
 	"github.com/stackb/scala-gazelle/pkg/collections"
 )
 

@@ -13,6 +13,20 @@ bazel_dep(name = "rules_jvm_external", version = "6.9")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "rules_scala", version = "7.1.5", repo_name = "io_bazel_rules_scala")
 
+# Branch: master
+# Commit: f863b2d88e062d1d11630c88c603ec2350834525
+# Date: 2025-12-22 22:38:08 +0000 UTC
+# URL: https://github.com/stackb/rules_proto/commit/f863b2d88e062d1d11630c88c603ec2350834525
+#
+# Upgrade to rules_go 0.59.0 for bazelci (#414)
+# Size: 4093498 (4.1 MB)
+archive_override(
+    module_name = "build_stack_rules_proto",
+    sha256 = "7685f36afa721165b1ab2ba548b1cf20f65178c0b14566fdf63378e8ae68f4d7",
+    strip_prefix = "rules_proto-f863b2d88e062d1d11630c88c603ec2350834525",
+    urls = ["https://github.com/stackb/rules_proto/archive/f863b2d88e062d1d11630c88c603ec2350834525.tar.gz"],
+)
+
 # -------------------------------------------------------------------
 # Configuration: Go
 # -------------------------------------------------------------------
