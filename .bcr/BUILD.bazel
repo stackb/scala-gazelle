@@ -1,0 +1,11 @@
+load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
+
+package_filegroup(
+    name = "filegroup",
+    srcs = [
+        "metadata.template.json",
+        "presubmit.yml",
+        "source.template.json",
+    ],
+    visibility = ["//visibility:public"],
+)
