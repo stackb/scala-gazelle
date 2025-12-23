@@ -2,3 +2,4 @@ common --enable_bzlmod=true
 query --output=label_kind
 build --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
 build --java_runtime_version=remotejdk_21
+build --incompatible_autoload_externally=
