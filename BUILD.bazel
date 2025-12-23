@@ -126,7 +126,6 @@ package_filegroup(
         "//rules:filegroup",
         "//scala/meta/semanticdb:filegroup",
         "//scalapb:filegroup",
-        "//third_party/bazelbuild/bazel-gazelle:filegroup",
         "//tools/plantuml:filegroup",
     ],
 )
