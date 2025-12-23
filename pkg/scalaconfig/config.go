@@ -845,6 +845,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		r.SetPrivateAttr(UnmanagedDepsPrivateAttrName, unmanaged)
 	}
 
+	// Final sorting to ensure order stability
 	sort.SliceStable(dst.List, func(i, j int) bool {
 		// For StringExpr, sort by their Value field directly (more efficient)
 		iStr, iOk := dst.List[i].(*build.StringExpr)
@@ -856,6 +857,7 @@ func (c *Config) mergeDeps(attrValue build.Expr, deps map[label.Label]bool, impo
 		return build.FormatString(dst.List[i]) < build.FormatString(dst.List[j])
 	})
 
+	// Additional experimental logic for unmanaged deps cleanup
 	if attrName == "deps" {
 		if true {
 			if hasUnmanagedDeps {

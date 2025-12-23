@@ -112,6 +112,51 @@ func TestJavaProviderOnResolve(t *testing.T) {
 	}
 }
 
+func TestParseLabelNonCanonical(t *testing.T) {
+	for name, tc := range map[string]struct {
+		input   string
+		want    label.Label
+		wantErr string
+	}{
+		"empty string": {
+			input: "",
+			want:  label.NoLabel,
+		},
+		"simple label": {
+			input: "//foo:bar",
+			want:  label.Label{Pkg: "foo", Name: "bar", Canonical: false},
+		},
+		"label with repo": {
+			input: "@maven//com/google/guava:guava",
+			want:  label.Label{Repo: "maven", Pkg: "com/google/guava", Name: "guava", Canonical: false},
+		},
+		"canonical repo becomes non-canonical": {
+			input: "@@maven//com/google/guava:guava",
+			want:  label.Label{Repo: "maven", Pkg: "com/google/guava", Name: "guava", Canonical: false},
+		},
+		"label with relative": {
+			input: ":mylib",
+			want:  label.Label{Name: "mylib", Canonical: false, Relative: true},
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			got, err := provider.ParseLabelNonCanonical(tc.input)
+			var gotErr string
+			if err != nil {
+				gotErr = err.Error()
+			}
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Errorf("(-want +got):\n%s", diff)
+			}
+			if tc.wantErr != "" {
+				if diff := cmp.Diff(tc.wantErr, gotErr); diff != "" {
+					t.Errorf("error (-want +got):\n%s", diff)
+				}
+			}
+		})
+	}
+}
+
 func TestJavaProviderCanProvide(t *testing.T) {
 	for name, tc := range map[string]struct {
 		from label.Label

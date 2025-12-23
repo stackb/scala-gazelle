@@ -111,7 +111,7 @@ func (p *JavaProvider) readJarIndex(c *config.Config, filename string) error {
 
 	isPredefined := make(map[label.Label]bool)
 	for _, v := range index.Predefined {
-		lbl, err := label.Parse(v)
+		lbl, err := ParseLabelNonCanonical(v)
 		if err != nil {
 			return fmt.Errorf("bad predefined label %q: %v", v, err)
 		}
@@ -119,7 +119,7 @@ func (p *JavaProvider) readJarIndex(c *config.Config, filename string) error {
 	}
 
 	for k, v := range index.Preferred {
-		dep, err := label.Parse(v)
+		dep, err := ParseLabelNonCanonical(v)
 		if err != nil {
 			return fmt.Errorf("malformed preferred label %s: %v", v, err)
 		}
@@ -140,13 +140,9 @@ func (p *JavaProvider) readJarFile(jarFile *jipb.JarFile, isPredefined map[label
 		log.Panicf("jarFile must have a name: %+v", jarFile)
 	}
 
-	var from label.Label
-	if jarFile.Label != "" {
-		var err error
-		from, err = label.Parse(jarFile.Label)
-		if err != nil {
-			return fmt.Errorf("%s: parsing label %q: %v", jarFile.Filename, jarFile.Label, err)
-		}
+	from, err := ParseLabelNonCanonical(jarFile.Label)
+	if err != nil {
+		return fmt.Errorf("%s: parsing jarfile label %q: %v", jarFile.Filename, jarFile.Label, err)
 	}
 	p.byLabel[from] = jarFile
 
@@ -180,6 +176,21 @@ func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label
 	symbol := resolver.NewSymbol(impType, imp, p.Name(), from)
 	p.scope.PutSymbol(symbol)
 	return symbol
+}
+
+// ParseLabelNonCanonical parses a label string and returns a non-canonical label.
+// This is useful when you want to suppress the @@ prefix in label strings.
+func ParseLabelNonCanonical(lblStr string) (label.Label, error) {
+	if lblStr == "" {
+		return label.NoLabel, nil
+	}
+	if from, err := label.Parse(lblStr); err != nil {
+		return from, err
+	} else {
+		// we do not want canonical labels, suppress @@maven
+		from.Canonical = false
+		return from, nil
+	}
 }
 
 func sortedSymbolClassfiles(classSymbols map[*jipb.ClassFile]*resolver.Symbol) []*jipb.ClassFile {
