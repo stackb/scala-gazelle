@@ -19,7 +19,7 @@ var (
 	nonWordRe    = regexp.MustCompile(`\W+`)
 )
 
-func CleanupLabel(in string) string {
+func CleanupLabelName(in string) string {
 	return nonWordRe.ReplaceAllString(in, "_")
 }
 

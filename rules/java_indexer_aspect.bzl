@@ -242,6 +242,13 @@ def _jarindex_basename(ctx, label):
         label.name,
     ])
 
+# see https://bazelbuild.slack.com/archives/C014RARENH0/p1752851984151199?thread_ts=1752594227.746349&cid=C014RARENH0 - we can't get the label apparent name! ("@maven")
+def get_apparent_label(label):
+    parts = label.repo_name.split("~")
+    apparent_name = parts[len(parts) - 1]
+    apparent_label = "@%s//%s:%s" % (apparent_name, label.package, label.name)
+    return apparent_label
+
 def jarindexer_action(ctx, label, kind, executable, jar):
     output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
     ctx.actions.run(
@@ -250,7 +257,7 @@ def jarindexer_action(ctx, label, kind, executable, jar):
         executable = executable,
         arguments = [
             "--label",
-            str(label),
+            get_apparent_label(label),
             "--kind",
             kind,
             "--output_file",

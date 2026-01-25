@@ -3,6 +3,8 @@ package maven
 import (
 	"errors"
 	"fmt"
+	"log"
+	"sort"
 
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/stackb/scala-gazelle/pkg/bazel"
@@ -38,17 +40,31 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 		artifacts: make(map[string]label.Label),
 	}
 
+	log.Println("loading configuration from:", installFile)
+
+	// Try v2 format first
+	v2, err := loadLockfileV2(installFile)
+	if err == nil && v2.Version == "2" {
+		return newResolverFromV2(&r, v2, mavenWorkspaceName, putSymbol)
+	}
+
+	// Fallback to v1 format
 	c, err := loadConfiguration(installFile)
 	if err != nil {
 		return nil, fmt.Errorf("loading configuration %s: %w", installFile, err)
 	}
 
+	return newResolverFromV1(&r, c, mavenWorkspaceName, putSymbol)
+}
+
+func newResolverFromV1(r *mavenResolver, c *configFile, mavenWorkspaceName string, putSymbol putSymbolFunc) (Resolver, error) {
 	for _, dep := range c.DependencyTree.Dependencies {
-		c, err := ParseCoordinate(dep.Coord)
+		log.Println("loaded dep:", dep.Coord)
+		coord, err := ParseCoordinate(dep.Coord)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse coordinate %v: %w", dep.Coord, err)
 		}
-		from := label.Label{Repo: mavenWorkspaceName, Name: bazel.CleanupLabel(c.ArtifactString())}
+		from := label.Label{Repo: mavenWorkspaceName, Name: bazel.CleanupLabelName(coord.ArtifactString())}
 		labelString := from.String()
 		r.artifacts[dep.Coord] = from
 
@@ -58,7 +74,30 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 		}
 	}
 
-	return &r, nil
+	return r, nil
+}
+
+func newResolverFromV2(r *mavenResolver, lf *LockfileV2, mavenWorkspaceName string, putSymbol putSymbolFunc) (Resolver, error) {
+	// Sort artifact IDs for deterministic iteration
+	ids := make([]string, 0, len(lf.Packages))
+	for id := range lf.Packages {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+
+	for _, id := range ids {
+		packages := lf.Packages[id]
+		from := label.Label{Repo: mavenWorkspaceName, Name: bazel.CleanupLabelName(id)}
+		labelString := from.String()
+		r.artifacts[id] = from
+
+		for _, pkg := range packages {
+			r.data.Add(pkg, labelString)
+			putSymbol(resolver.NewSymbol(sppb.ImportType_PACKAGE, pkg, mavenWorkspaceName, from))
+		}
+	}
+
+	return r, nil
 }
 
 func (r *mavenResolver) Name() string {
