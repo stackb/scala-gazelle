@@ -60,6 +60,8 @@ COMPILE_TIME = 0
 
 RUNTIME = 1
 
+DEFAULT_REPO_NAME_SEPARATOR = "+"
+
 # Compile-time dependency attributes, grouped by type.
 DEPS = [
     "_cc_toolchain",  # From cc rules
@@ -244,15 +246,9 @@ def _jarindex_basename(ctx, label):
 
 # see https://bazelbuild.slack.com/archives/C014RARENH0/p1752851984151199?thread_ts=1752594227.746349&cid=C014RARENH0 - we can't get the label apparent name! ("@maven")
 def get_apparent_label(label):
-    # if label.repo_name.startswith("rules_jvm_external"):
-    #     fail("get_apparent_label:", str(label))
-
-    parts = label.repo_name.split("+")
+    parts = label.repo_name.split(DEFAULT_REPO_NAME_SEPARATOR)
     apparent_name = parts[len(parts) - 1]
     apparent_label = "@%s//%s:%s" % (apparent_name, label.package, label.name)
-
-    if apparent_name.startswith("rules_jvm_external"):
-        fail("apparent_name:", apparent_name)
 
     return apparent_label
 
