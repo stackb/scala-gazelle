@@ -2,18 +2,20 @@
 """
 
 load(":providers.bzl", "JarIndexerAspectInfo")
-load(":java_indexer_aspect.bzl", "jarindexer_action", "java_indexer_aspect")
+load(":java_indexer_aspect.bzl", "get_apparent_label", "jarindexer_action", "java_indexer_aspect")
 
 def target_label(target):
-    return str(target.label)
+    return get_apparent_label(target.label)
 
 def merge_action(ctx, output_file, jarindex_files):
     args = ctx.actions.args()
     args.use_param_file("@%s", use_always = True)
     args.add("--output_file", output_file)
-    args.add_all(ctx.attr.platform_deps, map_each = target_label, format_each = "--predefined=%s", uniquify = True)
+
+    for dep in ctx.attr.platform_deps:
+        args.add("--predefined=%s" % target_label(dep))
     for pkg, dep in ctx.attr.preferred_deps.items():
-        args.add("--preferred=%s=%s" % (pkg, dep))
+        args.add("--preferred=%s=%s" % (pkg, get_apparent_label(dep.label)))
 
     args.add_all(jarindex_files)
 
@@ -81,7 +83,7 @@ java_index = rule(
             doc = "list of java labels to be indexed without a JarSpec.Label, typically [@bazel_tools//tools/jdk:platformclasspath]",
             allow_files = True,
         ),
-        "preferred_deps": attr.string_dict(
+        "preferred_deps": attr.string_keyed_label_dict(
             doc = "mapping of package name to label that should be used for dependency resolution",
         ),
         "_mergeindex": attr.label(
@@ -95,13 +97,6 @@ java_index = rule(
             cfg = "exec",
             executable = True,
             doc = "the jarindexer tool",
-        ),
-        "_ijar": attr.label(
-            default = Label("@bazel_tools//tools/jdk:ijar"),
-            executable = True,
-            cfg = "exec",
-            allow_files = True,
-            doc = "the ijar tool",
         ),
     },
     outputs = {

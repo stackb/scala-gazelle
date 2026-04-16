@@ -69,6 +69,7 @@ func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Sco
 	if !filepath.IsAbs(filename) {
 		filename = filepath.Join(dir, filename)
 	}
+
 	resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
 		log.Printf(format, args...)
 	}, scope.PutSymbol)

@@ -60,6 +60,8 @@ COMPILE_TIME = 0
 
 RUNTIME = 1
 
+DEFAULT_REPO_NAME_SEPARATOR = "+"
+
 # Compile-time dependency attributes, grouped by type.
 DEPS = [
     "_cc_toolchain",  # From cc rules
@@ -242,15 +244,24 @@ def _jarindex_basename(ctx, label):
         label.name,
     ])
 
+# see https://bazelbuild.slack.com/archives/C014RARENH0/p1752851984151199?thread_ts=1752594227.746349&cid=C014RARENH0 - we can't get the label apparent name! ("@maven")
+def get_apparent_label(label):
+    parts = label.repo_name.split(DEFAULT_REPO_NAME_SEPARATOR)
+    apparent_name = parts[len(parts) - 1]
+    apparent_label = "@%s//%s:%s" % (apparent_name, label.package, label.name)
+
+    return apparent_label
+
 def jarindexer_action(ctx, label, kind, executable, jar):
     output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
+
     ctx.actions.run(
         mnemonic = "JarIndexer",
         progress_message = "Indexing " + jar.basename,
         executable = executable,
         arguments = [
             "--label",
-            str(label),
+            get_apparent_label(label),
             "--kind",
             kind,
             "--output_file",
@@ -260,6 +271,7 @@ def jarindexer_action(ctx, label, kind, executable, jar):
         inputs = [jar],
         outputs = [output_file],
     )
+
     return output_file
 
 def collect_java_toolchain_info(target, ide_info, ide_info_file):
