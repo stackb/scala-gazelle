@@ -69,9 +69,18 @@ func (p *MavenProvider) loadFile(dir string, filename string, scope resolver.Sco
 	if !filepath.IsAbs(filename) {
 		filename = filepath.Join(dir, filename)
 	}
+
 	resolver, err := maven.NewResolver(filename, name, p.lang, func(format string, args ...interface{}) {
 		log.Printf(format, args...)
-	}, scope.PutSymbol)
+	}, func(sym *resolver.Symbol) error {
+		if strings.HasPrefix(sym.Label.Repo, "rules_jvm_external") {
+			log.Panicf("maven putSymbol: %s", sym.Label.Repo)
+		} else {
+			log.Printf("maven putSymbol: %s", sym.Label.Repo)
+		}
+		// log.Panicf("scope.PutSymbol %s %v", sym.Name, sym.Label)
+		return scope.PutSymbol(sym)
+	})
 	if err != nil {
 		return nil, fmt.Errorf("initializing maven resolver: %w", err)
 	}

@@ -59,7 +59,7 @@ func NewResolver(installFile, mavenWorkspaceName, lang string, warn warnFunc, pu
 
 func newResolverFromV1(r *mavenResolver, c *configFile, mavenWorkspaceName string, putSymbol putSymbolFunc) (Resolver, error) {
 	for _, dep := range c.DependencyTree.Dependencies {
-		log.Println("loaded dep:", dep.Coord)
+		log.Println("loading v1 dep:", dep.Coord)
 		coord, err := ParseCoordinate(dep.Coord)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse coordinate %v: %w", dep.Coord, err)

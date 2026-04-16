@@ -6,6 +6,7 @@ import (
 	"log"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
@@ -173,9 +174,14 @@ func (p *JavaProvider) readClassFile(classFile *jipb.ClassFile, from label.Label
 }
 
 func (p *JavaProvider) putSymbol(impType sppb.ImportType, imp string, from label.Label) *resolver.Symbol {
-	symbol := resolver.NewSymbol(impType, imp, p.Name(), from)
-	p.scope.PutSymbol(symbol)
-	return symbol
+	sym := resolver.NewSymbol(impType, imp, p.Name(), from)
+
+	if strings.HasPrefix(sym.Label.Repo, "rules_jvm_external") {
+		log.Panicf("maven putSymbol: %s", sym.Label.Repo)
+	}
+
+	p.scope.PutSymbol(sym)
+	return sym
 }
 
 // ParseLabelNonCanonical parses a label string and returns a non-canonical label.
