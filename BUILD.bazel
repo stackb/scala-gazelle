@@ -3,16 +3,17 @@ load("@build_stack_rules_proto//rules:proto_compile_assets.bzl", "proto_compile_
 load("@build_stack_scala_gazelle//rules:package_filegroup.bzl", "package_filegroup")
 
 # -- Gazelle language "walk" ---
+# gazelle:exclude .bcr
+# gazelle:exclude .claude
 # gazelle:exclude .github
 # gazelle:exclude .vscode
-# gazelle:exclude .bcr
 # gazelle:exclude bazel-bin
 # gazelle:exclude bazel-out
 # gazelle:exclude bazel-scala-gazelle
 # gazelle:exclude bazel-testlogs
 # gazelle:exclude bin
-# gazelle:exclude vendor
 # gazelle:exclude examples
+# gazelle:exclude vendor
 
 # -- Gazelle language "resolve" ---
 # gazelle:resolve go go github.com/stackb/rules_proto/v4/pkg/protoc @build_stack_rules_proto//pkg/protoc
@@ -82,7 +83,6 @@ package_filegroup(
         "WORKSPACE",
         "go.mod",
         "go.sum",
-        "maven2_install.json",
         "maven_install.json",
     ],
     visibility = ["//visibility:public"],
