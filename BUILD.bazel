@@ -87,7 +87,6 @@ package_filegroup(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//.claude:filegroup",
         "//blaze/worker:filegroup",
         "//build/stack/gazelle/scala/autokeep:filegroup",
         "//build/stack/gazelle/scala/cache:filegroup",
