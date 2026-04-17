@@ -82,10 +82,12 @@ package_filegroup(
         "WORKSPACE",
         "go.mod",
         "go.sum",
+        "maven2_install.json",
         "maven_install.json",
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//.claude:filegroup",
         "//blaze/worker:filegroup",
         "//build/stack/gazelle/scala/autokeep:filegroup",
         "//build/stack/gazelle/scala/cache:filegroup",

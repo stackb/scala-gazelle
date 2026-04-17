@@ -104,6 +104,17 @@ func (s *ScalametaParser) Stop() {
 		os.RemoveAll(s.processDir)
 		s.processDir = ""
 	}
+	s.httpPort = 0
+	s.httpUrl = ""
+}
+
+// IsRunning reports whether the parser process is alive.
+// ProcessState is set by Wait(); if non-nil the process has exited.
+func (s *ScalametaParser) IsRunning() bool {
+	if s.cmd == nil {
+		return false
+	}
+	return s.cmd.ProcessState == nil
 }
 
 func (s *ScalametaParser) Start() error {

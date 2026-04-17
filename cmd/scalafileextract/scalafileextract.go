@@ -56,10 +56,6 @@ func run(args []string) error {
 	cfg.Parser = parser.NewScalametaParser(
 		parser.WithHttpClientTimeout(60 * time.Second),
 	)
-
-	if err := cfg.Parser.Start(); err != nil {
-		return fmt.Errorf("starting parser: %w", err)
-	}
 	defer func() {
 		cfg.Parser.Stop()
 	}()
@@ -72,10 +68,16 @@ func run(args []string) error {
 	}
 
 	if cfg.PersistentWorker {
+		// In persistent worker mode, parser initialization is deferred
+		// to inside the loop so startup failures are reported per-request
+		// via WorkResponse rather than killing the worker process.
 		if err := persistentWork(&cfg); err != nil {
 			return fmt.Errorf("while performing persistent work: %v", err)
 		}
 	} else {
+		if err := cfg.Parser.Start(); err != nil {
+			return fmt.Errorf("starting parser: %w", err)
+		}
 		if err := batchWork(&cfg); err != nil {
 			return fmt.Errorf("while performing batch work: %v", err)
 		}
@@ -103,16 +105,33 @@ func persistentWork(cfg *Config) error {
 
 		batchCfg, err := parseFlags(req.Arguments)
 		if err != nil {
-			return fmt.Errorf("parsing work request arguments: %v", err)
-		}
-
-		batchCfg.Parser = cfg.Parser
-		batchCfg.Cwd = cfg.Cwd
-
-		if err := batchWork(&batchCfg); err != nil {
-			// Don't terminate the worker on batch errors; report via WorkResponse
 			resp.ExitCode = 1
-			resp.Output = fmt.Sprintf("performing persistent batch: %v", err)
+			resp.Output = fmt.Sprintf("parsing work request arguments: %v", err)
+		} else {
+			// Ensure parser is running (lazy init + restart if crashed)
+			if !cfg.Parser.IsRunning() {
+				cfg.Parser.Stop()
+				if err := cfg.Parser.Start(); err != nil {
+					log.Printf("failed to start parser: %v", err)
+					resp.ExitCode = 1
+					resp.Output = fmt.Sprintf("starting parser: %v", err)
+					if err := protobuf.WriteDelimitedTo(&resp, stdout); err != nil {
+						return fmt.Errorf("writing work response: %v", err)
+					}
+					if err := stdout.Flush(); err != nil {
+						return fmt.Errorf("flushing work response: %v", err)
+					}
+					continue
+				}
+			}
+
+			batchCfg.Parser = cfg.Parser
+			batchCfg.Cwd = cfg.Cwd
+
+			if err := batchWork(&batchCfg); err != nil {
+				resp.ExitCode = 1
+				resp.Output = fmt.Sprintf("performing persistent batch: %v", err)
+			}
 		}
 
 		if err := protobuf.WriteDelimitedTo(&resp, stdout); err != nil {
