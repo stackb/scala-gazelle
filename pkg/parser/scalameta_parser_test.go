@@ -745,6 +745,81 @@ func mustParseURL(t *testing.T, raw string) *url.URL {
 	return u
 }
 
+func TestIsRunning_NeverStarted(t *testing.T) {
+	p := NewScalametaParser()
+	if p.IsRunning() {
+		t.Error("expected IsRunning() == false for a never-started parser")
+	}
+}
+
+func TestIsRunning_AfterStartAndStop(t *testing.T) {
+	p := NewScalametaParser()
+	if err := p.Start(); err != nil {
+		t.Fatal("Start:", err)
+	}
+	if !p.IsRunning() {
+		t.Error("expected IsRunning() == true after Start()")
+	}
+	p.Stop()
+	if p.IsRunning() {
+		t.Error("expected IsRunning() == false after Stop()")
+	}
+}
+
+func TestStop_ResetsState(t *testing.T) {
+	p := NewScalametaParser()
+	if err := p.Start(); err != nil {
+		t.Fatal("Start:", err)
+	}
+	if p.httpPort == 0 {
+		t.Error("expected non-zero httpPort after Start()")
+	}
+	if p.httpUrl == "" {
+		t.Error("expected non-empty httpUrl after Start()")
+	}
+	p.Stop()
+	if p.httpPort != 0 {
+		t.Errorf("expected httpPort == 0 after Stop(), got %d", p.httpPort)
+	}
+	if p.httpUrl != "" {
+		t.Errorf("expected httpUrl == \"\" after Stop(), got %q", p.httpUrl)
+	}
+}
+
+func TestRestart(t *testing.T) {
+	p := NewScalametaParser()
+
+	if err := p.Start(); err != nil {
+		t.Fatal("first Start:", err)
+	}
+	if !p.IsRunning() {
+		t.Fatal("expected IsRunning() after first Start()")
+	}
+
+	p.Stop()
+	if p.IsRunning() {
+		t.Fatal("expected !IsRunning() after Stop()")
+	}
+
+	if err := p.Start(); err != nil {
+		t.Fatal("second Start:", err)
+	}
+	if !p.IsRunning() {
+		t.Error("expected IsRunning() after restart")
+	}
+
+	// Verify the restarted parser can actually serve requests
+	response, err := p.Parse(context.Background(), &sppb.ParseRequest{})
+	if err != nil {
+		t.Fatal("Parse after restart:", err)
+	}
+	if response.Error == "" {
+		t.Error("expected error response for empty request")
+	}
+
+	p.Stop()
+}
+
 func mustWriteTestFiles(t *testing.T, tmpDir string, files []testtools.FileSpec) []string {
 	var filenames []string
 	for _, file := range files {

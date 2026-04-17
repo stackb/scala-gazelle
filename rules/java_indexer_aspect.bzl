@@ -60,8 +60,6 @@ COMPILE_TIME = 0
 
 RUNTIME = 1
 
-DEFAULT_REPO_NAME_SEPARATOR = "+"
-
 # Compile-time dependency attributes, grouped by type.
 DEPS = [
     "_cc_toolchain",  # From cc rules
@@ -246,11 +244,26 @@ def _jarindex_basename(ctx, label):
 
 # see https://bazelbuild.slack.com/archives/C014RARENH0/p1752851984151199?thread_ts=1752594227.746349&cid=C014RARENH0 - we can't get the label apparent name! ("@maven")
 def get_apparent_label(label):
-    parts = label.repo_name.split(DEFAULT_REPO_NAME_SEPARATOR)
-    apparent_name = parts[len(parts) - 1]
-    apparent_label = "@%s//%s:%s" % (apparent_name, label.package, label.name)
+    """Returns the apparent label string for a bzlmod canonical label.
 
-    return apparent_label
+    Splits the canonical repo name on '+' (Bazel 8+) or '~' (Bazel 7) to
+    extract the apparent repo name (e.g. 'maven' from 'rules_jvm_external+5.3+maven').
+
+    Args:
+        label: A Label object.
+
+    Returns:
+        A label string using the apparent repo name, e.g. "@maven//pkg:target".
+    """
+    repo_name = label.repo_name
+    if "+" in repo_name:
+        parts = repo_name.split("+")
+    elif "~" in repo_name:
+        parts = repo_name.split("~")
+    else:
+        parts = [repo_name]
+    apparent_name = parts[len(parts) - 1]
+    return "@%s//%s:%s" % (apparent_name, label.package, label.name)
 
 def jarindexer_action(ctx, label, kind, executable, jar):
     output_file = ctx.actions.declare_file(_jarindex_basename(ctx, label) + ".javaindex.pb")
