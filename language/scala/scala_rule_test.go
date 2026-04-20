@@ -338,6 +338,121 @@ func (m *mockGlobalScope) GetSymbols(prefix string) []*resolver.Symbol {
 	return m.Global.GetSymbols(prefix)
 }
 
+func TestFilterNonImportableConflicts(t *testing.T) {
+	libSymbol := &resolver.Symbol{
+		Type:     sppb.ImportType_CLASS,
+		Name:     "com.foo.MyClass",
+		Provider: "scala_library",
+		Label:    label.Label{Pkg: "com/foo", Name: "mylib"},
+	}
+	binSymbol := &resolver.Symbol{
+		Type:     sppb.ImportType_CLASS,
+		Name:     "com.foo.MyClass",
+		Provider: "scala_binary",
+		Label:    label.Label{Pkg: "com/foo", Name: "mybin"},
+	}
+	testSymbol := &resolver.Symbol{
+		Type:     sppb.ImportType_CLASS,
+		Name:     "com.foo.MyClass",
+		Provider: "scala_test",
+		Label:    label.Label{Pkg: "com/foo", Name: "mytest"},
+	}
+	lib2Symbol := &resolver.Symbol{
+		Type:     sppb.ImportType_CLASS,
+		Name:     "com.foo.MyClass",
+		Provider: "scala_library",
+		Label:    label.Label{Pkg: "com/bar", Name: "otherlib"},
+	}
+
+	for name, tc := range map[string]struct {
+		symbol    *resolver.Symbol
+		wantLabel label.Label
+		wantConflicts int
+	}{
+		"no conflicts - returns unchanged": {
+			symbol:    libSymbol,
+			wantLabel: libSymbol.Label,
+			wantConflicts: 0,
+		},
+		"library primary with binary conflict - binary filtered out": {
+			symbol: &resolver.Symbol{
+				Type:      libSymbol.Type,
+				Name:      libSymbol.Name,
+				Provider:  libSymbol.Provider,
+				Label:     libSymbol.Label,
+				Conflicts: []*resolver.Symbol{binSymbol},
+			},
+			wantLabel: libSymbol.Label,
+			wantConflicts: 0,
+		},
+		"binary primary with library conflict - library wins": {
+			symbol: &resolver.Symbol{
+				Type:      binSymbol.Type,
+				Name:      binSymbol.Name,
+				Provider:  binSymbol.Provider,
+				Label:     binSymbol.Label,
+				Conflicts: []*resolver.Symbol{libSymbol},
+			},
+			wantLabel: libSymbol.Label,
+			wantConflicts: 0,
+		},
+		"test primary with library conflict - library wins": {
+			symbol: &resolver.Symbol{
+				Type:      testSymbol.Type,
+				Name:      testSymbol.Name,
+				Provider:  testSymbol.Provider,
+				Label:     testSymbol.Label,
+				Conflicts: []*resolver.Symbol{libSymbol},
+			},
+			wantLabel: libSymbol.Label,
+			wantConflicts: 0,
+		},
+		"binary primary with binary conflict - no importable alternative, returns original": {
+			symbol: &resolver.Symbol{
+				Type:      binSymbol.Type,
+				Name:      binSymbol.Name,
+				Provider:  binSymbol.Provider,
+				Label:     binSymbol.Label,
+				Conflicts: []*resolver.Symbol{testSymbol},
+			},
+			wantLabel: binSymbol.Label,
+			wantConflicts: 1,
+		},
+		"two libraries conflict with binary - binary filtered, libraries remain": {
+			symbol: &resolver.Symbol{
+				Type:      libSymbol.Type,
+				Name:      libSymbol.Name,
+				Provider:  libSymbol.Provider,
+				Label:     libSymbol.Label,
+				Conflicts: []*resolver.Symbol{binSymbol, lib2Symbol},
+			},
+			wantLabel: libSymbol.Label,
+			wantConflicts: 1,
+		},
+		"binary primary with two library conflicts - first library wins": {
+			symbol: &resolver.Symbol{
+				Type:      binSymbol.Type,
+				Name:      binSymbol.Name,
+				Provider:  binSymbol.Provider,
+				Label:     binSymbol.Label,
+				Conflicts: []*resolver.Symbol{libSymbol, lib2Symbol},
+			},
+			wantLabel: libSymbol.Label,
+			wantConflicts: 1,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			got := filterNonImportableConflicts(tc.symbol)
+			if got.Label != tc.wantLabel {
+				t.Errorf("label: want %v, got %v", tc.wantLabel, got.Label)
+			}
+			if len(got.Conflicts) != tc.wantConflicts {
+				t.Errorf("conflicts: want %d, got %d", tc.wantConflicts, len(got.Conflicts))
+			}
+		})
+	}
+}
+
 func NewTestScalaConfig(t *testing.T, universe resolver.Universe, rel string, dd ...rule.Directive) (*scalaconfig.Config, error) {
 	c := config.New()
 	sc := scalaconfig.New(zerolog.New(os.Stderr), universe, c, rel)

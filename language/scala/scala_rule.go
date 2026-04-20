@@ -125,7 +125,7 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 			continue
 		}
 		if symbol, ok := r.ResolveSymbol(rctx.Config, rctx.RuleIndex, rctx.From, scalaLangName, imp.Imp); ok {
-			imp.Symbol = symbol
+			imp.Symbol = filterNonImportableConflicts(symbol)
 			if len(imp.Symbol.Conflicts) > 0 {
 				if resolved, ok := sc.ResolveConflict(rctx.Rule, imports, imp, imp.Symbol); ok {
 					imp.Symbol = resolved
@@ -149,6 +149,59 @@ func (r *scalaRule) ResolveImports(rctx *scalarule.ResolveContext) resolver.Impo
 	}
 
 	return imports
+}
+
+// filterNonImportableConflicts removes binary/test symbols from conflict
+// resolution. When both a scala_binary and scala_library provide the same
+// symbol (e.g. due to overlapping srcs), the library should always win because
+// binary targets are not importable.
+func filterNonImportableConflicts(sym *resolver.Symbol) *resolver.Symbol {
+	if len(sym.Conflicts) == 0 {
+		return sym
+	}
+
+	// Collect all candidates (primary + conflicts), keeping only importable ones.
+	importable := make([]*resolver.Symbol, 0, 1+len(sym.Conflicts))
+	if !isBinaryRule(sym.Provider) {
+		importable = append(importable, sym)
+	}
+	for _, c := range sym.Conflicts {
+		if !isBinaryRule(c.Provider) {
+			importable = append(importable, c)
+		}
+	}
+
+	// If nothing was filtered, return the original symbol unchanged.
+	if len(importable) == 1+len(sym.Conflicts) {
+		return sym
+	}
+
+	// If no importable symbols exist, return the original (e.g. binary-only package).
+	if len(importable) == 0 {
+		return sym
+	}
+
+	// Single importable symbol remaining: return a copy without conflicts.
+	if len(importable) == 1 {
+		return &resolver.Symbol{
+			Type:     importable[0].Type,
+			Name:     importable[0].Name,
+			Label:    importable[0].Label,
+			Provider: importable[0].Provider,
+			Requires: importable[0].Requires,
+		}
+	}
+
+	// Multiple importable symbols: return the first with the rest as conflicts.
+	// Allocate a new Symbol to avoid mutating the shared trie state.
+	return &resolver.Symbol{
+		Type:      importable[0].Type,
+		Name:      importable[0].Name,
+		Label:     importable[0].Label,
+		Provider:  importable[0].Provider,
+		Conflicts: importable[1:],
+		Requires:  importable[0].Requires,
+	}
 }
 
 // ResolveSymbol implements the resolver.SymbolResolver interface.
