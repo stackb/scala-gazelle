@@ -34,9 +34,7 @@ func (sl *scalaLang) readScalaRuleCacheFile() error {
 		if err != nil {
 			return err
 		}
-		if err := sl.parser.LoadScalaRule(from, rule); err != nil {
-			return err
-		}
+		sl.parser.SeedScalaRule(from, rule)
 	}
 
 	if debugCache {
