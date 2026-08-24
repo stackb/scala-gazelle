@@ -19,12 +19,14 @@ const debugMemoParser = false
 type MemoParser struct {
 	next  Parser
 	rules map[label.Label]*sppb.Rule
+	used  map[label.Label]bool
 }
 
 func NewMemoParser(next Parser) *MemoParser {
 	return &MemoParser{
 		next:  next,
 		rules: make(map[label.Label]*sppb.Rule),
+		used:  make(map[label.Label]bool),
 	}
 }
 
@@ -53,6 +55,15 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 		if debugMemoParser {
 			log.Printf("rule cache hit: %s", from)
 		}
+		if !p.used[from] {
+			p.used[from] = true
+			// Seeded rules carry no symbols so that rules deleted from the
+			// tree cannot pollute the resolution scope; load symbols on first
+			// use, in walk order like a fresh parse.
+			if err := p.next.LoadScalaRule(from, rule); err != nil {
+				return nil, err
+			}
+		}
 		return rule, nil
 	}
 	if debugMemoParser {
@@ -71,6 +82,7 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 	}
 	rule.Sha256 = sha256
 	p.rules[from] = rule
+	p.used[from] = true
 
 	if debugMemoParser {
 		log.Printf("rule cache save: %s (%s)", from, sha256)
@@ -82,14 +94,26 @@ func (p *MemoParser) ParseScalaRule(kind string, from label.Label, dir string, s
 // LoadScalaRule loads the given state.
 func (p *MemoParser) LoadScalaRule(from label.Label, rule *sppb.Rule) error {
 	p.rules[from] = rule
+	p.used[from] = true
 	return p.next.LoadScalaRule(from, rule)
 }
 
-// ScalaRules returns a list of all scala rules sorted by label
+// SeedScalaRule primes the memo with a cached rule without loading its
+// symbols into scope.  Symbols load on the first ParseScalaRule hit, so
+// cached rules that no longer exist in the tree never contribute symbols.
+func (p *MemoParser) SeedScalaRule(from label.Label, rule *sppb.Rule) {
+	p.rules[from] = rule
+}
+
+// ScalaRules returns the rules used this run (freshly parsed or cache-hit)
+// sorted by label.  Seeded-but-unused rules are dropped so that deleted
+// rules age out of a persistent cache file.
 func (p *MemoParser) ScalaRules() []*sppb.Rule {
 	rules := make([]*sppb.Rule, 0, len(p.rules))
-	for _, rule := range p.rules {
-		rules = append(rules, rule)
+	for from, rule := range p.rules {
+		if p.used[from] {
+			rules = append(rules, rule)
+		}
 	}
 	SortRules(rules)
 	return rules

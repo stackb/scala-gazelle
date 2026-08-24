@@ -111,9 +111,22 @@ func (s *semanticdbIndexRule) Resolve(rctx *scalarule.ResolveContext, importsRaw
 		kinds[kind] = true
 	}
 
+	// Collect symbols by label, including conflict losers: TrieScope.Put is
+	// first-wins, so which label holds a duplicated symbol name depends on
+	// symbol insertion order (package walk order vs. sorted cache preload).
+	// Index membership must be order-independent, so traverse Conflicts too.
 	symbols := make(map[label.Label]*resolver.Symbol)
+	var addSymbol func(sym *resolver.Symbol)
+	addSymbol = func(sym *resolver.Symbol) {
+		if _, ok := symbols[sym.Label]; !ok {
+			symbols[sym.Label] = sym
+		}
+		for _, conflict := range sym.Conflicts {
+			addSymbol(conflict)
+		}
+	}
 	for _, sym := range GetGlobalScope().GetSymbols("") {
-		symbols[sym.Label] = sym
+		addSymbol(sym)
 	}
 
 	deps := make([]string, 0, len(symbols))

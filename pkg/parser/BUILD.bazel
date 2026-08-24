@@ -39,6 +39,7 @@ go_test(
     srcs = [
         "assets_test.go",
         "exec_test.go",
+        "memo_parser_test.go",
         "scalameta_parser_test.go",
     ],
     data = glob(["testdata/**/*"]),
@@ -47,6 +48,7 @@ go_test(
         "//build/stack/gazelle/scala/parse",
         "//pkg/bazel",
         "//pkg/collections",
+        "@bazel_gazelle//label",
         "@bazel_gazelle//testtools",
         "@com_github_google_go_cmp//cmp",
         "@com_github_google_go_cmp//cmp/cmpopts",
